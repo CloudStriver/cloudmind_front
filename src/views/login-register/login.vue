@@ -46,7 +46,7 @@
                         </div>
                         <div class="forget">忘记密码?</div>
                     </div>
-                    <button class="login-button">登录</button>
+                    <button class="login-button" @click="login">登录</button>
                 </div>
                 <div class="third">
                     <div class="third-login">
@@ -70,19 +70,28 @@
 import Captcha from '@/components/captcha.vue'
 import { ref } from 'vue'
 import { judgeEmail } from './utils'
-// import { successMsg, warningMsg, errorMsg } from '@/components/utils'
 
 let account = ref("")
 let isCaptcha = ref(false)
+let isEmail = ref(false)
 
 const judgeAccount = () => {
-    const isEmail = judgeEmail(account.value)
-    if (isEmail) {
+    isEmail.value = judgeEmail(account.value)
+    if (isEmail.value) {
         isCaptcha.value = true
     } 
     else {
         isCaptcha.value = false
-        // warningMsg("请输入正确的邮箱")
+    }
+}
+
+const login = () => {
+    if (isCaptcha.value) {
+        console.log("登录成功");
+        
+    }
+    else {
+        console.log("登录失败");
     }
 }
 

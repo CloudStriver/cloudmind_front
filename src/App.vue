@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import Message from '@/components/message/message.vue'
 </script>
 
 <template>
   <div id="App">
-    <Message></Message>
     <router-view></router-view>
   </div>
 </template>
