@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import Captcha from '@/components/captcha.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { judgeEmail } from './utils'
 
 let account = ref("")
