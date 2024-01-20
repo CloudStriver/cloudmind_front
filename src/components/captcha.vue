@@ -32,8 +32,8 @@
 </template>
 
 <script setup lang="ts">
-import { errorMsg, successMsg } from '@/utils/message';
 import { onMounted, ref } from 'vue'
+import { errorMsg, successMsg } from '@/utils/message';
 
 const trackLeftX = ref()
 const slider = ref()
@@ -46,17 +46,21 @@ let sliderX = ref(0) //滑块距离轨道最左测的距离left
 let sliderLeft = ref(0) //滑块距离轨道最左测的距离
 let isMouseDown = ref(false) //鼠标是否按下
 let isCaptcha = ref("padding") //是否验证成功
+
 document.onselectstart = () => false //解决拖动滑块时选中文字和图片的问题
+
 onMounted(() => {
     trackLeft.value = Math.ceil(trackLeftX.value.getBoundingClientRect().left)    
 })
 
 const mouseDown = (event: MouseEvent) => {
-    isMouseDown.value = true
-    clickX = event.clientX
-    sliderLeft.value = clickX - trackLeft.value
-    minX.value = clickX
-    maxX.value = minX.value + 190   
+    if (isMouseDown.value === false && isCaptcha.value === "padding") {
+        isMouseDown.value = true
+        clickX = event.clientX
+        sliderLeft.value = clickX - trackLeft.value
+        minX.value = clickX
+        maxX.value = minX.value + 190   
+    } 
 }
 
 const mouseMove = (event: MouseEvent) => {
@@ -82,8 +86,9 @@ const mouseUp = () => {
                 isCaptcha.value = "padding"
                 slider.value.classList.remove("slider-error")
                 filled.value.classList.remove("filled-error")
-            }, 2000)
-        } else {
+            }, 3000)
+        } 
+        else {
             successMsg("验证成功")
             sliderX.value = 190
             isCaptcha.value = "success"
