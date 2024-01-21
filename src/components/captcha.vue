@@ -46,6 +46,7 @@ let sliderX = ref(0) //滑块距离轨道最左测的距离left
 let sliderLeft = ref(0) //滑块距离轨道最左测的距离
 let isMouseDown = ref(false) //鼠标是否按下
 let isCaptcha = ref("padding") //是否验证成功
+let isSuccess = ref(false) //传递给父祖件的验证状态
 
 document.onselectstart = () => false //解决拖动滑块时选中文字和图片的问题
 
@@ -94,6 +95,7 @@ const mouseUp = () => {
             isCaptcha.value = "success"
             slider.value.classList.add("slider-success")
             filled.value.classList.add("filled-success")
+            isSuccess.value = isCaptcha.value === "success" ? true : false
         }
         isMouseDown.value = false
     }
@@ -105,6 +107,10 @@ const mouseOut = () => {
         document.addEventListener('mouseup', mouseUp)
     }
 }
+
+defineExpose({
+    isSuccess
+})
 
 </script>
 
