@@ -21,9 +21,11 @@
                                type="text"
                                placeholder="邮箱"
                                v-model="account"
-                               @input="judgeAccount"
+                               @input="judgeAccountInput"
+                               @blur="judgeAccountBlur"
                         >
                     </div>
+                    <div class="emailMsg" v-show="errorEmail">* {{ errorEmailMsg }}</div>
                     <div class="password">
                         <i class="iconfont icon-lock-solid" 
                            style="color: rgb(187, 186, 186)">
@@ -31,10 +33,14 @@
                         <input class="password-input" 
                                type="password"
                                placeholder="密码"
+                               v-model="password"
+                               @input="judgePasswordInput"
+                               @blur="judgePasswordBlur"
                         >
                     </div>
+                    <div class="passwordMsg" v-show="errorPassword">* {{ errorPasswordMsg }}</div>
                     <div v-if="isCaptcha" class="captcha">
-                        <Captcha></Captcha>
+                        <Captcha ref="captcha"></Captcha>
                     </div>
                     <div class="auto-forget">
                         <div>
@@ -68,14 +74,26 @@
 
 <script setup lang="ts">
 import Captcha from '@/components/captcha.vue'
-import { onMounted, ref } from 'vue'
-import { judgeEmail } from './utils'
+import { ref, onMounted } from 'vue'
+import { judgeEmail, judgePassword } from './utils'
 
-let account = ref("")
-let isCaptcha = ref(false)
-let isEmail = ref(false)
+const captcha = ref()
+const account = ref("")
+const password = ref("")
+const isCaptcha = ref(false)
+const isEmail = ref(false)
+const errorEmailMsg = ref("")
+const errorPasswordMsg = ref("")
+const errorEmail = ref(false)
+const errorPassword = ref(false)
 
-const judgeAccount = () => {
+onMounted (() => {
+    console.log(account.value);
+    console.log(password.value);
+    
+})
+
+const judgeAccountInput = () => {
     isEmail.value = judgeEmail(account.value)
     if (isEmail.value) {
         isCaptcha.value = true
@@ -84,14 +102,56 @@ const judgeAccount = () => {
         isCaptcha.value = false
     }
 }
-
-const login = () => {
-    if (isCaptcha.value) {
-        console.log("登录成功");
-        
+const judgeAccountBlur = () => {
+    if (account.value === "") {
+        errorEmail.value = true
+        errorEmailMsg.value = "邮箱不能为空"
+    }
+    else if (!isEmail.value) {
+        errorEmail.value = true
+        errorEmailMsg.value = "邮箱格式不正确"
     }
     else {
-        console.log("登录失败");
+        errorEmail.value = false
+    }
+}
+
+const judgePasswordInput = () => {
+    console.log(password.value.length, password.value);
+    
+    if (password.value.length === 0) {
+        errorPassword.value = true
+        errorPasswordMsg.value = "密码不能为空"
+    }
+    else if (password.value.length < 8) {
+        errorPassword.value = true
+        errorPasswordMsg.value = "密码长度不能小于8位"
+    }
+    else if (password.value.length === 20) {
+        errorPassword.value = true
+        errorPasswordMsg.value = "密码长度不能大于20位"
+    }
+    else {
+        judgePasswordBlur()
+    }
+}
+const judgePasswordBlur = () => {
+    const isPassword = judgePassword(password.value)
+    if (!isPassword) {
+        errorPassword.value = true
+        errorPasswordMsg.value = "密码需要同时包含字母和数字"
+    }
+    else {
+        errorPassword.value = false
+    }
+    console.log(password.value.length, password.value);
+    
+}
+
+const login = () => {
+    if (isEmail.value && captcha.value.isSuccess && !errorPassword.value) {
+        console.log("登录成功");
+        
     }
 }
 
@@ -175,6 +235,7 @@ const login = () => {
             }
 
             .input {
+                position: relative;
                 width: 100%;
                 height: auto;
                 margin-bottom: 10px;
@@ -218,6 +279,21 @@ const login = () => {
                     color: rgb(187, 186, 186);
                 }
 
+                .emailMsg,
+                .passwordMsg {
+                    position: absolute;
+                    font-size: 10px;
+                    color: #d84141;
+                    left: 55px;
+                }
+
+                .emailMsg {
+                    top: 32px;
+                }
+                .passwordMsg {
+                    top: 79px;
+                }
+
                 .captcha {
                     width: 220px;
                     height: 32px;
@@ -246,14 +322,23 @@ const login = () => {
                         user-select: none;
                         cursor: pointer;
                     }
+                    .checkbox-lable:hover,
+                    .checkbox-input:hover {
+                        color: rgba(60, 176, 253, 1);
+                    }
+
+                    .checkbox-input:checked + .checkbox-lable {
+                        color: rgba(60, 176, 253, 1);
+                    }
 
                     .forget {
                         cursor: pointer;
                         color: rgba(60, 176, 253, 1);
                     }
+
                     .forget:hover {
                         text-decoration: underline;
-                        color: blue;
+                        color: rgb(30, 79, 255);
                     }
                 }
 
