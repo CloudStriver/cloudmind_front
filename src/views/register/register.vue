@@ -4,57 +4,73 @@
         <div class="panel">
             <img 
                 src="../../assets/images/illustration.png" 
-                style="transform: scale(0.7); -webkit-user-drag: none;"
+                style="transform: scale(0.7); -webkit-user-drag: none; "
             >
             <div class="contents">
                 <div class="cloudmind">
                     <img src="../../assets/images/cloudmind.png">
                 </div>
                 <div class="switch">
-                    <button>登 录</button>
-                    <button style="cursor: pointer;" @click="register">注 册</button>
+                    <button style="cursor: pointer;" @click="login">登 录</button>
+                    <button>注 册</button>
                 </div>
                 <div class="input">
-                    <div class="account">
+                    <div class="email">
                         <i class="iconfont icon-user-solid"
                             style="color: rgb(187, 186, 186)">
                         </i>
-                        <input class="account-input" 
-                               type="text"
-                               placeholder="邮箱"
-                               v-model="account"
-                               @input="judgeAccountInput"
-                               @blur="judgeAccountBlur"
+                        <input 
+                            type="text" 
+                            placeholder="输入邮箱"
+                            class="email-input"
+                            autocomplete="new-password"
+                            v-model="email"
+                            @blur="emailBlur"
                         >
                     </div>
-                    <div class="email-msg" v-show="errorEmail">* {{ errorEmailMsg }}</div>
-                    <div class="password">
-                        <i class="iconfont icon-lock-solid" 
-                           style="color: rgb(187, 186, 186)">
+                    <div class="email-msg" v-show="errorEmail">* {{ EmailMsg }}</div>
+                    <div class="getCaptcah" v-if="setCaptcha">
+                        <i 
+                            class="iconfont icon-shield-alt-solid"
+                            style="color: rgb(187, 186, 186)">
                         </i>
-                        <input class="password-input" 
-                               type="password"
-                               placeholder="密码"
-                               v-model="password"
-                               @input="judgePasswordInput"
-                               @blur="judgePasswordBlur"
+                        <input 
+                            type="text" 
+                            placeholder="输入验证码"
+                            class="captcha-input"
+                        >
+                        <!-- textPassword测试密码 -->
+                        <button @click="textPassword">获取验证码</button> 
+                    </div>
+                    <div class="password" v-if="setPassword">
+                        <i 
+                            class="iconfont icon-lock-solid"
+                            style="color: rgb(187, 186, 186)"
+                        ></i>
+                        <input 
+                            type="password"
+                            placeholder="输入密码(8-16位字符)"
+                            class="password-input"
+                            v-model="password"
+                            @blur="passwordBlur"
                         >
                     </div>
-                    <div class="password-msg" v-show="errorPassword">* {{ errorPasswordMsg }}</div>
-                    <div v-if="isCaptcha" class="captcha">
-                        <Captcha ref="captcha"></Captcha>
+                    <div class="password-msg" v-show="errorPassword">* {{ passwordMsg }}</div>
+                    <div class="confirm-password" v-if="setPassword">
+                        <i 
+                            class="iconfont icon-lock-solid"
+                            style="color: rgb(187, 186, 186)"
+                        ></i>
+                        <input 
+                            type="password"
+                            placeholder="确认密码"
+                            class="confirm-password-input"
+                            v-model="confirmPassword"
+                            @blur="confirmPasswordBlur"
+                        >
                     </div>
-                    <div class="auto-forget">
-                        <div>
-                            <input type="checkbox" 
-                                   id="checkbox"
-                                   class="checkbox-input"
-                            >
-                            <label class="checkbox-lable" for="checkbox">自动登录</label>
-                        </div>
-                        <div class="forget">忘记密码?</div>
-                    </div>
-                    <button class="login-button" @click="login">登录</button>
+                    <div class="confirm-password-msg" v-show="errorConfirmPassword">* {{ confirmPasswordMsg }}</div>
+                    <button class="register-button" @click="register">注册</button>
                 </div>
                 <div class="third">
                     <div class="third-login">
@@ -71,87 +87,91 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 </template>
 
 <script setup lang="ts">
-import Captcha from '@/components/captcha.vue'
-import router from '@/router'
+import router from '../../router/index'
 import { ref } from 'vue'
 import { judgeEmail, judgePassword } from '@/utils/judge'
 
-const captcha = ref()
-const account = ref("")
-const password = ref("")
-const isCaptcha = ref(false)
+const email = ref('')
 const isEmail = ref(false)
-const errorEmailMsg = ref("")
-const errorPasswordMsg = ref("")
 const errorEmail = ref(false)
+const EmailMsg = ref('')
+const setCaptcha = ref(true)
+const setPassword = ref(false)
+const password = ref('')
+const confirmPassword = ref('')
 const errorPassword = ref(false)
+const passwordMsg = ref('')
+const errorConfirmPassword = ref(false)
+const confirmPasswordMsg = ref('')
+const isPassword = ref(false)
 
-const judgeAccountInput = () => {
-    isEmail.value = judgeEmail(account.value)
-    if (isEmail.value) {
-        isCaptcha.value = true
-    } 
-    else {
-        isCaptcha.value = false
-    }
-}
-const judgeAccountBlur = () => {
-    if (account.value === "") {
+const emailBlur = () => {
+    if (email.value === '') {
         errorEmail.value = true
-        errorEmailMsg.value = "邮箱不能为空"
+        EmailMsg.value = '邮箱不能为空'
+        return
     }
-    else if (!isEmail.value) {
+    isEmail.value = judgeEmail(email.value)
+    if (!isEmail.value) {
         errorEmail.value = true
-        errorEmailMsg.value = "邮箱格式不正确"
-    }
-    else {
+        EmailMsg.value = '邮箱格式不正确'
+    } else {
         errorEmail.value = false
+        EmailMsg.value = ''
     }
 }
 
-const judgePasswordInput = () => {
-    if (password.value.length === 0) {
+const passwordBlur =() => {
+    if (password.value === '') {
         errorPassword.value = true
-        errorPasswordMsg.value = "密码不能为空"
+        passwordMsg.value = '密码不能为空'
+        return
     }
-    else if (password.value.length < 8) {
+    if (!judgePassword(password.value)) {
         errorPassword.value = true
-        errorPasswordMsg.value = "密码长度不能小于8位"
-    }
-    else if (password.value.length === 20) {
-        errorPassword.value = true
-        errorPasswordMsg.value = "密码长度不能大于20位"
-    }
-    else {
-        judgePasswordBlur()
-    }
-}
-const judgePasswordBlur = () => {
-    const isPassword = judgePassword(password.value)
-    if (!isPassword) {
-        errorPassword.value = true
-        errorPasswordMsg.value = "密码需要同时包含字母和数字"
-    }
-    else {
+        passwordMsg.value = '密码格式不正确'
+    } else {
         errorPassword.value = false
+        passwordMsg.value = ''
     }
 }
 
-const login = () => {
-    if (isEmail.value && captcha.value.isSuccess && !errorPassword.value) {
-        console.log("登录成功");
-        
+const confirmPasswordBlur = () => {
+    if (confirmPassword.value !== password.value) {
+        errorConfirmPassword.value = true
+        confirmPasswordMsg.value = '两次密码不一致'
+    } else {
+        errorConfirmPassword.value = false
+        confirmPasswordMsg.value = ''
+        isPassword.value = true
     }
 }
 
-const register = () => router.push('/register')
+const textPassword = () => {
+    if (isEmail.value) {
+        setCaptcha.value = false
+        setPassword.value = true
+    }
+    else {
+        errorEmail.value = true
+        EmailMsg.value = '邮箱格式不正确'
+    }
+}
 
+const register = () => {
+    if (isEmail.value && isPassword.value) {
+        console.log('注册成功')
+        router.push('/')
+    } 
+}
+
+const login = () => router.push('/login')
 </script>
- 
+
 <style scoped lang="css">
 .main-box {
     width: 100%;
@@ -217,15 +237,15 @@ const register = () => router.push('/register')
                     font-size: 13px;
                 }
                 button:first-child {
+                    color: #b9b9b9;
+                    background-color: rgba(255, 255, 255, 0);
+                }
+                button:last-child {
                     font-weight: 700;
                     border-radius: 5px;
                     color: rgb(62, 96, 133);
                     background-color: #fff;
                     box-shadow: 0px 1px 4px  rgba(0, 0, 0, 0.2);
-                }
-                button:last-child {
-                    color: #b9b9b9;
-                    background-color: rgba(255, 255, 255, 0);
                 }
             }
 
@@ -240,8 +260,10 @@ const register = () => router.push('/register')
                 align-items: center;
                 justify-content: space-between;
 
-                .account, 
-                .password {
+                .email,
+                .getCaptcah,
+                .password,
+                .confirm-password {
                     width: 220px;
                     height: 32px;
                     box-shadow: inset 0 0 1px 1px rgba(224, 223, 223, 0.981);
@@ -254,13 +276,10 @@ const register = () => router.push('/register')
                     align-items: center;
                     justify-content: space-between;
                 }
-                .account:hover,
-                .password:hover {
+                .email:hover {
                     box-shadow: inset 0 0 1px 1px rgba(188, 190, 192, 0.854);
                 }
-
-                .account-input,
-                .password-input {
+                .email-input {
                     width: 89%;
                     height: 90%;
                     border: none;
@@ -268,88 +287,81 @@ const register = () => router.push('/register')
                     outline: none;
                     font-size: 14px;
                 }
-                .account-input::placeholder,
-                .password-input::placeholder {
+                .email-input::placeholder {
                     font-size: 13px;
                     color: rgb(187, 186, 186);
                 }
 
                 .email-msg,
-                .password-msg {
+                .password-msg,
+                .confirm-password-msg {
                     position: absolute;
                     font-size: 10px;
                     color: #d84141;
                     left: 55px;
                 }
-
                 .email-msg {
                     top: 32px;
                 }
                 .password-msg {
-                    top: 79px;
+                    top: 79.5px;
+                }
+                .confirm-password-msg {
+                    top: 126px;
                 }
 
-                .captcha {
-                    width: 220px;
-                    height: 32px;
-                    margin-bottom: 15px;
-                    display: flex;
-                    flex-direction: row;
-                    align-items: center;
-                    justify-content: space-between;
+                .getCaptcah button {
+                    width: 40%;
+                    height: 90%;
+                    border: none;
+                    outline: none;
+                    font-size: 12px;
+                    color: rgb(50, 145, 209);
+                    background-color: #fff;
+                }
+                .getCaptcah:hover {
+                    box-shadow: inset 0 0 1px 1px rgba(188, 190, 192, 0.854);
+                }
+                .captcha-input {
+                    width: 45%;
+                    height: 90%;
+                    border: none;
+                    border-radius: 0 3px 3px 0;
+                    outline: none;
+                    font-size: 14px;
+                }
+                .captcha-input::placeholder {
+                    font-size: 13px;
+                    color: rgb(187, 186, 186);
                 }
 
-                .auto-forget {
-                    width: 220px;
-                    font-size: 11px;
-                    margin-bottom: 15px;
-                    display: flex;
-                    justify-content: space-between;
-
-                    .checkbox-input {
-                        cursor: pointer;
-                        margin-right: 5px;
-                        vertical-align: middle;
-                        
-                    }
-                    .checkbox-lable {
-                        color: rgb(88, 88, 88); 
-                        user-select: none;
-                        cursor: pointer;
-                    }
-                    .checkbox-lable:hover,
-                    .checkbox-input:hover {
-                        color: rgba(60, 176, 253, 1);
-                    }
-
-                    .checkbox-input:checked + .checkbox-lable {
-                        color: rgba(60, 176, 253, 1);
-                    }
-
-                    .forget {
-                        cursor: pointer;
-                        color: rgba(60, 176, 253, 1);
-                    }
-
-                    .forget:hover {
-                        text-decoration: underline;
-                        color: rgb(30, 79, 255);
-                    }
+                .password-input,
+                .confirm-password-input {
+                    width: 89%;
+                    height: 90%;
+                    border: none;
+                    border-radius: 0 3px 3px 0;
+                    outline: none;
+                    font-size: 14px;
                 }
 
-                .login-button {
+                .password-input::placeholder,
+                .confirm-password-input::placeholder {
+                    font-size: 13px;
+                    color: rgb(187, 186, 186);
+                }
+
+                .register-button {
                     width: 220px;
                     height: 32px;
                     border: none;
                     cursor: pointer;
                     font-size: 14px;
                     border-radius: 10px;
+                    margin-top: 15px;
                     margin-bottom: 10px;
                     color: #fff;
                     background: linear-gradient(155.11deg, rgba(30, 168, 255, 1) 0%, rgba(59, 142, 231, 0.4) 100%);
-                }
-                .login-button:hover {
-                    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.2);
                 }
             }
 
