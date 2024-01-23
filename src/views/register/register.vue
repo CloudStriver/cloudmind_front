@@ -71,6 +71,23 @@
                     </div>
                     <div class="confirm-password-msg" v-show="errorConfirmPassword">* {{ confirmPasswordMsg }}</div>
                     <button class="register-button" @click="register">注册</button>
+                    <div class="agreements">
+                        <input 
+                            type="checkbox" 
+                            id="agreement"
+                            style="vertical-align: middle;"
+                            v-model="agreements"
+                        >
+                        <label for="agreement" class="agreement-lable">已阅读并同意以下协议 </label>
+                        <router-link 
+                            to="/agreements_user"
+                            style="color: rgba(60, 176, 253, 1); text-decoration: none; vertical-align: middle;"
+                        > 用户协议、</router-link>
+                        <router-link 
+                            to="/agreements_privacy"
+                            style="color: rgba(60, 176, 253, 1); text-decoration: none; vertical-align: middle;"
+                        >隐私政策</router-link>
+                    </div>
                 </div>
                 <div class="third">
                     <div class="third-login">
@@ -108,6 +125,7 @@ const passwordMsg = ref('')
 const errorConfirmPassword = ref(false)
 const confirmPasswordMsg = ref('')
 const isPassword = ref(false)
+const agreements = ref(false)
 
 const emailBlur = () => {
     if (email.value === '') {
@@ -163,7 +181,7 @@ const textPassword = () => {
 }
 
 const register = () => {
-    if (isEmail.value && isPassword.value) {
+    if (isEmail.value && isPassword.value && agreements.value) {
         console.log('注册成功')
         router.push('/')
     } 
@@ -362,6 +380,18 @@ const login = () => router.push('/login')
                     margin-bottom: 10px;
                     color: #fff;
                     background: linear-gradient(155.11deg, rgba(30, 168, 255, 1) 0%, rgba(59, 142, 231, 0.4) 100%);
+                }
+
+                .agreements {
+                    font-size: 10px;
+                    margin-right: 7px;
+
+                    .agreement-lable {
+                        color: rgb(111, 111, 111); 
+                        user-select: none;
+                        cursor: pointer;
+                        vertical-align: middle;
+                    }
                 }
             }
 

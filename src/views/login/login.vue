@@ -55,6 +55,23 @@
                         <div class="forget">忘记密码?</div>
                     </div>
                     <button class="login-button" @click="login">登录</button>
+                    <div class="agreements">
+                        <input 
+                            type="checkbox" 
+                            id="agreement"
+                            style="vertical-align: middle;"
+                            v-model="agreements"
+                        >
+                        <label for="agreement" class="agreement-lable">已阅读并同意以下协议 </label>
+                        <router-link 
+                            to="/agreements_user"
+                            style="color: rgba(60, 176, 253, 1); text-decoration: none; vertical-align: middle;"
+                        > 用户协议、</router-link>
+                        <router-link 
+                            to="/agreements_privacy"
+                            style="color: rgba(60, 176, 253, 1); text-decoration: none; vertical-align: middle;"
+                        >隐私政策</router-link>
+                    </div>
                 </div>
                 <div class="third">
                     <div class="third-login">
@@ -89,6 +106,7 @@ const errorEmailMsg = ref("")
 const errorPasswordMsg = ref("")
 const errorEmail = ref(false)
 const errorPassword = ref(false)
+const agreements = ref(false)
 
 const judgeAccountInput = () => {
     isEmail.value = judgeEmail(account.value)
@@ -142,9 +160,9 @@ const judgePasswordBlur = () => {
 }
 
 const login = () => {
-    if (isEmail.value && captcha.value.isSuccess && !errorPassword.value) {
+    if (isEmail.value && captcha.value.isSuccess && !errorPassword.value && agreements.value) {
         console.log("登录成功");
-        
+
     }
 }
 
@@ -350,6 +368,18 @@ const register = () => router.push('/register')
                 }
                 .login-button:hover {
                     box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.2);
+                }
+
+                .agreements {
+                    font-size: 10px;
+                    margin-right: 7px;
+
+                    .agreement-lable {
+                        color: rgb(111, 111, 111); 
+                        user-select: none;
+                        cursor: pointer;
+                        vertical-align: middle;
+                    }
                 }
             }
 
