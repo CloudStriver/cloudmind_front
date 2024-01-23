@@ -1,9 +1,164 @@
 <template>
-    <div></div>
+    <div class="main-box">
+        <Nav class="nav"></Nav>
+        <div class="contents">
+            <header class="header">
+                <div class="header-layout">
+                    <search class="search"></search>
+                    <div class="header-right">
+                        <i class="iconfont icon-calendar-check-solid"></i>
+                        <i class="iconfont icon-bell"></i>
+                        <i class="iconfont icon-cog-solid"></i>
+                        <avatar class="avatar"></avatar>
+                    </div>
+                </div>
+            </header>
+            <section class="section-top">
+                <activity class="activity"></activity>
+            </section>
+            <section class="section-bottom">
+                <recommend class="recommend"></recommend>
+                <div class="right">
+                    <rank class="rank"></rank>
+                    <announced class="announced"></announced>
+                </div>
+            </section>
+            <footer class="footer"> 
+                <a href="https://beian.miit.gov.cn/" target="_blank">湘ICP备2023015545号</a>
+            </footer>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
+import Nav from '@/components/navigation.vue'
+import search from '@/components/search.vue'
+import avatar from '@/components/avatar.vue'
+import activity from '@/views/home/activity.vue'
+import recommend from '@/views/home/recommend.vue'
+import rank from '@/views/home/rank.vue'
+import announced from '@/views/home/announced.vue'
 </script>
 
 <style scoped lang="css">
+.main-box {
+    width: 100%;
+    display: flex;
+    
+    .nav {
+        position: fixed;
+        height: 100%;
+        width: 80px;
+        float: left;
+    }
+
+    .contents {
+        background-color: rgba(240, 245, 255, 1);
+        margin-left: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+
+        .header {
+            width: 100%;
+            height: 70px;
+            background-color: rgba(240, 245, 255, 1);
+            padding: 0 2% 0;
+            margin-bottom: 20px;
+
+            .header-layout {
+                width: 100%;
+                height: 100%;
+                background-color: rgba(207, 227, 252, 0.6);
+                padding: 0 60px 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                
+                .search {
+                    width: 300px;
+                    height: 32px;
+                }
+    
+                .header-right {
+                    display: flex;
+                    align-items: center;
+                    
+                    i {
+                        font-size: 20px;
+                        margin-right: 30px;
+                        cursor: pointer;
+                        color: #494848;
+                    }
+    
+                    .avatar {
+                        width: 50px;
+                        height: 50px;
+                    }
+                }
+            }
+        }
+
+        .section-top {
+            width: 100%;
+            padding: 0 2% 0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            .activity {
+                max-width: 1200px;
+                height: 360px;
+                margin-bottom: 10px;
+            }
+
+        }
+        .section-bottom {
+            width: 100%;
+            padding: 0 2% 0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+
+            .recommend {
+                max-width: 740px;
+                height: 780px;
+                margin-right: 10px;
+            }
+
+            .right {
+                height: 780px;
+                display: flex;
+                flex-direction: column;
+
+                .rank {
+                    width: 450px;
+                    height: 520px;
+                    background-color: #fff;
+                    margin-bottom: 10px;
+                }
+
+                .announced {
+                    width: 450px;
+                    height: 250px;
+                    background-color: #fff;
+                }
+            }
+        }
+
+        .footer {
+            height: 80px; 
+            width: 100%; 
+            border-top: 0.6px solid rgb(232, 232, 232); 
+            margin-top: 50px; display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+    }
+}
 </style>
