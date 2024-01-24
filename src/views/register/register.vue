@@ -15,7 +15,7 @@
                     <button>注 册</button>
                 </div>
                 <div class="input">
-                    <div class="email">
+                    <div class="email" v-if="setCaptcha">
                         <i class="iconfont icon-user-solid"
                             style="color: rgb(187, 186, 186)">
                         </i>
@@ -38,10 +38,12 @@
                             type="text" 
                             placeholder="输入验证码"
                             class="captcha-input"
+                            v-model="captcha"
+                            @blur="captchaBlur"
                         >
-                        <!-- textPassword测试密码 -->
-                        <button @click="textPassword">获取验证码</button> 
+                        <button @click="getCaptcah" class="captcha-button">{{ captchaMessage }}</button> 
                     </div>
+                    <div class="captcha-msg" v-show="errorCaptcha">* {{ captchaMsg }}</div>
                     <div class="password" v-if="setPassword">
                         <i 
                             class="iconfont icon-lock-solid"
@@ -70,7 +72,7 @@
                         >
                     </div>
                     <div class="confirm-password-msg" v-show="errorConfirmPassword">* {{ confirmPasswordMsg }}</div>
-                    <button class="register-button" @click="register">注册</button>
+                    <button class="register-button" @click="register">{{ buttonMessage }}</button>
                     <div class="agreements">
                         <input 
                             type="checkbox" 
@@ -96,10 +98,18 @@
                         <div ></div>
                     </div>
                     <div>
-                        <i class="iconfont icon-qq qq"></i>
-                        <i class="iconfont icon-weixin weixin"></i>
-                        <i class="iconfont icon-gitub gitub"></i>
-                        <i class="iconfont icon-gitee1 gitee"></i>
+                        <a href="" target="_blank">
+                            <i class="iconfont icon-qq qq"></i>
+                        </a>
+                        <a href="" target="_blank">
+                            <i class="iconfont icon-weixin weixin"></i>
+                        </a>
+                        <a href="https://github.com/login/oauth/authorize?client_id=2b3644ed24902ef9eb6f&redirect_uri=http://apisix.cloudmind.top/auth/githubLogin" target="_blank">
+                            <i class="iconfont icon-gitub gitub"></i>
+                        </a>
+                        <a href="https://gitee.com/oauth/authorize?client_id=10dfe502136745d1f135474390c4cb6cd50fce3a5bf7a167891d3b0ec184d2eb&redirect_uri=http://apisix.cloudmind.top/auth/giteeLogin&response_type=code" target="_blank">
+                            <i class="iconfont icon-gitee1 gitee"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -111,21 +121,32 @@
 import router from '../../router/index'
 import { ref } from 'vue'
 import { judgeEmail, judgePassword } from '@/utils/judge'
+import { errorMsg, successMsg } from '@/utils/message'
+import { post } from '@/utils/request'
+import { userStore } from '@/store/index'
 
+const store = userStore()
 const email = ref('')
-const isEmail = ref(false)
-const errorEmail = ref(false)
-const EmailMsg = ref('')
-const setCaptcha = ref(true)
-const setPassword = ref(false)
+const captcha = ref('')
 const password = ref('')
-const confirmPassword = ref('')
-const errorPassword = ref(false)
+const EmailMsg = ref('')
+const captchaMsg = ref('')
 const passwordMsg = ref('')
-const errorConfirmPassword = ref(false)
+const confirmPassword = ref('')
 const confirmPasswordMsg = ref('')
+const isEmail = ref(false)
+const setCaptcha = ref(true)
+const errorEmail = ref(false)
 const isPassword = ref(false)
 const agreements = ref(false)
+const setPassword = ref(false)
+const errorCaptcha = ref(false)
+const errorPassword = ref(false)
+const isConfirmassword = ref(false)
+const clickGetCaptcha = ref(false)
+const errorConfirmPassword = ref(false)
+const buttonMessage = ref('下一步')
+const captchaMessage = ref('获取验证码')
 
 const emailBlur = () => {
     if (email.value === '') {
@@ -143,6 +164,21 @@ const emailBlur = () => {
     }
 }
 
+const captchaBlur = () => {
+    if (captcha.value === '') {
+        errorCaptcha.value = true
+        captchaMsg.value = '验证码不能为空'
+        return
+    }
+    if (captcha.value.length < 6) {
+        errorCaptcha.value = true
+        captchaMsg.value = '验证码格式不正确'
+    } else {
+        errorCaptcha.value = false
+        captchaMsg.value = ''
+    }
+}
+
 const passwordBlur =() => {
     if (password.value === '') {
         errorPassword.value = true
@@ -152,9 +188,11 @@ const passwordBlur =() => {
     if (!judgePassword(password.value)) {
         errorPassword.value = true
         passwordMsg.value = '密码格式不正确'
+        isPassword.value = false
     } else {
         errorPassword.value = false
         passwordMsg.value = ''
+        isPassword.value = true
     }
 }
 
@@ -162,28 +200,95 @@ const confirmPasswordBlur = () => {
     if (confirmPassword.value !== password.value) {
         errorConfirmPassword.value = true
         confirmPasswordMsg.value = '两次密码不一致'
+        isConfirmassword.value = false
     } else {
         errorConfirmPassword.value = false
         confirmPasswordMsg.value = ''
-        isPassword.value = true
+        isConfirmassword.value = true
     }
 }
 
-const textPassword = () => {
+const judgeThisPassword = () => {
+    if (isPassword.value && isConfirmassword.value) {
+        return true
+    }
+    else {
+        return false
+    }
+}
+
+const getCaptcah = () => {
     if (isEmail.value) {
-        setCaptcha.value = false
-        setPassword.value = true
+        clickGetCaptcha.value = true
+        post('/auth/sendEmail', {
+            email: email.value,
+            subject: '注册'
+        })
+
+        let time = 60
+        let timer = setInterval(() => {
+            time--
+            captchaMessage.value = `${time}s后重新获取`
+            if (time === 0) {
+                clearInterval(timer)
+                captchaMessage.value = '重新获取'
+            }
+        }, 1000)
+        
     }
     else {
         errorEmail.value = true
         EmailMsg.value = '邮箱格式不正确'
+        clickGetCaptcha.value = false
     }
 }
 
+const generateRrandomString = ():string => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 8; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result
+}
+
 const register = () => {
-    if (isEmail.value && isPassword.value && agreements.value) {
-        console.log('注册成功')
-        router.push('/')
+    if (buttonMessage.value === '下一步') {
+        if (isEmail.value && captcha.value.length === 6 && clickGetCaptcha.value) {
+            buttonMessage.value = '注 册'
+            setCaptcha.value = false
+            setPassword.value = true
+        } 
+        else {
+            errorMsg('请先填写正确的邮箱和验证码')
+        }
+    } 
+    else {
+        if (judgeThisPassword()) {
+            if (agreements.value) {
+                const name = generateRrandomString()
+                post('/auth/register', {
+                    name: name,
+                    email: email.value,
+                    sex: 1,
+                    password: password.value,
+                    code: captcha.value
+                })
+                .then((res: any) => {
+                    store.setUserInfo(res.userId, res.accessToken, res.refreshToken, res.chatToken, false)
+                    store.localSetUserInfo(res.userId, res.accessToken, res.refreshToken, res.chatToken, false)
+
+                    successMsg('注册成功')
+                    router.push('/')
+                })
+            }
+            else {
+                errorMsg('请先阅读并同意用户协议和隐私政策')
+            }
+        }
+        else {
+            errorMsg('请先填写正确的密码')
+        }
     } 
 }
 
@@ -312,36 +417,43 @@ const login = () => router.push('/login')
 
                 .email-msg,
                 .password-msg,
-                .confirm-password-msg {
+                .confirm-password-msg,
+                .captcha-msg{
                     position: absolute;
                     font-size: 10px;
                     color: #d84141;
                     left: 55px;
                 }
-                .email-msg {
+                .email-msg,
+                .password-msg {
                     top: 32px;
                 }
-                .password-msg {
+        
+                .captcha-msg,
+                .confirm-password-msg{
                     top: 79.5px;
                 }
-                .confirm-password-msg {
-                    top: 126px;
-                }
 
-                .getCaptcah button {
-                    width: 40%;
+
+                .captcha-button {
+                    width: 42%;
                     height: 90%;
                     border: none;
                     outline: none;
-                    font-size: 12px;
+                    font-size: 11px;
                     color: rgb(50, 145, 209);
                     background-color: #fff;
+                    transition: all 0.5s;
+                    cursor: pointer;
+                }
+                .captcha-button:active {
+                    transform: scale(0.96);
                 }
                 .getCaptcah:hover {
                     box-shadow: inset 0 0 1px 1px rgba(188, 190, 192, 0.854);
                 }
                 .captcha-input {
-                    width: 45%;
+                    width: 43%;
                     height: 90%;
                     border: none;
                     border-radius: 0 3px 3px 0;
@@ -376,10 +488,17 @@ const login = () => router.push('/login')
                     cursor: pointer;
                     font-size: 14px;
                     border-radius: 10px;
-                    margin-top: 15px;
+                    margin-top: 10px;
                     margin-bottom: 10px;
                     color: #fff;
                     background: linear-gradient(155.11deg, rgba(30, 168, 255, 1) 0%, rgba(59, 142, 231, 0.4) 100%);
+                    transition: all 0.5s;
+                }
+                .register-button:hover {
+                    box-shadow: 0 0 10px 2px rgba(30, 169, 255, 0.281);
+                }
+                .register-button:active {
+                    transform: scale(0.9);
                 }
 
                 .agreements {
@@ -435,6 +554,13 @@ const login = () => router.push('/login')
                 .gitee {
                     color: #d83d3d;
                 }
+                .gitub {
+                    color: rgb(0, 0, 0);
+                }
+            }
+
+            .third a {
+                text-decoration: none;
             }
         }
     }

@@ -11,7 +11,7 @@ interface myResponseType<T> extends AxiosResponse {
 }
 
 const service = axios.create({
-  baseURL: 'https://apisix.cloudmind.top',
+  baseURL: 'http://apisix.cloudmind.top',
   timeout: 10000,
   headers: {
     'X_XH_ENV': 'test',
@@ -78,7 +78,7 @@ service.interceptors.response.use(
       return Promise.reject('网页不存在')
     }
     else {
-      ElMessage.error('服务器出错，请及时联系管理员')
+      ElMessage.error(error.response.data.Msg)
     }
   }
 )
