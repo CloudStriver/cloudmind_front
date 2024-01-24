@@ -187,7 +187,7 @@ const passwordBlur =() => {
     }
     if (!judgePassword(password.value)) {
         errorPassword.value = true
-        passwordMsg.value = '密码格式不正确'
+        passwordMsg.value = '密码格式不正确，必须同时包含数字和字母'
         isPassword.value = false
     } else {
         errorPassword.value = false
@@ -283,7 +283,7 @@ const register = () => {
                 })
             }
             else {
-                errorMsg('请先阅读并同意用户协议和隐私政策')
+                errorMsg('请阅读并同意用户协议和隐私政策')
             }
         }
         else {

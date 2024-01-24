@@ -15,14 +15,15 @@
                     <button style="cursor: pointer;" @click="register">注 册</button>
                 </div>
                 <div class="input">
-                    <div class="account">
+                    <div class="email">
                         <i class="iconfont icon-user-solid"
                             style="color: rgb(187, 186, 186)">
                         </i>
-                        <input class="account-input" 
+                        <input class="email-input" 
                                type="text"
                                placeholder="邮箱"
-                               v-model="account"
+                               v-model="email"
+                               autocomplete="new-password"
                                @input="judgeAccountInput"
                                @blur="judgeAccountBlur"
                         >
@@ -95,21 +96,26 @@
 import Captcha from '@/components/captcha.vue'
 import router from '@/router'
 import { ref } from 'vue'
+import { post } from '@/utils/request';
+import { userStore } from '@/store/index';
+import { errorMsg, successMsg } from '@/utils/message';
 import { judgeEmail, judgePassword } from '@/utils/judge'
 
+const store = userStore()
 const captcha = ref()
-const account = ref("")
+const email = ref("")
 const password = ref("")
-const isCaptcha = ref(false)
-const isEmail = ref(false)
 const errorEmailMsg = ref("")
 const errorPasswordMsg = ref("")
+const isEmail = ref(false)
+const isCaptcha = ref(false)
+const isPassword = ref(false)
 const errorEmail = ref(false)
-const errorPassword = ref(false)
 const agreements = ref(false)
+const errorPassword = ref(false)
 
 const judgeAccountInput = () => {
-    isEmail.value = judgeEmail(account.value)
+    isEmail.value = judgeEmail(email.value)
     if (isEmail.value) {
         isCaptcha.value = true
     } 
@@ -118,7 +124,7 @@ const judgeAccountInput = () => {
     }
 }
 const judgeAccountBlur = () => {
-    if (account.value === "") {
+    if (email.value === "") {
         errorEmail.value = true
         errorEmailMsg.value = "邮箱不能为空"
     }
@@ -149,20 +155,56 @@ const judgePasswordInput = () => {
     }
 }
 const judgePasswordBlur = () => {
-    const isPassword = judgePassword(password.value)
-    if (!isPassword) {
+    const judgeIsPassword = judgePassword(password.value)
+    if (!judgeIsPassword) {
         errorPassword.value = true
         errorPasswordMsg.value = "密码需要同时包含字母和数字"
     }
     else {
         errorPassword.value = false
+        isPassword.value = true
+    }
+}
+
+const judgeEmailAndPassword = () => {
+    if (isEmail.value && isPassword.value) {
+        return true
+    }
+    else {
+        return false
     }
 }
 
 const login = () => {
-    if (isEmail.value && captcha.value.isSuccess && !errorPassword.value && agreements.value) {
-        console.log("登录成功");
+    if (email.value === '') {
+        errorEmail.value = true
+        errorEmailMsg.value = "邮箱不能为空"
+        return 
+    }
 
+    if (judgeEmailAndPassword() && agreements.value && captcha.value.isSuccess) {
+        post('/auth/emailLogin', {
+            email: email.value,
+            password: password.value
+        })
+        .then ((res: any) => {
+            store.setUserInfo(res.userId, res.accessToken, res.refreshToken, res.chatToken, false)
+            store.localSetUserInfo(res.userId, res.accessToken, res.refreshToken, res.chatToken, false)
+            successMsg('登录成功')
+            router.push('/')
+        })
+        .catch((err:any) => {
+            console.log(err);
+        })
+    }
+    else if (!captcha.value.isSuccess) {
+        errorMsg('未进行人机验证')
+    }
+    else if (!agreements.value) {
+        errorMsg("请阅读并同意用户协议和隐私政策")
+    }
+    else {
+        errorMsg("请正确填写邮箱和密码")
     }
 }
 
@@ -258,7 +300,7 @@ const register = () => router.push('/register')
                 align-items: center;
                 justify-content: space-between;
 
-                .account, 
+                .email, 
                 .password {
                     width: 220px;
                     height: 32px;
@@ -272,12 +314,12 @@ const register = () => router.push('/register')
                     align-items: center;
                     justify-content: space-between;
                 }
-                .account:hover,
+                .email:hover,
                 .password:hover {
                     box-shadow: inset 0 0 1px 1px rgba(188, 190, 192, 0.854);
                 }
 
-                .account-input,
+                .email-input,
                 .password-input {
                     width: 89%;
                     height: 90%;
@@ -286,7 +328,7 @@ const register = () => router.push('/register')
                     outline: none;
                     font-size: 14px;
                 }
-                .account-input::placeholder,
+                .email-input::placeholder,
                 .password-input::placeholder {
                     font-size: 13px;
                     color: rgb(187, 186, 186);
