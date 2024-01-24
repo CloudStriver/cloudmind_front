@@ -365,9 +365,13 @@ const register = () => router.push('/register')
                     margin-bottom: 10px;
                     color: #fff;
                     background: linear-gradient(155.11deg, rgba(30, 168, 255, 1) 0%, rgba(59, 142, 231, 0.4) 100%);
+                    transition: all 0.5s;
                 }
                 .login-button:hover {
-                    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.2);
+                    box-shadow: 0 0 10px 2px rgba(30, 169, 255, 0.281);
+                }
+                .login-button:active {
+                    transform: scale(0.9);
                 }
 
                 .agreements {

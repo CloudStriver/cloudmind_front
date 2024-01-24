@@ -5,7 +5,7 @@ export const judgeEmail = (email: string):boolean => {
 }
 
 export const judgePassword = (password: string):boolean => {
-    const expression = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,20}$/
+    const expression = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/ 
     const objExp = new RegExp(expression)
     return objExp.test(password)
 }
