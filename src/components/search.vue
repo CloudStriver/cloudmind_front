@@ -16,17 +16,18 @@
     width: 300px;
     height: 32px;
     border-radius: 25px;
-    border: 2px solid rgb(107, 167, 232);
+    border: 1.5px solid rgb(107, 167, 232);
     padding-left: 15px;
+    padding-right: 10px;
     background-color: #ffffff;
     display: flex;
     align-items: center;
 
     input {
-        width: 250px;
         height: 96%;
         border: none;
         outline: none;
+        flex: 1
     }
     input::placeholder {
         color: rgb(165, 165, 165);

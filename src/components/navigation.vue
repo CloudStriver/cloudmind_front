@@ -13,6 +13,13 @@
             >
                 <i class="iconfont icon-home-solid"></i>
             </router-link>
+            <router-link
+                to="/personal"
+                class="router"
+                active-class="router-active"
+            >
+                <i class="iconfont icon-sidenav-doc" style="font-size: 22px;"></i>
+            </router-link>
             <router-link 
                 to="/space" 
                 class="router"
