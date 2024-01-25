@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1288623",
+      "name": "加",
+      "font_class": "jia",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "3135636",
+      "name": "个人空间",
+      "font_class": "sidenav-doc",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
       "icon_id": "13604660",
       "name": "错误2",
       "font_class": "cuowu1",

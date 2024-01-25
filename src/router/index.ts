@@ -21,6 +21,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/agreements_privacy',
     component: () => import('../views/agreements/privacy.vue'),
+  },
+  {
+    path: '/personal',
+    component: () => import('../views/personal/personal.vue'),
   }
 ]
 
