@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1346676",
+      "name": "文件",
+      "font_class": "wenjian",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "5041659",
+      "name": "图片文件",
+      "font_class": "jianzhuanquan-",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "9881684",
+      "name": "KHCFDC_视频文件",
+      "font_class": "shipinwenjian",
+      "unicode": "e6ee",
+      "unicode_decimal": 59118
+    },
+    {
+      "icon_id": "38283090",
+      "name": "音乐文件",
+      "font_class": "yinlewenjian",
+      "unicode": "e9c5",
+      "unicode_decimal": 59845
+    },
+    {
       "icon_id": "1288623",
       "name": "加",
       "font_class": "jia",

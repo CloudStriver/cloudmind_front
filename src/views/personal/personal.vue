@@ -64,7 +64,7 @@
                 </div>
             </header>
             <footer class="footer">
-                <div></div>
+                <Files></Files>
                 <i class="iconfont icon-jia add"></i>
             </footer>
         </div>
@@ -74,6 +74,7 @@
 <script setup lang="ts">
 import Nav from '@/components/navigation.vue'
 import Search from '@/components/search.vue'
+import Files from '@/views/personal/files.vue'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 
@@ -146,6 +147,7 @@ const clickMusic = () => {
     width: 100%;
     height: 100%;
     display: flex;
+    overflow: hidden;
 
     .nav {
         width: 80px;
@@ -287,6 +289,8 @@ const clickMusic = () => {
             width: 100%;
             height: 100%;
             box-shadow: 14px 5px 15px 2px rgb(230, 239, 255) inset;
+            padding: 10px 10px 10px 22px;
+
             .add {
                 position: absolute;
                 font-size: 80px;
