@@ -1,5 +1,5 @@
 <template>
-    <div class="main-box">
+    <div class="main-box" @click="cancelPopup($event)">
         <Nav class="nav"></Nav>
         <div class="drawer-box">
             <div 
@@ -63,9 +63,59 @@
                     </div>
                 </div>
             </header>
-            <footer class="footer">
-                <Files></Files>
-                <i class="iconfont icon-jia add"></i>
+            <footer class="footer" @contextmenu="contextmenuShowPopup($event)">
+                <Popup 
+                    class="contextmenu-popup"
+                    id="contextmenuPopup"
+                    v-show="isContexmenuPopup"
+                    :style="{left: popupLeft + 'px', top: popupRight + 'px'}"
+                ></Popup>
+                <div class="files-box">
+                    <!-- <div class="contents">
+                        <div class="images">
+                            <i class="iconfont icon-wenjian"></i>
+                        </div>
+                        <div class="title">复习资料</div>
+                        <div class="time">2024/01/26 13:14</div>
+                    </div>
+                    <div class="contents">
+                        <div class="images">
+                            <i class="iconfont icon-file-alt-solid"></i>
+                        </div>
+                        <div class="title">期末作业</div>
+                        <div class="time">2024/01/26 13:14</div>
+                    </div>
+                    <div class="contents">
+                        <div class="images">
+                            <i class="iconfont icon-shipinwenjian radio"></i>
+                        </div>
+                        <div class="title">宋浩高数不挂科</div>
+                        <div class="time">2024/01/26 13:14</div>
+                    </div>
+                    <div class="contents">
+                        <div class="images">
+                            <i class="iconfont icon-yinlewenjian music"></i>
+                        </div>
+                        <div class="title">兰淞清唱合集</div>
+                        <div class="time">2024/01/26 13:14</div>
+                    </div>
+                    <div class="contents">
+                        <div class="images">
+                            <i class="iconfont icon-jianzhuanquan- image"></i>
+                        </div>
+                        <div class="title">兰淞自拍合集</div>
+                        <div class="time">2024/01/26 13:14</div>
+                    </div> -->
+                </div>
+                <i 
+                    class="iconfont icon-jia add" 
+                    @click.stop="clickShowPopup"
+                ></i>
+                <Popup 
+                    id="add-popup"
+                    class="add-popup"
+                    v-show="isClickPopup"
+                ></Popup>
             </footer>
         </div>
     </div>
@@ -74,7 +124,7 @@
 <script setup lang="ts">
 import Nav from '@/components/navigation.vue'
 import Search from '@/components/search.vue'
-import Files from '@/views/personal/files.vue'
+import Popup from '@/views/personal/popup.vue'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 
@@ -86,8 +136,38 @@ const isFlles = ref(false)
 const isImages = ref(false)
 const isradios = ref(false)
 const isMusic = ref (false)
+const isClickPopup = ref(false)
+const isContexmenuPopup = ref(false)
+const popupLeft = ref(0)
+const popupRight = ref(0)
 const drawerLeft = ref(0)
 const contentsMaginLeft = ref(140)
+
+const clickShowPopup = () => {
+    isClickPopup.value = true
+    isContexmenuPopup.value = false
+    document.addEventListener('click', cancelPopup);
+}
+const cancelPopup = (event: MouseEvent) => {
+    const popup = document.querySelector('.add-popup') as HTMLElement;
+    if (popup && !popup.contains(event.target as Node)) {
+        isClickPopup.value = false;
+        document.removeEventListener('click', cancelPopup);
+    }
+    const tpopup = document.querySelector('.contextmenu-popup') as HTMLElement;
+    if (tpopup && !tpopup.contains(event.target as Node)) {
+        isContexmenuPopup.value = false;
+        document.removeEventListener('click', cancelPopup);
+    }
+}
+const contextmenuShowPopup = (event: MouseEvent) => {
+    isClickPopup.value = false
+    isContexmenuPopup.value = true
+    document.addEventListener('click', cancelPopup);
+    popupLeft.value = event.clientX - 160
+    popupRight.value = event.clientY - 160
+    event.preventDefault()
+}
 
 const drawerHandle = () => {
     if (drawerLeft.value === 0) {
@@ -293,7 +373,7 @@ const clickMusic = () => {
 
             .add {
                 position: absolute;
-                font-size: 80px;
+                font-size: 70px;
                 color: #82b4ea;
                 border-radius: 50%;
                 right: 20px;
@@ -307,6 +387,92 @@ const clickMusic = () => {
             .add:active {
                 transition: all 100ms;
                 transform: scale(0.9);
+            }
+
+            .add-popup {
+                position: absolute;
+                width: 160px;
+                height: 150px;
+                right: 20px;
+                bottom: 100px;
+                z-index: 10;
+            }
+
+            .contextmenu-popup {
+                position: absolute;
+                width: 160px;
+                height: 150px;
+                z-index: 10;
+            }
+
+            .files-box {
+                width: 100%;
+                height: 92%;
+                padding: 10px 10px 20px 10px;
+                margin-bottom: 120px;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, 150px);
+                grid-template-rows: repeat(auto-fill, 200px);
+                grid-row-gap: 10px;
+                grid-column-gap: 10px;
+                justify-content: space-between;
+                align-items: center;
+                overflow-y: auto;
+                
+                
+                .contents {
+                    width: 150px; 
+                    height: 180px; 
+                    background-color: #fff;
+                    margin-right: 10px;
+                    margin-bottom: 10px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+
+                    .images {
+                        width: 100px;
+                        height: 100px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        i {
+                            font-size: 100px;
+                            color: #96b0df;
+                        }
+
+                        .radio {
+                            font-size: 80px;
+                        }
+
+                        .music {
+                            font-size: 85px;
+                        }
+
+                        .image {
+                            font-size: 75px;
+                        }
+                    }
+
+
+                    .title {
+                        font-size: 15px;
+                        color: #252526;
+                    }
+
+                    .time {
+                        font-size: 12px;
+                        color: #a0a0a0;
+                        margin-top: 5px;
+                    }
+                }
+
+                .contents:hover {
+                    background-color: #f5f5f5;
+                    border-radius: 20px;
+                }
             }
         }
     }
