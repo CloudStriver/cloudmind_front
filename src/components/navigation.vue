@@ -14,7 +14,7 @@
                 <i class="iconfont icon-home-solid"></i>
             </router-link>
             <router-link
-                to="/personal"
+                :to="'/personal/' + fatherId"
                 class="router"
                 active-class="router-active"
             >
@@ -53,6 +53,17 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { useStore } from '@/store/index';
+import { getFatherIdFromHerf } from '@/views/personal/utils'
+
+const store = useStore();
+const userId = store.getUserId()
+const fatherId = ref<string>(userId);
+onMounted(() => {
+    fatherId.value = getFatherIdFromHerf() || userId;
+})
+
 </script>
 
 <style scoped lang="css">

@@ -123,9 +123,9 @@ import { ref } from 'vue'
 import { judgeEmail, judgePassword } from '@/utils/judge'
 import { errorMsg, successMsg } from '@/utils/message'
 import { post } from '@/utils/request'
-import { userStore } from '@/store/index'
+import { useStore } from '@/store/index'
 
-const store = userStore()
+const store = useStore()
 const email = ref('')
 const captcha = ref('')
 const password = ref('')
@@ -275,8 +275,8 @@ const register = () => {
                     code: captcha.value
                 })
                 .then((res: any) => {
-                    store.setUserInfo(res.userId, res.accessToken, res.refreshToken, res.chatToken, false)
-                    store.localSetUserInfo(res.userId, res.accessToken, res.refreshToken, res.chatToken, false)
+                    store.setUserInfo(res.userId, res.shortToken, res.longToken, res.chatToken, false)
+                    store.localSetUserInfo(res.userId, res.shortToken, res.longToken, res.chatToken, false)
 
                     successMsg('注册成功')
                     router.push('/')

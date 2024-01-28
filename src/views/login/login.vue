@@ -23,7 +23,6 @@
                                type="text"
                                placeholder="邮箱"
                                v-model="email"
-                               autocomplete="new-password"
                                @input="judgeAccountInput"
                                @blur="judgeAccountBlur"
                         >
@@ -97,11 +96,11 @@ import Captcha from '@/components/captcha.vue'
 import router from '@/router'
 import { ref } from 'vue'
 import { post } from '@/utils/request';
-import { userStore } from '@/store/index';
+import { useStore } from '@/store/index';
 import { errorMsg, successMsg } from '@/utils/message';
 import { judgeEmail, judgePassword } from '@/utils/judge'
 
-const store = userStore()
+const store = useStore()
 const captcha = ref()
 const email = ref("")
 const password = ref("")
@@ -188,8 +187,9 @@ const login = () => {
             password: password.value
         })
         .then ((res: any) => {
-            store.setUserInfo(res.userId, res.accessToken, res.refreshToken, res.chatToken, false)
-            store.localSetUserInfo(res.userId, res.accessToken, res.refreshToken, res.chatToken, false)
+            store.setUserInfo(res.userId, res.shortToken, res.longToken, res.chatToken, false)
+            store.localSetUserInfo(res.userId, res.shortToken, res.longToken, res.chatToken, false)
+            
             successMsg('登录成功')
             router.push('/')
         })

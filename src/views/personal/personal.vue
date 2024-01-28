@@ -47,7 +47,7 @@
         <div class="contents" :style="{marginLeft: contentsMaginLeft + 'px'}">
             <header class="header">
                 <div class="header-header">
-                    <div class="path">CloudMind ></div>
+                    <div class="path">CloudMind >{{ path }}</div>
                     <Search class="search"></Search> 
                 </div>
                 <div class="header-footer">
@@ -71,14 +71,14 @@
                     :style="{left: popupLeft + 'px', top: popupRight + 'px'}"
                 ></Popup>
                 <div class="files-box">
-                    <!-- <div class="contents">
+                    <div class="contents">
                         <div class="images">
                             <i class="iconfont icon-wenjian"></i>
                         </div>
                         <div class="title">复习资料</div>
                         <div class="time">2024/01/26 13:14</div>
                     </div>
-                    <div class="contents">
+                    <!-- <div class="contents">
                         <div class="images">
                             <i class="iconfont icon-file-alt-solid"></i>
                         </div>
@@ -125,7 +125,9 @@
 import Nav from '@/components/navigation.vue'
 import Search from '@/components/search.vue'
 import Popup from '@/views/personal/popup.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useStore } from '@/store/index';
+import { post } from '@/utils/request';
 import type { Ref } from 'vue'
 
 const files = ref()
@@ -138,10 +140,32 @@ const isradios = ref(false)
 const isMusic = ref (false)
 const isClickPopup = ref(false)
 const isContexmenuPopup = ref(false)
+const path = ref('')
+const userId = ref('')
 const popupLeft = ref(0)
 const popupRight = ref(0)
 const drawerLeft = ref(0)
 const contentsMaginLeft = ref(140)
+const store = useStore();
+
+onMounted(() => {
+    userId.value = store.getUserId()
+    getFilesUrl()
+})
+
+const getFilesUrl = () => {
+    // post('/content/getFile', {
+    //     isGetSize: false,
+    //     filterOptions: {
+    //         onlyUserId: userId.value,
+    //         onlyDocumentType: 1,
+    //         onlyFatherId: userId.value
+    //     }
+    // })
+    // .then((res: any) => {
+    //     console.log(res);
+    // })
+}
 
 const clickShowPopup = () => {
     isClickPopup.value = true

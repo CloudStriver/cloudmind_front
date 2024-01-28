@@ -8,6 +8,7 @@
                 style="display: none;" 
                 id="file"
                 multiple
+                @change="uploadFiles($event)"
             >
         </label>
         <label class="upload-folder" for="folder">
@@ -28,6 +29,77 @@
 </template>
 
 <script setup lang="ts">
+import SparkMD5 from 'spark-md5'
+import mime from 'mime'
+import { ref } from 'vue'
+import { useStore } from '@/store/index'
+import { post, put } from '@/utils/request'
+import { getTypeFromSuffix, getFatherIdFromHerf } from './utils'
+import type { createFiles } from './utils'
+
+const store = useStore();
+
+const uploadToTX = (res: any, suffix: string) => {
+    // put(res.url, {
+    //     headers: {
+    //         'Content-Type': mime.getType(suffix),
+    //         'x-cos-security-token': res.sessionToken
+    //     },
+    //     data: res.data
+    // })
+    // .then((response: any) => {
+    //     console.log(response);
+    // })
+}
+
+const applySignedUrl = (md5: string, suffix: string) => {
+    // post('/sts/applySignedUrl', {
+    //     md5, 
+    //     suffix
+    // })
+    // .then((res: any) => {
+    //     uploadToTX(res, suffix)
+    // })
+}
+
+const createFilesUrl = (data: Object) => {
+    // post('/content/createFile', data)
+    // .then((res: any) => {
+    //     console.log(res);
+    // })
+}
+
+const uploadFiles = (event: any) => {
+    for (let i = 0; i < event.target.files.length; i ++) {
+        const file = event.target.files[i];
+        const fileReader = new FileReader();
+        const spark = new SparkMD5.ArrayBuffer();
+        fileReader.readAsArrayBuffer(file);
+        fileReader.onload = (e: any) => {
+            spark.append(e.target.result);
+            const md5 = spark.end();
+
+            const suffix = '.' + file.name.split('.').pop();
+            applySignedUrl(md5, suffix)
+
+            const userId = store.getUserId();
+            const type = getTypeFromSuffix(suffix)
+            const fatherId = getFatherIdFromHerf() || userId
+            const createFilesUrlData = ref<createFiles>({
+                file: {
+                    userId,
+                    name: file.name,
+                    type,
+                    fatherId,
+                    spaceSize: file.size,
+                    md5,
+                    isDel: 1
+                }
+            })
+            createFilesUrl(createFilesUrlData)
+        }
+    }
+}
 </script>
 
 <style scoped lang="css">

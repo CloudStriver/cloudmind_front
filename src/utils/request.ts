@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios'
-import { userStore } from '@/store/index'
+import { useStore } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { ref } from 'vue'
@@ -19,10 +19,10 @@ const service = axios.create({
   }
 })
 
-const store = userStore()
+const store = useStore()
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const localToken = localStorage.getItem('AccessToken')
+    const localToken = localStorage.getItem('ShortToken')
     config.headers['Authorization'] = localToken
     
     return config
@@ -41,10 +41,10 @@ service.interceptors.response.use(
     const status = error.response.status
         
     if (status === 401) {
-      const refreshToken = localStorage.getItem('RefreshToken')
+      const longToken = localStorage.getItem('LongToken')
       
-      if (refreshToken) {
-        post('/usercenter/v1/auth/RefreshToken', { refreshToken })
+      if (longToken) {
+        post('/auth/refresh', { longToken })
         .then((response: any) => {
           if (response.msg === 'token有误') {
             store.loginOut()
@@ -54,7 +54,7 @@ service.interceptors.response.use(
             if (reqCounts.value < 2) {
               reqCounts.value ++
               const res = response.data
-              store.updateToken(res.accessToken, res.refreshToken, res.chatToken)
+              store.updateToken(res.shortToken, res.longToken, res.chatToken)
               return service(error.config)
             }
             else {
@@ -95,5 +95,10 @@ export async function get<T = any>(url: string): Promise<AxiosResponse<myRespons
 
 export async function post<T = any>(url: string, data?: any ): Promise<AxiosResponse<myResponseType<T>, any>> {
   const response = await service.post<myResponseType<T>>(url, data)
+  return response
+}
+
+export async function put<T = any>(url: string, data?: any ): Promise<AxiosResponse<myResponseType<T>, any>> {
+  const response = await service.put<myResponseType<T>>(url, data)
   return response
 }
