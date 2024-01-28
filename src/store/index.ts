@@ -54,10 +54,11 @@ export const useStore = defineStore('user', {
         },
 
         loginOut () {
+            localStorage.removeItem("UserId")
             localStorage.removeItem("ShortToken")
             localStorage.removeItem("LongToken")
-            localStorage.removeItem("ChatToken")
 
+            this.userId = ""
             this.shortToken = ""
             this.longToken = ""
         }
