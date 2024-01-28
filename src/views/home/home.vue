@@ -9,7 +9,17 @@
                         <i class="iconfont icon-calendar-check-solid"></i>
                         <i class="iconfont icon-bell"></i>
                         <i class="iconfont icon-cog-solid"></i>
-                        <avatar class="avatar"></avatar>
+                        <avatar 
+                            class="avatar" 
+                            @mouseover="mouseoverPopup"
+                            @mouseleave="mouseleavePopup"
+                        ></avatar>
+                        <popup 
+                            class="popup"
+                            v-show="isPopup"
+                            @mouseover="mouseoverPopup"
+                            @mouseleave="mouseleavePopup"
+                        ></popup>
                     </div>
                 </div>
             </header>
@@ -38,6 +48,13 @@ import activity from '@/views/home/activity.vue'
 import recommend from '@/views/home/recommend.vue'
 import rank from '@/views/home/rank.vue'
 import announced from '@/views/home/announced.vue'
+import popup from '@/views/home/popup.vue'
+import { ref } from 'vue'
+
+const isPopup = ref(false)
+const mouseoverPopup = () => { isPopup.value = true } 
+const mouseleavePopup = () => { isPopup.value = false }
+
 </script>
 
 <style scoped lang="css">
@@ -96,6 +113,15 @@ import announced from '@/views/home/announced.vue'
                     .avatar {
                         width: 50px;
                         height: 50px;
+                    }
+
+                    .popup {
+                        position: absolute;
+                        width: 160px;
+                        height: 80px;
+                        right: 40px;
+                        top: 60px;
+                        z-index: 10;
                     }
                 }
             }
