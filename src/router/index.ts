@@ -23,14 +23,15 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/agreements/privacy.vue'),
   },
   {
-    path: '/personal',
+    path: '/personal/:fatherId',
     component: () => import('../views/personal/personal.vue'),
+    props: true,
   }
 ]
 
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
-    routes,
-  })
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes,
+})
   
-  export default router
+export default router

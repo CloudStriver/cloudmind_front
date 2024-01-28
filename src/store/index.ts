@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const userStore = defineStore('user', {
+export const useStore = defineStore('user', {
     state: () =>{
         return {
             userId: "",
@@ -11,48 +11,55 @@ export const userStore = defineStore('user', {
             userAccount: "",
             userPassword: "",  
             userAvatar: "",
-            accessToken: "",
-            refreshToken: "",
-            chatToken: "",
+            shortToken: "",
+            longToken: "",
+            fatherId: "",
             isAutoLogin: false
         }
     },
 
     actions: {
-        setUserInfo (userId: string, accessToken:string, refreshToken:string, chatToken:string, isAutoLogin:boolean) {
+        getUserId () {
+            if (this.userId == "") {
+                this.userId = localStorage.getItem("UserId") || ""
+            }
+            return this.userId 
+        },
+        setFatherId (fatherId: string) {
+            this.fatherId = fatherId
+        },
+        
+        setUserInfo (userId: string, shortToken:string, longToken:string, chatToken:string, isAutoLogin:boolean) {
             this.userId = userId
-            this.accessToken = accessToken
-            this.refreshToken = refreshToken
-            this.chatToken = chatToken
+            this.shortToken = shortToken
+            this.longToken = longToken
             this.isAutoLogin = isAutoLogin
         },
 
-        localSetUserInfo (userId: string, accessToken:string, refreshToken:string, chatToken:string, isAutoLogin:boolean) {
+        localSetUserInfo (userId: string, shortToken:string, longToken:string, chatToken:string, isAutoLogin:boolean) {
             localStorage.setItem("UserId", userId)
-            localStorage.setItem("AccessToken", accessToken)
-            localStorage.setItem("RefreshToken", refreshToken)
+            localStorage.setItem("ShortToken", shortToken)
+            localStorage.setItem("LongToken", longToken)
             localStorage.setItem("ChatToken", chatToken)
             localStorage.setItem("IsAutoLogin", isAutoLogin ? "true" : "false")
         },
 
-        updateToken (accessToken:string, refreshToken:string, chatToken:string) {
-            localStorage.setItem("AccessToken", accessToken)
-            localStorage.setItem("RefreshToken", refreshToken)
+        updateToken (shortToken:string, longToken:string, chatToken:string) {
+            localStorage.setItem("ShortToken", shortToken)
+            localStorage.setItem("LongToken", longToken)
             localStorage.setItem("ChatToken", chatToken)
 
-            this.accessToken = accessToken
-            this.refreshToken = refreshToken
-            this.chatToken = chatToken
+            this.shortToken = shortToken
+            this.longToken = longToken
         },
 
         loginOut () {
-            localStorage.removeItem("AccessToken")
-            localStorage.removeItem("RefreshToken")
+            localStorage.removeItem("ShortToken")
+            localStorage.removeItem("LongToken")
             localStorage.removeItem("ChatToken")
 
-            this.accessToken = ""
-            this.refreshToken = ""
-            this.chatToken = ""
+            this.shortToken = ""
+            this.longToken = ""
         }
     }
 })
