@@ -1,0 +1,1 @@
+import{d as e,o as t,c as o,i as c,_ as r}from"./index-EejqKmlh.js";const n={class:"main-box"},_=["src"],p=e({__name:"avatar",props:{url:{type:String,default:"/src/assets/images/avatar.png"}},setup(a){const s=a;return(i,d)=>(t(),o("div",n,[c("img",{src:s.url},null,8,_)]))}}),m=r(p,[["__scopeId","data-v-5acb3055"]]);export{m as a};
