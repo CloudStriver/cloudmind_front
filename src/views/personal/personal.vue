@@ -68,20 +68,15 @@
                     class="contextmenu-popup"
                     id="contextmenuPopup"
                     v-show="isContexmenuPopup"
-                    @update="updateFilesList"
                     :style="{left: popupLeft + 'px', top: popupRight + 'px'}"
                 ></Popup>
                 <div class="files-box">
-                    <div 
-                        class="contents"
-                        v-for="(file, index) in filesList"
-                        :key="index"
-                    >
+                    <div class="contents">
                         <div class="images">
                             <i class="iconfont icon-wenjian"></i>
                         </div>
-                        <div class="title">{{ getFileName(file.name) }}</div>
-                        <div class="time">{{ getFileTime(file.updateAt) }}</div>
+                        <div class="title">复习资料</div>
+                        <div class="time">2024/01/26 13:14</div>
                     </div>
                     <!-- <div class="contents">
                         <div class="images">
@@ -120,7 +115,6 @@
                     id="add-popup"
                     class="add-popup"
                     v-show="isClickPopup"
-                    @update="updateFilesList"
                 ></Popup>
             </footer>
         </div>
@@ -131,16 +125,15 @@
 import Nav from '@/components/navigation.vue'
 import Search from '@/components/search.vue'
 import Popup from '@/views/personal/popup.vue'
-import { getFilesUrl } from './utils'
+import { ref, onMounted } from 'vue'
 import { useStore } from '@/store/index';
+import { post } from '@/utils/request';
 import type { Ref } from 'vue'
-import { ref, onMounted, computed } from 'vue'
 
 const files = ref()
 const music = ref()
 const images = ref()
 const radios = ref()
-const store = useStore();
 const isFlles = ref(false)
 const isImages = ref(false)
 const isradios = ref(false)
@@ -149,39 +142,29 @@ const isClickPopup = ref(false)
 const isContexmenuPopup = ref(false)
 const path = ref('')
 const userId = ref('')
-const filesList = ref<any>([])
 const popupLeft = ref(0)
 const popupRight = ref(0)
 const drawerLeft = ref(0)
 const contentsMaginLeft = ref(140)
+const store = useStore();
 
 onMounted(() => {
     userId.value = store.getUserId()
-    filesList.value = getFilesUrl(userId.value)
-    console.log(filesList.value);
-    
+    getFilesUrl()
 })
 
-const updateFilesList = (update: boolean) => {
-    if (update) {
-        filesList.value = getFilesUrl(userId.value)
-    }
-}
-
-const getFileName = computed(() => {
-    return (name: string) => {
-        return name.length > 10 ? name.slice(0, 10) + '...' : name
-    }
-})
-
-const getFileTime = (time: number): string => {
-    const date = new Date(time * 1000); // 将时间戳转换为日期对象
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 月份从0开始，需要加1
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${year}/${month}/${day} ${hours}:${minutes}`;
+const getFilesUrl = () => {
+    // post('/content/getFile', {
+    //     isGetSize: false,
+    //     filterOptions: {
+    //         onlyUserId: userId.value,
+    //         onlyDocumentType: 1,
+    //         onlyFatherId: userId.value
+    //     }
+    // })
+    // .then((res: any) => {
+    //     console.log(res);
+    // })
 }
 
 const clickShowPopup = () => {

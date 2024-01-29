@@ -16,7 +16,6 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "cos-js-sdk-v5": "^1.6.0",
     "element-plus": "^2.5.1",
     "pinia": "^2.1.7",
     "postcss": "^8.4.33",
