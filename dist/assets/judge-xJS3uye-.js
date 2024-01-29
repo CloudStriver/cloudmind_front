@@ -1,0 +1,1 @@
+const o="/assets/background-circle-Hkm1nkGu.png",e="/assets/illustration-jtrOqrpJ.png",p="/assets/cloudmind-gL7vndUD.png",r=s=>{const t=/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;return new RegExp(t).test(s)},a=s=>{const t=/^(?=.*[A-Za-z])(?=.*\d).{8,20}$/;return new RegExp(t).test(s)};export{o as _,a,e as b,p as c,r as j};
