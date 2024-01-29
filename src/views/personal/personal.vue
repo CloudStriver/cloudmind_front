@@ -71,9 +71,21 @@
                     @update="updateFilesList"
                     :style="{left: popupLeft + 'px', top: popupRight + 'px'}"
                 ></Popup>
+                <div 
+                    class="file-popup" 
+                    v-show="isFilePopup"
+                    :style="{left: filePopupLeft + 'px', top: filePopupRight + 'px'}"
+                >
+                    <div class="upload-public">上传至社区</div>
+                    <div class="detail">查看详情</div>
+                    <div class="download">下载</div>
+                    <div class="move">移动</div>
+                    <div class="delete">删除</div>
+                    <div class="recycle">移至回收站</div>
+                </div>
                 <div class="files-box">
                     <div 
-                        class="contents"
+                        class="files-contents"
                         v-for="(file, index) in filesList"
                         :key="index"
                     >
@@ -146,6 +158,7 @@ const isImages = ref(false)
 const isradios = ref(false)
 const isMusic = ref (false)
 const isClickPopup = ref(false)
+const isFilePopup = ref(false)
 const isContexmenuPopup = ref(false)
 const path = ref('')
 const userId = ref('')
@@ -153,6 +166,8 @@ const filesList = ref<any>([])
 const popupLeft = ref(0)
 const popupRight = ref(0)
 const drawerLeft = ref(0)
+const filePopupLeft = ref(0)
+const filePopupRight = ref(0)
 const contentsMaginLeft = ref(140)
 
 onMounted(() => {
@@ -175,39 +190,68 @@ const getFileName = computed(() => {
 })
 
 const getFileTime = (time: number): string => {
-    const date = new Date(time * 1000); // 将时间戳转换为日期对象
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 月份从0开始，需要加1
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${year}/${month}/${day} ${hours}:${minutes}`;
+    const date = new Date(time * 1000) // 将时间戳转换为日期对象
+    const year = date.getFullYear()
+    const month = (date.getMonth() + 1).toString().padStart(2, '0') // 月份从0开始，需要加1
+    const day = date.getDate().toString().padStart(2, '0')
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    return `${year}/${month}/${day} ${hours}:${minutes}`
 }
 
 const clickShowPopup = () => {
     isClickPopup.value = true
     isContexmenuPopup.value = false
-    document.addEventListener('click', cancelPopup);
+    document.addEventListener('click', cancelPopup)
 }
 const cancelPopup = (event: MouseEvent) => {
     const popup = document.querySelector('.add-popup') as HTMLElement;
     if (popup && !popup.contains(event.target as Node)) {
-        isClickPopup.value = false;
-        document.removeEventListener('click', cancelPopup);
+        isClickPopup.value = false
+        document.removeEventListener('click', cancelPopup)
     }
     const tpopup = document.querySelector('.contextmenu-popup') as HTMLElement;
     if (tpopup && !tpopup.contains(event.target as Node)) {
-        isContexmenuPopup.value = false;
-        document.removeEventListener('click', cancelPopup);
+        isContexmenuPopup.value = false
+        document.removeEventListener('click', cancelPopup)
+    }
+    const filePopup = document.querySelector('.file-popup') as HTMLElement;
+    if (filePopup && !filePopup.contains(event.target as Node)) {
+        isFilePopup.value = false
+        document.removeEventListener('click', cancelPopup)
     }
 }
-const contextmenuShowPopup = (event: MouseEvent) => {
-    isClickPopup.value = false
-    isContexmenuPopup.value = true
-    document.addEventListener('click', cancelPopup);
-    popupLeft.value = event.clientX - 160
-    popupRight.value = event.clientY - 160
-    event.preventDefault()
+const contextmenuShowPopup = (event: any) => {
+    const filePopup = document.querySelector('.files-contents') as HTMLElement;
+    console.log(event);
+    
+    if (filePopup && event.target.classList.contains('files-box')) {
+        isClickPopup.value = false
+        isFilePopup.value = false
+        isContexmenuPopup.value = true
+        document.addEventListener('click', cancelPopup)
+        if (event.clientY + 150 > window.innerHeight) {
+            popupRight.value = event.clientY - 150
+        }
+        else {
+            popupRight.value = event.clientY
+        }
+        popupLeft.value = event.clientX
+        event.preventDefault()
+    }
+    else {
+        isFilePopup.value = true
+        isContexmenuPopup.value = false
+        document.addEventListener('click', cancelPopup)
+        if (event.clientY + 280 > window.innerHeight) {
+            filePopupRight.value = event.clientY - 280
+        }
+        else {
+            filePopupRight.value = event.clientY
+        }
+        filePopupLeft.value = event.clientX
+        event.preventDefault()
+    }
 }
 
 const drawerHandle = () => {
@@ -276,7 +320,7 @@ const clickMusic = () => {
     }
 
     .drawer-box {
-        position: relative;
+        position: relative;  
         display: flex;
         .drawer {
             position: absolute;
@@ -343,12 +387,13 @@ const clickMusic = () => {
     }
 
     .contents {
-        width: 100%;
+        /* width: 100%; */
         height: 100%;
         background-color: #fff;
         transition: all 1s;
         display: flex;
         flex-direction: column;
+        flex: 1;
 
         .header {
             width: 100%;
@@ -411,6 +456,9 @@ const clickMusic = () => {
             height: 100%;
             box-shadow: 14px 5px 15px 2px rgb(230, 239, 255) inset;
             padding: 10px 10px 10px 22px;
+            display: flex;
+            flex: 1;
+            overflow-y: auto;
 
             .add {
                 position: absolute;
@@ -446,11 +494,35 @@ const clickMusic = () => {
                 z-index: 10;
             }
 
+            .file-popup {
+                position: absolute;
+                width: 160px;
+                border-radius: 15px;
+                z-index: 10;
+                background-color: #fff;
+                box-shadow: 0 0 10px 1px rgb(214, 214, 214);
+
+                div {
+                    height: 35px;
+                    margin: 10px;
+                    padding-left: 10px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                }
+                div:hover {
+                    background-color: #f5f5f5;
+                }
+                
+                .recycle {
+                    color: #d83b3b;
+                }
+            }
+
             .files-box {
                 width: 100%;
-                height: 92%;
+                flex: 1;
                 padding: 10px 10px 20px 10px;
-                margin-bottom: 120px;
                 display: grid;
                 grid-template-columns: repeat(auto-fill, 150px);
                 grid-template-rows: repeat(auto-fill, 200px);
@@ -458,13 +530,11 @@ const clickMusic = () => {
                 grid-column-gap: 10px;
                 justify-content: space-between;
                 align-items: center;
-                overflow-y: auto;
                 
                 
-                .contents {
+                .files-contents {
                     width: 150px; 
                     height: 180px; 
-                    background-color: #fff;
                     margin-right: 10px;
                     margin-bottom: 10px;
                     display: flex;
@@ -510,9 +580,10 @@ const clickMusic = () => {
                     }
                 }
 
-                .contents:hover {
-                    background-color: #f5f5f5;
+                .files-contents:hover {
+                    cursor: pointer;
                     border-radius: 20px;
+                    background-color: #f5f5f5;
                 }
             }
         }
