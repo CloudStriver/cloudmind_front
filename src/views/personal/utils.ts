@@ -1,14 +1,15 @@
 import { useStore } from '@/store/index'
+import { post } from '@/utils/request'
+import { ref } from 'vue'
 
 export interface createFiles {
     file: {
-        userId: string,
         name: string,
         type: number, //Type_null = 0; Type_audio = 1; Type_video = 2; Type_photo = 3; Type_word = 4; Type_ppt = 5; Type_zip = 6; Type_excel = 7; Type_pdf = 8; Type_folder = 9; Type_file = 10; Type_code = 11; Type_unknown = 12;
         fatherId: string,
         spaceSize: number,
         md5?: string, //创建文件夹时不填，创建文件时要填
-        isDel: number, //(默认为1）1:未删除 2:软删除 3:彻底删除
+        isDel?: number, //(默认为1）1:未删除 2:软删除 3:彻底删除
     }
 }
 
@@ -20,6 +21,26 @@ export const getFatherIdFromHerf = () => {
         store.setFatherId(fatherId)
         return fatherId
     }
+}
+
+export const getFilesUrl = (userId: string) => {
+    const filesList = ref<any>([])
+    post('/content/getFileList', {
+        filterOptions: {
+            onlyUserId: userId,
+            onlyDocumentType: 1,
+        },
+        paginationOptions: {
+            page: 1,
+            limit: 40
+        }
+    })
+    .then((res: any) => {
+        for (let i = 0; i < res.files.length; i ++) {
+            filesList.value.push(res.files[i])
+        }
+    })
+    return filesList.value
 }
 
 export const getTypeFromSuffix = (suffix: string) => {
