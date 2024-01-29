@@ -30,43 +30,22 @@
 
 <script setup lang="ts">
 import SparkMD5 from 'spark-md5'
-import mime from 'mime'
 import { ref } from 'vue'
 import { useStore } from '@/store/index'
-import { post, put } from '@/utils/request'
+import { post } from '@/utils/request'
+import { cosUploadFile } from '@/utils/cos'
 import { getTypeFromSuffix, getFatherIdFromHerf } from './utils'
 import type { createFiles } from './utils'
 
 const store = useStore();
-
-const uploadToTX = (res: any, suffix: string) => {
-    // put(res.url, {
-    //     headers: {
-    //         'Content-Type': mime.getType(suffix),
-    //         'x-cos-security-token': res.sessionToken
-    //     },
-    //     data: res.data
-    // })
-    // .then((response: any) => {
-    //     console.log(response);
-    // })
-}
-
-const applySignedUrl = (md5: string, suffix: string) => {
-    // post('/sts/applySignedUrl', {
-    //     md5, 
-    //     suffix
-    // })
-    // .then((res: any) => {
-    //     uploadToTX(res, suffix)
-    // })
-}
-
-const createFilesUrl = (data: Object) => {
-    // post('/content/createFile', data)
-    // .then((res: any) => {
-    //     console.log(res);
-    // })
+const emit = defineEmits(['update'])
+const createFilesUrl = (data: Object, isSuccess: boolean) => {
+    post('/content/createFile', data)
+    .then(() => {
+        if (isSuccess) {
+            emit('update', true)
+        }
+    })
 }
 
 const uploadFiles = (event: any) => {
@@ -78,25 +57,26 @@ const uploadFiles = (event: any) => {
         fileReader.onload = (e: any) => {
             spark.append(e.target.result);
             const md5 = spark.end();
-
             const suffix = '.' + file.name.split('.').pop();
-            applySignedUrl(md5, suffix)
-
             const userId = store.getUserId();
             const type = getTypeFromSuffix(suffix)
             const fatherId = getFatherIdFromHerf() || userId
             const createFilesUrlData = ref<createFiles>({
                 file: {
-                    userId,
                     name: file.name,
                     type,
                     fatherId,
                     spaceSize: file.size,
                     md5,
-                    isDel: 1
-                }
+                },
             })
-            createFilesUrl(createFilesUrlData)
+            if (i === event.target.files.length - 1) {
+                createFilesUrl(createFilesUrlData.value, true)
+            }
+            else {
+                createFilesUrl(createFilesUrlData.value, false)
+            }
+            cosUploadFile(file, md5, suffix)
         }
     }
 }

@@ -44,7 +44,7 @@ service.interceptors.response.use(
       const longToken = localStorage.getItem('LongToken')
       
       if (longToken) {
-        post('/auth/refresh', { longToken })
+        post('/auth/refreshToken', { longToken })
         .then((response: any) => {
           if (response.msg === 'token有误') {
             store.loginOut()
