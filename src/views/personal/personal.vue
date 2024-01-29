@@ -90,14 +90,14 @@
                         :key="index"
                     >
                         <div class="images">
-                            <i class="iconfont icon-wenjian"></i>
+                            <i class="iconfont icon-file-alt-solid"></i>
                         </div>
                         <div class="title">{{ getFileName(file.name) }}</div>
                         <div class="time">{{ getFileTime(file.updateAt) }}</div>
                     </div>
                     <!-- <div class="contents">
                         <div class="images">
-                            <i class="iconfont icon-file-alt-solid"></i>
+                            <i class="iconfont icon-wenjian"></i>
                         </div>
                         <div class="title">期末作业</div>
                         <div class="time">2024/01/26 13:14</div>
