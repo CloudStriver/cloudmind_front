@@ -26,6 +26,8 @@ module.exports = {
   rules: {
     'vue/multi-word-component-names': 0,
     'space-before-function-paren': 'off',
-  }
+    "no-self-assign": "off",
+    "no-redeclare": "off"
+  },
 }
  
