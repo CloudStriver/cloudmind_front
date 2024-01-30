@@ -88,7 +88,7 @@ const uploadFiles = (event: any) => {
             else {
                 createFilesUrl(createFilesUrlData.value, false)
             }
-            // cosUploadFile(file, md5, suffix)
+            cosUploadFile(file, md5, suffix)
         }
     }
 }
