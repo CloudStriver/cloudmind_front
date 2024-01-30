@@ -2,7 +2,10 @@
   "name": "cloudmind_front",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
+  "resolutions": {
+    "jackspeak": "2.1.1"
+  },
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
