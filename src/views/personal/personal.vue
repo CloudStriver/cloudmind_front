@@ -44,6 +44,26 @@
                 </div>
             </div>
         </div>
+        <div class="create-folder-box" v-if="isCreateFolder">
+            <div class="create-folder">
+                <header class="create-folder-header">
+                    <div>新建文件夹</div>
+                    <i class="iconfont icon-cuowu1" @click="cancelCreateFolder"></i>
+                </header>
+                <section class="create-folder-section">
+                    <input 
+                        type="text" 
+                        v-model="createFolderName" 
+                        ref="folderName"
+                        @focus="selectText"
+                        class="folder-name"
+                    >
+                </section>
+                <footer class="create-folder-footer">
+                    <button @click="confirmCreateFolder">确定</button>
+                </footer>
+            </div>
+        </div>
         <div class="contents" :style="{marginLeft: contentsMaginLeft + 'px'}">
             <header class="header">
                 <div class="header-header">
@@ -70,6 +90,7 @@
                     v-show="isContexmenuPopup"
                     @update="updateFilesList"
                     :style="{left: popupLeft + 'px', top: popupRight + 'px'}"
+                    :createFolderData = "createFolderData"
                 ></Popup>
                 <div 
                     class="file-popup" 
@@ -90,14 +111,19 @@
                         :key="index"
                     >
                         <div class="images">
-                            <i class="iconfont icon-file-alt-solid"></i>
+                            <i 
+                                class="iconfont icon-file-alt-solid" 
+                            ></i>
+                            <!-- <i 
+                                class="iconfont icon-wenjian"
+                            ></i> -->
                         </div>
                         <div class="title">{{ getFileName(file.name) }}</div>
                         <div class="time">{{ getFileTime(file.updateAt) }}</div>
                     </div>
                     <!-- <div class="contents">
                         <div class="images">
-                            <i class="iconfont icon-wenjian"></i>
+                            
                         </div>
                         <div class="title">期末作业</div>
                         <div class="time">2024/01/26 13:14</div>
@@ -132,6 +158,7 @@
                     id="add-popup"
                     class="add-popup"
                     v-show="isClickPopup"
+                    :createFolderData = "createFolderData"
                     @update="updateFilesList"
                 ></Popup>
             </footer>
@@ -143,7 +170,7 @@
 import Nav from '@/components/navigation.vue'
 import Search from '@/components/search.vue'
 import Popup from '@/views/personal/popup.vue'
-import { getPrivateFiles, getFatherIdFromHerf } from './utils'
+import { getPrivateFiles, getFatherIdFromHerf, type createFiles } from './utils'
 import { useStore } from '@/store/index';
 import type { Ref } from 'vue'
 import { ref, onMounted, computed } from 'vue'
@@ -152,17 +179,28 @@ const files = ref()
 const music = ref()
 const images = ref()
 const radios = ref()
+const folderName = ref()
 const store = useStore();
 const isFlles = ref(false)
 const isImages = ref(false)
 const isradios = ref(false)
 const isMusic = ref (false)
-const isClickPopup = ref(false)
 const isFilePopup = ref(false)
+const isClickPopup = ref(false)
+const isCreateFolder = ref(false)
 const isContexmenuPopup = ref(false)
 const path = ref('')
 const userId = ref('')
 const fatherId = ref('')
+const createFolderName = ref('新建文件夹')
+const createFolderData = ref<createFiles>({
+    file: {
+        name: '新建文件夹',
+        type: 9,
+        fatherId: userId.value,
+        spaceSize: 0,
+    }
+})
 const filesList = ref<any>([])
 const popupLeft = ref(0)
 const popupRight = ref(0)
@@ -177,10 +215,39 @@ onMounted(() => {
     filesList.value = getPrivateFiles(fatherId.value)
 })
 
-const updateFilesList = (update: boolean) => {
-    if (update) {
-        filesList.value = getPrivateFiles(fatherId.value)
+const selectText = () => {
+    folderName.value.select()
+}
+
+const cancelCreateFolder = () => {
+    isCreateFolder.value = false
+}
+
+const confirmCreateFolder = () => {
+    createFolderData.value = {
+        file: {
+            name: createFolderName.value,
+            type: 9,
+            fatherId: fatherId.value,
+            spaceSize: 0,
+        }
     }
+
+    isCreateFolder.value = false
+    createFolderName.value = '新建文件夹'
+}
+
+const updateFilesList = (update: any) => {
+    if (update[0]) {
+        if (update[1]) {
+            isCreateFolder.value = true
+            filesList.value = getPrivateFiles(fatherId.value)
+        }
+        else {
+            filesList.value = getPrivateFiles(fatherId.value)
+        }
+    }
+
 }
 
 const getFileName = computed(() => {
@@ -386,6 +453,79 @@ const clickMusic = () => {
         }
     }
 
+    .create-folder-box {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 11;
+        background-color: #cbcbcb3e;
+
+        .create-folder {
+            position: absolute;
+            width: 350px;
+            height: 180px;
+            border-radius: 20px;
+            background-color: rgb(240, 245, 254);
+            box-shadow: 0 0 30px 2px rgba(5, 5, 5, 0.1);
+            padding: 10px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            .create-folder-header {
+                display: flex;
+                justify-content: space-between;
+
+                i {
+                    cursor: pointer;
+                    font-size: 25px;
+                    color: rgb(95, 134, 185);
+                }
+            }
+
+            .create-folder-section {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                .folder-name {
+                    width: 290px;
+                    height: 40px;
+                    padding-left: 5px;
+                    border-radius: 5px;
+                    border: 1px solid rgb(130, 149, 182);
+                }
+                .folder-name:focus {
+                    outline: none;
+                }
+            }
+
+            .create-folder-footer {
+                width: 100%;
+                padding-right: 10px;
+                display: flex;
+                justify-content: flex-end;
+
+                button {
+                    width: 80px;
+                    height: 30px;
+                    border-radius: 3px;
+                    color: rgb(66, 100, 159);
+                    border: none;
+                    box-shadow: 0 0 3px 0.2px rgb(85, 138, 212);
+                    background-color: rgb(250, 236, 228);
+                    transition: all 0.1s;
+                }
+                button:active {
+                    transform: scale(0.9);
+                }
+            }
+
+        }
+    }
     .contents {
         /* width: 100%; */
         height: 100%;

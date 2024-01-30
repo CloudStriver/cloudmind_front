@@ -21,7 +21,7 @@
                 style="display: none;"
             >
         </label>
-        <div class="create-folder">
+        <div class="create-folder" @click="sendMessage">
             <i class="iconfont icon-folder-add-line"></i>
             <div>创建文件夹</div>
         </div>
@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import SparkMD5 from 'spark-md5'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useStore } from '@/store/index'
 import { post } from '@/utils/request'
 import { cosUploadFile } from '@/utils/cos'
@@ -38,15 +38,27 @@ import { getTypeFromSuffix, getFatherIdFromHerf } from './utils'
 import type { createFiles } from './utils'
 
 const store = useStore();
+const props = defineProps(['createFolderData'])
 const emit = defineEmits(['update'])
-const createFilesUrl = (data: Object, isSuccess: boolean) => {
+const createFilesUrl = (data: createFiles, isSuccess: boolean) => {
     post('/content/createFile', data)
     .then(() => {
         if (isSuccess) {
-            emit('update', true)
+            emit('update', [true, false])
         }
     })
 }
+
+const sendMessage = () => {
+    emit('update', [true, true])
+    createFolder()
+}
+
+const createFolder = watch(() => props.createFolderData, (newVal) => {
+    if (newVal) {
+        createFilesUrl(newVal, true)
+    }
+})
 
 const uploadFiles = (event: any) => {
     for (let i = 0; i < event.target.files.length; i ++) {
@@ -76,7 +88,7 @@ const uploadFiles = (event: any) => {
             else {
                 createFilesUrl(createFilesUrlData.value, false)
             }
-            cosUploadFile(file, md5, suffix)
+            // cosUploadFile(file, md5, suffix)
         }
     }
 }
@@ -99,6 +111,10 @@ const uploadFiles = (event: any) => {
         padding-left: 10px;
         display: flex;
         align-items: center;
+
+        i {
+            margin-right: 5px;
+        }
     }
     .upload-files:hover,
     .upload-folder:hover,
