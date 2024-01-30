@@ -2,15 +2,56 @@ import { useStore } from '@/store/index'
 import { post } from '@/utils/request'
 import { ref } from 'vue'
 
+//创建文件接口
 export interface createFiles {
     file: {
         name: string,
-        type: number, //Type_null = 0; Type_audio = 1; Type_video = 2; Type_photo = 3; Type_word = 4; Type_ppt = 5; Type_zip = 6; Type_excel = 7; Type_pdf = 8; Type_folder = 9; Type_file = 10; Type_code = 11; Type_unknown = 12;
+        type: number, //1:音频 2:视频 3:图片 4:文档 5:幻灯片 6:压缩包 7:表格 8:pdf 9:文件夹 10:文件 11:代码 12:其他
         fatherId: string,
         spaceSize: number,
         md5?: string, //创建文件夹时不填，创建文件时要填
-        isDel?: number, //(默认为1）1:未删除 2:软删除 3:彻底删除
     }
+}
+
+//搜索、查询用户文件列表接口
+export interface getPrivateFiles {
+    //搜索填
+    searchOptions?: {
+        allFieldsKey?: string, 
+        multiFieldsKey: {
+            name?: string,
+            id?: string,
+        }
+    },
+    filterOptions: {
+        onlyFatherId: string,
+        onlyFileType?: number
+    },
+    paginationOptions?: {
+        limit?: number,
+        lastToken?: string,
+        backward?: boolean,
+        offset?: number,
+    }
+}
+//搜索、查询用户文件列表api
+export const getPrivateFiles = (id: string) => {
+    const data = ref<getPrivateFiles>({
+        filterOptions: {
+            onlyFatherId: id,
+        },
+        paginationOptions: {
+            limit: 40,
+        }
+    })
+    const filesList = ref<any>([])
+    post('/content/getPrivateFiles', data.value)
+    .then((res: any) => {
+        for (let i = 0; i < res.files.length; i ++) {
+            filesList.value.push(res.files[i])
+        }
+    })
+    return filesList.value
 }
 
 const store = useStore()
@@ -21,26 +62,6 @@ export const getFatherIdFromHerf = () => {
         store.setFatherId(fatherId)
         return fatherId
     }
-}
-
-export const getFilesUrl = (userId: string) => {
-    const filesList = ref<any>([])
-    post('/content/getFileList', {
-        filterOptions: {
-            onlyUserId: userId,
-            onlyDocumentType: 1,
-        },
-        paginationOptions: {
-            page: 1,
-            limit: 40
-        }
-    })
-    .then((res: any) => {
-        for (let i = 0; i < res.files.length; i ++) {
-            filesList.value.push(res.files[i])
-        }
-    })
-    return filesList.value
 }
 
 export const getTypeFromSuffix = (suffix: string) => {

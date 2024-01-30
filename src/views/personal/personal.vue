@@ -143,7 +143,7 @@
 import Nav from '@/components/navigation.vue'
 import Search from '@/components/search.vue'
 import Popup from '@/views/personal/popup.vue'
-import { getFilesUrl } from './utils'
+import { getPrivateFiles, getFatherIdFromHerf } from './utils'
 import { useStore } from '@/store/index';
 import type { Ref } from 'vue'
 import { ref, onMounted, computed } from 'vue'
@@ -162,6 +162,7 @@ const isFilePopup = ref(false)
 const isContexmenuPopup = ref(false)
 const path = ref('')
 const userId = ref('')
+const fatherId = ref('')
 const filesList = ref<any>([])
 const popupLeft = ref(0)
 const popupRight = ref(0)
@@ -172,14 +173,13 @@ const contentsMaginLeft = ref(140)
 
 onMounted(() => {
     userId.value = store.getUserId()
-    filesList.value = getFilesUrl(userId.value)
-    console.log(filesList.value);
-    
+    fatherId.value = getFatherIdFromHerf() || userId.value
+    filesList.value = getPrivateFiles(fatherId.value)
 })
 
 const updateFilesList = (update: boolean) => {
     if (update) {
-        filesList.value = getFilesUrl(userId.value)
+        filesList.value = getPrivateFiles(fatherId.value)
     }
 }
 
