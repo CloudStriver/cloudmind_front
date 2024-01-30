@@ -18,7 +18,6 @@ concurrency:
   group: "pages"
 
 jobs:
-
   build-mp:
     env:
       UPLOAD_KEY: ${{ secrets.UPLOAD_KEY }}
