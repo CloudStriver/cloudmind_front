@@ -44,6 +44,43 @@
                 </div>
             </div>
         </div>
+        <div class="check-file-details" v-if="isShowFileDetails">
+            <div class="details-box">
+                <header class="details-header">
+                    <div>详细信息</div>
+                    <i class="iconfont icon-cuowu1" @click="cancelShowFileDetails"></i>
+                </header>
+                <section class="details-section">
+                    <i class="iconfont icon-wenjian"></i>
+                </section>
+                <footer class="details-footer">
+                    <div class="details-footer-div-style">
+                        <div>文件名</div>
+                        <div></div>
+                    </div>
+                    <div class="details-footer-div-style">
+                        <div>类型</div>
+                        <div></div>
+                    </div>
+                    <div class="details-footer-div-style">
+                        <div>路径</div>
+                        <div></div>
+                    </div>
+                    <div class="details-footer-div-style">
+                        <div>大小</div>
+                        <div></div>
+                    </div>
+                    <div class="details-footer-div-style">
+                        <div>创建时间</div>
+                        <div></div>
+                    </div>
+                    <div class="details-footer-div-style">
+                        <div>修改时间</div>
+                        <div></div>
+                    </div>
+                </footer>
+            </div>
+        </div>
         <div class="create-folder-box" v-if="isCreateFolder">
             <div class="create-folder">
                 <header class="create-folder-header">
@@ -98,7 +135,7 @@
                     :style="{left: filePopupLeft + 'px', top: filePopupRight + 'px'}"
                 >
                     <div class="upload-public">上传至社区</div>
-                    <div class="detail">查看详情</div>
+                    <div class="detail" @click="checkFileDetail">查看详细信息</div>
                     <div class="download">下载</div>
                     <div class="move">移动</div>
                     <div class="delete">删除</div>
@@ -189,10 +226,18 @@ const isFilePopup = ref(false)
 const isClickPopup = ref(false)
 const isCreateFolder = ref(false)
 const isContexmenuPopup = ref(false)
+const isShowFileDetails = ref(false)
 const path = ref('')
 const userId = ref('')
 const fatherId = ref('')
 const createFolderName = ref('新建文件夹')
+const filesList = ref<any>([])
+const popupLeft = ref(0)
+const popupRight = ref(0)
+const drawerLeft = ref(0)
+const filePopupLeft = ref(0)
+const filePopupRight = ref(0)
+const contentsMaginLeft = ref(140)
 const createFolderData = ref<createFiles>({
     file: {
         name: '新建文件夹',
@@ -201,19 +246,21 @@ const createFolderData = ref<createFiles>({
         spaceSize: 0,
     }
 })
-const filesList = ref<any>([])
-const popupLeft = ref(0)
-const popupRight = ref(0)
-const drawerLeft = ref(0)
-const filePopupLeft = ref(0)
-const filePopupRight = ref(0)
-const contentsMaginLeft = ref(140)
 
 onMounted(() => {
     userId.value = store.getUserId()
     fatherId.value = getFatherIdFromHerf() || userId.value
     filesList.value = getPrivateFiles(fatherId.value)
 })
+
+const checkFileDetail = () => {
+    isFilePopup.value = false
+    isShowFileDetails.value = true
+}
+
+const cancelShowFileDetails = () => {
+    isShowFileDetails.value = false
+}
 
 const selectText = () => {
     folderName.value.select()
@@ -323,7 +370,6 @@ const contextmenuShowPopup = (event: any) => {
 
 const drawerHandle = () => {
     if (drawerLeft.value === 0) {
-
         drawerLeft.value = -140
         contentsMaginLeft.value = 5
     }
@@ -449,6 +495,75 @@ const clickMusic = () => {
                 height: 120px;
                 border-radius: 50%;
                 background-color: #c9dcf5;
+            }
+        }
+    }
+
+    .check-file-details {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 11;
+        padding: 50px;
+        background-color: #cbcbcb3e;
+        overflow-y: auto;
+        display: flex;
+
+        .details-box {
+            position: relative;
+            width: 400px;
+            height: 460px;
+            padding: 10px;
+            background-color: rgb(240, 245, 254);
+            box-shadow: 0 0 30px 2px rgba(5, 5, 5, 0.1);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+
+            .details-header {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                
+                i {
+                    font-size: 20px;
+                    cursor: pointer;
+                }
+            }
+
+            .details-section {
+                i {
+                    font-size: 120px;
+                    color: rgb(95, 134, 185);
+                }
+            }
+
+            .details-footer {
+                width: 380px;
+                height: 280px;
+                background-color: #fff;
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+
+                .details-footer-div-style {
+                    display: flex;
+                    font-size: 15px;
+
+                    div:first-child {
+                        width: 100px;
+                        color: rgb(110, 137, 173);
+                    }
+                    div:last-child {
+                        width: 260px;
+                        color: rgb(26, 54, 91);
+                        white-space: nowrap;
+                        overflow: hidden;
+                    }
+                }
             }
         }
     }
