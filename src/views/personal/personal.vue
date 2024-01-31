@@ -56,27 +56,27 @@
                 <footer class="details-footer">
                     <div class="details-footer-div-style">
                         <div>文件名</div>
-                        <div></div>
+                        <div>{{ fileDetails.name }}</div>
                     </div>
                     <div class="details-footer-div-style">
                         <div>类型</div>
-                        <div></div>
+                        <div>{{ fileDetails.type }}</div>
                     </div>
                     <div class="details-footer-div-style">
                         <div>路径</div>
-                        <div></div>
+                        <div>{{ fileDetails.path }}</div>
                     </div>
                     <div class="details-footer-div-style">
                         <div>大小</div>
-                        <div></div>
+                        <div>{{ fileDetails.size }}</div>
                     </div>
                     <div class="details-footer-div-style">
                         <div>创建时间</div>
-                        <div></div>
+                        <div>{{ fileDetails.createAt }}</div>
                     </div>
                     <div class="details-footer-div-style">
                         <div>修改时间</div>
-                        <div></div>
+                        <div>{{ fileDetails.updateAt }}</div>
                     </div>
                 </footer>
             </div>
@@ -135,7 +135,7 @@
                     :style="{left: filePopupLeft + 'px', top: filePopupRight + 'px'}"
                 >
                     <div class="upload-public">上传至社区</div>
-                    <div class="detail" @click="checkFileDetail">查看详细信息</div>
+                    <div class="detail" @click="checkFileDetail()">查看详细信息</div>
                     <div class="download">下载</div>
                     <div class="move">移动</div>
                     <div class="delete">删除</div>
@@ -146,17 +146,20 @@
                         class="files-contents"
                         v-for="(file, index) in filesList"
                         :key="index"
+                        @contextmenu="contextmenuShowFilePopup(index)"
                     >
                         <div class="images">
                             <i 
-                                class="iconfont icon-file-alt-solid" 
+                                class="iconfont icon-file-alt-solid"
+                                v-if="file.type !== '文件夹'" 
                             ></i>
-                            <!-- <i 
+                            <i 
                                 class="iconfont icon-wenjian"
-                            ></i> -->
+                                v-if="file.type === '文件夹'"
+                            ></i>
                         </div>
-                        <div class="title">{{ getFileName(file.name) }}</div>
-                        <div class="time">{{ getFileTime(file.updateAt) }}</div>
+                        <div class="title">{{ file.name }}</div>
+                        <div class="time">{{ file.updateAt }}</div>
                     </div>
                     <!-- <div class="contents">
                         <div class="images">
@@ -207,10 +210,10 @@
 import Nav from '@/components/navigation.vue'
 import Search from '@/components/search.vue'
 import Popup from '@/views/personal/popup.vue'
-import { getPrivateFiles, getFatherIdFromHerf, type createFiles } from './utils'
 import { useStore } from '@/store/index';
-import type { Ref } from 'vue'
 import { ref, onMounted, computed } from 'vue'
+import { getPrivateFiles, getFatherIdFromHerf, type createFiles } from './utils'
+import type { Ref } from 'vue'
 
 const files = ref()
 const music = ref()
@@ -237,25 +240,48 @@ const popupRight = ref(0)
 const drawerLeft = ref(0)
 const filePopupLeft = ref(0)
 const filePopupRight = ref(0)
+const nowClickFileIndex = ref(-1)
 const contentsMaginLeft = ref(140)
 const createFolderData = ref<createFiles>({
     file: {
         name: '新建文件夹',
-        type: 9,
+        url: '',
+        type: '文件夹',
         fatherId: userId.value,
         spaceSize: 0,
     }
+})
+const fileDetails = ref({
+    name: '',
+    type: '',
+    path: '',
+    size: 0,
+    createAt: '',
+    updateAt: '',
 })
 
 onMounted(() => {
     userId.value = store.getUserId()
     fatherId.value = getFatherIdFromHerf() || userId.value
     filesList.value = getPrivateFiles(fatherId.value)
+    console.log("切换了");
+    
 })
 
 const checkFileDetail = () => {
     isFilePopup.value = false
     isShowFileDetails.value = true
+    const index = nowClickFileIndex.value
+    fileDetails.value = {
+        name: filesList.value[index].name,
+        type: filesList.value[index].type,
+        path: filesList.value[index].path,
+        size: filesList.value[index].spaceSize,
+        createAt: filesList.value[index].createAt,
+        updateAt: filesList.value[index].updateAt,
+    }    
+    console.log(fileDetails.value);
+    
 }
 
 const cancelShowFileDetails = () => {
@@ -274,7 +300,8 @@ const confirmCreateFolder = () => {
     createFolderData.value = {
         file: {
             name: createFolderName.value,
-            type: 9,
+            url: '',
+            type: '文件夹',
             fatherId: fatherId.value,
             spaceSize: 0,
         }
@@ -303,16 +330,6 @@ const getFileName = computed(() => {
     }
 })
 
-const getFileTime = (time: number): string => {
-    const date = new Date(time * 1000) // 将时间戳转换为日期对象
-    const year = date.getFullYear()
-    const month = (date.getMonth() + 1).toString().padStart(2, '0') // 月份从0开始，需要加1
-    const day = date.getDate().toString().padStart(2, '0')
-    const hours = date.getHours().toString().padStart(2, '0')
-    const minutes = date.getMinutes().toString().padStart(2, '0')
-    return `${year}/${month}/${day} ${hours}:${minutes}`
-}
-
 const clickShowPopup = () => {
     isClickPopup.value = true
     isContexmenuPopup.value = false
@@ -337,8 +354,6 @@ const cancelPopup = (event: MouseEvent) => {
 }
 const contextmenuShowPopup = (event: any) => {
     const filePopup = document.querySelector('.files-contents') as HTMLElement;
-    console.log(event);
-    
     if (filePopup && event.target.classList.contains('files-box')) {
         isClickPopup.value = false
         isFilePopup.value = false
@@ -366,6 +381,10 @@ const contextmenuShowPopup = (event: any) => {
         filePopupLeft.value = event.clientX
         event.preventDefault()
     }
+}
+
+const contextmenuShowFilePopup = (index: number) => {
+    nowClickFileIndex.value = index
 }
 
 const drawerHandle = () => {

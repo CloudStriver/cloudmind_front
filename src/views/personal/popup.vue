@@ -30,11 +30,12 @@
 
 <script setup lang="ts">
 import SparkMD5 from 'spark-md5'
+import mime from 'mime'
 import { ref, watch } from 'vue'
 import { useStore } from '@/store/index'
 import { post } from '@/utils/request'
 import { cosUploadFile } from '@/utils/cos'
-import { getTypeFromSuffix, getFatherIdFromHerf } from './utils'
+import { getFatherIdFromHerf } from './utils'
 import type { createFiles } from './utils'
 
 const store = useStore();
@@ -71,24 +72,25 @@ const uploadFiles = (event: any) => {
             const md5 = spark.end();
             const suffix = '.' + file.name.split('.').pop();
             const userId = store.getUserId();
-            const type = getTypeFromSuffix(suffix)
+            const type = mime.getExtension(file.type) as string;
             const fatherId = getFatherIdFromHerf() || userId
             const createFilesUrlData = ref<createFiles>({
                 file: {
                     name: file.name,
+                    url: '',
                     type,
                     fatherId,
                     spaceSize: file.size,
                     md5,
                 },
             })
-            if (i === event.target.files.length - 1) {
-                createFilesUrl(createFilesUrlData.value, true)
-            }
-            else {
-                createFilesUrl(createFilesUrlData.value, false)
-            }
-            cosUploadFile(file, md5, suffix)
+            // if (i === event.target.files.length - 1) {
+            //     createFilesUrl(createFilesUrlData.value, true)
+            // }
+            // else {
+            //     createFilesUrl(createFilesUrlData.value, false)
+            // }
+            // cosUploadFile(file, md5, suffix)
         }
     }
 }
