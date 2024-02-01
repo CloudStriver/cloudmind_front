@@ -84,13 +84,13 @@ const uploadFiles = (event: any) => {
                     md5,
                 },
             })
-            // if (i === event.target.files.length - 1) {
-            //     createFilesUrl(createFilesUrlData.value, true)
-            // }
-            // else {
-            //     createFilesUrl(createFilesUrlData.value, false)
-            // }
-            // cosUploadFile(file, md5, suffix)
+            if (i === event.target.files.length - 1) {
+                createFilesUrl(createFilesUrlData.value, true)
+            }
+            else {
+                createFilesUrl(createFilesUrlData.value, false)
+            }
+            cosUploadFile(file, md5, suffix)
         }
     }
 }

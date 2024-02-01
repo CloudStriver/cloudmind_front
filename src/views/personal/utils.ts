@@ -30,6 +30,8 @@ export interface responseCreateFiles {
     }
 }
 
+const fileMap = new Map<string, string>()
+
 //搜索、查询用户文件列表接口
 export interface getPrivateFiles {
     //搜索填
@@ -69,8 +71,8 @@ export const getPrivateFiles = (id: string) => {
             res.files[i].createAt = getFileTime(res.files[i].createAt)
             res.files[i].updateAt = getFileTime(res.files[i].updateAt)
             res.files[i].spaceSize = getFileSize(res.files[i].spaceSize)
-            console.log(res.files[i]);
-            
+            fileMap.set(res.files[i].fileId, res.files[i].name)     
+            res.files[i].path = getFilePath(res.files[i].path)       
             filesList.value.push(res.files[i])
         }
     })
@@ -98,7 +100,6 @@ const getFileTime = (time: number): string => {
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${year}/${month}/${day} ${hours}:${minutes}`;
 }
-
 const getFileSize = (bits: number): string => {
     const bytes = bits / 8; // 将位转换为字节
     if (bytes >= 1024 * 1024) {
@@ -108,5 +109,14 @@ const getFileSize = (bits: number): string => {
     } else {
         return bytes.toFixed(2) + " bytes"; // 使用字节
     }
+}
+const getFilePath = (path: string): string => {
+    const paths = path.split('/')
+    paths[0] = 'CloudMind'
+    for (let i = 1; i < paths.length - 1; i ++) {
+        paths[i] = fileMap.get(paths[i]) as string
+    }
+    paths[paths.length - 1] = fileMap.get(paths[paths.length - 1]) as string
+    return paths.join('/')
 }
 
