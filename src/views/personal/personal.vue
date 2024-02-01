@@ -106,9 +106,13 @@
                 <div class="header-header">
                     <div class="path">
                         <div 
+                            class="path-item"
                             v-for="(item, index) in path"
                             :key="index"
-                        >{{ item }}</div>
+                        >{{ item }}
+                            <div>></div>
+                        </div>
+                        <div class="nowPath">{{ nowPath }}</div>
                     </div>
                     <Search class="search"></Search> 
                 </div>
@@ -211,7 +215,7 @@ import Nav from '@/components/navigation.vue'
 import Search from '@/components/search.vue'
 import Popup from '@/views/personal/popup.vue'
 import { useStore } from '@/store/index';
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onUpdated } from 'vue'
 import { getPrivateFiles, getFatherIdFromHerf, type createFiles } from './utils'
 import type { Ref } from 'vue'
 
@@ -230,7 +234,8 @@ const isClickPopup = ref(false)
 const isCreateFolder = ref(false)
 const isContexmenuPopup = ref(false)
 const isShowFileDetails = ref(false)
-const path = ref<any>(['CloudMind > '])
+const path = ref<any>([])
+const nowPath = ref('')
 const userId = ref('')
 const fatherId = ref('')
 const createFolderName = ref('新建文件夹')
@@ -259,12 +264,22 @@ const fileDetails = ref({
     createAt: '',
     updateAt: '',
 })
-
-onMounted(() => {
+onMounted(() => { 
     userId.value = store.getUserId()
     fatherId.value = getFatherIdFromHerf() || userId.value
     filesList.value = getPrivateFiles(fatherId.value)
 })
+
+onUpdated(() => {
+    setTimeout(() => {
+        const pathArry = filesList.value[0].path.split('/')
+        pathArry.pop()
+        nowPath.value = pathArry[pathArry.length - 1]
+        pathArry.pop()
+        path.value = pathArry
+    }, 500)
+})
+
 window.addEventListener('popstate', function() {
     location.reload();
 });
@@ -695,9 +710,23 @@ const clickMusic = () => {
 
                 .path {
                     font-size: 20px;
-                    font-weight: 550;
                     color: rgb(61, 108, 171);
                     display: flex;
+
+                    .path-item {
+                        display: flex;
+                        cursor: pointer;
+                        user-select: none;
+                        color: #b7b6b6;
+
+                        div {
+                            margin: 0 5px;
+                        }
+                    }
+
+                    .nowPath {
+                        font-weight: 550;
+                    }
                 }
     
                 .search {

@@ -13,24 +13,6 @@ export interface createFiles {
         md5?: string, //创建文件夹时不填，创建文件时要填
     }
 }
-export interface responseCreateFiles {
-    file: {
-        fileId: string,
-        userId: string,
-        name: string,
-        type: string,
-        path: string,
-        fatherId: string,
-        spaceSize: string,
-        md5: string,
-        isDel: boolean,
-        updateAt: number,
-        url: string,
-        createAt: number,
-    }
-}
-
-const fileMap = new Map<string, string>()
 
 //搜索、查询用户文件列表接口
 export interface getPrivateFiles {
@@ -60,19 +42,18 @@ export const getPrivateFiles = (id: string) => {
         filterOptions: {
             onlyFatherId: id,
         },
-        paginationOptions: {
+        paginationOptions: { 
             limit: 40,
         }
     })
-    const filesList = ref<responseCreateFiles[]>([])
+    const filesList = ref<any>([])
     post('/content/getPrivateFiles', data.value)
     .then((res: any) => {
         for (let i = 0; i < res.files.length; i ++) {
             res.files[i].createAt = getFileTime(res.files[i].createAt)
             res.files[i].updateAt = getFileTime(res.files[i].updateAt)
             res.files[i].spaceSize = getFileSize(res.files[i].spaceSize)
-            fileMap.set(res.files[i].fileId, res.files[i].name)     
-            res.files[i].path = getFilePath(res.files[i].path)       
+            res.files[i].path = res.fatherPath + "/" + res.files[i].name
             filesList.value.push(res.files[i])
         }
     })
@@ -110,14 +91,5 @@ const getFileSize = (bits: number): string => {
     } else {
         return bytes.toFixed(2) + " bytes"; // 使用字节
     }
-}
-const getFilePath = (path: string): string => {
-    const paths = path.split('/')
-    paths[0] = 'CloudMind'
-    for (let i = 1; i < paths.length - 1; i ++) {
-        paths[i] = fileMap.get(paths[i]) as string
-    }
-    paths[paths.length - 1] = fileMap.get(paths[paths.length - 1]) as string
-    return paths.join('/')
 }
 
