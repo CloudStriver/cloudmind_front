@@ -272,6 +272,7 @@ onMounted(() => {
 
 onUpdated(() => {
     setTimeout(() => {
+        if (filesList.value.length === 0) return
         const pathArry = filesList.value[0].path.split('/')
         pathArry.pop()
         nowPath.value = pathArry[pathArry.length - 1]
@@ -721,6 +722,13 @@ const clickMusic = () => {
 
                         div {
                             margin: 0 5px;
+                        }
+                    }
+                    .path-item:hover {
+                        color: #789bbc;
+
+                        div {
+                            color: #b7b6b6;
                         }
                     }
 
