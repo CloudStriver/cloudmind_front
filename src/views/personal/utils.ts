@@ -76,8 +76,6 @@ export const getPrivateFiles = (id: string) => {
             filesList.value.push(res.files[i])
         }
     })
-    console.log(filesList.value);
-    
     return filesList.value
 }
 
@@ -88,6 +86,9 @@ export const getFatherIdFromHerf = () => {
         const fatherId = urls[urls.length - 1]
         store.setFatherId(fatherId)
         return fatherId
+    }
+    else {
+        return store.fatherId
     }
 }
 

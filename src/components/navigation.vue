@@ -53,15 +53,24 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useStore } from '@/store/index';
 import { getFatherIdFromHerf } from '@/views/personal/utils'
+import router from '@/router';
 
 const store = useStore();
 const userId = store.getUserId()
 const fatherId = ref<string>(userId);
+const props = defineProps(['link'])
 onMounted(() => {
     fatherId.value = getFatherIdFromHerf() || userId;
+})
+
+watch(() => props.link, (newVal) => {
+    if (newVal) {
+        fatherId.value = newVal
+        router.push('/personal/' + newVal)
+    }
 })
 
 </script>

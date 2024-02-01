@@ -1,6 +1,6 @@
 <template>
     <div class="main-box" @click="cancelPopup($event)">
-        <Nav class="nav"></Nav>
+        <Nav class="nav" :link="fatherId"></Nav>
         <div class="drawer-box">
             <div 
                 class="drawer"
@@ -104,7 +104,12 @@
         <div class="contents" :style="{marginLeft: contentsMaginLeft + 'px'}">
             <header class="header">
                 <div class="header-header">
-                    <div class="path">CloudMind >{{ path }}</div>
+                    <div class="path">
+                        <div 
+                            v-for="(item, index) in path"
+                            :key="index"
+                        >{{ item }}</div>
+                    </div>
                     <Search class="search"></Search> 
                 </div>
                 <div class="header-footer">
@@ -147,6 +152,7 @@
                         v-for="(file, index) in filesList"
                         :key="index"
                         @contextmenu="contextmenuShowFilePopup(index)"
+                        @click="enterOrClick(file)"
                     >
                         <div class="images">
                             <i 
@@ -158,16 +164,10 @@
                                 v-if="file.type === '文件夹'"
                             ></i>
                         </div>
-                        <div class="title">{{ file.name }}</div>
+                        <div class="title">{{ getFileName(file.name) }}</div>
                         <div class="time">{{ file.updateAt }}</div>
                     </div>
                     <!-- <div class="contents">
-                        <div class="images">
-                            
-                        </div>
-                        <div class="title">期末作业</div>
-                        <div class="time">2024/01/26 13:14</div>
-                    </div>
                     <div class="contents">
                         <div class="images">
                             <i class="iconfont icon-shipinwenjian radio"></i>
@@ -230,7 +230,7 @@ const isClickPopup = ref(false)
 const isCreateFolder = ref(false)
 const isContexmenuPopup = ref(false)
 const isShowFileDetails = ref(false)
-const path = ref('')
+const path = ref<any>(['CloudMind > '])
 const userId = ref('')
 const fatherId = ref('')
 const createFolderName = ref('新建文件夹')
@@ -248,7 +248,7 @@ const createFolderData = ref<createFiles>({
         url: '',
         type: '文件夹',
         fatherId: userId.value,
-        spaceSize: 0,
+        spaceSize: -1,
     }
 })
 const fileDetails = ref({
@@ -264,9 +264,10 @@ onMounted(() => {
     userId.value = store.getUserId()
     fatherId.value = getFatherIdFromHerf() || userId.value
     filesList.value = getPrivateFiles(fatherId.value)
-    console.log("切换了");
-    
 })
+window.addEventListener('popstate', function() {
+    location.reload();
+});
 
 const checkFileDetail = () => {
     isFilePopup.value = false
@@ -280,8 +281,6 @@ const checkFileDetail = () => {
         createAt: filesList.value[index].createAt,
         updateAt: filesList.value[index].updateAt,
     }    
-    console.log(fileDetails.value);
-    
 }
 
 const cancelShowFileDetails = () => {
@@ -303,7 +302,7 @@ const confirmCreateFolder = () => {
             url: '',
             type: '文件夹',
             fatherId: fatherId.value,
-            spaceSize: 0,
+            spaceSize: -1,
         }
     }
 
@@ -385,6 +384,17 @@ const contextmenuShowPopup = (event: any) => {
 
 const contextmenuShowFilePopup = (index: number) => {
     nowClickFileIndex.value = index
+}
+
+const enterOrClick = (file: any) => {
+    if (file.type === '文件夹') {
+        fatherId.value = file.fileId
+        store.setFatherId(fatherId.value)
+        filesList.value = getPrivateFiles(fatherId.value)
+    }
+    else {
+        console.log('打开文件');
+    }
 }
 
 const drawerHandle = () => {
@@ -687,6 +697,7 @@ const clickMusic = () => {
                     font-size: 20px;
                     font-weight: 550;
                     color: rgb(61, 108, 171);
+                    display: flex;
                 }
     
                 .search {

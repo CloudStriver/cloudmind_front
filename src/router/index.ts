@@ -26,6 +26,9 @@ const routes: RouteRecordRaw[] = [
     path: '/personal/:fatherId',
     component: () => import('../views/personal/personal.vue'),
     props: true,
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/user',
