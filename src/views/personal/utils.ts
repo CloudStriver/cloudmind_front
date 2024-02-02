@@ -27,7 +27,7 @@ export interface getPrivateFiles {
     },
     filterOptions: {
         onlyFatherId: string,
-        onlyFileType?: number
+        onlyType?: string[]
     },
     paginationOptions?: {
         limit?: number,
@@ -36,6 +36,7 @@ export interface getPrivateFiles {
         offset?: number,
     }
 }
+
 //搜索、查询用户文件列表api
 export const getPrivateFiles = (id: string) => {
     const data = ref<getPrivateFiles>({
@@ -60,6 +61,30 @@ export const getPrivateFiles = (id: string) => {
     return filesList.value
 }
 
+//获取文件夹名列表
+export const getFolderList = (id: string) => {
+    const data = ref<getPrivateFiles>({
+        filterOptions: {
+            onlyFatherId: id,
+            onlyType: ['文件夹']
+        },
+        paginationOptions: { 
+            limit: 40,
+        }
+    })
+    const foldersList = ref<any>([])
+    post('/content/getPrivateFiles', data.value)
+    .then((res: any) => {
+        for (let i = 0; i < res.files.length; i ++) {
+            foldersList.value.push(res.files[i])
+        }
+    })
+    console.log(foldersList.value);
+    
+    return foldersList.value
+}
+
+//从url中获取fatherId
 const store = useStore()
 export const getFatherIdFromHerf = () => {
     if (store.fatherId === "") {
@@ -73,6 +98,7 @@ export const getFatherIdFromHerf = () => {
     }
 }
 
+//时间戳转换
 const getFileTime = (time: number): string => {
     const date = new Date(time); 
     const year = date.getFullYear();
@@ -82,6 +108,8 @@ const getFileTime = (time: number): string => {
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${year}/${month}/${day} ${hours}:${minutes}`;
 }
+
+//文件大小转换
 const getFileSize = (bits: number): string => {
     if (bits < 0) return '0B';
     else if (bits < 1024) {

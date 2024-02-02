@@ -101,6 +101,43 @@
                 </footer>
             </div>
         </div>
+        <div class="move-files" v-if="isMoveFiles">
+            <div class="move-box">
+                <header class="move-box-header">
+                    <div>移动到</div>
+                    <i class="iconfont icon-cuowu1" @click="cancelMoveFiles"></i>
+                </header>
+                <section class="move-box-section">
+                    <div style="margin-bottom: 10px;">path</div>
+                    <div v-if="isMoveCreateFolder" class="move-add-folder">
+                        <i class="iconfont icon-wenjian"></i>
+                        <input 
+                            type="text" 
+                            ref="folderName"
+                            v-model="moveCreateFolderName"
+                            @focus="selectText"
+                            @blur="confirmMoveCreateFolder"
+                        >
+                        <i class="iconfont icon-cuowu"></i>
+                    </div>
+                    <div 
+                        class="move-filesList-box"
+                        v-for="(file, index) in moveFoldersList"
+                        :key="index"
+                        @click="enterFolder(index)"
+                    >
+                        <div class="move-filesList-contents">
+                            <i class="iconfont icon-wenjian"></i>
+                            <div>{{ file.name }}</div>
+                        </div>
+                    </div>
+                </section>
+                <footer class="move-box-footer">
+                    <i class="iconfont icon-folder-add-line" @click="createFolder"></i>
+                    <button @click="confirmMove">确定</button>
+                </footer>
+            </div>
+        </div>
         <div class="contents" :style="{marginLeft: contentsMaginLeft + 'px'}">
             <header class="header">
                 <div class="header-header">
@@ -144,9 +181,9 @@
                     :style="{left: filePopupLeft + 'px', top: filePopupRight + 'px'}"
                 >
                     <div class="upload-public">上传至社区</div>
-                    <div class="detail" @click="checkFileDetail()">查看详细信息</div>
+                    <div class="detail" @click="checkFileDetail">查看详细信息</div>
                     <div class="download">下载</div>
-                    <div class="move">移动</div>
+                    <div class="move" @click="moveFiles">移动</div>
                     <div class="delete">删除</div>
                     <div class="recycle">移至回收站</div>
                 </div>
@@ -216,8 +253,11 @@ import Search from '@/components/search.vue'
 import Popup from '@/views/personal/popup.vue'
 import { useStore } from '@/store/index';
 import { ref, onMounted, computed, onUpdated } from 'vue'
-import { getPrivateFiles, getFatherIdFromHerf, type createFiles } from './utils'
+import { getPrivateFiles, getFatherIdFromHerf, getFolderList } from './utils'
+import type { createFiles } from './utils'
 import type { Ref } from 'vue'
+import { post } from '@/utils/request';
+import { successMsg } from '@/utils/message';
 
 const files = ref()
 const music = ref()
@@ -230,22 +270,28 @@ const isImages = ref(false)
 const isradios = ref(false)
 const isMusic = ref (false)
 const isFilePopup = ref(false)
+const isMoveFiles = ref(false)
 const isClickPopup = ref(false)
 const isCreateFolder = ref(false)
 const isContexmenuPopup = ref(false)
 const isShowFileDetails = ref(false)
-const path = ref<any>([])
+const isMoveCreateFolder = ref(false)
 const nowPath = ref('')
 const userId = ref('')
 const fatherId = ref('')
 const createFolderName = ref('新建文件夹')
+const moveCreateFolderName = ref('新建文件夹')
+const path = ref<any>([])
 const filesList = ref<any>([])
+const moveFoldersList = ref<any>([])
+const tempMoveFolderList = ref<any>([])
 const popupLeft = ref(0)
 const popupRight = ref(0)
 const drawerLeft = ref(0)
 const filePopupLeft = ref(0)
 const filePopupRight = ref(0)
 const nowClickFileIndex = ref(-1)
+const nowClickFolderIndex = ref(-1)
 const contentsMaginLeft = ref(140)
 const createFolderData = ref<createFiles>({
     file: {
@@ -297,6 +343,62 @@ const checkFileDetail = () => {
         createAt: filesList.value[index].createAt,
         updateAt: filesList.value[index].updateAt,
     }    
+}
+
+const moveFiles = () => {
+    isMoveFiles.value = true
+    isFilePopup.value = false
+    moveFoldersList.value = getFolderList(userId.value)
+}
+const cancelMoveFiles = () => {
+    isMoveFiles.value = false
+}
+const enterFolder = (index: number) => {
+    tempMoveFolderList.value.push(moveFoldersList.value)
+    moveFoldersList.value = getFolderList(moveFoldersList.value[index].fileId)
+    nowClickFolderIndex.value = index
+}
+const createFolder = () => {
+    isMoveCreateFolder.value = true
+}
+const confirmMoveCreateFolder = () => {
+    isMoveCreateFolder.value = false
+    const data = {
+        file: {
+            name: moveCreateFolderName.value,
+            url: '',
+            type: '文件夹',
+            fatherId: userId.value, // 这里需要修改
+            spaceSize: -1,
+        }
+    }
+    post('/content/createFile', data)
+    .then(() => {
+        //需要修改
+        filesList.value = getPrivateFiles(userId.value)
+        moveFoldersList.value = getFolderList(userId.value)
+        moveCreateFolderName.value = '新建文件夹'
+        successMsg('创建成功')
+    })
+}
+const confirmMove = () => {
+    const tempFileId = filesList.value[nowClickFileIndex.value].fileId
+    const tempFatherId = tempMoveFolderList.value[0][nowClickFolderIndex.value].fileId
+    
+    post('/content/moveFile', {
+        fileId: tempFileId,
+        fatherId: tempFatherId, 
+    })
+    .then(() => {
+        if (fatherId.value === tempFatherId) {
+            filesList.value = getPrivateFiles(fatherId.value)
+        }
+        if (tempFileId.value === fatherId.value) {
+            filesList.value = getPrivateFiles(fatherId.value)
+        }
+        isMoveFiles.value = false
+        successMsg('移动成功')
+    })
 }
 
 const cancelShowFileDetails = () => {
@@ -617,7 +719,7 @@ const clickMusic = () => {
         position: absolute;
         width: 100%;
         height: 100%;
-        z-index: 11;
+        z-index: 12;
         background-color: #cbcbcb3e;
 
         .create-folder {
@@ -686,6 +788,147 @@ const clickMusic = () => {
 
         }
     }
+
+    .move-files {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 11;
+        padding: 50px;
+        background-color: #cbcbcb3e;
+        display: flex;
+        overflow: auto;
+
+        .move-box {
+            position: relative;
+            width: 400px;
+            height: 500px;
+            background-color: rgb(240, 245, 254);
+            box-shadow: 0 0 30px 2px rgba(5, 5, 5, 0.1);
+            margin: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            .move-box-header {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                
+                i {
+                    font-size: 20px;
+                    cursor: pointer;
+                }
+            }
+
+            .move-box-section {
+                width: 380px;
+                height: 400px;
+                background-color: #fff;
+                overflow-y: auto;
+
+                .move-add-folder {
+                    width: 100%;
+                    height: 50px;
+                    padding-left: 10px;
+                    cursor: pointer;
+                    font-size: 15px;
+                    color: #1d1d1e;
+                    background-color: #f5f5f5;
+                    display: flex;
+                    align-items: center;
+
+                    i:first-child {
+                        font-size: 30px;
+                        color: rgb(95, 134, 185);
+                        margin-right: 10px;
+                    }
+                    
+                    input {
+                        width: 250px;
+                        height: 30px;
+                        border-radius: 5px;
+                        border: 1px solid rgb(130, 149, 182);
+                        padding-left: 10px;
+                        margin-right: 50px;
+                    }
+                    input:hover {
+                        border: 1px solid rgb(26, 73, 136);
+                    }
+                    input:focus {
+                        outline: none;
+                        border: 1px solid rgb(26, 73, 136);
+                    }
+                    
+                    i:last-child {
+                        font-size: 18px;
+                        color: #d83b3b;
+                    }
+                }
+
+                .move-filesList-box {
+                    display: flex;
+                    overflow-x: hidden;
+
+                    .move-filesList-contents {
+                        width: 100%;
+                        height: 50px;
+                        padding-left: 10px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        font-size: 15px;
+                        color: #1d1d1e;
+
+                        i {
+                            font-size: 30px;
+                            color: rgb(95, 134, 185);
+                            margin-right: 10px;
+                        }
+                    }
+
+                    .move-filesList-contents:hover {
+                        background-color: #f5f5f5;
+                    }
+                }
+            }
+
+            .move-box-footer {
+                width: 380px;
+                height: 30px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                i {
+                    font-size: 30px;
+                    color: rgb(66, 100, 159);
+                    cursor: pointer;
+                    transition: all 0.1s;
+                }
+                i:active {
+                    transform: scale(0.9);
+                }
+
+                button {
+                    width: 100px;
+                    height: 30px;
+                    font-size: 16px;
+                    border: none;
+                    border-radius: 3px;
+                    color: rgb(66, 100, 159);
+                    box-shadow: 0 0 3px 0.2px rgb(85, 138, 212);
+                    background-color: rgb(250, 236, 228);
+                    transition: all 0.1s;
+                }
+                button:active {
+                    transform: scale(0.9);
+                }
+            }
+        }
+    }
+
     .contents {
         /* width: 100%; */
         height: 100%;
