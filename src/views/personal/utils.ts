@@ -83,13 +83,21 @@ const getFileTime = (time: number): string => {
     return `${year}/${month}/${day} ${hours}:${minutes}`;
 }
 const getFileSize = (bits: number): string => {
-    const bytes = bits / 8; // 将位转换为字节
-    if (bytes >= 1024 * 1024) {
-        return (bytes / (1024 * 1024)).toFixed(2) + " MB"; // 转换为兆字节
-    } else if (bytes >= 1024) {
-        return (bytes / 1024).toFixed(2) + " KB"; // 转换为千字节
-    } else {
-        return bytes.toFixed(2) + " bytes"; // 使用字节
+    if (bits < 0) return '0B';
+    else if (bits < 1024) {
+        return bits + 'B'
+    } 
+    else if (bits < (1024*1024)) {
+        const temp = bits / 1024
+        return temp.toFixed(2)  + 'KB';
+    } 
+    else if (bits < (1024*1024*1024)) {
+        const temp = bits / (1024*1024);
+        return temp.toFixed(2) + 'MB';
+    } 
+    else {
+        const temp = bits / (1024*1024*1024);
+        return temp.toFixed(2) + 'GB';
     }
 }
 
