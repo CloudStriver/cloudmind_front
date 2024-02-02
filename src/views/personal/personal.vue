@@ -108,7 +108,17 @@
                     <i class="iconfont icon-cuowu1" @click="cancelMoveFiles"></i>
                 </header>
                 <section class="move-box-section">
-                    <div style="margin-bottom: 10px;">path</div>
+                    <div class="move-path">
+                        <div 
+                            class="move-path-item"
+                            v-for="(path, index) in movePath.path"
+                            :key="index"
+                            @click="jumpMovePath(index)"
+                        >{{ path }}
+                            <div>></div>
+                        </div>
+                        <div class="nowMovePath">{{ nowMovePath.path }}</div>
+                    </div>
                     <div v-if="isMoveCreateFolder" class="move-add-folder">
                         <i class="iconfont icon-wenjian"></i>
                         <input 
@@ -124,7 +134,7 @@
                         class="move-filesList-box"
                         v-for="(file, index) in moveFoldersList"
                         :key="index"
-                        @click="enterFolder(index)"
+                        @click="enterFolder(file, index)"
                     >
                         <div class="move-filesList-contents">
                             <i class="iconfont icon-wenjian"></i>
@@ -146,6 +156,7 @@
                             class="path-item"
                             v-for="(item, index) in path"
                             :key="index"
+                            @click="jumpPath(index)"
                         >{{ item }}
                             <div>></div>
                         </div>
@@ -190,7 +201,7 @@
                 <div class="files-box">
                     <div 
                         class="files-contents"
-                        v-for="(file, index) in filesList"
+                        v-for="(file, index) in filesList.files"
                         :key="index"
                         @contextmenu="contextmenuShowFilePopup(index)"
                         @click="enterOrClick(file)"
@@ -252,12 +263,13 @@ import Nav from '@/components/navigation.vue'
 import Search from '@/components/search.vue'
 import Popup from '@/views/personal/popup.vue'
 import { useStore } from '@/store/index';
-import { ref, onMounted, computed, onUpdated } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { getPrivateFiles, getFatherIdFromHerf, getFolderList } from './utils'
-import type { createFiles } from './utils'
+import type { createFiles, responseGetPrivateFiles } from './utils'
 import type { Ref } from 'vue'
 import { post } from '@/utils/request';
-import { successMsg } from '@/utils/message';
+import { errorMsg, successMsg } from '@/utils/message';
+import { fa } from 'element-plus/es/locale/index.mjs';
 
 const files = ref()
 const music = ref()
@@ -273,16 +285,24 @@ const isFilePopup = ref(false)
 const isMoveFiles = ref(false)
 const isClickPopup = ref(false)
 const isCreateFolder = ref(false)
+const isEnterChildFolder = ref(false)
 const isContexmenuPopup = ref(false)
 const isShowFileDetails = ref(false)
 const isMoveCreateFolder = ref(false)
-const nowPath = ref('')
 const userId = ref('')
+const nowPath = ref('')
 const fatherId = ref('')
 const createFolderName = ref('新建文件夹')
 const moveCreateFolderName = ref('新建文件夹')
 const path = ref<any>([])
-const filesList = ref<any>([])
+const movePath = ref<any>({
+    path: [],
+    fileId: [],
+})
+const nowMovePath = ref({ 
+    path:'', 
+    fileId: ''
+})
 const moveFoldersList = ref<any>([])
 const tempMoveFolderList = ref<any>([])
 const popupLeft = ref(0)
@@ -302,61 +322,88 @@ const createFolderData = ref<createFiles>({
         spaceSize: -1,
     }
 })
+const filesList = ref<responseGetPrivateFiles>({
+    fatherNamePath: '',
+    fatherIdPath: '',
+    files: [],
+})
 const fileDetails = ref({
     name: '',
     type: '',
     path: '',
-    size: 0,
+    size: '',
     createAt: '',
     updateAt: '',
 })
-onMounted(() => { 
+
+onMounted(async() => { 
     userId.value = store.getUserId()
     fatherId.value = getFatherIdFromHerf() || userId.value
-    filesList.value = getPrivateFiles(fatherId.value)
-})
-
-onUpdated(() => {
-    setTimeout(() => {
-        if (filesList.value.length === 0) return
-        const pathArry = filesList.value[0].path.split('/')
-        pathArry.pop()
-        nowPath.value = pathArry[pathArry.length - 1]
-        pathArry.pop()
-        path.value = pathArry
-    }, 500)
+    filesList.value = await getPrivateFiles(fatherId.value)
+    path.value = await getPath(filesList.value.fatherNamePath)
 })
 
 window.addEventListener('popstate', function() {
     location.reload();
 });
 
+const getPath = async (path: string) => {
+    const tempPath = path.split('/')
+    nowPath.value = tempPath.pop() as string
+    return tempPath
+}
+
 const checkFileDetail = () => {
     isFilePopup.value = false
     isShowFileDetails.value = true
     const index = nowClickFileIndex.value
     fileDetails.value = {
-        name: filesList.value[index].name,
-        type: filesList.value[index].type,
-        path: filesList.value[index].path,
-        size: filesList.value[index].spaceSize,
-        createAt: filesList.value[index].createAt,
-        updateAt: filesList.value[index].updateAt,
+        name: filesList.value.files[index].name,
+        type: filesList.value.files[index].type,
+        path: filesList.value.files[index].path,
+        size: filesList.value.files[index].spaceSize,
+        createAt: filesList.value.files[index].createAt,
+        updateAt: filesList.value.files[index].updateAt,
     }    
 }
 
+const getNowPath = (file: any) => {
+    const tempPath = file.fatherNamePath.split('/')
+    const tempFileId = file.fatherIdPath.split('/')
+    nowMovePath.value = {
+        path: tempPath.pop() as string,
+        fileId: tempFileId.pop() as string
+    }
+    return {
+        path: tempPath,
+        fileId: tempFileId
+    }
+}
 const moveFiles = () => {
     isMoveFiles.value = true
     isFilePopup.value = false
-    moveFoldersList.value = getFolderList(userId.value)
+    moveFoldersList.value = getFolderList(fatherId.value)
+    movePath.value = getNowPath(filesList.value)
 }
 const cancelMoveFiles = () => {
     isMoveFiles.value = false
 }
-const enterFolder = (index: number) => {
-    tempMoveFolderList.value.push(moveFoldersList.value)
-    moveFoldersList.value = getFolderList(moveFoldersList.value[index].fileId)
-    nowClickFolderIndex.value = index
+const enterFolder = (file: any,index: number) => {
+    const filesId = filesList.value.files[nowClickFileIndex.value].fileId
+    if (file.fileId === filesId) {
+        errorMsg('无法移动到该目录')
+        return
+    }
+    else {
+        tempMoveFolderList.value.push(moveFoldersList.value)
+        moveFoldersList.value = getFolderList(moveFoldersList.value[index].fileId)
+        nowClickFolderIndex.value = index
+        movePath.value.path.push(nowMovePath.value.path)
+        movePath.value.fileId.push(nowMovePath.value.fileId)
+        nowMovePath.value.path = file.name
+        nowMovePath.value.fileId = file.fileId
+        console.log(nowMovePath.value);
+    }
 }
 const createFolder = () => {
     isMoveCreateFolder.value = true
@@ -368,37 +415,49 @@ const confirmMoveCreateFolder = () => {
             name: moveCreateFolderName.value,
             url: '',
             type: '文件夹',
-            fatherId: userId.value, // 这里需要修改
+            fatherId: nowMovePath.value.fileId,
             spaceSize: -1,
         }
     }
-    post('/content/createFile', data)
-    .then(() => {
-        //需要修改
-        filesList.value = getPrivateFiles(userId.value)
-        moveFoldersList.value = getFolderList(userId.value)
+     post('/content/createFile', data)
+    .then(async (res: any) => {
+        if (nowMovePath.value.fileId === fatherId.value) {
+            filesList.value = await getPrivateFiles(fatherId.value)
+        }
+        movePath.value.path.push(nowMovePath.value.path)
+        movePath.value.fileId.push(nowMovePath.value.fileId)
+        nowMovePath.value = {
+            path: moveCreateFolderName.value,
+            fileId: res.fileId
+        }
+        moveFoldersList.value = getFolderList(res.fileId)
         moveCreateFolderName.value = '新建文件夹'
         successMsg('创建成功')
     })
 }
 const confirmMove = () => {
-    const tempFileId = filesList.value[nowClickFileIndex.value].fileId
-    const tempFatherId = tempMoveFolderList.value[0][nowClickFolderIndex.value].fileId
+    const tempFileId = filesList.value.files[nowClickFileIndex.value].fileId
+    const tempFatherId = nowMovePath.value.fileId 
     
     post('/content/moveFile', {
         fileId: tempFileId,
         fatherId: tempFatherId, 
     })
-    .then(() => {
-        if (fatherId.value === tempFatherId) {
-            filesList.value = getPrivateFiles(fatherId.value)
-        }
-        if (tempFileId.value === fatherId.value) {
-            filesList.value = getPrivateFiles(fatherId.value)
-        }
+    .then(async() => {
+        filesList.value = await getPrivateFiles(fatherId.value)
         isMoveFiles.value = false
         successMsg('移动成功')
     })
+}
+const jumpMovePath = (index: number) => {
+    moveFoldersList.value = getFolderList(movePath.value.fileId[index])
+    console.log(movePath.value.fileId[index]);
+    console.log(moveFoldersList.value);
+    
+    nowMovePath.value.path = movePath.value.path[index]
+    nowMovePath.value.fileId = movePath.value.fileId[index]
+    movePath.value.path = movePath.value.path.slice(0, index)
+    movePath.value.fileId = movePath.value.fileId.slice(0, index)
 }
 
 const cancelShowFileDetails = () => {
@@ -428,17 +487,21 @@ const confirmCreateFolder = () => {
     createFolderName.value = '新建文件夹'
 }
 
-const updateFilesList = (update: any) => {
+const updateFilesList = async (update: any) => {
     if (update[0]) {
         if (update[1]) {
             isCreateFolder.value = true
-            filesList.value = getPrivateFiles(fatherId.value)
         }
-        else {
-            filesList.value = getPrivateFiles(fatherId.value)
-        }
+        filesList.value = await getPrivateFiles(fatherId.value) 
     }
+}
 
+const jumpPath = async (index: number) => {
+    const tempIdPath = filesList.value.fatherIdPath.split('/')
+    fatherId.value = tempIdPath[index]
+    store.setFatherId(fatherId.value)
+    filesList.value = await getPrivateFiles(fatherId.value)
+    path.value = await getPath(filesList.value.fatherNamePath)
 }
 
 const getFileName = computed(() => {
@@ -504,11 +567,12 @@ const contextmenuShowFilePopup = (index: number) => {
     nowClickFileIndex.value = index
 }
 
-const enterOrClick = (file: any) => {
+const enterOrClick = async(file: any) => {
     if (file.type === '文件夹') {
         fatherId.value = file.fileId
         store.setFatherId(fatherId.value)
-        filesList.value = getPrivateFiles(fatherId.value)
+        filesList.value = await getPrivateFiles(fatherId.value)
+        path.value = await getPath(file.path)
     }
     else {
         console.log('打开文件');
@@ -828,6 +892,46 @@ const clickMusic = () => {
                 background-color: #fff;
                 overflow-y: auto;
 
+                .move-path {
+                    display: flex;
+                    align-items: center;
+                    font-size: 12px;
+
+                    .nowMovePath {
+                        height: 25px;
+                        color: rgb(61, 108, 171);
+                        cursor: pointer;
+                        user-select: none;
+                        padding-left: 10px;
+                        padding-top: 5px;
+                        font-weight: 550;
+                        display: flex;
+                        align-items: center;
+                    }
+    
+                    .move-path-item {
+                        height: 25px;
+                        cursor: pointer;
+                        user-select: none;
+                        color: #b7b6b6;
+                        padding-left: 10px;
+                        padding-top: 5px;
+                        display: flex;
+                        align-items: center;
+    
+                        div {
+                            margin: 0 5px;
+                        }
+                    }
+                    .move-path-item:hover {
+                        color: #789bbc;
+    
+                        div {
+                            color: #b7b6b6;
+                        }
+                    }
+                }
+
                 .move-add-folder {
                     width: 100%;
                     height: 50px;
@@ -977,6 +1081,7 @@ const clickMusic = () => {
 
                     .nowPath {
                         font-weight: 550;
+                        cursor: pointer;
                     }
                 }
     

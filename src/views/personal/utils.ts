@@ -14,6 +14,27 @@ export interface createFiles {
     }
 }
 
+export interface responseGetPrivateFiles {
+    files: {
+        fileId: string,
+        userId: string,
+        name: string,
+        type: string,
+        path: string,
+        fatherId: string,
+        spaceSize: string,
+        md5: string,
+        isDel: number,
+        zone: string,
+        subZone: string,
+        description: string,
+        updateAt: string,
+        createAt: string,
+    }[],
+    fatherNamePath: string,
+    fatherIdPath: string,
+}
+
 //搜索、查询用户文件列表接口
 export interface getPrivateFiles {
     //搜索填
@@ -38,7 +59,7 @@ export interface getPrivateFiles {
 }
 
 //搜索、查询用户文件列表api
-export const getPrivateFiles = (id: string) => {
+export const getPrivateFiles = async(id: string) => {
     const data = ref<getPrivateFiles>({
         filterOptions: {
             onlyFatherId: id,
@@ -47,16 +68,29 @@ export const getPrivateFiles = (id: string) => {
             limit: 40,
         }
     })
-    const filesList = ref<any>([])
-    post('/content/getPrivateFiles', data.value)
+    const filesList = ref<responseGetPrivateFiles>({
+        files: [],
+        fatherNamePath: '',
+        fatherIdPath: ''
+    })
+    await post('/content/getPrivateFiles', data.value)
     .then((res: any) => {
-        for (let i = 0; i < res.files.length; i ++) {
-            res.files[i].createAt = getFileTime(res.files[i].createAt)
-            res.files[i].updateAt = getFileTime(res.files[i].updateAt)
-            res.files[i].spaceSize = getFileSize(res.files[i].spaceSize)
-            res.files[i].path = res.fatherPath + "/" + res.files[i].name
-            filesList.value.push(res.files[i])
-        }
+        filesList.value = {
+            files: res.files.map((file: any) => ({
+                fileId: file.fileId,
+                userId: file.userId,
+                name: file.name,
+                type: file.type,
+                path: `${res.fatherNamePath}/${file.name}`,
+                fatherId: file.fatherId,
+                md5: file.md5,
+                updateAt: getFileTime(file.updateAt),
+                spaceSize: getFileSize(file.spaceSize),
+                createAt: getFileTime(file.createAt)
+            })),
+            fatherNamePath: res.fatherNamePath,
+            fatherIdPath: res.fatherIdPath
+            }
     })
     return filesList.value
 }
@@ -79,8 +113,6 @@ export const getFolderList = (id: string) => {
             foldersList.value.push(res.files[i])
         }
     })
-    console.log(foldersList.value);
-    
     return foldersList.value
 }
 
