@@ -16,7 +16,7 @@ const cos = new COS({
         const md5 = options.Key.split('.')[0].split('/').pop()
         const suffix = options.Key.split('.')[1]
         // options.Key = users/md5.suffix 
-         post('/sts/applySignedUrl', {
+         post('/content/askUploadFile', {
             md5, 
             suffix
         })
