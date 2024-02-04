@@ -148,6 +148,27 @@
                 </footer>
             </div>
         </div>
+        <div class="delete-file" v-if="isDeleteFile">
+            <div class="confirm-delete" v-if="isDelete">
+                <header class="confirm-delete-header">
+                    <div>彻底删除</div>
+                    <i class="iconfont icon-cuowu1" @click="cancelDeleteFile"></i>
+                </header>
+                <section class="confirm-delete-section">
+                    <div>执行此操作后该文件将永久删除，是否继续执行？</div>
+                </section>
+                <footer class="confirm-delete-footer">
+                    <button @click="confirmDeleteFile">彻底删除</button>
+                </footer>
+            </div>
+            <div class="delete-public" v-if="isDeletPublic">
+                <div>是否删除上传到社区空间中的该文件?</div>
+                <div>
+                    <button @click="confirmDeleteFileAndPublic">是</button>
+                    <button @click="deleteUrl">否</button>
+                </div>
+            </div>
+        </div>
         <div class="contents" :style="{marginLeft: contentsMaginLeft + 'px'}">
             <header class="header">
                 <div class="header-header">
@@ -194,9 +215,9 @@
                     <div class="upload-public">上传至社区</div>
                     <div class="detail" @click="checkFileDetail">查看详细信息</div>
                     <div class="download">下载</div>
-                    <div class="move" @click="moveFiles">移动</div>
-                    <div class="delete">删除</div>
+                    <div class="move" @click="moveFile">移动</div>
                     <div class="recycle">移至回收站</div>
+                    <div class="delete" @click="deleteFile">彻底删除</div>
                 </div>
                 <div class="files-box">
                     <div 
@@ -269,7 +290,7 @@ import type { createFiles, responseGetPrivateFiles } from './utils'
 import type { Ref } from 'vue'
 import { post } from '@/utils/request';
 import { errorMsg, successMsg } from '@/utils/message';
-import { fa } from 'element-plus/es/locale/index.mjs';
+import { fi } from 'element-plus/es/locale/index.mjs';
 
 const files = ref()
 const music = ref()
@@ -278,20 +299,23 @@ const radios = ref()
 const folderName = ref()
 const store = useStore();
 const isFlles = ref(false)
+const isDelete = ref(false)
 const isImages = ref(false)
 const isradios = ref(false)
 const isMusic = ref (false)
-const isFilePopup = ref(false)
 const isMoveFiles = ref(false)
+const isFilePopup = ref(false)
 const isClickPopup = ref(false)
+const isDeleteFile = ref(false)
+const isDeletPublic = ref(false)
 const isCreateFolder = ref(false)
-const isEnterChildFolder = ref(false)
 const isContexmenuPopup = ref(false)
 const isShowFileDetails = ref(false)
 const isMoveCreateFolder = ref(false)
 const userId = ref('')
 const nowPath = ref('')
 const fatherId = ref('')
+const clearCommunity = ref(false)
 const createFolderName = ref('新建文件夹')
 const moveCreateFolderName = ref('新建文件夹')
 const path = ref<any>([])
@@ -379,7 +403,7 @@ const getNowPath = (file: any) => {
         fileId: tempFileId
     }
 }
-const moveFiles = () => {
+const moveFile = () => {
     isMoveFiles.value = true
     isFilePopup.value = false
     moveFoldersList.value = getFolderList(fatherId.value)
@@ -458,6 +482,39 @@ const jumpMovePath = (index: number) => {
     nowMovePath.value.fileId = movePath.value.fileId[index]
     movePath.value.path = movePath.value.path.slice(0, index)
     movePath.value.fileId = movePath.value.fileId.slice(0, index)
+}
+
+//彻底删除api需要修改
+const deleteFile = () => {
+    isDeleteFile.value = true
+    isDelete.value = true
+    isFilePopup.value = false
+}
+const cancelDeleteFile = () => {
+    isDeleteFile.value = false
+}
+const confirmDeleteFile = () => {
+    isDelete.value = false
+    isDeletPublic.value = true
+}
+const deleteUrl = () => {
+    console.log(nowClickFileIndex.value);
+    
+    post('/content/deleteFile', {
+        fileId: filesList.value.files[nowClickFileIndex.value].fileId,
+        deleteType: 3,
+        clearCommunity: clearCommunity.value,
+    })
+    .then(async() => {
+        filesList.value = await getPrivateFiles(fatherId.value)
+        isDeleteFile.value = false
+        isDeletPublic.value = false
+        successMsg('删除成功')
+    })
+}
+const confirmDeleteFileAndPublic = () => {
+    clearCommunity.value = true
+    deleteUrl()
 }
 
 const cancelShowFileDetails = () => {
@@ -853,6 +910,93 @@ const clickMusic = () => {
         }
     }
 
+    .delete-file {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 11;
+        padding: 50px;
+        background-color: #cbcbcb3e;
+        display: flex;
+        overflow: auto;
+
+        .confirm-delete {
+            position: relative;
+            width: 250px;
+            height: 200px;
+            background-color: #fcf5f5;
+            box-shadow: 0 0 30px 2px rgba(5, 5, 5, 0.2);
+            margin: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+
+            .confirm-delete-header {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                
+                i {
+                    font-size: 20px;
+                    cursor: pointer;
+                }
+            }
+
+            .confirm-delete-section {
+                color: #bb2b2b;
+                font-size: 15px;
+                font-weight: 550;
+            }
+
+            .confirm-delete-footer {
+                button {
+                    width: 100px;
+                    height: 30px;
+                    font-size: 15px;
+                    border: none;
+                    border-radius: 5px;
+                    box-shadow: 0 0 3px 0.2px rgb(85, 138, 212);
+                    color: #fff;
+                    background-color: #e36060;
+                    transistion: all 0.1s;
+                }
+
+                button:active {
+                    transform: scale(0.9);
+                }
+            }
+        }
+
+        .delete-public {
+            position: relative;
+            width: 290px;
+            height: 100px;
+            background-color: #ffffff;
+            box-shadow: 0 0 30px 2px rgba(5, 5, 5, 0.2);
+            margin: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+
+            button {
+                width: 80px;
+                height: 30px;
+                font-size: 15px;
+                border: none;
+                border-radius: 5px;
+                margin: 0 10px;
+            }
+            button:first-child {
+                background-color: #ee6f6f;
+                color: #fff;
+            }
+        }
+    }
+
     .move-files {
         position: absolute;
         width: 100%;
@@ -1184,7 +1328,7 @@ const clickMusic = () => {
                     background-color: #f5f5f5;
                 }
                 
-                .recycle {
+                .delete {
                     color: #d83b3b;
                 }
             }
