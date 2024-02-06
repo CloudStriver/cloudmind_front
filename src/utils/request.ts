@@ -11,7 +11,7 @@ interface myResponseType<T> extends AxiosResponse {
 }
 
 const service = axios.create({
-  baseURL: 'http://apisix.cloudmind.top',
+  baseURL: 'https://apisix.cloudmind.top',
   timeout: 10000,
   headers: {
     'X_XH_ENV': 'test',
@@ -88,8 +88,8 @@ export async function request<T>(config: InternalAxiosRequestConfig): Promise<Ax
   return response
 }
 
-export async function get<T = any>(url: string): Promise<AxiosResponse<myResponseType<T>, any>> {
-  const response = await service.get<myResponseType<T>>(url)
+export async function get<T = any>(url: string, params?: any): Promise<AxiosResponse<myResponseType<T>, any>> {
+  const response = await service.get<myResponseType<T>>(url, params)
   return response
 }
 

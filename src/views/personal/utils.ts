@@ -1,5 +1,5 @@
 import { useStore } from '@/store/index'
-import { post } from '@/utils/request'
+import { post, get } from '@/utils/request'
 import { ref } from 'vue'
 
 //创建文件接口
@@ -37,43 +37,39 @@ export interface responseGetPrivateFiles {
 
 //搜索、查询用户文件列表接口
 export interface getPrivateFiles {
-    //搜索填
-    searchOptions?: {
-        allFieldsKey?: string, 
-        multiFieldsKey: {
-            name?: string,
-            id?: string,
-        },
-        sortType?: number, //1:按创建时间升序排序 2:按创建时间降序排序 3按修改时间升序排序 4:按修改时间降序排序 5:按文件大小升序排序 6:按文件大小降序排序
-    },
-    filterOptions: {
-        onlyFatherId: string,
-        onlyType?: string[]
-    },
-    paginationOptions?: {
-        limit?: number,
-        lastToken?: string,
-        backward?: boolean,
-        offset?: number,
-    }
+    allFieldsKey?: string,
+    name?: string,
+    id?: string,
+    sortType: number,
+    onlyFatherId: string,
+    onlyType?: string[],
+    limit: number,
+    lastToken?: string,
+    backward: boolean,
+    offset: number,
 }
 
 //搜索、查询用户文件列表api
 export const getPrivateFiles = async(id: string) => {
     const data = ref<getPrivateFiles>({
-        filterOptions: {
-            onlyFatherId: id,
-        },
-        paginationOptions: { 
-            limit: 40,
-        }
+        sortType: 3,
+        onlyFatherId: id,
+        limit: 40,
+        backward: true,
+        offset: 0
     })
+    const params = new URLSearchParams(data.value as any).toString()
+    const url = `/content/getPrivateFiles?${params}`
+    console.log(url);
+    console.log(params);
+    
+    
     const filesList = ref<responseGetPrivateFiles>({
         files: [],
         fatherNamePath: '',
         fatherIdPath: ''
     })
-    await post('/content/getPrivateFiles', data.value)
+    await get(url)
     .then((res: any) => {
         filesList.value = {
             files: res.files.map((file: any) => ({
@@ -98,16 +94,17 @@ export const getPrivateFiles = async(id: string) => {
 //获取文件夹名列表
 export const getFolderList = (id: string) => {
     const data = ref<getPrivateFiles>({
-        filterOptions: {
-            onlyFatherId: id,
-            onlyType: ['文件夹']
-        },
-        paginationOptions: { 
-            limit: 40,
-        }
+        sortType: 3,
+        onlyFatherId: id,
+        limit: 40,
+        backward: true,
+        offset: 0,
+        onlyType: ['文件夹']
     })
+    const params = new URLSearchParams(data.value as any).toString()
+    const url = `/content/getPrivateFiles?${params}`
     const foldersList = ref<any>([])
-    post('/content/getPrivateFiles', data.value)
+    get(url)
     .then((res: any) => {
         for (let i = 0; i < res.files.length; i ++) {
             foldersList.value.push(res.files[i])
