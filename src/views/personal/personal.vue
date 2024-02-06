@@ -438,7 +438,7 @@ const fileDetails = ref({
 onMounted(async() => { 
     userId.value = store.getUserId()
     fatherId.value = getFatherIdFromHerf() || userId.value
-    filesList.value = await getPrivateFiles(fatherId.value)
+    // filesList.value = await getPrivateFiles(fatherId.value)
     path.value = await getPath(filesList.value.fatherNamePath)
 })
 
