@@ -290,7 +290,6 @@ import type { createFiles, responseGetPrivateFiles } from './utils'
 import type { Ref } from 'vue'
 import { post } from '@/utils/request';
 import { errorMsg, successMsg } from '@/utils/message';
-import { fi } from 'element-plus/es/locale/index.mjs';
 
 const files = ref()
 const music = ref()
