@@ -7,39 +7,55 @@
                 :style="{left: drawerLeft + 'px'}"
                 @dblclick="drawerHandle"
             >
-                <div class="classify">
-                    <div 
-                        class="files"
-                        ref="files"
-                        @click="clickFiles"
+                <div>
+                    <div
+                        class="main-classify"
+                        @click="openOrCloseClassify"
                     >
-                        <i class="iconfont icon-file-alt-solid"></i>
-                        <div>文件</div>
+                        <i class="iconfont icon-sanjiaoxia" v-show="!isClassifyOpen"></i>
+                        <i class="iconfont icon-sanjiaoyou" v-show="isClassifyOpen"></i>
+                        <div>文件筛选</div>
                     </div>
-                    <div 
-                        class="images"
-                        ref="images"
-                        @click="clickImages"
-                    >
-                        <i class="iconfont icon-image"></i>
-                        <div>图片</div>
-                    </div>
-                    <div 
-                        class="radios"
-                        ref="radios"
-                        @click="clickRadios"
-                    >
-                        <i class="iconfont icon-video-solid"></i>
-                        <div>视频</div>
-                    </div>
-                    <div class="music"
-                        ref="music"
-                        @click="clickMusic"
-                    >
-                        <i class="iconfont icon-music-solid"></i>
-                        <div>音乐</div>
+                    <div class="classify" :style="{top: classifyTop + 'px'}">
+                        <div 
+                            class="files"
+                            ref="files"
+                            @click="clickFiles"
+                        >
+                            <i class="iconfont icon-file-alt-solid"></i>
+                            <div>文档</div>
+                        </div>
+                        <div 
+                            class="images"
+                            ref="images"
+                            @click="clickImages"
+                        >
+                            <i class="iconfont icon-image"></i>
+                            <div>图片</div>
+                        </div>
+                        <div 
+                            class="radios"
+                            ref="radios"
+                            @click="clickRadios"
+                        >
+                            <i class="iconfont icon-video-solid"></i>
+                            <div>视频</div>
+                        </div>
+                        <div class="music"
+                            ref="music"
+                            @click="clickMusic"
+                        >
+                            <i class="iconfont icon-music-solid"></i>
+                            <div>音乐</div>
+                        </div>
                     </div>
                 </div>
+                <div
+                    :style="{top: classifyTop + 'px'}"
+                    class="main-recycle"
+                    ref="recycle"
+                    @click="enterRecycle"
+                >回收站</div>
                 <div class="statistic">
                 </div>
             </div>
@@ -169,7 +185,11 @@
                 </div>
             </div>
         </div>
-        <div class="contents" :style="{marginLeft: contentsMaginLeft + 'px'}">
+        <div 
+            class="contents" 
+            :style="{marginLeft: contentsMaginLeft + 'px'}"
+            v-show="!isRecycle"
+        >
             <header class="header">
                 <div class="header-header">
                     <div class="path">
@@ -276,6 +296,57 @@
                 ></Popup>
             </footer>
         </div>
+        <div 
+            class="recycle-contents"
+            :style="{marginLeft: contentsMaginLeft + 'px'}"
+            v-show="isRecycle"
+        >
+            <header class="recycle-header">
+                <div class="recycle-header-header">
+                    <div>回收站</div>
+                    <button>
+                        <i class="iconfont icon-lajitong"></i>
+                        清空回收站
+                    </button>
+                </div>
+                <div class="recycle-header-section">
+                    <label for="recycleAllSelect">
+                        <input 
+                            type="checkbox"
+                            id="recycleAllSelect"
+                        >全选
+                    </label>
+                </div>
+                <div class="recycle-header-footer">
+                    <div>文件名称</div>
+                    <div>大小</div>
+                    <div>删除时间</div>
+                    <div>剩余时间</div>
+                </div>
+            </header>
+            <section class="recycle-footer">
+                <div class="recycle-file-box">
+                    <div class="recycle-file-content">
+                        <div class="checkbox"></div>
+                        <i class="iconfont icon-wenjian"></i>
+                        <div>测试文件路径</div>
+                    </div>
+                    <div>10.3MB</div>
+                    <div>2024/01/26 13:14</div>
+                    <div>10天</div>
+                </div>
+                <div class="recycle-file-box">
+                    <div class="recycle-file-content">
+                        <div class="checkbox"></div>
+                        <i class="iconfont icon-wenjian"></i>
+                        <div>测试文件路径</div>
+                    </div>
+                    <div>10.3MB</div>
+                    <div>2024/01/26 13:14</div>
+                    <div>10天</div>
+                </div>
+            </section>
+        </div>
     </div>
 </template>
 
@@ -295,6 +366,8 @@ const files = ref()
 const music = ref()
 const images = ref()
 const radios = ref()
+const recycle = ref()
+const classify = ref()
 const folderName = ref()
 const store = useStore();
 const isFlles = ref(false)
@@ -302,11 +375,14 @@ const isDelete = ref(false)
 const isImages = ref(false)
 const isradios = ref(false)
 const isMusic = ref (false)
+const isRecycle = ref(false)
 const isMoveFiles = ref(false)
 const isFilePopup = ref(false)
 const isClickPopup = ref(false)
 const isDeleteFile = ref(false)
 const isDeletPublic = ref(false)
+const isClassifyOpen = ref(false)
+const clearCommunity = ref(false)
 const isCreateFolder = ref(false)
 const isContexmenuPopup = ref(false)
 const isShowFileDetails = ref(false)
@@ -314,7 +390,6 @@ const isMoveCreateFolder = ref(false)
 const userId = ref('')
 const nowPath = ref('')
 const fatherId = ref('')
-const clearCommunity = ref(false)
 const createFolderName = ref('新建文件夹')
 const moveCreateFolderName = ref('新建文件夹')
 const path = ref<any>([])
@@ -331,11 +406,12 @@ const tempMoveFolderList = ref<any>([])
 const popupLeft = ref(0)
 const popupRight = ref(0)
 const drawerLeft = ref(0)
+const classifyTop = ref(0)
 const filePopupLeft = ref(0)
 const filePopupRight = ref(0)
 const nowClickFileIndex = ref(-1)
 const nowClickFolderIndex = ref(-1)
-const contentsMaginLeft = ref(140)
+const contentsMaginLeft = ref(150)
 const createFolderData = ref<createFiles>({
     file: {
         name: '新建文件夹',
@@ -646,6 +722,23 @@ const drawerHandle = () => {
     }
 }
 
+const openOrCloseClassify = () => {
+    if (classifyTop.value === 0) {
+        classifyTop.value = -200
+        isClassifyOpen.value = true
+    }
+    else {
+        classifyTop.value = 0
+        isClassifyOpen.value = false
+    }
+    isRecycle.value = false
+}
+
+const enterRecycle = () => {
+    isRecycle.value = true
+    cancelOption()
+}
+
 const cancelOption = () => {
     isFlles.value = false
     isImages.value = false
@@ -706,23 +799,46 @@ const clickMusic = () => {
             position: absolute;
             width: 150px;
             height: 100%;
+            padding-right: 2px;
             border-right: 1px solid rgb(209, 225, 252); 
             background-color: rgba(240, 245, 255, 1);
-            padding: 20px 0;
             z-index: 1;
             transition: all 1s;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             align-items: center;
 
+            .main-classify {
+                position: relative;
+                width: 100%;
+                height: 40px;
+                padding-left: 20px;
+                z-index: 5;
+                user-select: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                color: rgb(25, 80, 146);
+                background-color: rgb(240, 245, 255);
+
+                i {
+                    margin-right: 3px;
+                }
+            }
+            .main-classify:hover {
+                background-color: rgb(255, 255, 255);
+            }
+
             .classify {
+                position: relative;
                 width: 150px;
-                height: 220px;
+                height: auto;
                 font-size: 15px;
+                z-index: 3;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
+                transition: all 1s;
 
                 div {
                     height: 50px;
@@ -757,9 +873,27 @@ const clickMusic = () => {
                 }
             }
 
+            .main-recycle {
+                position: relative;
+                width: 100%;
+                height: 40px;
+                padding-left: 20px;
+                user-select: none;
+                cursor: pointer;
+                color: rgb(25, 80, 146);
+                display: flex;
+                align-items: center;
+                transition: top 1s;
+            }
+            .main-recycle:hover {
+                background-color: rgb(255, 255, 255);
+            }
+
             .statistic {
+                position: absolute;
                 width: 120px;
                 height: 120px;
+                bottom: 10px;
                 border-radius: 50%;
                 background-color: #c9dcf5;
             }
@@ -1267,7 +1401,7 @@ const clickMusic = () => {
         .footer {
             width: 100%;
             height: 100%;
-            box-shadow: 14px 5px 15px 2px rgb(230, 239, 255) inset;
+            box-shadow: 8px 5px 15px 2px rgb(230, 239, 255) inset;
             padding: 10px 10px 10px 22px;
             display: flex;
             flex: 1;
@@ -1397,6 +1531,127 @@ const clickMusic = () => {
                     cursor: pointer;
                     border-radius: 20px;
                     background-color: #f5f5f5;
+                }
+            }
+        }
+    }
+
+    .recycle-contents {
+        height: 100%;
+        background-color: #fff;
+        transition: all 1s;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+        .recycle-header {
+            width: 100%;
+            height: 150px;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            .recycle-header-header {
+                width: 100%;
+                padding: 20px 10px 0 10px;
+                margin-bottom: 15px;
+                display: flex;
+                justify-content: space-between;
+
+                div {
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: rgb(61, 108, 171);
+                    display: flex;
+                }
+
+                button {
+                    width: 120px;
+                    height: 30px;
+                    font-size: 15px;
+                    border: none;
+                    border-radius: 5px;
+                    box-shadow: 0 0 3px 0.2px rgb(85, 138, 212);
+                    color: #fff;
+                    background-color: #e36060;
+                    transition: all 0.1s;
+                }
+                button:active {
+                    transform: scale(0.9);
+                }
+            }
+
+            .recycle-header-section {
+                width: 100%;
+                padding: 0 0 10px 10px;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+
+                label {
+                    font-size: 15px;
+                    color: #686666;
+                    vertical-align: middle;
+                    cursor: pointer;
+                    user-select: none;
+
+                    input {
+                        vertical-align: middle;
+                        margin-right: 10px;
+                    }
+                }
+            }
+
+            .recycle-header-footer {
+                height: 30px;
+                font-size: 15px;
+                color: #a8a7a7;
+                padding-bottom: 10px;
+                margin: 0 30px 0 30px;
+                border-bottom: 1px solid rgb(241, 246, 255);
+                display: flex;
+                justify-content: space-between;
+
+                div:first-child {
+                    width: 70%;
+                }
+            }
+        }
+
+        .recycle-footer {
+            height: 100%;
+            padding: 20px;
+            padding-left: 25px;
+            padding-right: 30px;
+            box-shadow: 8px 5px 15px 2px rgb(230, 239, 255) inset;
+            overflow-y: auto;
+
+            .recycle-file-box {
+                height: 60px;
+                border-bottom: 1px solid rgba(241, 246, 255, 0.676);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .recycle-file-content {
+                    width: 72%;
+                    display: flex;
+                    align-items: center;
+
+                    .checkbox {
+                        width: 13px;
+                        height: 13px;
+                        border: 1px solid #a8a7a7;
+                        border-radius: 50%;
+                        margin-right: 10px;
+                    }
+
+                    i {
+                        font-size: 30px;
+                        color: #6885ba;
+                        margin-right: 10px;
+                    }
                 }
             }
         }
