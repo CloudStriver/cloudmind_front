@@ -7,9 +7,7 @@
                     <search class="search"></search>
                     <div class="header-right">
                         <i class="iconfont icon-calendar-check-solid"></i>
-                        <router-link to="/notification" style="text-decoration: none;">
-                            <i class="iconfont icon-bell"></i>
-                        </router-link>
+                        <i class="iconfont icon-bell"></i>
                         <i class="iconfont icon-cog-solid"></i>
                         <avatar 
                             class="avatar" 
@@ -25,19 +23,31 @@
                     </div>
                 </div>
             </header>
-            <section class="section-top">
-                <activity class="activity"></activity>
-            </section>
-            <section class="section-bottom">
-                <recommend class="recommend"></recommend>
-                <div class="right">
-                    <rank class="rank"></rank>
-                    <announced class="announced"></announced>
+            <section class="section">
+                <div class="notification-box">
+                    <div class="section-top">
+                        <div style="font-size: 22px; font-weight: 700;">通知中心</div>
+                        <label for="">
+                            <input type="radio" name="select">
+                        </label>
+                        <label for="">
+                            <input type="radio" name="select">
+                        </label>
+                        <label for="">
+                            <input type="radio" name="select">
+                        </label>
+                        <label for="">
+                            <input type="radio" name="select">
+                        </label>
+                        <label for="">
+                            <input type="radio" name="select">
+                        </label>
+                    </div>
+                    <div class="section-bottom">
+
+                    </div>
                 </div>
             </section>
-            <footer class="footer"> 
-                <a href="https://beian.miit.gov.cn/" target="_blank">湘ICP备2023015545号</a>
-            </footer>
         </div>
     </div>
 </template>
@@ -46,24 +56,20 @@
 import Nav from '@/components/navigation.vue'
 import search from '@/components/search.vue'
 import avatar from '@/components/avatar.vue'
-import activity from '@/views/home/activity.vue'
-import recommend from '@/views/home/recommend.vue'
-import rank from '@/views/home/rank.vue'
-import announced from '@/views/home/announced.vue'
 import popup from '@/views/home/popup.vue'
 import { ref } from 'vue'
 
 const isPopup = ref(false)
 const mouseoverPopup = () => { isPopup.value = true } 
 const mouseleavePopup = () => { isPopup.value = false }
-
 </script>
 
 <style scoped lang="css">
 .main-box {
     width: 100%;
+    height: 100%;
     display: flex;
-    
+
     .nav {
         position: fixed;
         height: 100%;
@@ -72,20 +78,23 @@ const mouseleavePopup = () => { isPopup.value = false }
     }
 
     .contents {
+        position: relative;
         background-color: rgba(240, 245, 255, 1);
         margin-left: 80px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
         flex: 1;
-
+        overflow-x: hidden;
+        overflow-y: auto;
+        
         .header {
+            position: absolute;
             width: 100%;
             height: 70px;
             background-color: rgba(240, 245, 255, 1);
             padding: 0 2% 0;
-            margin-bottom: 20px;
+            margin: auto;
 
             .header-layout {
                 width: 100%;
@@ -129,64 +138,38 @@ const mouseleavePopup = () => { isPopup.value = false }
             }
         }
 
-        .section-top {
+        .section {
+            position: relative;
             width: 100%;
-            padding: 0 2% 0;
+            flex: 1;
+            padding: 0 10% 0;
+            margin: 0 10% 130px 10%;
+            top: 100px;
+            overflow-y: auto;
             display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
 
-            .activity {
-                max-width: 1200px;
-                height: 360px;
-                margin-bottom: 10px;
-            }
-
-        }
-        .section-bottom {
-            width: 100%;
-            padding: 0 2% 0;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-
-            .recommend {
-                max-width: 740px;
-                height: 780px;
-                margin-right: 10px;
-            }
-
-            .right {
-                height: 780px;
+            .notification-box {
+                flex: 1;
                 display: flex;
                 flex-direction: column;
 
-                .rank {
-                    width: 450px;
-                    height: 520px;
+                .section-top {
+                    height: 100px;
                     background-color: #fff;
-                    margin-bottom: 10px;
+                    margin-bottom: 5px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
                 }
 
-                .announced {
-                    width: 450px;
-                    height: 250px;
+                .section-bottom {
+                    width: 100%;
+                    flex: 1;
                     background-color: #fff;
                 }
             }
         }
 
-        .footer {
-            height: 80px; 
-            width: 100%; 
-            border-top: 0.6px solid rgb(232, 232, 232); 
-            margin-top: 50px; display: flex; 
-            align-items: center; 
-            justify-content: center;
-        }
     }
 }
 </style>
