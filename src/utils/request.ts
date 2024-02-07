@@ -14,7 +14,7 @@ const service = axios.create({
   baseURL: 'https://apisix.cloudmind.top',
   timeout: 10000,
   headers: {
-    'X_XH_ENV': 'test',
+    'X-Xh-Env': 'test',
     'Content-Type': 'application/json'
   }
 })

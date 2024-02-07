@@ -124,13 +124,13 @@ const imageUrl = ref('/src/assets/images/avatar.png')
 onMounted(() => {
     get('/content/getUserDetail')
     .then((res: any) => {
-        name.value = res.userDetail.name,
-        sex.value = res.userDetail.sex === 1 ? '男' : '女',
-        fullName.value = res.userDetail.fullName === '' ? '未填写' : res.fullName,
-        idCard.value = res.userDetail.idCard === '' ? '未填写' : res.idCard,
-        description.value = res.userDetail.description === '' ? '未填写' : res.description,
-        imageUrl.value = res.userDetail.imageUrl  === '' ? '/src/assets/images/avatar.png' : res.imageUrl
-        console.log(res.userDetail);
+        name.value = res.name,
+        sex.value = res.sex === 1 ? '男' : '女',
+        fullName.value = res.fullName === '' ? '未填写' : res.fullName,
+        idCard.value = res.idCard === '' ? '未填写' : res.idCard,
+        description.value = res.description === '' ? '未填写' : res.description,
+        imageUrl.value = res.imageUrl  === '' ? '/src/assets/images/avatar.png' : res.imageUrl
+        console.log(res);
         
     })
 })

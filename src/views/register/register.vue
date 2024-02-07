@@ -122,7 +122,7 @@ import router from '../../router/index'
 import { ref } from 'vue'
 import { judgeEmail, judgePassword } from '@/utils/judge'
 import { errorMsg, successMsg } from '@/utils/message'
-import { post } from '@/utils/request'
+import { post, get } from '@/utils/request'
 import { useStore } from '@/store/index'
 
 const store = useStore()
@@ -255,9 +255,18 @@ const generateRrandomString = ():string => {
 const register = () => {
     if (buttonMessage.value === '下一步') {
         if (isEmail.value && captcha.value.length === 6 && clickGetCaptcha.value) {
-            buttonMessage.value = '注 册'
-            setCaptcha.value = false
-            setPassword.value = true
+            const url = '/auth/checkEmail?email=' + email.value + '&code=' + captcha.value
+            get(url)
+            .then((res: any) => {
+                if (res.ok) {
+                    buttonMessage.value = '注 册'
+                    setCaptcha.value = false
+                    setPassword.value = true
+                }
+                else {
+                    errorMsg('验证码错误')
+                }
+            })
         } 
         else {
             errorMsg('请先填写正确的邮箱和验证码')
@@ -272,7 +281,6 @@ const register = () => {
                     email: email.value,
                     sex: 1,
                     password: password.value,
-                    code: captcha.value
                 })
                 .then((res: any) => {
                     store.setUserInfo(res.userId, res.shortToken, res.longToken, res.chatToken, false)
