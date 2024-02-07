@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "22533636",
+      "name": "更多",
+      "font_class": "gengduo",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "880392",
+      "name": "分享",
+      "font_class": "fenxiang",
+      "unicode": "e621",
+      "unicode_decimal": 58913
+    },
+    {
+      "icon_id": "35102466",
+      "name": "收藏01",
+      "font_class": "shoucang01",
+      "unicode": "ea32",
+      "unicode_decimal": 59954
+    },
+    {
+      "icon_id": "35102697",
+      "name": "喜欢02",
+      "font_class": "xihuan02",
+      "unicode": "ea38",
+      "unicode_decimal": 59960
+    },
+    {
+      "icon_id": "35567576",
+      "name": "消息 (1)",
+      "font_class": "a-xiaoxi1",
+      "unicode": "eb3f",
+      "unicode_decimal": 60223
+    },
+    {
+      "icon_id": "36181309",
+      "name": "点赞 (2)",
+      "font_class": "a-dianzan2",
+      "unicode": "ec0e",
+      "unicode_decimal": 60430
+    },
+    {
+      "icon_id": "36181316",
+      "name": "不好 (2)",
+      "font_class": "a-buhao2",
+      "unicode": "ec0f",
+      "unicode_decimal": 60431
+    },
+    {
       "icon_id": "1985009",
       "name": "垃圾桶",
       "font_class": "lajitong",

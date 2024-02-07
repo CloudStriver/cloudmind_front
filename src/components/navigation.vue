@@ -28,7 +28,7 @@
                 <i class="iconfont icon-cube-solid"></i>
             </router-link>
             <router-link 
-                to="/4" 
+                to="/posts" 
                 class="router"
                 active-class="router-active"
             >
