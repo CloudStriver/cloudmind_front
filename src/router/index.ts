@@ -37,6 +37,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/notification',
     component: () => import('../views/notification/notification.vue'),
+  },
+  {
+    path: '/posts',
+    component: () => import('../views/posts/posts.vue'),
   }
 ]
 
