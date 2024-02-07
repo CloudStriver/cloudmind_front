@@ -1,31 +1,14 @@
 import COS from 'cos-js-sdk-v5'
 import { post } from './request'
 
-/*
-创建cos(全局唯一的，用来上传文件的) ->
-用户需要上传文件->  cos.UploadFile(options,密钥)
--> getAuthorization(options, callback) -> 获取临时密钥
--> callback()将密钥传回UploadFile -> 上传文件
-*/
-// 有两个bucket 
-// 私人的bucket 用来存储用户的文件
-// 私人的bucket:
-// const Bucket = 'cloudmind-file-1318210890'
-// const Region = 'ap-shanghai'
-// 公共的bucket 用来存储用户头像/帖子标题图片等
-// const Bucket = 'cloudmind-1318210890'
-// const Region = 'ap-guangzhou'
-
-const Bucket = 'cloudmind-file-1318210890'
-const Region = 'ap-shanghai'
+const Bucket = 'cloudmind-1318210890'
+const Region = 'ap-guangzhou'
 const cos = new COS({
     getAuthorization: (options: any, callback: any) => {
-        // users/md5.suffix  从该字符传中提取md5和suffix
         const name = options.Key.split('/')[1]
-        // options.Key = users/md5.suffix 
-         post('/content/askUploadFile', {
+         post('/content/askUploadAvatar', {
             name,
-            fileSize: options.Body.size
+            avatarSize: options.SliceSize
         })
         .then((res: any) => {
             callback({
@@ -40,7 +23,7 @@ const cos = new COS({
     }
 })
 
-export const cosUploadFile = (file: any, md5: string, suffix: string) => {
+export const cosUploadAvatar = (file: any, md5: string, suffix: string, onUploadComplete: () => void) => {
     cos.uploadFile({
         Bucket,
         Region,
@@ -48,7 +31,10 @@ export const cosUploadFile = (file: any, md5: string, suffix: string) => {
         Body: file,
         SliceSize: file.size,
         onProgress: (progressData: any) => {
-            console.log(JSON.stringify(progressData));
+            if (progressData.percent === 1) {
+                onUploadComplete();
+            }
+            console.log(progressData);
         }
     }, (err: any, data: any) => {
         console.log(err || data);

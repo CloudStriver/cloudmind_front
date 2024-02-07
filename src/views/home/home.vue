@@ -51,12 +51,16 @@ import recommend from '@/views/home/recommend.vue'
 import rank from '@/views/home/rank.vue'
 import announced from '@/views/home/announced.vue'
 import popup from '@/views/home/popup.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { getUserDetail } from '../information/utils'
 
 const isPopup = ref(false)
 const mouseoverPopup = () => { isPopup.value = true } 
 const mouseleavePopup = () => { isPopup.value = false }
 
+onMounted(() => {
+    getUserDetail()
+})
 </script>
 
 <style scoped lang="css">

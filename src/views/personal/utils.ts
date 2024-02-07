@@ -1,5 +1,5 @@
 import { useStore } from '@/store/index'
-import { post, get } from '@/utils/request'
+import { get } from '@/utils/request'
 import { ref } from 'vue'
 
 //创建文件接口

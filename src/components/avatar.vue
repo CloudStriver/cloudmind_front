@@ -1,17 +1,13 @@
 <template>
     <div class="main-box">
-        <img :src="props.url">
+        <img :src="store.userAvatar" style="border-radius: 50%;">
     </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-    url: {
-        type: String,
-        default: '/src/assets/images/avatar.png'
-    
-    }
-})
+import { useStore } from '@/store/index'
+
+const store = useStore()
 </script>
 
 <style scoped lang="css">
