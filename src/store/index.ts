@@ -10,7 +10,7 @@ export const useStore = defineStore('user', {
             userIntroduce: "",
             userAccount: "",
             userPassword: "",  
-            userAvatar: "",
+            userAvatar: "/src/assets/images/avatar.png",
             shortToken: "",
             longToken: "",
             fatherId: "",
@@ -20,6 +20,12 @@ export const useStore = defineStore('user', {
     },
 
     actions: {
+        setUserDetail (name: string, sex: string, description: string, avatar: string) {
+            this.userName = name
+            this.userSex = sex
+            this.userIntroduce = description
+            this.userAvatar = avatar
+        },
         getUserId () {
             if (this.userId == "") {
                 this.userId = localStorage.getItem("UserId") || ""

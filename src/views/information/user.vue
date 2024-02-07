@@ -4,8 +4,27 @@
         <div class="contents">
             <div class="operate-box">
                 <div class="avatar-name">
-                    <div class="avatar"><avatar :url="imageUrl"></avatar></div>
-                    <div>{{ splitName(name) }}</div>
+                    <div 
+                        class="avatar" 
+                        @mouseover="planAvatar" 
+                        @mouseleave="noPlanAvatar"
+                    >
+                        <label
+                            for="changeAvatar"
+                            class="change-avatar" 
+                            v-show="isChangeAvatar"
+                        >
+                            <input 
+                                type="file" 
+                                style="display: none;" 
+                                id="changeAvatar"
+                                @change="changeAvatar($event)"
+                            >
+                            <i class="iconfont icon-xiangji"></i>
+                        </label>
+                        <avatar></avatar>
+                    </div>
+                    <div>{{ splitName(detail.name) }}</div>
                 </div>
                 <div class="select">
                     <div>
@@ -54,7 +73,7 @@
                             <div>昵</div>
                             <div>称</div>
                         </div>
-                        <div class="second">{{ name }}</div>
+                        <div class="second">{{ detail.name }}</div>
                     </div>
                     <div class="info">
                         <div class="first">
@@ -69,7 +88,7 @@
                             <div>性</div>
                             <div>别</div>
                         </div>
-                        <div class="second">{{ sex }}</div>
+                        <div class="second">{{ detail.sex }}</div>
                     </div>
                     <div class="info">
                         <div class="first">
@@ -78,7 +97,7 @@
                             <div>姓</div>
                             <div>名</div>
                         </div>
-                        <div class="second">{{ fullName }}</div>
+                        <div class="second">{{ detail.fullName }}</div>
                     </div>
                     <div class="info">
                         <div class="first">
@@ -87,7 +106,7 @@
                             <div>证</div>
                             <div>号</div>
                         </div>
-                        <div class="second">{{ idCard }}</div>
+                        <div class="second">{{ detail.idCard }}</div>
                     </div>
                     <div class="info">
                         <div class="first">
@@ -96,7 +115,7 @@
                             <div>简</div>
                             <div>介</div>
                         </div>
-                        <div class="second">{{ description }}</div>
+                        <div class="second">{{ detail.description }}</div>
                     </div>
                 </footer>
             </div>
@@ -109,34 +128,50 @@ import Nav from '@/components/navigation.vue'
 import avatar from '@/components/avatar.vue'
 import { ref, onMounted } from 'vue'
 import { useStore } from '@/store/index'
-import { get } from '@/utils/request'
+import SparkMD5 from 'spark-md5'
+import { cosUploadAvatar } from '@/utils/public-cos'
+import { getUserDetail } from './utils'
 
 const store = useStore()
 const userId = store.getUserId()
-const name = ref('')
-const sex = ref('男') //1男 2女
-const idCard = ref('未填写')
-const fullName = ref('未填写')
-const description = ref('未填写')
+const isChangeAvatar = ref(false)
+const detail = ref({
+    name: '',
+    sex: '男',//1男 2女
+    idCard: '未填写',
+    fullName: '未填写',
+    description: '未填写',
+    avatar: store.userAvatar
+})
 const select = ref('个人资料')
-const imageUrl = ref('/src/assets/images/avatar.png')
 
-onMounted(() => {
-    get('/content/getUserDetail')
-    .then((res: any) => {
-        name.value = res.name,
-        sex.value = res.sex === 1 ? '男' : '女',
-        fullName.value = res.fullName === '' ? '未填写' : res.fullName,
-        idCard.value = res.idCard === '' ? '未填写' : res.idCard,
-        description.value = res.description === '' ? '未填写' : res.description,
-        imageUrl.value = res.imageUrl  === '' ? '/src/assets/images/avatar.png' : res.imageUrl
-        console.log(res);
-        
-    })
+onMounted(async() => {
+    detail.value = await getUserDetail()
 })
 
 const splitName = (name: string) => {
     return name.length  > 10 ? name.slice(0, 10) + '...' : name
+}
+const planAvatar = () => {
+    isChangeAvatar.value = true
+}
+const noPlanAvatar = () => {
+    isChangeAvatar.value = false
+}
+const changeAvatar = async(event: any) => {
+    const file = event.target.files![0]
+    const fileReader = new FileReader();
+    const spark = new SparkMD5.ArrayBuffer();
+    fileReader.readAsArrayBuffer(file);
+    fileReader.onload = (e: any) => {
+        spark.append(e.target.result);
+        const md5 = spark.end();
+        const suffix = '.' + file.name.split('.').pop();
+        cosUploadAvatar(file, md5, suffix, async () => {
+            detail.value = await getUserDetail()
+            location.reload()
+        })
+    }
 }
 </script>
 
@@ -188,6 +223,25 @@ const splitName = (name: string) => {
                     width: 120px;
                     height: 120px;
                     margin-bottom: 10px;
+
+                    .change-avatar {
+                        width: 120px;
+                        height: 120px;
+                        border-radius: 50%;
+                        position: absolute;
+                        background-color: rgba(0, 0, 0, 0.5);
+                        cursor: pointer;
+
+                        i {
+                            position: absolute;
+                            font-size: 50px;
+                            color: #ffffff;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                        }
+                    
+                    }
                 }
             }
 
