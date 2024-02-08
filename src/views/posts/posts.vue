@@ -25,68 +25,28 @@
             </header>
             <section class="section">
                 <div class="posts-box">
-                    <div class="posts">
-                        <header class="posts-header">自学前端需要达到什么水平才能去工作</header>
-                        <section class="posts-section">
-                            admin: 当时之所以选择自学WEB前端，是因为身边的同学都在说互联网行业薪资高，工作环境也好。加上我们大一接触过C语言，自己也一直都对编程感兴趣，只是这四年基本都是被游戏掌控着，一直拖到快毕业才开始自学。我们班很多人都选择去培训Java或者前端开发了...
-                        </section>
-                        <footer class="posts-footer">
-                            <div class="like">
-                                <i class="iconfont icon-a-dianzan2"></i>
-                                <div>点赞 5.2w</div>
-                            </div>
-                            <i class="iconfont icon-a-buhao2 i"></i>
-                            <div class="remark">
-                                <i class="iconfont icon-a-xiaoxi1"></i>
-                                <div>评论 5k</div>
-                            </div>
-                            <i class="iconfont icon-xihuan02 i"></i>
-                            <i class="iconfont icon-shoucang01 i"></i>
-                            <i class="iconfont icon-fenxiang i"></i>
-                            <i class="iconfont icon-gengduo i"></i>
-                        </footer>
+                    <div class="add-post">
+                        <i class="iconfont icon-jia"></i>
+                        <div>发布</div>
                     </div>
-                    <div class="posts">
-                        <header class="posts-header">自学前端需要达到什么水平才能去工作</header>
-                        <section class="posts-section">
-                            admin: 当时之所以选择自学WEB前端，是因为身边的同学都在说互联网行业薪资高，工作环境也好。加上我们大一接触过C语言，自己也一直都对编程感兴趣，只是这四年基本都是被游戏掌控着，一直拖到快毕业才开始自学。我们班很多人都选择去培训Java或者前端开发了...
-                        </section>
-                        <footer class="posts-footer">
-                            <div class="like">
-                                <i class="iconfont icon-a-dianzan2"></i>
-                                <div>点赞 5.2w</div>
-                            </div>
-                            <i class="iconfont icon-a-buhao2 i"></i>
-                            <div class="remark">
-                                <i class="iconfont icon-a-xiaoxi1"></i>
-                                <div>评论 5k</div>
-                            </div>
-                            <i class="iconfont icon-xihuan02 i"></i>
-                            <i class="iconfont icon-shoucang01 i"></i>
-                            <i class="iconfont icon-fenxiang i"></i>
-                            <i class="iconfont icon-gengduo i"></i>
-                        </footer>
-                    </div>
-                    <div class="posts">
-                        <header class="posts-header">自学前端需要达到什么水平才能去工作</header>
-                        <section class="posts-section">
-                            admin: 当时之所以选择自学WEB前端，是因为身边的同学都在说互联网行业薪资高，工作环境也好。加上我们大一接触过C语言，自己也一直都对编程感兴趣，只是这四年基本都是被游戏掌控着，一直拖到快毕业才开始自学。我们班很多人都选择去培训Java或者前端开发了...
-                        </section>
-                        <footer class="posts-footer">
-                            <div class="like">
-                                <i class="iconfont icon-a-dianzan2"></i>
-                                <div>点赞 5.2w</div>
-                            </div>
-                            <i class="iconfont icon-a-buhao2 i"></i>
-                            <div class="remark">
-                                <i class="iconfont icon-a-xiaoxi1"></i>
-                                <div>评论 5k</div>
-                            </div>
-                            <i class="iconfont icon-xihuan02 i"></i>
-                            <i class="iconfont icon-shoucang01 i"></i>
-                            <i class="iconfont icon-fenxiang i"></i>
-                            <i class="iconfont icon-gengduo i"></i>
-                        </footer>
+                    <div
+                        v-for="(post, index) in postsList.posts"
+                        :key="index"
+                    >
+                        <div class="posts">
+                            <header class="posts-header">{{ post.title }}</header>
+                            <section class="posts-section">
+                                {{ post.author.name }}: {{ post.text }}
+                            </section>
+                            <footer class="posts-footer">
+                                <div class="like">
+                                    <i class="iconfont icon-a-dianzan2"></i>
+                                    <div>点赞 {{ post.likeCount }}</div>
+                                </div>
+                                <i class="iconfont icon-a-buhao2 i"></i>
+                                <i class="iconfont icon-gengduo i"></i>
+                            </footer>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -99,11 +59,22 @@ import Nav from '@/components/navigation.vue'
 import search from '@/components/search.vue'
 import avatar from '@/components/avatar.vue'
 import popup from '@/views/home/popup.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { getOtherPosts } from './utils'
+import type { responseGetOtherPosts } from './utils'
 
 const isPopup = ref(false)
+const postsList = ref<responseGetOtherPosts>({
+    posts: []
+})
+
+onMounted(async () => {
+    postsList.value = await getOtherPosts()
+})
+
 const mouseoverPopup = () => { isPopup.value = true } 
 const mouseleavePopup = () => { isPopup.value = false }
+
 </script>
 
 <style scoped lang="css">
@@ -204,6 +175,29 @@ const mouseleavePopup = () => { isPopup.value = false }
                 flex-direction: column;
                 align-items: center;
 
+                .add-post {
+                    position: absolute;
+                    width: 150px;
+                    height: 50px;
+                    background-color: #fff;
+                    left: -180px;
+                    border-radius: 20px;
+                    box-shadow: 0 0 10px 2px #01030a1f;
+                    cursor: pointer;
+                    padding: 20px;
+                    display: flex;
+                    align-items: center;
+                    
+                    i {
+                        font-size: 30px;
+                        margin-right: 20px;
+                        color: #6d99ec;
+                    }
+                }
+                .add-post:hover {
+                    background-color: #e4e4e42f;
+                }
+
                 .posts {
                     width: 800px;
                     background-color: #fff;
@@ -231,20 +225,16 @@ const mouseleavePopup = () => { isPopup.value = false }
                         display: flex;
                         align-items: center;
 
-                        .like,
-                        .remark {
+                        .like {
                             margin-right: 20px;
+                            font-weight: 600;
+                            color: #29529e;
                             display: flex;
 
                             i {
                                 font-size: 20px;
                                 margin-right: 3px;
                             }
-                        }
-
-                        .like {
-                            font-weight: 600;
-                            color: #29529e;
                         }
 
                         .i {
