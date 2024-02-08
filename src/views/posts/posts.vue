@@ -36,15 +36,35 @@
                         <div class="posts">
                             <header class="posts-header">{{ post.title }}</header>
                             <section class="posts-section">
-                                {{ post.author.name }}: {{ post.text }}
+                                {{ post.userName }}: {{ post.text }}
                             </section>
                             <footer class="posts-footer">
-                                <div class="like">
-                                    <i class="iconfont icon-a-dianzan2"></i>
-                                    <div>点赞 {{ post.likeCount }}</div>
+                                <div class="post-detail">
+                                    <div 
+                                        class="like"
+                                        v-if="!post.liked"
+                                        @click="likePost(post)"
+                                    >
+                                        <i class="iconfont icon-a-dianzan2"></i>
+                                        <div>点赞 {{ post.likeCount }}</div>
+                                    </div>
+                                    <div class="liked" v-if="post.liked">
+                                        <i class="iconfont icon-a-dianzan2"></i>
+                                        <div>已点赞 {{ post.likeCount }}</div>
+                                    </div>
+                                    <div class="remark">
+                                        <i class="iconfont icon-a-xiaoxi1"></i>
+                                        <div>评论 {{ post.commentCount }}</div>
+                                    </div>
+                                    <i class="iconfont icon-gengduo i"></i>
                                 </div>
-                                <i class="iconfont icon-a-buhao2 i"></i>
-                                <i class="iconfont icon-gengduo i"></i>
+                                <div
+                                    class="tag"
+                                    v-for="(tag, index) in post.tags.slice(0, 3)"
+                                    :key="index"
+                                >
+                                    <button>{{ tag }}</button>
+                                </div>
                             </footer>
                         </div>
                     </div>
@@ -61,6 +81,7 @@ import avatar from '@/components/avatar.vue'
 import popup from '@/views/home/popup.vue'
 import { ref, onMounted } from 'vue'
 import { getOtherPosts } from './utils'
+import { post } from '@/utils/request'
 import type { responseGetOtherPosts } from './utils'
 
 const isPopup = ref(false)
@@ -71,6 +92,19 @@ const postsList = ref<responseGetOtherPosts>({
 onMounted(async () => {
     postsList.value = await getOtherPosts()
 })
+
+const likePost = (thisPost: any) => {
+    //还需要判断用户是否登录，只有登录才可以点赞
+    post('/relation/createRelation', {
+        toId: thisPost.postId,
+        toType: 4,
+        relationType: 1
+    })
+    .then(() => {
+        thisPost.liked = true
+        thisPost.likeCount ++
+    })
+}
 
 const mouseoverPopup = () => { isPopup.value = true } 
 const mouseleavePopup = () => { isPopup.value = false }
@@ -222,25 +256,61 @@ const mouseleavePopup = () => { isPopup.value = false }
                     .posts-footer {
                         margin-top: 10px;
                         color: #494848;
+                        cursor: pointer;
                         display: flex;
                         align-items: center;
+                        justify-content: space-between;
 
-                        .like {
-                            margin-right: 20px;
-                            font-weight: 600;
-                            color: #29529e;
+                        .post-detail {
                             display: flex;
 
-                            i {
+                            .like,
+                            .liked,
+                            .remark {
+                                margin-right: 20px;
+                                display: flex;
+    
+                                i {
+                                    font-size: 20px;
+                                    margin-right: 3px;
+                                }
+                            }
+    
+                            .i {
                                 font-size: 20px;
-                                margin-right: 3px;
+                                margin-right: 20px;
+                            }
+    
+                            .like:hover,
+                            .remark:hover {
+                                color: #6d99ec;
+                            }
+    
+                            i:hover {
+                                color: #6d99ec;
+                            }
+    
+                            .liked {
+                               color: #6d99ec;
+                               font-weight: 600;
+                            }
+                            .liked:hover {
+                                color: #494848;
                             }
                         }
 
-                        .i {
-                            font-size: 20px;
-                            margin-right: 20px;
-                            cursor: pointer;
+                        .tag {
+                            display: flex;
+
+                            button {
+                                background-color: #b0d3f8;
+                                color: #fff;
+                                border: none;
+                                border-radius: 5px;
+                                padding: 5px 10px;
+                                margin-right: 10px;
+                                cursor: pointer;
+                            }
                         }
                     }
                 }

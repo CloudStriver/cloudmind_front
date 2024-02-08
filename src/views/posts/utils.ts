@@ -7,10 +7,11 @@ export interface responseGetOtherPosts {
         title: string,
         text: string,
         url: string,
+        tags: string[],
         likeCount: number,
-        author: {
-            name: string,
-        }
+        commentCount: number,
+        liked: boolean,
+        userName: string,
     }[]
 }
 
@@ -26,13 +27,13 @@ export const getOtherPosts = async () => {
                 title: post.title,
                 text: post.text,
                 url: post.url,
+                tags: post.tags,
                 likeCount: post.likeCount,
-                author: {
-                    name: post.author.name,
-                }
+                commentCount: post.commentCount,
+                liked: post.liked,
+                userName: post.userName
             }))
         }
     })
-
     return postsList.value
 }
