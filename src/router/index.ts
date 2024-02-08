@@ -7,7 +7,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/home/home.vue'),
   },
   {
-    path: '/login',
+    path: '/login/:code?',
     component: () => import('../views/login/login.vue'),
   },
   {
@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/agreements/privacy.vue'),
   },
   {
-    path: '/personal/:fatherId',
+    path: '/personal/:fatherId?',
     component: () => import('../views/personal/personal.vue'),
     props: true,
     meta: {
