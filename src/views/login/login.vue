@@ -83,7 +83,9 @@
                         <i class="iconfont icon-qq qq"></i>
                         <i class="iconfont icon-weixin weixin"></i>
                         <i class="iconfont icon-gitub gitub"></i>
-                        <i class="iconfont icon-gitee1 gitee"></i>
+                        <a href="https://gitee.com/oauth/authorize?client_id=10dfe502136745d1f135474390c4cb6cd50fce3a5bf7a167891d3b0ec184d2eb&redirect_uri=https://apisix.cloudmind.top/auth/githubLogin&response_type=code" target="_blank">
+                            <i class="iconfont icon-gitee1 gitee"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -94,8 +96,8 @@
 <script setup lang="ts">
 import Captcha from '@/components/captcha.vue'
 import router from '@/router'
-import { ref } from 'vue'
-import { post } from '@/utils/request';
+import { ref, onMounted } from 'vue'
+import { post, get } from '@/utils/request';
 import { useStore } from '@/store/index';
 import { errorMsg, successMsg } from '@/utils/message';
 import { judgeEmail, judgePassword } from '@/utils/judge'
@@ -112,6 +114,28 @@ const isPassword = ref(false)
 const errorEmail = ref(false)
 const agreements = ref(false)
 const errorPassword = ref(false)
+
+onMounted(() => {
+    thirdLogin()
+})
+
+const thirdLogin = () => {
+    const code = location.href.split('=')[1]
+    if (code) {
+        const url = '/auth/giteeLogin?code=' + code
+        get(url)
+        .then ((res: any) => {
+            store.setUserInfo(res.userId, res.shortToken, res.longToken, res.chatToken, false)
+            store.localSetUserInfo(res.userId, res.shortToken, res.longToken, res.chatToken, false)
+            
+            successMsg('登录成功')
+            router.push('/')
+        })
+        .catch((err:any) => {
+            console.log(err);
+        })
+    }
+}
 
 const judgeAccountInput = () => {
     isEmail.value = judgeEmail(email.value)
@@ -453,6 +477,10 @@ const register = () => router.push('/register')
                     font-size: 12px;
                     color: rgb(187, 186, 186);
                     user-select: none;
+                }
+
+                a {
+                    text-decoration: none;
                 }
 
                 i {

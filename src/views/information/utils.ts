@@ -20,7 +20,7 @@ export const getUserDetail = async() => {
         detail.value.fullName = res.fullName === '' ? '未填写' : res.fullName,
         detail.value.idCard = res.idCard === '' ? '未填写' : res.idCard,
         detail.value.description = res.description === '' ? '未填写' : res.description,
-        detail.value.avatar = res.url  === '' ? '/src/assets/images/avatar.png' : res.url
+        detail.value.avatar = res.url  === '' ? 'https://cloudmind.top/assets/avatar.png' : res.url
         store.setUserDetail(detail.value.name, detail.value.sex, detail.value.description, detail.value.avatar)
     })
     return detail.value

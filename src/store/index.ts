@@ -10,7 +10,7 @@ export const useStore = defineStore('user', {
             userIntroduce: "",
             userAccount: "",
             userPassword: "",  
-            userAvatar: "/src/assets/images/avatar.png",
+            userAvatar: "https://cloudmind.top/assets/avatar.png",
             shortToken: "",
             longToken: "",
             fatherId: "",
