@@ -5,6 +5,10 @@ import { ref } from "vue"
 const store = useStore()
 
 export const getUserDetail = async() => {
+    if (sessionStorage.getItem('LongToken') === null && localStorage.getItem('LongToken') === null) {
+        return 
+    }
+    
     const detail = ref({
         name: '',
         sex: '',

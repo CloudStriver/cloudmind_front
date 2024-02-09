@@ -3,6 +3,7 @@ import { useStore } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { ref } from 'vue'
+import { errorMsg } from './message'
 
 interface myResponseType<T> extends AxiosResponse {
     code: number,
@@ -22,8 +23,18 @@ const service = axios.create({
 const store = useStore()
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const localToken = localStorage.getItem('ShortToken')
-    config.headers['Authorization'] = localToken
+    // const localToken = localStorage.getItem('ShortToken')
+    if (localStorage.getItem('LongToken') === null && sessionStorage.getItem('LongToken') === null) {
+      return config
+    }
+    else if (localStorage.getItem('LongToken') === null && sessionStorage.getItem('LongToken') !== null) {
+      const localToken = sessionStorage.getItem('ShortToken')
+      config.headers['Authorization'] = localToken
+    }
+    else {
+      const localToken = localStorage.getItem('ShortToken')
+      config.headers['Authorization'] = localToken
+    }
     
     return config
   },
@@ -32,45 +43,45 @@ service.interceptors.request.use(
   }
 )
 
-const reqCounts = ref(0)
 service.interceptors.response.use(
   (response: any) => {
     return response.data
   },
   (error: any) => {
     const status = error.response.status
-        
     if (status === 401) {
-      const longToken = localStorage.getItem('LongToken')
-      
-      if (longToken) {
-        post('/auth/refreshToken', { longToken })
-        .then((response: any) => {
-          if (response.msg === 'token有误') {
-            store.loginOut()
-            ElMessage.error('登录过期，请重新登录')
+      if (localStorage.getItem('isAutoLogin') === "true") {//自动登录情况
+        const longToken = localStorage.getItem('LongToken')
+        if (longToken) {
+          try {
+            post('/auth/refreshToken', { longToken })
+            .then((res: any) => {
+              if (res !== undefined) {
+                store.setUserLocal (res.shortToken, res.longToken, res.userId)
+                return service(error.config)
+              }
+              else {
+                store.loginOut()
+                ElMessage.error('登录过期，请重新登录')
+              }
+            })
           }
-          else {
-            if (reqCounts.value < 2) {
-              reqCounts.value ++
-              const res = response.data
-              store.updateToken(res.shortToken, res.longToken, res.chatToken)
-              return service(error.config)
-            }
-            else {
-              store.loginOut()
-              ElMessage.error('登录过期，请重新登录')
-            }
+          catch (error: any) {
+            errorMsg(error)
           }
-        })
-        .catch((error: any) => {
-          console.log(error);
-        })
+        }
+        else {
+          store.loginOut()
+          ElMessage.error('请前往登录')
+        }
       }
-      else {
-        store.loginOut()
-        ElMessage.error('请登录')
-        return Promise.reject('请登录')
+      else if (sessionStorage.getItem('isAutoLogin') === "false") {
+        const longToken = sessionStorage.getItem('LongToken')
+        post('/auth/refreshToken', { longToken })
+        .then((res: any) => {
+          store.setUserSession (res.shortToken, res.longToken, res.userId)
+          return service(error.config)
+        })
       }
     }
     else if (status === 404) {

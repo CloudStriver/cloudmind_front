@@ -60,7 +60,7 @@ const mouseDown = (event: MouseEvent) => {
         clickX = event.clientX
         sliderLeft.value = clickX - trackLeft.value
         minX.value = clickX
-        maxX.value = minX.value + 190   
+        maxX.value = minX.value + 230   
     } 
 }
 
@@ -69,15 +69,15 @@ const mouseMove = (event: MouseEvent) => {
         sliderX.value = event.clientX - trackLeft.value - sliderLeft.value
         if (sliderX.value < 0) {
             sliderX.value = 0
-        } else if (sliderX.value > 190) {
-            sliderX.value = 190
+        } else if (sliderX.value > 230) {
+            sliderX.value = 230
         }
     }
 }
 
 const mouseUp = () => {
     if (isMouseDown.value) {
-        if (sliderX.value < 190) {
+        if (sliderX.value < 230) {
             errorMsg("验证失败，请重新验证")
             isCaptcha.value = "error"
             slider.value.classList.add("slider-error")
@@ -91,7 +91,7 @@ const mouseUp = () => {
         } 
         else {
             successMsg("验证成功")
-            sliderX.value = 190
+            sliderX.value = 230
             isCaptcha.value = "success"
             slider.value.classList.add("slider-success")
             filled.value.classList.add("filled-success")
@@ -117,8 +117,8 @@ defineExpose({
 <style scoped lang="css">
 .track {
     position: relative;
-    width: 220px;
-    height: 30px;
+    width: 260px;
+    height: 38px;
     background-color: #f4f9ff;
     box-shadow: inset 0 0 2px #c9c9c9;
     display: flex;
@@ -129,7 +129,7 @@ defineExpose({
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
-        font-size: 11px;
+        font-size: 13px;
         color: rgb(153, 153, 153);
         user-select: none;
     }
@@ -138,7 +138,7 @@ defineExpose({
     .filled-success,
     .filled-error {
         position: absolute;
-        height: 30px;
+        height: 38px;
         border: 0.1px solid #1991fa;
         background-color: #cee8fe;
     }
@@ -157,8 +157,8 @@ defineExpose({
     .slider-success,
     .slider-error {
         position: absolute;
-        width: 30px;
-        height: 30px;
+        width: 38px;
+        height: 38px;
         color: #afaeae;
         background-color: #fff;
         box-shadow: 0 0 2px 0.6px #c9c9c9;
