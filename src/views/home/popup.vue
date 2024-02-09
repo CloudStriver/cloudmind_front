@@ -21,18 +21,30 @@
 import { useStore } from '@/store/index'
 import { onMounted, ref } from 'vue'
 import { successMsg } from '@/utils/message';
+import { getUserDetail } from '../information/utils';
 
 const store = useStore()
 const isLogin = ref(false)
 
 onMounted(() => {
-    isLogin.value = store.getUserId() === "" ? false : true
+    judgeIsLogin()
 })
+
+const judgeIsLogin = () => {
+    if (localStorage.getItem('LongToken') || sessionStorage.getItem('LongToken')) {
+        isLogin.value = true
+    }
+    else {
+        isLogin.value = false
+    }
+}
 
 const logout = () => {
     store.loginOut()
     isLogin.value = false
+    getUserDetail()
     successMsg('退出登录成功')
+    location.reload()
 }
 </script>
 

@@ -15,7 +15,7 @@ export const useStore = defineStore('user', {
             longToken: "",
             fatherId: "",
             fatherIdName: "",
-            isAutoLogin: false
+            isAutoLogin: "false"
         }
     },
 
@@ -28,46 +28,53 @@ export const useStore = defineStore('user', {
         },
         getUserId () {
             if (this.userId == "") {
-                this.userId = localStorage.getItem("UserId") || ""
+                if (localStorage.getItem('LongToken') || sessionStorage.getItem('LongToken')) {
+                    this.userId = localStorage.getItem("UserId") || ""
+                }
             }
             return this.userId 
         },
         setFatherId (fatherId: string) {
             this.fatherId = fatherId
         },
-        
-        setUserInfo (userId: string, shortToken:string, longToken:string, chatToken:string, isAutoLogin:boolean) {
+
+        setUserSession (shortToken: string, longToken: string, userId: string) {
             this.userId = userId
             this.shortToken = shortToken
             this.longToken = longToken
-            this.isAutoLogin = isAutoLogin
-        },
+            this.isAutoLogin = "false"
 
-        localSetUserInfo (userId: string, shortToken:string, longToken:string, chatToken:string, isAutoLogin:boolean) {
+            sessionStorage.setItem("UserId", userId)
+            sessionStorage.setItem("ShortToken", shortToken)
+            sessionStorage.setItem("LongToken", longToken)
+            sessionStorage.setItem("isAutoLogin", "false")
+        },
+        setUserLocal (shortToken: string, longToken: string, userId: string) {
+            this.userId = userId
+            this.shortToken = shortToken
+            this.longToken = longToken
+            this.isAutoLogin = "true"
+
             localStorage.setItem("UserId", userId)
             localStorage.setItem("ShortToken", shortToken)
             localStorage.setItem("LongToken", longToken)
-            localStorage.setItem("ChatToken", chatToken)
-            localStorage.setItem("IsAutoLogin", isAutoLogin ? "true" : "false")
-        },
-
-        updateToken (shortToken:string, longToken:string, chatToken:string) {
-            localStorage.setItem("ShortToken", shortToken)
-            localStorage.setItem("LongToken", longToken)
-            localStorage.setItem("ChatToken", chatToken)
-
-            this.shortToken = shortToken
-            this.longToken = longToken
+            localStorage.setItem("isAutoLogin", "true")
         },
 
         loginOut () {
             localStorage.removeItem("UserId")
             localStorage.removeItem("ShortToken")
             localStorage.removeItem("LongToken")
+            sessionStorage.removeItem("UserId")
+            sessionStorage.removeItem("ShortToken")
+            sessionStorage.removeItem("LongToken")
+            localStorage.removeItem("isAutoLogin")
+            sessionStorage.removeItem("isAutoLogin")
 
             this.userId = ""
             this.shortToken = ""
             this.longToken = ""
+            this.isAutoLogin = ""
         }
     }
 })

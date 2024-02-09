@@ -1,10 +1,10 @@
 <template>
     <div class="main-box">
-        <img src="../../assets/images/background-circle.png" class="circle">
         <div class="panel">
+            <img src="../../assets/images/background-circle.png" class="circle">
             <img 
+                class="illustration"
                 src="../../assets/images/illustration.png" 
-                style="transform: scale(0.7); -webkit-user-drag: none;"
             >
             <div class="contents">
                 <div class="cloudmind">
@@ -16,28 +16,34 @@
                 </div>
                 <div class="input">
                     <div class="email">
-                        <i class="iconfont icon-user-solid"
-                            style="color: rgb(187, 186, 186)">
+                        <i 
+                            class="iconfont icon-user-solid"
+                            style="color: rgb(187, 186, 186); font-size: 18px;"
+                        >
                         </i>
-                        <input class="email-input" 
-                               type="text"
-                               placeholder="邮箱"
-                               v-model="email"
-                               @input="judgeAccountInput"
-                               @blur="judgeAccountBlur"
+                        <input 
+                            class="email-input" 
+                            type="text"
+                            placeholder="邮箱"
+                            v-model="email"
+                            @input="judgeAccountInput"
+                            @blur="judgeAccountBlur"
                         >
                     </div>
                     <div class="email-msg" v-show="errorEmail">* {{ errorEmailMsg }}</div>
                     <div class="password">
-                        <i class="iconfont icon-lock-solid" 
-                           style="color: rgb(187, 186, 186)">
+                        <i 
+                            class="iconfont icon-lock-solid" 
+                            style="color: rgb(187, 186, 186)"
+                        >
                         </i>
-                        <input class="password-input" 
-                               type="password"
-                               placeholder="密码"
-                               v-model="password"
-                               @input="judgePasswordInput"
-                               @blur="judgePasswordBlur"
+                        <input 
+                            class="password-input" 
+                            type="password"
+                            placeholder="密码"
+                            v-model="password"
+                            @input="judgePasswordInput"
+                            @blur="judgePasswordBlur"
                         >
                     </div>
                     <div class="password-msg" v-show="errorPassword">* {{ errorPasswordMsg }}</div>
@@ -46,15 +52,17 @@
                     </div>
                     <div class="auto-forget">
                         <div>
-                            <input type="checkbox" 
-                                   id="checkbox"
-                                   class="checkbox-input"
+                            <input 
+                                v-model="isAutoLogin"
+                                type="checkbox" 
+                                id="checkbox"
+                                class="checkbox-input"
                             >
                             <label class="checkbox-lable" for="checkbox">自动登录</label>
                         </div>
                         <div class="forget">忘记密码?</div>
                     </div>
-                    <button class="login-button" @click="login">登录</button>
+                    <button class="login-button" @click="login">登 录</button>
                     <div class="agreements">
                         <input 
                             type="checkbox" 
@@ -73,21 +81,7 @@
                         >隐私政策</router-link>
                     </div>
                 </div>
-                <div class="third">
-                    <div class="third-login">
-                        <div></div>
-                        <div>第三方登录</div>
-                        <div ></div>
-                    </div>
-                    <div>
-                        <i class="iconfont icon-qq qq"></i>
-                        <i class="iconfont icon-weixin weixin"></i>
-                        <i class="iconfont icon-gitub gitub"></i>
-                        <a href="https://gitee.com/oauth/authorize?client_id=10dfe502136745d1f135474390c4cb6cd50fce3a5bf7a167891d3b0ec184d2eb&redirect_uri=https://apisix.cloudmind.top/auth/githubLogin&response_type=code" target="_blank">
-                            <i class="iconfont icon-gitee1 gitee"></i>
-                        </a>
-                    </div>
-                </div>
+                <Third></Third>
             </div>
         </div>
     </div> 
@@ -95,6 +89,7 @@
 
 <script setup lang="ts">
 import Captcha from '@/components/captcha.vue'
+import Third from './third-login.vue'
 import router from '@/router'
 import { ref, onMounted } from 'vue'
 import { post, get } from '@/utils/request';
@@ -113,6 +108,7 @@ const isCaptcha = ref(false)
 const isPassword = ref(false)
 const errorEmail = ref(false)
 const agreements = ref(false)
+const isAutoLogin = ref(false)
 const errorPassword = ref(false)
 
 onMounted(() => {
@@ -125,8 +121,7 @@ const thirdLogin = () => {
         const url = '/auth/giteeLogin?code=' + code
         get(url)
         .then ((res: any) => {
-            store.setUserInfo(res.userId, res.shortToken, res.longToken, res.chatToken, false)
-            store.localSetUserInfo(res.userId, res.shortToken, res.longToken, res.chatToken, false)
+            store.setUserLocal (res.shortToken, res.longToken, res.userId)
             
             successMsg('登录成功')
             router.push('/')
@@ -211,9 +206,12 @@ const login = () => {
             password: password.value
         })
         .then ((res: any) => {
-            store.setUserInfo(res.userId, res.shortToken, res.longToken, res.chatToken, false)
-            store.localSetUserInfo(res.userId, res.shortToken, res.longToken, res.chatToken, false)
-            
+            if (!isAutoLogin.value) {
+                store.setUserSession (res.shortToken, res.longToken, res.userId)
+            }
+            else {
+                store.setUserLocal (res.shortToken, res.longToken, res.userId)
+            }
             successMsg('登录成功')
             router.push('/')
         })
@@ -238,54 +236,61 @@ const register = () => router.push('/register')
  
 <style scoped lang="css">
 .main-box {
+    position: relative;
     width: 100%;
     height: 100%;
     background-color: rgba(240, 245, 255, 1);
-
-    .circle {
-        position: absolute;
-        bottom: 2%;
-        right: 5%;
-        width: 25%;
-        height: 51%;
-        -webkit-user-drag: none;
-    }
+    padding: 30px;
+    display: flex;
+    overflow: auto;
 
     .panel {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: 1200px;
-        height: 600px;
+        position: relative;
+        width: 1400px;
+        height: 700px;
         border-radius: 80px;
         background: rgba(207, 227, 252, 0.6);
         box-shadow: 0px 1px 7px 2px rgba(114, 157, 224, 0.51);
+        margin: auto;
         display: flex;
         align-items: center;
         justify-content: space-around;
 
+        .circle {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            right: -200px;
+            bottom: -120px;
+        }
+
+        .illustration {
+            transform: scale(0.85);
+            -webkit-user-drag: none;
+        }
+
         .contents {
-            width: 360px;
+            width: 400px;
             height: auto;
             border-radius: 25px;
             margin-right: 100px;
             padding: 16px;
-            padding-bottom: 50px;
+            padding-bottom: 40px;
             background-color: #fff;
 
             .cloudmind {
+                margin-bottom: 20px;
                 display: flex;
                 justify-content: center;
             }
             .cloudmind img {
-                transform: scale(0.7); 
+                transform: scale(0.82); 
                 -webkit-user-drag: none;
             }
 
             .switch {
-                width: 45%;
-                height: 40px;
+                width: 50%;
+                height: 50px;
                 background: rgba(243, 247, 251, 1);
                 border-radius: 10px;
                 margin: 0px 0 15px 53px;
@@ -298,7 +303,7 @@ const register = () => router.push('/register')
                     width: 48%;
                     height: 70%;
                     border: none;
-                    font-size: 13px;
+                    font-size: 14px;
                 }
                 button:first-child {
                     font-weight: 700;
@@ -326,13 +331,13 @@ const register = () => router.push('/register')
 
                 .email, 
                 .password {
-                    width: 220px;
-                    height: 32px;
+                    width: 260px;
+                    height: 40px;
                     box-shadow: inset 0 0 1px 1px rgba(224, 223, 223, 0.981);
-                    border-radius: 3px;
+                    border-radius: 5px;
                     padding-left: 10px;
                     padding-right: 1px;
-                    margin-bottom: 15px;
+                    margin-bottom: 20px;
                     display: flex;
                     flex-direction: row;
                     align-items: center;
@@ -354,28 +359,28 @@ const register = () => router.push('/register')
                 }
                 .email-input::placeholder,
                 .password-input::placeholder {
-                    font-size: 13px;
+                    font-size: 15px;
                     color: rgb(187, 186, 186);
                 }
 
                 .email-msg,
                 .password-msg {
                     position: absolute;
-                    font-size: 10px;
+                    font-size: 12px;
                     color: #d84141;
                     left: 55px;
                 }
 
                 .email-msg {
-                    top: 32px;
+                    top: 41px;
                 }
                 .password-msg {
-                    top: 79px;
+                    top: 102px;
                 }
 
                 .captcha {
-                    width: 220px;
-                    height: 32px;
+                    width: 260px;
+                    height: 40px;
                     margin-bottom: 15px;
                     display: flex;
                     flex-direction: row;
@@ -384,17 +389,17 @@ const register = () => router.push('/register')
                 }
 
                 .auto-forget {
-                    width: 220px;
-                    font-size: 11px;
+                    width: 260px;
+                    font-size: 12px;
                     margin-bottom: 15px;
                     display: flex;
                     justify-content: space-between;
+                    align-items: center;
 
                     .checkbox-input {
                         cursor: pointer;
                         margin-right: 5px;
                         vertical-align: middle;
-                        
                     }
                     .checkbox-lable {
                         color: rgb(88, 88, 88); 
@@ -422,13 +427,13 @@ const register = () => router.push('/register')
                 }
 
                 .login-button {
-                    width: 220px;
-                    height: 32px;
+                    width: 260px;
+                    height: 40px;
                     border: none;
                     cursor: pointer;
-                    font-size: 14px;
+                    font-size: 15px;
                     border-radius: 10px;
-                    margin-bottom: 10px;
+                    margin-bottom: 15px;
                     color: #fff;
                     background: linear-gradient(155.11deg, rgba(30, 168, 255, 1) 0%, rgba(59, 142, 231, 0.4) 100%);
                     transition: all 0.5s;
@@ -441,8 +446,9 @@ const register = () => router.push('/register')
                 }
 
                 .agreements {
-                    font-size: 10px;
+                    font-size: 12px;
                     margin-right: 7px;
+                    margin-bottom: 10px;
 
                     .agreement-lable {
                         color: rgb(111, 111, 111); 
@@ -452,53 +458,23 @@ const register = () => router.push('/register')
                     }
                 }
             }
-
-            .third {
-                width: 100%;
-                height: 60px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: space-between;
-
-                .third-login {
-                    width: 300px;
-                    display: flex; 
-                    justify-content: center;
-                    align-items: center;
-                }
-                .third-login div:first-child,
-                .third-login div:last-child {
-                    width: 70px;
-                    height: 0.1px;
-                    background-color: rgb(187, 186, 186);
-                }
-                .third-login div:nth-child(2) {
-                    font-size: 12px;
-                    color: rgb(187, 186, 186);
-                    user-select: none;
-                }
-
-                a {
-                    text-decoration: none;
-                }
-
-                i {
-                    font-size: 25px;
-                    margin: 0 8px;
-                    cursor: pointer;
-                }
-                .qq {
-                    color: rgb(78, 186, 248);
-                }
-                .weixin {
-                    color: rgb(71, 211, 118);
-                }
-                .gitee {
-                    color: #d83d3d;
-                }
-            }
         }
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .contents {
+        position: absolute;
+        width: 1600px;
+        height: 800px;
+        border-radius: 100px;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .illustration {
+        display: none;
     }
 }
 </style>
