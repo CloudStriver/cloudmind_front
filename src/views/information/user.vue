@@ -146,7 +146,7 @@ const detail = ref({
 const select = ref('个人资料')
 
 onMounted(async() => {
-    detail.value = await getUserDetail()
+    detail.value = await getUserDetail() as any
 })
 
 const splitName = (name: string) => {
@@ -168,7 +168,7 @@ const changeAvatar = async(event: any) => {
         const md5 = spark.end();
         const suffix = '.' + file.name.split('.').pop();
         cosUploadAvatar(file, md5, suffix, async () => {
-            detail.value = await getUserDetail()
+            detail.value = await getUserDetail() as any
             location.reload()
         })
     }

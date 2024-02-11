@@ -26,16 +26,17 @@ export const useStore = defineStore('user', {
             this.userIntroduce = description
             this.userAvatar = avatar
         },
-        getUserId () {
-            if (this.userId == "") {
-                if (localStorage.getItem('LongToken') || sessionStorage.getItem('LongToken')) {
-                    this.userId = localStorage.getItem("UserId") || ""
-                }
-            }
-            return this.userId 
-        },
         setFatherId (fatherId: string) {
             this.fatherId = fatherId
+        },
+        getUserId () {
+            if (sessionStorage.getItem("UserId") !== null) {
+                this.userId = sessionStorage.getItem("UserId") as string
+            }
+            else if (localStorage.getItem("UserId") !== null) {
+                this.userId = localStorage.getItem("UserId") as string
+            }
+            return this.userId
         },
 
         setUserSession (shortToken: string, longToken: string, userId: string) {
