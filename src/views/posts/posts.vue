@@ -58,12 +58,14 @@
                                     </div>
                                     <i class="iconfont icon-gengduo i"></i>
                                 </div>
-                                <div
-                                    class="tag"
-                                    v-for="(tag, index) in post.tags.slice(0, 3)"
-                                    :key="index"
-                                >
-                                    <button>{{ tag }}</button>
+                                <div class="tag-box">
+                                    <div
+                                        class="tag"
+                                        v-for="(tag, index) in post.tags.slice(0, 3)"
+                                        :key="index"
+                                    >
+                                        <button>{{ tag }}</button>
+                                    </div>
                                 </div>
                             </footer>
                         </div>
@@ -299,17 +301,21 @@ const mouseleavePopup = () => { isPopup.value = false }
                             }
                         }
 
-                        .tag {
+                        .tag-box {
                             display: flex;
-
-                            button {
-                                background-color: #b0d3f8;
-                                color: #fff;
-                                border: none;
-                                border-radius: 5px;
-                                padding: 5px 10px;
-                                margin-right: 10px;
-                                cursor: pointer;
+                            
+                            .tag {
+                                display: flex;
+    
+                                button {
+                                    background-color: #b0d3f8;
+                                    color: #fff;
+                                    border: none;
+                                    border-radius: 5px;
+                                    padding: 5px 10px;
+                                    margin-right: 10px;
+                                    cursor: pointer;
+                                }
                             }
                         }
                     }
