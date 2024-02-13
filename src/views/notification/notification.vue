@@ -26,7 +26,10 @@
             <section class="section">
                 <div class="notification-box">
                     <div class="section-top">
-                        <div style="font-size: 22px; font-weight: 700;">通知中心</div>
+                        <div class="notifications">
+                            <div style="font-size: 22px; font-weight: 700;">通知中心</div>
+                            <div class="notifications-count">126</div>
+                        </div>
                         <label for="">
                             <input type="radio" name="select">
                         </label>
@@ -44,7 +47,7 @@
                         </label>
                     </div>
                     <div class="section-bottom">
-
+                        <div class="notification"></div>
                     </div>
                 </div>
             </section>
@@ -142,7 +145,7 @@ const mouseleavePopup = () => { isPopup.value = false }
             position: relative;
             width: 100%;
             flex: 1;
-            padding: 0 10% 0;
+            padding: 0 28% 0;
             margin: 0 10% 130px 10%;
             top: 100px;
             overflow-y: auto;
@@ -160,12 +163,35 @@ const mouseleavePopup = () => { isPopup.value = false }
                     display: flex;
                     align-items: center;
                     justify-content: space-around;
+
+                    .notifications {
+                        position: relative;
+
+                        .notifications-count {
+                            position: absolute;
+                            height: 30px;
+                            padding: 0 5px;
+                            color: #fff;
+                            background-color: #de3032;
+                            border-radius: 50%;
+                            right: -30px;
+                            top: -15px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                    }
                 }
 
                 .section-bottom {
                     width: 100%;
                     flex: 1;
                     background-color: #fff;
+
+                    .notification {
+                        width: 100%;
+                        background-color: #762222;
+                    }
                 }
             }
         }
