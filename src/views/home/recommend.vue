@@ -48,7 +48,6 @@
                             name="select-classify"
                             v-model="selectClassify"
                             value="goods"
-                            checked
                         >
                         <label for="goods">商品</label>
                     </div>
@@ -69,6 +68,7 @@
                             name="select-classify"
                             v-model="selectClassify"
                             value="posts"
+                            checked
                         >
                         <label for="posts">帖子</label>
                     </div>
@@ -103,7 +103,7 @@ import ShowRecommend from './show-recommend.vue'
 
 const isShowClassify = ref(false)
 const selectMain = ref('hot')
-const selectClassify = ref('goods')
+const selectClassify = ref('posts')
 
 const mouseleaveClassifyPop = () => {
     const popup = document.querySelector('.more-box') as Element

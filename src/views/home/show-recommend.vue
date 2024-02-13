@@ -137,6 +137,8 @@ const getShow = () => {
         const url = '/content/getPopularRecommend?category=' + judgeType(classify)
         get(url)
         .then((res: any) => {
+            console.log(res);
+            
             responseDetail.value = {
                 posts: res.recommends.posts.map((post: any) => ({
                     postId: post.postId,

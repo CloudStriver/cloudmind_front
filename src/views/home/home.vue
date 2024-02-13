@@ -8,6 +8,7 @@
                     <div class="header-right">
                         <i class="iconfont icon-calendar-check-solid"></i>
                         <router-link to="/notification" style="text-decoration: none;">
+                            <div class="notifications-count"></div>
                             <i class="iconfont icon-bell"></i>
                         </router-link>
                         <i class="iconfont icon-cog-solid"></i>
@@ -108,6 +109,22 @@ onMounted(() => {
                 .header-right {
                     display: flex;
                     align-items: center;
+                    position: relative;
+
+                    .notifications-count {
+                        position: absolute;
+                        width: 13px;
+                        height: 13px;
+                        color: #fff;
+                        background-color: #de3032;
+                        border: 3px solid rgba(207, 227, 252, 1);
+                        border-radius: 50%;
+                        right: 128px;
+                        top: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
                     
                     i {
                         font-size: 20px;
