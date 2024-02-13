@@ -19,7 +19,7 @@ export const getOtherPosts = async () => {
     const postsList = ref<responseGetOtherPosts>({
         posts: []
     })
-    await get('/content/getOtherPosts')
+    await get('/content/getPosts')
     .then((res: any) => {
         postsList.value = {
             posts: res.posts.map((post: any) => ({
