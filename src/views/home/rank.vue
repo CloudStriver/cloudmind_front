@@ -7,7 +7,7 @@
 
 <style scoped lang="css">
 .main-box {
-    width: 450px;
+    width: 400px;
     height: 520px;
     background-color: #fff;
 }

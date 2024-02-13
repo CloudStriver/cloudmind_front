@@ -84,9 +84,12 @@ import popup from '@/views/home/popup.vue'
 import { ref, onMounted } from 'vue'
 import { getOtherPosts } from './utils'
 import { post } from '@/utils/request'
+import { useStore } from '@/store/index'
 import type { responseGetOtherPosts } from './utils'
+import { errorMsg } from '@/utils/message'
 
 const isPopup = ref(false)
+const store = useStore()
 const postsList = ref<responseGetOtherPosts>({
     posts: []
 })
@@ -96,7 +99,11 @@ onMounted(async () => {
 })
 
 const likePost = (thisPost: any) => {
-    //还需要判断用户是否登录，只有登录才可以点赞
+    const longToken = store.getUserLongToken()
+    if (!longToken) {
+        errorMsg('请先登录')
+        return
+    }
     post('/relation/createRelation', {
         toId: thisPost.postId,
         toType: 4,
