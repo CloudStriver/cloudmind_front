@@ -151,32 +151,33 @@ onMounted(() => {
         .section-bottom {
             width: 100%;
             padding: 0 2% 0;
+            margin-bottom: 20px;
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
 
             .recommend {
-                max-width: 740px;
+                width: 790px;
                 height: 780px;
                 margin-right: 10px;
             }
 
             .right {
+                width: 400px;
                 height: 780px;
                 display: flex;
                 flex-direction: column;
 
                 .rank {
-                    width: 450px;
+                    max-width: 400px;
                     height: 520px;
                     background-color: #fff;
                     margin-bottom: 10px;
                 }
 
                 .announced {
-                    width: 450px;
+                    max-width: 400px;
                     height: 250px;
                     background-color: #fff;
                 }
@@ -190,6 +191,34 @@ onMounted(() => {
             margin-top: 50px; display: flex; 
             align-items: center; 
             justify-content: center;
+        }
+    }
+}
+
+@media screen and (max-width: 1000px){
+
+    .section-top {
+        width: 100%;
+    }
+    .section-bottom {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+
+        display: flex;
+        flex-direction:  column;
+
+        .recommend {
+            width: 100%;
+            margin-right: 0;
+        }
+
+        .rank {
+            width: 100%;
+        }
+
+        .announced {
+            width: 100%;
         }
     }
 }

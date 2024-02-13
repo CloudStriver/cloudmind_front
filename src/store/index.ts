@@ -61,6 +61,15 @@ export const useStore = defineStore('user', {
             localStorage.setItem("LongToken", longToken)
             localStorage.setItem("isAutoLogin", "true")
         },
+        getUserLongToken () {
+            if (sessionStorage.getItem("LongToken") !== null) {
+                this.longToken = sessionStorage.getItem("LongToken") as string
+            }
+            else if (localStorage.getItem("LongToken") !== null) {
+                this.longToken = localStorage.getItem("LongToken") as string
+            }
+            return this.longToken
+        },
 
         loginOut () {
             localStorage.removeItem("UserId")
