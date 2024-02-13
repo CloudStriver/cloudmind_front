@@ -2,27 +2,7 @@
     <div class="main-box">
         <Nav class="nav"></Nav>
         <div class="contents">
-            <header class="header">
-                <div class="header-layout">
-                    <search class="search"></search>
-                    <div class="header-right">
-                        <i class="iconfont icon-calendar-check-solid"></i>
-                        <i class="iconfont icon-bell"></i>
-                        <i class="iconfont icon-cog-solid"></i>
-                        <avatar 
-                            class="avatar" 
-                            @mouseover="mouseoverPopup"
-                            @mouseleave="mouseleavePopup"
-                        ></avatar>
-                        <popup 
-                            class="popup"
-                            v-show="isPopup"
-                            @mouseover="mouseoverPopup"
-                            @mouseleave="mouseleavePopup"
-                        ></popup>
-                    </div>
-                </div>
-            </header>
+            <CHeader class="header"></CHeader>
             <section class="section">
                 <div class="posts-box">
                     <div class="add-post">
@@ -34,7 +14,10 @@
                         :key="index"
                     >
                         <div class="posts">
-                            <header class="posts-header">{{ post.title }}</header>
+                            <header 
+                                class="posts-header"
+                                @click="toPostDetail(post.postId)"
+                            >{{ post.title }}</header>
                             <section class="posts-section">
                                 {{ post.userName }}: {{ post.text }}
                             </section>
@@ -78,17 +61,15 @@
 
 <script setup lang="ts">
 import Nav from '@/components/navigation.vue'
-import search from '@/components/search.vue'
-import avatar from '@/components/avatar.vue'
-import popup from '@/views/home/popup.vue'
+import CHeader from '@/components/header.vue'
 import { ref, onMounted } from 'vue'
 import { getOtherPosts } from './utils'
 import { post } from '@/utils/request'
 import { useStore } from '@/store/index'
 import type { responseGetOtherPosts } from './utils'
 import { errorMsg } from '@/utils/message'
+import router from '@/router'
 
-const isPopup = ref(false)
 const store = useStore()
 const postsList = ref<responseGetOtherPosts>({
     posts: []
@@ -97,6 +78,11 @@ const postsList = ref<responseGetOtherPosts>({
 onMounted(async () => {
     postsList.value = await getOtherPosts()
 })
+
+const toPostDetail = (postId: string) => {
+    router.push('/post/' + postId)
+    console.log('跳转');
+}
 
 const likePost = (thisPost: any) => {
     const longToken = store.getUserLongToken()
@@ -114,9 +100,6 @@ const likePost = (thisPost: any) => {
         thisPost.likeCount ++
     })
 }
-
-const mouseoverPopup = () => { isPopup.value = true } 
-const mouseleavePopup = () => { isPopup.value = false }
 
 </script>
 
@@ -140,68 +123,19 @@ const mouseleavePopup = () => { isPopup.value = false }
         margin-left: 80px;
         display: flex;
         flex-direction: column;
-        align-items: center;
         flex: 1;
         overflow-x: hidden;
-        
+
         .header {
-            position: absolute;
-            width: 100%;
             height: 70px;
-            background-color: rgba(240, 245, 255, 1);
-            padding: 0 2% 0;
-            margin: auto;
-            z-index: 5;
-
-            .header-layout {
-                width: 100%;
-                height: 100%;
-                background-color: rgba(207, 227, 252, 0.6);
-                padding: 0 60px 0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                
-                .search {
-                    width: 300px;
-                    height: 32px;
-                }
-    
-                .header-right {
-                    display: flex;
-                    align-items: center;
-                    
-                    i {
-                        font-size: 20px;
-                        margin-right: 30px;
-                        cursor: pointer;
-                        color: #494848;
-                    }
-    
-                    .avatar {
-                        width: 50px;
-                        height: 50px;
-                    }
-
-                    .popup {
-                        position: absolute;
-                        width: 160px;
-                        height: 80px;
-                        right: 40px;
-                        top: 60px;
-                        z-index: 10;
-                    }
-                }
-            }
         }
         
         .section {
             position: relative;
             width: 100%;
-            height: 100%;
             padding-left: 10%;
             padding-right: 10%;
-            margin-bottom: 10px;
+            flex: 1;
             overflow: hidden;
             overflow-y: auto;
             display: flex;
@@ -211,8 +145,7 @@ const mouseleavePopup = () => { isPopup.value = false }
                 position: absolute;
                 width: 850px;
                 background-color: #ffffff61;
-                padding: 20px 0;
-                margin-top: 80px;
+                padding: 20px;
                 flex: 1;
                 display: flex;
                 flex-direction: column;
@@ -244,10 +177,10 @@ const mouseleavePopup = () => { isPopup.value = false }
                 .posts {
                     width: 800px;
                     background-color: #fff;
-                    border-radius: 50px;
+                    border-radius: 10px;
                     box-shadow: 0 0 10px 2px #0808081f;
                     padding: 20px 30px;
-                    margin-bottom: 50px;
+                    margin-bottom: 20px;
                     display: flex;
                     flex-direction: column;
 
@@ -255,6 +188,11 @@ const mouseleavePopup = () => { isPopup.value = false }
                         font-size: 20px;
                         font-weight: 700;
                         margin-bottom: 10px;
+                        cursor: pointer;
+                    }
+                    .posts-header:hover {
+                        color: #6d99ec;
+                        text-decoration: underline;
                     }
 
                     .posts-section {

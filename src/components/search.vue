@@ -27,7 +27,7 @@
         height: 96%;
         border: none;
         outline: none;
-        flex: 1
+        flex: 1;
     }
     input::placeholder {
         color: rgb(165, 165, 165);
