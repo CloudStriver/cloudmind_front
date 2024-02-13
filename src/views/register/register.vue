@@ -264,7 +264,7 @@ const register = () => {
                     password: password.value,
                 })
                 .then((res: any) => {
-                    store.setUserSessionToken(res.shortToken, res.longToken)
+                    store.setUserSession(res.shortToken, res.longToken, res.userId)
 
                     successMsg('注册成功')
                     router.push('/')
