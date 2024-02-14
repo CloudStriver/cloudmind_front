@@ -3,6 +3,7 @@
         <router-link 
             to="/user"
             class="user"
+            v-if="isLogin"
         >个人信息</router-link>
         <router-link
             to="/login"
@@ -52,20 +53,24 @@ const logout = () => {
 .main-box {
     background: #ffffff;
     box-shadow: 0 0 20px 2px rgba(72, 72, 72, 0.1);
-    padding: 8px 5px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
 
     .user,
     .login {
+        height: 20px;
         text-decoration: none;
         font-size: 14px;
         color: rgb(113, 111, 111);
+        margin: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .logout {
+        height: 20px;
         border: none;
         padding: 0;
         margin: 0;
@@ -73,6 +78,7 @@ const logout = () => {
         background-color: #fff;
         color: rgb(113, 111, 111);
         cursor: pointer;
+        margin: 5px;
     }
 
     .user:hover,

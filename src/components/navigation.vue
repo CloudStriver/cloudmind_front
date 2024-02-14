@@ -14,6 +14,7 @@
                 <i class="iconfont icon-home-solid"></i>
             </router-link>
             <router-link
+                v-if="store.getUserLongToken()"
                 :to="'/personal/' + fatherId"
                 class="router"
                 active-class="router-active"

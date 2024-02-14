@@ -50,11 +50,11 @@ onMounted(() => {
     .contents {
         background-color: rgba(240, 245, 255, 1);
         margin-left: 80px;
+        flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        flex: 1;
 
         .section-top {
             width: 100%;
