@@ -2,52 +2,153 @@
     <div class="main-box">
         <Nav class="nav"></Nav>
         <div class="contents">
-            <header class="header">
-                <div class="header-layout">
-                    <search class="search"></search>
-                    <div class="header-right">
-                        <i class="iconfont icon-calendar-check-solid"></i>
-                        <i class="iconfont icon-bell"></i>
-                        <i class="iconfont icon-cog-solid"></i>
-                        <avatar 
-                            class="avatar" 
-                            @mouseover="mouseoverPopup"
-                            @mouseleave="mouseleavePopup"
-                        ></avatar>
-                        <popup 
-                            class="popup"
-                            v-show="isPopup"
-                            @mouseover="mouseoverPopup"
-                            @mouseleave="mouseleavePopup"
-                        ></popup>
-                    </div>
-                </div>
-            </header>
+            <CHeader class="cheader"></CHeader>
             <section class="section">
                 <div class="notification-box">
                     <div class="section-top">
                         <div class="notifications">
                             <div style="font-size: 22px; font-weight: 700;">通知中心</div>
-                            <div class="notifications-count">126</div>
+                            <div class="notification"></div>
+                            <div class="notifications-count">{{ notificationCount }}</div>
                         </div>
-                        <label for="">
-                            <input type="radio" name="select">
-                        </label>
-                        <label for="">
-                            <input type="radio" name="select">
-                        </label>
-                        <label for="">
-                            <input type="radio" name="select">
-                        </label>
-                        <label for="">
-                            <input type="radio" name="select">
-                        </label>
-                        <label for="">
-                            <input type="radio" name="select">
-                        </label>
+                        <div class="classify">
+                            <div>
+                                <input 
+                                    type="radio" 
+                                    name="select"
+                                    id="all"
+                                    checked
+                                >
+                                <label for="all">全部</label>
+                            </div>
+                            <div>
+                                <input 
+                                    type="radio" 
+                                    name="select"
+                                    id="like"
+                                >
+                                <label for="like">点赞</label>
+                            </div>
+                            <div>
+                                <input 
+                                    type="radio" 
+                                    name="select"
+                                    id="follow"
+                                >
+                                <label for="follow">关注</label>
+                            </div>
+                            <div>
+                                <input 
+                                    type="radio" 
+                                    name="select"
+                                    id="collect"
+                                >
+                                <label for="collect">收藏</label>
+                            </div>
+                            <div>
+                                <input 
+                                    type="radio" 
+                                    name="select"
+                                    id="comment"
+                                >
+                                <label for="comment">评论</label>
+                            </div>
+                            <div>
+                                <input 
+                                    type="radio" 
+                                    name="select"
+                                    id="share"
+                                >
+                                <label for="share">分享</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="section-bottom">
-                        <div class="notification"></div>
+                        <div class="notification-detail">
+                            <div class="svg-like">
+                                <i class="iconfont icon-a-dianzan2"></i>
+                            </div>
+                            <div class="content">
+                                <div class="content-top">
+                                    <div class="user">Lansongxxx</div>
+                                    <div>赞了</div>
+                                    <div>你的</div>
+                                    <div>帖子</div>
+                                </div>
+                                <router-link 
+                                    to="/post/1"
+                                    class="content-section"
+                                >语文作业</router-link>
+                                <div class="content-bottom">2024-2-14 13:14</div>
+                            </div>
+                        </div>
+                        <div class="notification-detail">
+                            <div class="svg-comment">
+                                <i class="iconfont icon-a-xiaoxi1"></i>
+                            </div>
+                            <div class="content">
+                                <div class="content-top">
+                                    <div class="user">Lansongxxx</div>
+                                    <div>评论了</div>
+                                    <div>你的</div>
+                                    <div>帖子</div>
+                                </div>
+                                <router-link 
+                                    to="/post/1"
+                                    class="content-section"
+                                >语文作业</router-link>
+                                <div class="content-bottom">2024-2-14 13:14</div>
+                            </div>
+                        </div>
+                        <div class="notification-detail">
+                            <div class="svg-collect">
+                                <i class="iconfont icon-shoucang01"></i>
+                            </div>
+                            <div class="content">
+                                <div class="content-top">
+                                    <div class="user">Lansongxxx</div>
+                                    <div>收藏了</div>
+                                    <div>你的</div>
+                                    <div>帖子</div>
+                                </div>
+                                <router-link 
+                                    to="/post/1"
+                                    class="content-section"
+                                >语文作业</router-link>
+                                <div class="content-bottom">2024-2-14 13:14</div>
+                            </div>
+                        </div>
+                        <div class="notification-detail">
+                            <div class="svg-share">
+                                <i class="iconfont icon-fenxiang"></i>
+                            </div>
+                            <div class="content">
+                                <div class="content-top">
+                                    <div class="user">Lansongxxx</div>
+                                    <div>分享了</div>
+                                    <div>你的</div>
+                                    <div>帖子</div>
+                                </div>
+                                <router-link 
+                                    to="/post/1"
+                                    class="content-section"
+                                >语文作业</router-link>
+                                <div class="content-bottom">2024-2-14 13:14</div>
+                            </div>
+                        </div>
+                        <div class="notification-detail">
+                            <div class="svg-follow">
+                                <i class="iconfont icon-guanzhu"></i>
+                            </div>
+                            <div class="content">
+                                <div class="content-top-">
+                                    <div class="user">Lansongxxx</div>
+                                    <div>关注了</div>
+                                    <div>你</div>
+                                </div>
+                                <div class="content-bottom">2024-2-14 13:14</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -57,14 +158,21 @@
 
 <script setup lang="ts">
 import Nav from '@/components/navigation.vue'
-import search from '@/components/search.vue'
-import avatar from '@/components/avatar.vue'
-import popup from '@/views/home/popup.vue'
-import { ref } from 'vue'
+import CHeader from '@/components/header.vue'
+import { ref, onMounted } from 'vue'
+import { getNotifications, getNotificationsCount } from './utils'
+import type { ResponseGetNotification } from './utils'
 
-const isPopup = ref(false)
-const mouseoverPopup = () => { isPopup.value = true } 
-const mouseleavePopup = () => { isPopup.value = false }
+const notificationCount = ref<number>(0)
+const notificationList = ref<ResponseGetNotification>({
+    notifications: [],
+    token: ''
+})
+
+onMounted(async() => {
+    getNotifications()
+    notificationCount.value = await getNotificationsCount()
+})
 </script>
 
 <style scoped lang="css">
@@ -84,101 +192,82 @@ const mouseleavePopup = () => { isPopup.value = false }
         position: relative;
         background-color: rgba(240, 245, 255, 1);
         margin-left: 80px;
+        flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
-        flex: 1;
-        overflow-x: hidden;
-        overflow-y: auto;
-        
-        .header {
-            position: absolute;
-            width: 100%;
+
+        .cheader {
             height: 70px;
-            background-color: rgba(240, 245, 255, 1);
-            padding: 0 2% 0;
-            margin: auto;
-
-            .header-layout {
-                width: 100%;
-                height: 100%;
-                background-color: rgba(207, 227, 252, 0.6);
-                padding: 0 60px 0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                
-                .search {
-                    width: 300px;
-                    height: 32px;
-                }
-    
-                .header-right {
-                    display: flex;
-                    align-items: center;
-                    
-                    i {
-                        font-size: 20px;
-                        margin-right: 30px;
-                        cursor: pointer;
-                        color: #494848;
-                    }
-    
-                    .avatar {
-                        width: 50px;
-                        height: 50px;
-                    }
-
-                    .popup {
-                        position: absolute;
-                        width: 160px;
-                        height: 80px;
-                        right: 40px;
-                        top: 60px;
-                        z-index: 10;
-                    }
-                }
-            }
         }
 
         .section {
-            position: relative;
             width: 100%;
+            padding-left: 20%;
+            padding-right: 20%;
+            padding-bottom: 20px;
             flex: 1;
-            padding: 0 28% 0;
-            margin: 0 10% 130px 10%;
-            top: 100px;
             overflow-y: auto;
             display: flex;
+            justify-content: center;
 
             .notification-box {
-                flex: 1;
+                width: 100%;
                 display: flex;
                 flex-direction: column;
 
                 .section-top {
-                    height: 100px;
+                    height: 80px;
                     background-color: #fff;
-                    margin-bottom: 5px;
+                    box-shadow: 0 0 10px 0 #0000001a;
+                    padding: 0 20px 0;
+                    margin-bottom: 3px;
                     display: flex;
                     align-items: center;
-                    justify-content: space-around;
+                    justify-content: space-between;
+
+                    .classify {
+                        display: flex;
+
+                        div {
+                            margin-right: 20px;
+
+                            label {
+                                cursor: pointer;
+                                user-select: none;
+                            }
+                            label:hover {
+                                color: #d6e0ed;
+                            }
+
+                            input {
+                                display: none;
+                            }
+                            input:checked + label {
+                                color: #8eaedc;
+                                font-weight: 700;
+                            }
+                        }
+                    }
 
                     .notifications {
                         position: relative;
+                        display: flex;
+                        align-items: center;
+
+                        .notification {
+                            background-color: #762222;
+                        }
 
                         .notifications-count {
-                            position: absolute;
-                            height: 30px;
-                            padding: 0 5px;
+                            height: 20px;
+                            padding: 5px;
+                            margin-left: 10px;
                             color: #fff;
                             background-color: #de3032;
-                            border-radius: 50%;
-                            right: -30px;
-                            top: -15px;
+                            border-radius: 50px;
                             display: flex;
                             align-items: center;
-                            justify-content: center;
                         }
                     }
                 }
@@ -187,10 +276,152 @@ const mouseleavePopup = () => { isPopup.value = false }
                     width: 100%;
                     flex: 1;
                     background-color: #fff;
+                    box-shadow: 0 0 10px 0 #0000001a;
+                    padding: 0 20px;
 
-                    .notification {
+                    .notification-detail {
                         width: 100%;
-                        background-color: #762222;
+                        height: 100px;
+                        border-bottom: 1px solid #f0f0f0;
+                        display: flex;
+                        align-items: center;
+
+                        .svg-like {
+                            width: 55px;
+                            height: 55px;
+                            background-color: #fff;
+                            margin-right: 20px;
+                            border-radius: 50%;
+                            box-shadow: 2px 2px 1px 1px #fcc4c43c;
+                            background-color: #fcc4c4a8;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                            i {
+                                font-size: 20px;
+                                color: #0000006f;
+                                font-weight: 700;
+                            }
+                        }
+                        .svg-comment {
+                            width: 55px;
+                            height: 55px;
+                            background-color: #95c5ff86;
+                            margin-right: 20px;
+                            border-radius: 50%;
+                            box-shadow: 2px 2px 1px 1px #95c5ff3a;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                            i {
+                                font-size: 20px;
+                                color: #0000006f;
+                                font-weight: 700;
+                            }
+                        }
+
+                        .svg-collect {
+                            width: 55px;
+                            height: 55px;
+                            background-color: #fbc97a86;
+                            margin-right: 20px;
+                            border-radius: 50%;
+                            box-shadow: 2px 2px 1px 1px #fbc97a3c;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                            i {
+                                font-size: 20px;
+                                color: #0000006f;
+                                font-weight: 700;
+                            }
+                        }
+
+                        .svg-share {
+                            width: 55px;
+                            height: 55px;
+                            background-color: #8eaedc86;
+                            margin-right: 20px;
+                            border-radius: 50%;
+                            box-shadow: 2px 2px 1px 1px #8eaedc3c;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                            i {
+                                font-size: 20px;
+                                color: #0000006f;
+                                font-weight: 700;
+                            }
+                        }
+
+                        .svg-follow {
+                            width: 55px;
+                            height: 55px;
+                            background-color: #fbba52bf;
+                            margin-right: 20px;
+                            border-radius: 50%;
+                            box-shadow: 2px 2px 1px 1px #fbc97a3c;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                            i {
+                                font-size: 18px;
+                                color: #0000006f;
+                                font-weight: 700;
+                            }
+                        }
+
+                        .content {
+                            display: flex;
+                            flex-direction: column;
+
+                            .content-top {
+                                display: flex;
+                                color: #929292;
+                                font-size: 13px;
+                                margin-bottom: 5px;
+
+                                .user {
+                                    margin-right: 5px;
+                                    cursor: pointer;
+                                }
+                            }
+
+                            .content-top- {
+                                display: flex;
+                                font-size: 15px;
+                                margin-bottom: 5px;
+                                user-select: none;
+
+                                .user {
+                                    margin-right: 5px;
+                                    font-weight: 700;
+                                    cursor: pointer;
+                                }
+                            }
+
+                            .content-section {
+                                text-decoration: none;
+                                color: #000;
+                                font-size: 15px;
+                                font-weight: 700;
+                                margin-bottom: 5px;
+                                cursor: pointer;
+                            }
+                            .content-section:hover {
+                                color: #8eaedc;
+                            }
+
+                            .content-bottom {
+                                font-size: 12px;
+                                color: #929292;
+                            }
+                        }
                     }
                 }
             }
