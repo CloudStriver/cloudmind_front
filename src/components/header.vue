@@ -56,6 +56,7 @@ const mouseleavePopup = () => { isPopup.value = false }
         .search {
             width: 300px;
             height: 32px;
+            padding: 0;
             margin: 0;
         }
 
@@ -95,8 +96,8 @@ const mouseleavePopup = () => { isPopup.value = false }
 
             .popup {
                 position: absolute;
-                width: 160px;
-                height: 80px;
+                width: 150px;
+                height: auto;
                 right: -55px;
                 top: 50px;
                 z-index: 10;

@@ -2,10 +2,10 @@
     <div class="main-box">
         <Nav class="nav"></Nav>
         <div class="contents">
-            <CHeader class="header"></CHeader>
+            <CHeader class="cheader"></CHeader>
             <section class="section">
                 <div class="posts-box">
-                    <div class="add-post">
+                    <div class="add-post" v-if="store.getUserLongToken()">
                         <i class="iconfont icon-jia"></i>
                         <div>发布</div>
                     </div>
@@ -108,7 +108,6 @@ const likePost = (thisPost: any) => {
     width: 100%;
     height: 100%;
     display: flex;
-    overflow: hidden;
 
     .nav {
         position: fixed;
@@ -121,22 +120,20 @@ const likePost = (thisPost: any) => {
         position: relative;
         background-color: rgba(240, 245, 255, 1);
         margin-left: 80px;
-        display: flex;
-        flex-direction: column;
         flex: 1;
         overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
 
-        .header {
+        .cheader {
             height: 70px;
         }
         
         .section {
-            position: relative;
             width: 100%;
             padding-left: 10%;
             padding-right: 10%;
             flex: 1;
-            overflow: hidden;
             overflow-y: auto;
             display: flex;
             justify-content: center;
