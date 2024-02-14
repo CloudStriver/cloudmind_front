@@ -49,6 +49,7 @@ export const useStore = defineStore('user', {
             sessionStorage.setItem("ShortToken", shortToken)
             sessionStorage.setItem("LongToken", longToken)
             sessionStorage.setItem("isAutoLogin", "false")
+            sessionStorage.setItem("HasChecked", "false")
         },
         setUserLocal (shortToken: string, longToken: string, userId: string) {
             this.userId = userId
@@ -60,6 +61,7 @@ export const useStore = defineStore('user', {
             localStorage.setItem("ShortToken", shortToken)
             localStorage.setItem("LongToken", longToken)
             localStorage.setItem("isAutoLogin", "true")
+            localStorage.setItem("HasChecked", "false")
         },
         getUserLongToken () {
             if (sessionStorage.getItem("LongToken") !== null) {
@@ -70,16 +72,21 @@ export const useStore = defineStore('user', {
             }
             return this.longToken
         },
+        getLoginType () {
+            if (sessionStorage.getItem("isAutoLogin") !== null) {
+                return 1
+            }
+            else if (localStorage.getItem("isAutoLogin") !== null) {
+                return 2
+            }
+            else {
+                return 0
+            }
+        },
 
         loginOut () {
-            localStorage.removeItem("UserId")
-            localStorage.removeItem("ShortToken")
-            localStorage.removeItem("LongToken")
-            sessionStorage.removeItem("UserId")
-            sessionStorage.removeItem("ShortToken")
-            sessionStorage.removeItem("LongToken")
-            localStorage.removeItem("isAutoLogin")
-            sessionStorage.removeItem("isAutoLogin")
+            localStorage.clear()
+            sessionStorage.clear()
 
             this.userId = ""
             this.shortToken = ""

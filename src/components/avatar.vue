@@ -1,13 +1,32 @@
 <template>
     <div class="main-box">
-        <img :src="store.userAvatar" style="border-radius: 50%;">
+        <img :src="getAvatar()" style="border-radius: 50%;">
     </div>
 </template>
 
 <script setup lang="ts">
 import { useStore } from '@/store/index'
-
 const store = useStore()
+
+const getAvatar = () => {
+    const loginType = store.getLoginType()
+    if (loginType === 0) {
+        const avatarUrl = store.userAvatar
+        console.log(avatarUrl);
+        
+        return avatarUrl as string
+    }
+    else if (loginType === 1) {       
+        console.log(sessionStorage.getItem("avatarUrl"));
+         
+        return sessionStorage.getItem("avatarUrl") as string
+    }
+    else if (loginType === 2) { 
+        console.log(localStorage.getItem("avatarUrl"));
+        
+        return localStorage.getItem("avatarUrl") as string
+    }
+}
 </script>
 
 <style scoped lang="css">
