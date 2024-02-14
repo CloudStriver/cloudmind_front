@@ -231,7 +231,6 @@ const login = () => {
 }
 
 const register = () => router.push('/register')
-
 </script>
  
 <style scoped lang="css">

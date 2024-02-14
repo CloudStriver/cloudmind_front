@@ -28,11 +28,34 @@ import recommend from '@/views/home/recommend.vue'
 import rank from '@/views/home/rank.vue'
 import announced from '@/views/home/announced.vue'
 import { onMounted } from 'vue'
+import { useStore } from '@/store/index'
 import { getUserDetail } from '../information/utils'
 
+const store = useStore()
+
 onMounted(() => {
-    getUserDetail()
+    firstGetUserDetail()
 })
+
+const firstGetUserDetail = () => {
+    const longToken = store.getUserLongToken()
+    const loginType = store.getLoginType()
+
+    if (longToken) {
+        if (loginType === 1 && sessionStorage.getItem("HasChecked") === 'false') {
+            getUserDetail().then(res => {
+                sessionStorage.setItem("HasChecked", 'true')
+                sessionStorage.setItem("avatarUrl", res.avatar)
+            });
+        } 
+        else if (loginType === 2 && localStorage.getItem("HasChecked") === 'false') {
+            getUserDetail().then(res => {
+                localStorage.setItem("HasChecked", 'true')
+                localStorage.setItem("avatarUrl", res.avatar)
+            });
+        }
+    }
+}
 </script>
 
 <style scoped lang="css">
