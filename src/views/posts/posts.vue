@@ -5,7 +5,11 @@
             <CHeader class="cheader"></CHeader>
             <section class="section">
                 <div class="posts-box">
-                    <div class="add-post" v-if="store.getUserLongToken()">
+                    <div 
+                        class="add-post" 
+                        v-if="store.getUserLongToken()"
+                        @click="router.push('/write')"
+                    >
                         <i class="iconfont icon-jia"></i>
                         <div>发布</div>
                     </div>

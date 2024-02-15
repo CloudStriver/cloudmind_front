@@ -19,6 +19,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-vue": "^5.1.12",
     "cos-js-sdk-v5": "^1.6.0",
     "element-plus": "^2.5.1",
     "mime": "^4.0.1",
