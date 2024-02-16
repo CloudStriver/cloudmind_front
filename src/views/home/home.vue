@@ -46,12 +46,14 @@ const firstGetUserDetail = () => {
             getUserDetail().then(res => {
                 sessionStorage.setItem("HasChecked", 'true')
                 sessionStorage.setItem("avatarUrl", res.avatar)
+                location.reload()
             });
         } 
         else if (loginType === 2 && localStorage.getItem("HasChecked") === 'false') {
             getUserDetail().then(res => {
                 localStorage.setItem("HasChecked", 'true')
                 localStorage.setItem("avatarUrl", res.avatar)
+                location.reload()
             });
         }
     }
