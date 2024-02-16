@@ -47,8 +47,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/posts/post.vue'),
   },
   {
-    path: '/write',
+    path: '/write/',
     component: () => import('../views/posts/write.vue'),
+  },
+  {
+    path: '/write/preview',
+    component: () => import('../views/posts/preview.vue'),
   }
 ]
 

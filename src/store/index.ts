@@ -15,7 +15,7 @@ export const useStore = defineStore('user', {
             longToken: "",
             fatherId: "",
             fatherIdName: "",
-            isAutoLogin: "false"
+            isAutoLogin: "false",
         }
     },
 

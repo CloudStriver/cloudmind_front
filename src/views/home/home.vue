@@ -46,6 +46,7 @@ const firstGetUserDetail = () => {
             getUserDetail().then(res => {
                 sessionStorage.setItem("HasChecked", 'true')
                 sessionStorage.setItem("avatarUrl", res.avatar)
+                sessionStorage.setItem("Name", res.name)
                 location.reload()
             });
         } 
@@ -53,6 +54,7 @@ const firstGetUserDetail = () => {
             getUserDetail().then(res => {
                 localStorage.setItem("HasChecked", 'true')
                 localStorage.setItem("avatarUrl", res.avatar)
+                localStorage.setItem("Name", res.name)
                 location.reload()
             });
         }
