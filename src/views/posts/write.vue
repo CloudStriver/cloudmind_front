@@ -1,5 +1,5 @@
 <template>
-  <div class="main-box">
+  <div class="main-box" @click="handleClickTagOutside">
     <div class="editor-box">
       <header class="header">
         <i class="iconfont icon-ffanhui- back"></i>
@@ -64,10 +64,43 @@
               </label>
             </div>
           </div>
-          <div class="add-tag">
-            <div>添加帖子标签</div>
-            <input type="text">
-            <i class="iconfont icon-jia"></i>
+          <div class="add-tag-box">
+            <div 
+              class="tag-contents" 
+              :style="{left: tagContentsLeft + 'px'}"
+              v-show="isShowSearchTag"
+            >
+              <div class="search">
+                <i class="iconfont icon-sousuo"></i>
+                <input 
+                  v-model="searchContent"
+                  type="text"
+                  @keydown="getTagList"
+                >
+              </div>
+              <div class="cur-tag-box">
+                <div 
+                  class="cur-tag" 
+                  v-for="(tag, index) in tagsList"
+                  :key="index"
+                  @click="selectTag(tag)"
+                >{{ tag }}</div>
+              </div>
+            </div>
+            <div style="margin-right: 20px;">添加帖子标签</div>
+            <div
+              class="tag"
+              v-for="(tag, index) in nowTagsList"
+              :key="index"
+            >
+              <div>{{ tag }}</div>
+              <i class="iconfont icon-cuowu1" @click="deleteTag(index)"></i>
+            </div>
+            <i 
+              class="iconfont icon-jia add-tag-button" 
+              v-if="nowTagsCount < 5"
+              @click="addTags($event)"
+            ></i>
           </div>
           <div class="operate">
             <button @click="previewPost" :disabled="isOperate">预览</button>
@@ -81,17 +114,26 @@
 
 <script setup lang="ts">
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
-import { onBeforeUnmount, onUpdated, ref, shallowRef } from 'vue'
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import { errorMsg } from '@/utils/message'
+import { debounce } from '@/utils/optimize'
 import { cosUploadImage } from '@/utils/public-cos'
+import { getTagsList } from './utils'
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import { onBeforeUnmount, onUpdated, ref, shallowRef } from 'vue'
 
 const coverImage = ref('') // 封面图片
 const valueHtml = ref('') // 文章内容
 const postTitle = ref('') // 文章标题
+const searchContent = ref('') 
 const editorRef = shallowRef()
 const isOperate = ref(true)
 const isShowOperate = ref(false)
 const isUploadImage = ref(false)
+const isShowSearchTag = ref(false)
+const nowTagsCount = ref(0)
+const tagContentsLeft = ref(0)
+const tagsList = ref<string[]>([])
+const nowTagsList = ref<string[]>([])
 const editorConfig = { placeholder: '请输入内容...' }
 const toolbarConfig = {
   toolbarKeys: [
@@ -142,6 +184,41 @@ onUpdated(() => {
     isOperate.value = true
   }
 })
+
+const getTagList = debounce(async() => {
+  if (!searchContent.value) {
+    return
+  }
+  tagsList.value = await getTagsList(searchContent.value).then()
+}, 500)
+const deleteTag = (index: number) => {
+  nowTagsCount.value --
+  nowTagsList.value.splice(index, 1)
+}
+const selectTag = (tag: string) => {
+  if (nowTagsList.value.includes(tag)) {
+    errorMsg('已经添加过该标签了');
+    return
+  }
+  nowTagsCount.value ++
+  nowTagsList.value.push(tag)
+  isShowSearchTag.value = false
+}
+const addTags = (event: Event) => {
+  const target = event.target as HTMLElement
+  const left = target.offsetLeft
+  tagContentsLeft.value = left
+  isShowSearchTag.value = true
+}
+const handleClickTagOutside = (event: Event) => {
+  if ((event.target as HTMLElement).closest('.tag-contents') || (event.target as HTMLElement).closest('.add-tag-button')) {
+    isShowSearchTag.value = true
+  }
+  else {
+    isShowSearchTag.value = false
+    searchContent.value = ''
+  }
+}
 
 const deleteImage = () => {
   coverImage.value = ''
@@ -336,22 +413,87 @@ const previewPost = () => {
           }
         }
 
-        .add-tag {
+        .add-tag-box {
+          position: relative;
           height: 50px;
           display: flex;
           align-items: center;
 
-          input {
-            width: 150px;
-            height: 30px;
-            margin-left: 30px;
-            padding-left: 10px;
-            border: 1px solid #ccc;
+          .tag-contents {
+            position: absolute;
+            width: 250px;
+            bottom: 50px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+
+            .search {
+              width: 100%;
+              height: 40px;
+              border: 1px solid #ccc;
+              border-radius: 60px;
+              padding-left: 10px;
+              margin-top: 10px;
+              margin-bottom: 8px;
+              display: flex;
+              align-items: center;
+
+              i {
+                font-size: 20px;
+                font-weight: 700;
+                color: #2e4482;
+                margin-right: 10px;
+              }
+
+              input {
+                width: 80%;
+                height: 30px;
+                border: none;
+                outline: none;
+              }
+            }
+
+            .cur-tag-box {
+              width: 100%;
+              max-height: 250px;
+              overflow-y: auto;
+
+              .cur-tag {
+                width: 100%;
+                height: 40px;
+                padding-left: 10px;
+                line-height: 40px;
+                color: #000;
+                cursor: pointer;
+              }
+              .cur-tag:hover {
+                background-color: #f5f5f5;
+              }
+            }
           }
 
+          .tag {
+            height: 35px;
+            padding: 8px 15px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            color: #3b5393;
+
+            i {
+              font-size: 20px;
+              color: #ccc;
+              cursor: pointer;
+            }
+          }
+
+
           i {
-            font-size: 30px;
-            margin-left: 20px;
+            margin-left: 5px;
+            font-size: 25px;
             color: #ccc;
             cursor: pointer;
           }

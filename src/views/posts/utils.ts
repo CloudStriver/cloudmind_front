@@ -37,3 +37,12 @@ export const getOtherPosts = async () => {
     })
     return postsList.value
 }
+
+export const getTagsList = async(key: string) =>{
+    const url = '/label/getLabels?key=' + key
+    const tagsList = ref<string[]>([])
+    await get(url).then((res: any) => {
+        tagsList.value = res.labels.map((label: any) => label.value)
+    })
+    return tagsList.value
+}
