@@ -23,7 +23,10 @@
                                 @click="toPostDetail(post.postId)"
                             >{{ post.title }}</header>
                             <section class="posts-section">
-                                {{ post.userName }}: {{ post.text }}
+                                <div v-if="post.url !== ''" class="post-image">
+                                    <img :src="post.url">
+                                </div>
+                                <div class="post-content">{{ htmlToText(post.userName + ": " +  post.text) }}</div>
                             </section>
                             <footer class="posts-footer">
                                 <div class="post-detail">
@@ -48,7 +51,7 @@
                                 <div class="tag-box">
                                     <div
                                         class="tag"
-                                        v-for="(tag, index) in post.tags.slice(0, 3)"
+                                        v-for="(tag, index) in post.tags"
                                         :key="index"
                                     >
                                         <button>{{ tag }}</button>
@@ -82,6 +85,13 @@ const postsList = ref<responseGetOtherPosts>({
 onMounted(async () => {
     postsList.value = await getOtherPosts()
 })
+
+const htmlToText = (html: string) => {
+    const div = document.createElement('div')
+    div.innerHTML = html
+    if (div.innerText.length > 190) return div.innerText.slice(0, 190) + '...'
+    return div.innerText
+}
 
 const toPostDetail = (postId: string) => {
     router.push('/post/' + postId)
@@ -198,7 +208,29 @@ const likePost = (thisPost: any) => {
 
                     .posts-section {
                         font-size: 16px;
-                        margin-bottom: 10px;
+                        display: flex;
+
+                        .post-image {
+                            width: 220px;
+                            height: 130px;
+                            margin-right: 10px;
+                            cursor: pointer;
+
+                            img {
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 5px;
+                            object-fit: cover; 
+                            display: block;
+                            }
+                        }
+
+                        .post-content {
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: flex-start;
+                        }
                     }
                     
                     .posts-footer {
