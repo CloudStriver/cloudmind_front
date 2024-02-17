@@ -104,7 +104,7 @@
           </div>
           <div class="operate">
             <button @click="previewPost" :disabled="isOperate">预览</button>
-            <button :disabled="isOperate">发布</button>
+            <button @click="publishPost" :disabled="isOperate">发布</button>
           </div>
         </div>
       </section>
@@ -114,18 +114,23 @@
 
 <script setup lang="ts">
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
-import { errorMsg } from '@/utils/message'
+import SparkMD5 from 'spark-md5'
+import { errorMsg, successMsg } from '@/utils/message'
 import { debounce } from '@/utils/optimize'
 import { cosUploadImage } from '@/utils/public-cos'
 import { getTagsList } from './utils'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { onBeforeUnmount, onUpdated, ref, shallowRef } from 'vue'
+import { post } from '@/utils/request'
+import router from '@/router'
 
 const coverImage = ref('') // 封面图片
 const valueHtml = ref('') // 文章内容
 const postTitle = ref('') // 文章标题
 const searchContent = ref('') 
+const nowPostContent = ref('')
 const editorRef = shallowRef()
+const imageFile = ref()
 const isOperate = ref(true)
 const isShowOperate = ref(false)
 const isUploadImage = ref(false)
@@ -202,7 +207,6 @@ const selectTag = (tag: string) => {
   }
   nowTagsCount.value ++
   nowTagsList.value.push(tag)
-  isShowSearchTag.value = false
 }
 const addTags = (event: Event) => {
   const target = event.target as HTMLElement
@@ -211,7 +215,7 @@ const addTags = (event: Event) => {
   isShowSearchTag.value = true
 }
 const handleClickTagOutside = (event: Event) => {
-  if ((event.target as HTMLElement).closest('.tag-contents') || (event.target as HTMLElement).closest('.add-tag-button')) {
+  if ((event.target as HTMLElement).closest('.add-tag-button') || (event.target as HTMLElement).closest('.search')) {
     isShowSearchTag.value = true
   }
   else {
@@ -230,9 +234,11 @@ const showOperateImage = () => {
 }
 
 const uploadCoverImage = (event: Event) => {
+  
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
   if (file == null) return
+  imageFile.value = file
   isUploadImage.value = true
   coverImage.value = URL.createObjectURL(file)
 }
@@ -241,9 +247,50 @@ const handleCreated = (editor: any) => {
   editorRef.value = editor // 记录 editor 实例，重要！
 }
 
+const createPost = (url: string) => {
+  post('/content/createPost', {
+    title: postTitle.value,
+    text: valueHtml.value,
+    tags: nowTagsList.value,
+    status: 1,
+    url: url
+  })
+  .then(() => {
+    successMsg('发布成功')
+    postTitle.value = ''
+    valueHtml.value = ''
+    coverImage.value = ''
+    nowTagsList.value = []
+    isOperate.value = true
+    // router.push('/posts')
+  })
+}
+const publishPost = () => {
+  const url = ref('')
+  if(imageFile.value) {
+    const fileReader = new FileReader();
+    const spark = new SparkMD5.ArrayBuffer();
+    fileReader.readAsArrayBuffer(imageFile.value);
+    fileReader.onload = (e: any) => {
+        spark.append(e.target.result);
+        const md5 = spark.end();
+        const suffix = '.' + imageFile.value.name.split('.').pop();
+        url.value = "https://cloudmind.top/users/" + md5 + suffix
+        createPost(url.value)
+        cosUploadImage(imageFile.value, md5, suffix, async () => {})
+    }
+  }
+  else {
+    createPost(url.value)
+  }
+}
 const previewPost = () => {
   sessionStorage.setItem('postTitle', postTitle.value)
-  sessionStorage.setItem('postContent', editorRef.value.getHtml())
+  const originalText  = editorRef.value.getHtml()
+  const withoutFirstP = originalText.slice(3)
+  nowPostContent.value = withoutFirstP.slice(0, withoutFirstP.length - 4)
+  sessionStorage.setItem('postContent', nowPostContent.value)
+  console.log(nowPostContent.value);
   window.open('/write/preview')
 }
 </script>    

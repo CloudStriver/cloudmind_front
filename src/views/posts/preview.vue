@@ -12,7 +12,7 @@
                     </header>
                     <section class="detail-section">
                         <div style="margin-bottom: 10px;" v-html="content" class="content-html"></div>
-                        <div class="time">编写于 2024-02-13 21:39</div>
+                        <div class="time">{{ nowTime() }}</div>
                     </section>
                 </div>
             </div>
@@ -27,6 +27,15 @@ import { useStore } from '@/store/index'
 const store = useStore()
 const avatarUrl = ref('')
 const name = ref('')
+const nowTime = () => {
+    const date = new Date()
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const hour = date.getHours()
+    const minute = date.getMinutes()
+    return year + '-' + month + '-' + day + ' ' + hour + ':' + minute
+}
 
 onMounted(() => {
     setAvatarAndName()
