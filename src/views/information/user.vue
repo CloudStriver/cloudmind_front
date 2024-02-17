@@ -129,7 +129,7 @@ import avatar from '@/components/avatar.vue'
 import { ref, onMounted } from 'vue'
 import { useStore } from '@/store/index'
 import SparkMD5 from 'spark-md5'
-import { cosUploadAvatar } from '@/utils/public-cos'
+import { cosUploadImage } from '@/utils/public-cos'
 import { getUserDetail } from './utils'
 
 const store = useStore()
@@ -167,7 +167,7 @@ const changeAvatar = async(event: any) => {
         spark.append(e.target.result);
         const md5 = spark.end();
         const suffix = '.' + file.name.split('.').pop();
-        cosUploadAvatar(file, md5, suffix, async () => {
+        cosUploadImage(file, md5, suffix, async () => {
             detail.value = await getUserDetail() as any
             location.reload()
         })
