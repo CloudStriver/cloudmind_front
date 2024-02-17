@@ -12,18 +12,12 @@ const getAvatar = () => {
     const loginType = store.getLoginType()
     if (loginType === 0) {
         const avatarUrl = store.userAvatar
-        console.log(avatarUrl);
-        
         return avatarUrl as string
     }
     else if (loginType === 1) {       
-        console.log(sessionStorage.getItem("avatarUrl"));
-         
         return sessionStorage.getItem("avatarUrl") as string
     }
     else if (loginType === 2) { 
-        console.log(localStorage.getItem("avatarUrl"));
-        
         return localStorage.getItem("avatarUrl") as string
     }
 }

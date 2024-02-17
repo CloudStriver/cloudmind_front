@@ -23,7 +23,7 @@ const cos = new COS({
     }
 })
 
-export const cosUploadAvatar = (file: any, md5: string, suffix: string, onUploadComplete: () => void) => {
+export const cosUploadImage = (file: any, md5: string, suffix: string, onUploadComplete: () => void) => {
     cos.uploadFile({
         Bucket,
         Region,

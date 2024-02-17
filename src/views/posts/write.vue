@@ -7,7 +7,7 @@
           class="toolbar"
           :editor="editorRef"
           :defaultConfig="toolbarConfig"
-          :mode="mode"
+          :mode="'default'"
         />
       </header>
       <section class="section">
@@ -23,22 +23,46 @@
           style="min-height: 700px; overflow-y: hidden;"
           v-model="valueHtml"
           :defaultConfig="editorConfig"
-          :mode="mode"
+          :mode="'default'"
           @onCreated="handleCreated"
         />
         <div class="footer">
-          <div class="add-image">
+          <div class="image-box">
             <div>设置帖子封面</div>
-            <label for="image">
-              <div class="label">
-                <div>+ 添加图片</div>
-              </div>  
-            </label>
-            <input 
-              type="file" 
-              id="image"
-              style="display: none;"
-            >
+            <div v-if="!isUploadImage" class="add-image">
+              <label for="image">
+                <div class="label">
+                  <div>+ 添加图片</div>
+                </div>  
+              </label>
+              <input 
+                @change="uploadCoverImage($event)"
+                type="file" 
+                id="image"
+                style="display: none;"
+              >
+            </div>
+            <div v-if="isUploadImage" class="change-image">
+              <label for="changeImage">
+                <div>
+                  <img :src="coverImage" @mousemove="showOperateImage">
+                </div>
+                <div 
+                  class="operate-image" 
+                  v-show="isShowOperate"
+                  @mouseleave="showOperateImage"
+                >
+                  <label for="image">更换</label>
+                  <input 
+                    @change="uploadCoverImage($event)"
+                    type="file" 
+                    id="image"
+                    style="display: none;"
+                  >
+                  <button @click="deleteImage">删除</button>
+                </div>
+              </label>
+            </div>
           </div>
           <div class="add-tag">
             <div>添加帖子标签</div>
@@ -46,8 +70,8 @@
             <i class="iconfont icon-jia"></i>
           </div>
           <div class="operate">
-            <button @click="previewPost">预览</button>
-            <button>发布</button>
+            <button @click="previewPost" :disabled="isOperate">预览</button>
+            <button :disabled="isOperate">发布</button>
           </div>
         </div>
       </section>
@@ -55,89 +79,95 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
-
-import { onBeforeUnmount, ref, shallowRef } from 'vue'
+import { onBeforeUnmount, onUpdated, ref, shallowRef } from 'vue'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import { cosUploadImage } from '@/utils/public-cos'
 
-export default {
-  components: { Editor, Toolbar },
-  setup() {
-    // 编辑器实例，必须用 shallowRef
-    const editorRef = shallowRef()
+const coverImage = ref('') // 封面图片
+const valueHtml = ref('') // 文章内容
+const postTitle = ref('') // 文章标题
+const editorRef = shallowRef()
+const isOperate = ref(true)
+const isShowOperate = ref(false)
+const isUploadImage = ref(false)
+const editorConfig = { placeholder: '请输入内容...' }
+const toolbarConfig = {
+  toolbarKeys: [
+    // 一些常用的菜单 key
+    'undo', // 撤销
+    'redo', // 重做
+    'clearStyle', // 清除格式
+    '|',
+    'headerSelect', // 标题
+    'blockquote', // 引用
+    "codeBlock", // 代码块
+    'bold', // 加粗
+    'italic', // 斜体
+    'through', // 删除线
+    'underline', // 下划线
+    'divider', // 分割线
+    'bulletedList', // 无序列表
+    'numberedList', // 有序列表
+    'color', // 文字颜色
+    "bgColor", // 背景颜色
+    'insertLink', // 插入链接
+    'fontSize', // 字体大小
+    "fontFamily",
+    'lineHeight', // 行高
+    'uploadImage', // 上传图片
+    'uploadVideo',//上传视频
+    'delIndent', // 缩进
+    'indent', // 增进
+    'deleteImage',//删除图片
+    'insertTable', // 插入表格
+    'justifyCenter', // 居中对齐
+    'justifyJustify', // 两端对齐
+    'justifyLeft', // 左对齐
+    'justifyRight', // 右对齐
+  ]
+}
 
-    const toolbarConfig = {
-      toolbarKeys: [
-        // 一些常用的菜单 key
-        'undo', // 撤销
-        'redo', // 重做
-        'clearStyle', // 清除格式
-        '|',
-        'headerSelect', // 标题
-        'blockquote', // 引用
-        "codeBlock", // 代码块
-        'bold', // 加粗
-        'italic', // 斜体
-        'through', // 删除线
-        'underline', // 下划线
-        'divider', // 分割线
-        'bulletedList', // 无序列表
-        'numberedList', // 有序列表
-        'color', // 文字颜色
-        "bgColor", // 背景颜色
-        'insertLink', // 插入链接
-        'fontSize', // 字体大小
-        "fontFamily",
-        'lineHeight', // 行高
-        'uploadImage', // 上传图片
-        'uploadVideo',//上传视频
-        'delIndent', // 缩进
-        'indent', // 增进
-        'deleteImage',//删除图片
-        'insertTable', // 插入表格
-        'justifyCenter', // 居中对齐
-        'justifyJustify', // 两端对齐
-        'justifyLeft', // 左对齐
-        'justifyRight', // 右对齐
-      ]
-    }
-    const editorConfig = { placeholder: '请输入内容...' }
-    const postTitle = ref('') // 文章标题
+onBeforeUnmount(() => {
+    const editor = editorRef.value
+    if (editor == null) return
+    editor.destroy()
+})
 
-    // 组件销毁时，也及时销毁编辑器
-    onBeforeUnmount(() => {
-        const editor = editorRef.value
-        if (editor == null) return
-        editor.destroy()
-    })
-
-    const handleCreated = (editor) => {
-      editorRef.value = editor // 记录 editor 实例，重要！
-    }
-
-    const clickFabu = () => {
-      console.log(editorRef.value.getHtml()) // 获取内容
-    }
-
-    const previewPost = () => {
-      sessionStorage.setItem('postTitle', postTitle.value)
-      sessionStorage.setItem('postContent', editorRef.value.getHtml())
-      console.log(editorRef.value.getHtml())
-      window.open('/write/preview')
-    }
-
-    return {
-      editorRef,
-      mode: 'default', // 或 'simple'
-      toolbarConfig,
-      editorConfig,
-      postTitle,
-      handleCreated,
-      clickFabu,
-      previewPost
-    }; 
+onUpdated(() => {
+  if (postTitle.value && valueHtml.value !== '<p><br></p>') {
+    isOperate.value = false
+  } else {
+    isOperate.value = true
   }
+})
+
+const deleteImage = () => {
+  coverImage.value = ''
+  isUploadImage.value = false
+}
+
+const showOperateImage = () => {
+  isShowOperate.value = !isShowOperate.value
+}
+
+const uploadCoverImage = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file == null) return
+  isUploadImage.value = true
+  coverImage.value = URL.createObjectURL(file)
+}
+
+const handleCreated = (editor: any) => {
+  editorRef.value = editor // 记录 editor 实例，重要！
+}
+
+const previewPost = () => {
+  sessionStorage.setItem('postTitle', postTitle.value)
+  sessionStorage.setItem('postContent', editorRef.value.getHtml())
+  window.open('/write/preview')
 }
 </script>    
 
@@ -223,21 +253,85 @@ export default {
         margin: 0 auto;
         background-color: #fff;
 
-        .add-image {
+        .image-box {
           margin-bottom: 20px;
           display: flex;
-          
-          .label {
-            width: 200px;
-            height: 150px;
-            margin-left: 30px;
-            border: 1px dashed #ccc;
 
-            div {
-              font-size: 20px;
-              color: #ccc;
-              text-align: center;
-              line-height: 150px;
+          .change-image {
+            label {
+              position: relative;
+              cursor: pointer;
+
+              .operate-image {
+                position: absolute;
+                width: 220px;
+                height: 130px;
+                top: 0;
+                background-color: #7f7f7f4d;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                button {
+                  width: 50px;
+                  height: 30px;
+                  background-color: #000000;
+                  color: #fff;
+                  font-size: 14px;
+                  border: none;
+                  margin: 1px;
+                  cursor: pointer;
+                }
+                label {
+                  width: 50px;
+                  height: 30px;
+                  background-color: #000000;
+                  color: #fff;
+                  font-size: 14px;
+                  border: none;
+                  margin: 1px;
+                  cursor: pointer;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                }
+                
+              }
+
+              div {
+                width: 220px;
+                height: 130px;
+                margin-left: 30px;
+                cursor: pointer;
+
+                img {
+                  width: 100%;
+                  height: 100%;
+                  border-radius: 5px;
+                  object-fit: cover; 
+                  display: block;
+                }
+              }
+            }
+          }
+          
+          .add-image {
+            .label {
+              width: 220px;
+              height: 130px;
+              margin-left: 30px;
+              border: 1px dashed #ccc;
+              cursor: pointer;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+
+              div {
+                font-size: 20px;
+                color: #ccc;
+                text-align: center;
+                line-height: 150px;
+              }
             }
           }
         }
@@ -284,6 +378,10 @@ export default {
           button:nth-child(2) {
             background-color: #5383dd;
             color: #fff;
+          }
+
+          button:disabled {
+            opacity: 0.5;
           }
         }
       }
