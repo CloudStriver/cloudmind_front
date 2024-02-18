@@ -72,9 +72,25 @@
 <script setup lang="ts">
 import { get, post } from '@/utils/request'
 import { useStore } from '@/store/index'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { errorMsg } from '@/utils/message';
+import { truncate } from 'fs';
+import { calendarEmits } from 'element-plus';
 
+const storageContent = ref<any>({
+    hotGoods: [],
+    newGoods: [],
+    recommendGoods: [],
+    hotFiles: [],
+    newFiles: [],
+    recommendFiles: [],
+    hotPosts: [],
+    newPosts: [],
+    recommendPosts: [],
+    hotUsers: [],
+    newUsers: [],
+    recommendUsers: [],
+})
 const props = defineProps<{
     classify: string,
     mainClassify: string
@@ -104,6 +120,10 @@ const responseDetail = ref<ResponseDetail>({
 const store = useStore()
 
 onMounted(() => {
+    getShow()
+})
+
+watch(() => props.mainClassify, () => {
     getShow()
 })
 
@@ -137,13 +157,41 @@ const showPostImage = (url: string) => {
 
 const getShow = () => {
     const mainClassify = props.mainClassify
-    const classify = props.classify
-    if (mainClassify === 'hot') {
-        const url = '/content/getPopularRecommend?category=' + judgeType(classify)
-        get(url)
+    const classify = judgeType(props.classify) as string
+    const classifyNum = trunNum(classify) as number
+    const index = mainClassify + classify as any
+    
+    if (classify !== 'Users') {
+        if (storageContent.value[index].length !== 0) {
+            responseDetail.value = {
+                posts: (storageContent as any).value[index].map((post: any) => ({
+                    postId: post.postId,
+                    title: post.title,
+                    text: post.text,
+                    url: post.url,
+                    tags: post.tags,
+                    likeCount: post.likeCount,
+                    commentCount: post.commentCount,
+                    liked: post.liked,
+                    userName: post.userName
+                }))
+            }
+            return 
+        }
+        
+        const url = ref('')
+        if (mainClassify === 'hot') {
+            url.value = '/content/getPopularRecommend?category=' + classifyNum
+        }
+        else if (mainClassify === 'new') {
+            url.value = '/content/getLatestRecommend?category=' + classifyNum
+        }
+        else {
+            url.value = '/content/getRecommendByUser?category=' + classifyNum
+        }
+        
+        get(url.value)
         .then((res: any) => {
-            console.log(res);
-            
             responseDetail.value = {
                 posts: res.recommends.posts.map((post: any) => ({
                     postId: post.postId,
@@ -156,19 +204,32 @@ const getShow = () => {
                     liked: post.liked,
                     userName: post.userName
                 }))
-            }
+            };
+            storageContent.value[index] = res.recommends.posts
         })
     }
 }
 const judgeType = (type: string) => {
     switch (type) {
         case 'user':
-            return 1
-            case 'file':
-                return 2
+            return 'Users'
+        case 'file':
+            return 'Files'
         case 'goods':
-            return 3
+            return 'Goods'
         case 'posts':
+            return 'Posts'
+    }
+}
+const trunNum = (type: string) => {
+    switch (type) {
+        case 'Users':
+            return 1
+        case 'Files':
+            return 2
+        case 'Goods':
+            return 3
+        case 'Posts':
             return 4
     }
 }
