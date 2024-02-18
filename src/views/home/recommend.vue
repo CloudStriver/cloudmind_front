@@ -86,13 +86,11 @@
             </div>
         </header>
         <section class="section">
-            <div v-show="selectMain === 'hot'">
-                <ShowRecommend 
-                    class="hot" 
-                    :classify="selectClassify"
-                    :mainClassify="selectMain"
-                ></ShowRecommend>
-            </div>
+            <ShowRecommend 
+                class="show-recommend" 
+                :classify="selectClassify"
+                :mainClassify="selectMain"
+            ></ShowRecommend>
         </section>
     </div>
 </template>
@@ -203,7 +201,7 @@ const mouseleaveClassifyPop = () => {
         width: 100%;
         height: 100%;
 
-        .hot {
+        .show-recommend {
             width: 100%;
             height: 720px;
             overflow-y: auto;
