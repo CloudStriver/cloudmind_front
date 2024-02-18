@@ -127,7 +127,6 @@ const mouseleaveClassifyPop = () => {
         width: 100%;
         height: 50px;
         padding: 0 10px;
-        margin-bottom: 10px;
         border-bottom: 1px solid #e5e5e583;
         display: flex;
         justify-content: space-between;
