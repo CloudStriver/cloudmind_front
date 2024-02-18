@@ -10,6 +10,11 @@
             class="login"
             v-if="!isLogin"
         >登录</router-link>
+        <router-link
+            to="/login"
+            class="login"
+            v-if="isLogin"
+        >切换账号</router-link>
         <button
             class="logout"
             v-if="isLogin"
