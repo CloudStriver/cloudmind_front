@@ -72,7 +72,15 @@
                         >
                     </div>
                     <div class="confirm-password-msg" v-show="errorConfirmPassword">* {{ confirmPasswordMsg }}</div>
-                    <button class="register-button" @click="register">{{ buttonMessage }}</button>
+                    <button 
+                        v-show="!isNext"
+                        class="register-next" 
+                        @click="next"
+                    >下一步</button>
+                    <div v-show="isNext">
+                        <button class="register-back" @click="back">上一步</button>
+                        <button class="register-register" @click="register">注册</button>
+                    </div>
                     <div class="agreements">
                         <input 
                             type="checkbox" 
@@ -115,6 +123,7 @@ const captchaMsg = ref('')
 const passwordMsg = ref('')
 const confirmPassword = ref('')
 const confirmPasswordMsg = ref('')
+const isNext = ref(false)
 const isEmail = ref(false)
 const setCaptcha = ref(true)
 const errorEmail = ref(false)
@@ -126,7 +135,6 @@ const errorPassword = ref(false)
 const isConfirmassword = ref(false)
 const clickGetCaptcha = ref(false)
 const errorConfirmPassword = ref(false)
-const buttonMessage = ref('下一步')
 const captchaMessage = ref('获取验证码')
 
 const emailBlur = () => {
@@ -233,51 +241,56 @@ const generateRrandomString = ():string => {
     return result
 }
 
-const register = () => {
-    if (buttonMessage.value === '下一步') {
-        if (isEmail.value && captcha.value.length === 6 && clickGetCaptcha.value) {
-            const url = '/auth/checkEmail?email=' + email.value + '&code=' + captcha.value
-            get(url)
-            .then((res: any) => {
-                if (res.ok) {
-                    buttonMessage.value = '注 册'
-                    setCaptcha.value = false
-                    setPassword.value = true
-                }
-                else {
-                    errorMsg('验证码错误')
-                }
-            })
-        } 
-        else {
-            errorMsg('请先填写正确的邮箱和验证码')
-        }
-    } 
-    else {
-        if (judgeThisPassword()) {
-            if (agreements.value) {
-                const name = generateRrandomString()
-                post('/auth/register', {
-                    name: name,
-                    email: email.value,
-                    sex: 1,
-                    password: password.value,
-                })
-                .then((res: any) => {
-                    store.setUserSession(res.shortToken, res.longToken, res.userId)
-
-                    successMsg('注册成功')
-                    router.push('/')
-                })
+const next = () => {
+    if (isEmail.value && captcha.value.length === 6 && clickGetCaptcha.value) {
+        const url = '/auth/checkEmail?email=' + email.value + '&code=' + captcha.value
+        get(url)
+        .then((res: any) => {
+            if (res.ok) {
+                isNext.value = true
+                setCaptcha.value = false
+                setPassword.value = true
             }
             else {
-                errorMsg('请阅读并同意用户协议和隐私政策')
+                errorMsg('验证码错误')
             }
+        })
+    } 
+    else {
+        errorMsg('请先填写正确的邮箱和验证码')
+    }
+}
+
+const back = () => [
+    isNext.value = false,
+    setCaptcha.value = true,
+    setPassword.value = false
+]
+
+const register = () => {
+    if (judgeThisPassword()) {
+        if (agreements.value) {
+            const name = generateRrandomString()
+            post('/auth/register', {
+                name: name,
+                email: email.value,
+                sex: 1,
+                password: password.value,
+            })
+            .then((res: any) => {
+                store.setUserSession(res.shortToken, res.longToken, res.userId)
+
+                successMsg('注册成功')
+                router.push('/')
+            })
         }
         else {
-            errorMsg('请先填写正确的密码')
+            errorMsg('请阅读并同意用户协议和隐私政策')
         }
-    } 
+    }
+    else {
+        errorMsg('请先填写正确的密码')
+    }
 }
 
 const login = () => router.push('/login')
@@ -477,19 +490,33 @@ const login = () => router.push('/login')
                     color: rgb(187, 186, 186);
                 }
 
-                .register-button {
+                .register-next,
+                .register-register,
+                .register-back {
                     width: 260px;
                     height: 40px;
                     border: none;
                     cursor: pointer;
                     font-size: 14px;
                     border-radius: 10px;
-                    margin-top: 10px;
                     margin-bottom: 15px;
                     color: #fff;
                     background: linear-gradient(155.11deg, rgba(30, 168, 255, 1) 0%, rgba(59, 142, 231, 0.4) 100%);
                     transition: all 0.5s;
                 }
+
+                .register-back,
+                .register-register {
+                    width: 125px;
+                    margin: 5px;
+                    margin-top: 0px;
+                    margin-bottom: 15px;
+                }
+
+                .register-back {
+                    background: linear-gradient(155.11deg, rgb(197, 197, 197) 0%, rgba(65, 65, 65, 0.4) 100%);
+                }
+
                 .register-button:hover {
                     box-shadow: 0 0 10px 2px rgba(30, 169, 255, 0.281);
                 }
