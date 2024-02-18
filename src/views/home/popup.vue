@@ -80,8 +80,8 @@ const logout = () => {
         padding: 0;
         margin: 0;
         font-size: 14px;
-        background-color: #fff;
         color: rgb(113, 111, 111);
+        background-color: #fff;
         cursor: pointer;
         margin: 5px;
     }
