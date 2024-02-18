@@ -21,6 +21,12 @@ export const getUserDetail = async() => {
         detail.value.idCard = res.idCard === '' ? '未填写' : res.idCard,
         detail.value.description = res.description === '' ? '未填写' : res.description,
         detail.value.avatar = res.url  === '' ? 'https://cloudmind.top/assets/avatar.png' : res.url
+        if (store.getLoginType() === 1) {
+            sessionStorage.setItem("avatarUrl", detail.value.avatar)
+        }
+        else {
+            localStorage.setItem("avatarUrl", detail.value.avatar)
+        }
         store.setUserDetail(detail.value.name, detail.value.sex, detail.value.description, detail.value.avatar)
     })
     return detail.value

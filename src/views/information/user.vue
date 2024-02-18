@@ -169,7 +169,7 @@ const changeAvatar = async(event: any) => {
         const suffix = '.' + file.name.split('.').pop();
         cosUploadImage(file, md5, suffix, async () => {
             detail.value = await getUserDetail() as any
-            location.reload()
+            // location.reload()
         })
     }
 }
