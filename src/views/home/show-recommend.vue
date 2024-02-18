@@ -64,7 +64,28 @@
             </div>
         </div>
         <div class="user-box" v-show="props.classify === 'user'">
-            <div></div>
+            <div 
+                class="user"
+                v-for="(user, index) in responseDetail.users"
+                :key="index"
+            >
+                <img :src="user.url">
+                <div class="user-detail">
+                    <div>{{ user.name }}</div>
+                    <div>粉丝量：{{ user.followCount }}</div>
+                    <div 
+                        class="user-tag"
+                        v-for="(tag, index) in user.labels"
+                        :key="index"
+                    >
+                        {{ tag }}
+                    </div>
+                </div>
+                <button>
+                    <span>+</span>
+                    <span>关注</span>
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -74,8 +95,6 @@ import { get, post } from '@/utils/request'
 import { useStore } from '@/store/index'
 import { ref, onMounted, watch } from 'vue'
 import { errorMsg } from '@/utils/message';
-import { truncate } from 'fs';
-import { calendarEmits } from 'element-plus';
 
 const storageContent = ref<any>({
     hotGoods: [],
@@ -100,6 +119,9 @@ interface ResponseDetail {
         userId: string
         name: string
         url: string
+        description: string
+        followCount: number
+        labels: string[]
     }[],
     posts?: {
         postId: string
@@ -124,6 +146,9 @@ onMounted(() => {
 })
 
 watch(() => props.mainClassify, () => {
+    getShow()
+})
+watch(() => props.classify, () => {
     getShow()
 })
 
@@ -206,6 +231,47 @@ const getShow = () => {
                 }))
             };
             storageContent.value[index] = res.recommends.posts
+        })
+    }
+    else {
+        if (storageContent.value[index].length !== 0) {
+            responseDetail.value = {
+                users: (storageContent as any).value[index].map((user: any) => ({
+                    userId: user.userId,
+                    name: user.name,
+                    url: user.url,
+                    description: user.description,
+                    followCount: user.followCount,
+                    labels: user.labels
+                }))
+            }
+            return 
+        }
+        
+        const url = ref('')
+        if (mainClassify === 'hot') {
+            url.value = '/content/getPopularRecommend?category=' + classifyNum
+        }
+        else if (mainClassify === 'new') {
+            url.value = '/content/getLatestRecommend?category=' + classifyNum
+        }
+        else {
+            url.value = '/content/getRecommendByUser?category=' + classifyNum
+        }
+        
+        get(url.value)
+        .then((res: any) => {
+            responseDetail.value = {
+                users: res.recommends.users.map((user: any) => ({
+                    userId: user.userId,
+                    name: user.name,
+                    url: user.url,
+                    description: user.description,
+                    followCount: user.followCount,
+                    labels: user.labels
+                }))
+            };
+            storageContent.value[index] = res.recommends.users
         })
     }
 }
@@ -350,6 +416,73 @@ const trunNum = (type: string) => {
                         cursor: pointer;
                     }
                 }
+            }
+        }
+    }
+
+    .user-box {
+        width: 100%;
+
+        .user {
+            width: 100%;
+            height: 90px;
+            padding: 10px;
+            border-bottom: 1px solid #e5e5e5a1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            img {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                margin-right: 20px;
+            }
+
+            .user-detail {
+                flex: 1;
+                
+                div:first-child {
+                    font-size: 16px;
+                    font-weight: 700;
+                    margin-bottom: 5px;
+                }
+                div:nth-child(2) {
+                    font-size: 14px;
+                    color: #919191;
+                    margin-bottom: 5px;
+                }
+                .user-tag {
+                    width: 50px;
+                    height: 20px;
+                    font-size: 14px;
+                    background-color: #b0d3f8;
+                    border-radius: 5px;
+                    color: #ffffff;
+                    text-align: center;
+                }
+            }
+
+            button {
+                width: 60px;
+                height: 30px;
+                line-height: 30px;
+                background-color: #f8d9c5;
+                box-shadow: 0 0 5px 1px #ebac82;
+                border: none;
+                border-radius: 5px;
+                color: #fff;
+                font-weight: 700;
+                cursor: pointer;
+
+                span:first-child {
+                    font-size: 17px;
+                    margin-right: 3px;
+                    vertical-align: top;
+                }
+            }
+            button:active {
+                box-shadow: none;
             }
         }
     }
