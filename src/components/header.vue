@@ -4,8 +4,13 @@
             <search class="search"></search>
             <div class="header-right">
                 <i class="iconfont icon-calendar-check-solid"></i>
-                <router-link to="/notification" style="text-decoration: none;">
-                    <div class="notifications-count"></div>
+                <router-link 
+                    v-if="isLogin"
+                    to="/notification" 
+                    style="text-decoration: none;"
+                    @click="hasNotification = false"
+                >
+                    <div class="notifications-count" v-if="hasNotification"></div>
                     <i class="iconfont icon-bell"></i>
                 </router-link>
                 <i class="iconfont icon-cog-solid"></i>
@@ -26,15 +31,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { judgeHasLogin } from '@/utils/judge'
+import { getAllNotificationCount } from '@/utils/public' 
 import Search from '@/components/search.vue'
 import Avatar from '@/components/avatar.vue'
 import popup from '@/views/home/popup.vue'
 
+const isLogin = ref(false)
 const isPopup = ref(false)
+const hasNotification = ref(false)
+
+onMounted(() => {
+    isLogin.value = judgeHasLogin()
+    if (isLogin.value) {
+        timingGetNotificationCount()
+    }
+})
 
 const mouseoverPopup = () => { isPopup.value = true } 
 const mouseleavePopup = () => { isPopup.value = false }
+const timingGetNotificationCount = () => {
+    if (!hasNotification.value) {
+        getAllNotificationCount(() => {
+        }).then((res) => {
+            hasNotification.value = res
+            setTimeout(() => {
+                timingGetNotificationCount()
+            }, 30000)
+        })
+    }
+}
 </script>
 
 <style scoped lang="css">

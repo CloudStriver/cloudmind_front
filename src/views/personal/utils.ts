@@ -1,6 +1,7 @@
 import { useStore } from '@/store/index'
 import { get } from '@/utils/request'
 import { ref } from 'vue'
+import { turnTime } from '@/utils/public'
 
 //创建文件接口
 export interface createFiles {
@@ -80,9 +81,9 @@ export const getPrivateFiles = async(id: string) => {
                 path: `${res.fatherNamePath}/${file.name}`,
                 fatherId: file.fatherId,
                 md5: file.md5,
-                updateAt: getFileTime(file.updateAt),
+                updateAt: turnTime(file.updateAt),
                 spaceSize: getFileSize(file.spaceSize),
-                createAt: getFileTime(file.createAt)
+                createAt: turnTime(file.createAt)
             })),
             fatherNamePath: res.fatherNamePath,
             fatherIdPath: res.fatherIdPath
@@ -125,17 +126,6 @@ export const getFatherIdFromHerf = () => {
     else {
         return store.fatherId
     }
-}
-
-//时间戳转换
-const getFileTime = (time: number): string => {
-    const date = new Date(time); 
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');  
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${year}/${month}/${day} ${hours}:${minutes}`;
 }
 
 //文件大小转换

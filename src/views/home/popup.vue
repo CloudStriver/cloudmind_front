@@ -28,22 +28,14 @@ import { useStore } from '@/store/index'
 import { onMounted, ref } from 'vue'
 import { successMsg } from '@/utils/message';
 import { getUserDetail } from '../information/utils';
+import { judgeHasLogin } from '@/utils/judge';
 
 const store = useStore()
 const isLogin = ref(false)
 
 onMounted(() => {
-    judgeIsLogin()
+    isLogin.value = judgeHasLogin()
 })
-
-const judgeIsLogin = () => {
-    if (localStorage.getItem('LongToken') || sessionStorage.getItem('LongToken')) {
-        isLogin.value = true
-    }
-    else {
-        isLogin.value = false
-    }
-}
 
 const logout = () => {
     store.loginOut()
