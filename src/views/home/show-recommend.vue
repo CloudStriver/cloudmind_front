@@ -19,7 +19,10 @@
                 v-for="(post, index) in responseDetail.posts"
                 :key="index"
             >
-                <header class="posts-header">{{ post.title }}</header>
+                <router-link 
+                    class="posts-header"
+                    :to="'/post/' + post.postId"
+                >{{ post.title }}</router-link>
                 <section class="posts-section">
                     <img src="" v-if="showPostImage(post.url)">
                     <div class="posts-layout">
@@ -333,8 +336,9 @@ const trunNum = (type: string) => {
             border-bottom: 1px solid #e5e5e583;
 
             .posts-header {
+                color: #000;
+                text-decoration: none;
                 font-weight: 700;
-                margin-bottom: 10px;
                 cursor: pointer;
             }
             .posts-header:hover {
@@ -344,6 +348,7 @@ const trunNum = (type: string) => {
 
             .posts-section {
                 width: 100%;
+                margin-top: 5px;
                 display: flex;
 
                 .posts-layout {

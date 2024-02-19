@@ -95,7 +95,6 @@ const htmlToText = (html: string) => {
 
 const toPostDetail = (postId: string) => {
     router.push('/post/' + postId)
-    console.log('跳转');
 }
 
 const likePost = (thisPost: any) => {

@@ -15,6 +15,26 @@ export interface responseGetOtherPosts {
     }[]
 }
 
+export interface responseGetPost {
+    title: string,
+    text: string,
+    author: {
+        userId: string,
+        name: string,
+        url: string,
+    }
+    tags: string[],
+    viewCount: number,
+    likeCount: number,
+    commentCount: number,
+    shareCount: number,
+    collectCount: number,
+    liked: boolean,
+    collected: boolean,
+    createTime: number,
+    updateTime: number,
+}
+
 export const getOtherPosts = async () => {
     const postsList = ref<responseGetOtherPosts>({
         posts: []

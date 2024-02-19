@@ -6,7 +6,6 @@ export const getAllNotificationCount = async(fn: () => void): Promise<boolean> =
     .then((res: any) => {
         total = res.total
         fn()
-        console.log('total=', total);
     })
     return total > 0
 }
