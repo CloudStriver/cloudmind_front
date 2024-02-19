@@ -2,7 +2,6 @@ import axios, { AxiosError } from 'axios'
 import { useStore } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
-import { ref } from 'vue'
 import { errorMsg } from './message'
 
 interface myResponseType<T> extends AxiosResponse {

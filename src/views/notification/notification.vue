@@ -9,7 +9,7 @@
                         <div class="notifications">
                             <div style="font-size: 22px; font-weight: 700;">通知中心</div>
                             <div class="notification"></div>
-                            <div class="notifications-count">{{ notificationCount }}</div>
+                            <div class="notifications-count" v-if="notificationCount > 0">{{ notificationCount }}</div>
                         </div>
                         <div class="classify">
                             <div>
@@ -17,6 +17,8 @@
                                     type="radio" 
                                     name="select"
                                     id="all"
+                                    v-model="select"
+                                    value="all"
                                     checked
                                 >
                                 <label for="all">全部</label>
@@ -26,6 +28,8 @@
                                     type="radio" 
                                     name="select"
                                     id="like"
+                                    v-model="select"
+                                    value="like"
                                 >
                                 <label for="like">点赞</label>
                             </div>
@@ -34,6 +38,8 @@
                                     type="radio" 
                                     name="select"
                                     id="follow"
+                                    v-model="select"
+                                    value="follow"
                                 >
                                 <label for="follow">关注</label>
                             </div>
@@ -42,6 +48,8 @@
                                     type="radio" 
                                     name="select"
                                     id="collect"
+                                    v-model="select"
+                                    value="collect"
                                 >
                                 <label for="collect">收藏</label>
                             </div>
@@ -50,6 +58,8 @@
                                     type="radio" 
                                     name="select"
                                     id="comment"
+                                    v-model="select"
+                                    value="comment"
                                 >
                                 <label for="comment">评论</label>
                             </div>
@@ -58,95 +68,102 @@
                                     type="radio" 
                                     name="select"
                                     id="share"
+                                    v-model="select"
+                                    value="share"
                                 >
                                 <label for="share">分享</label>
                             </div>
                         </div>
                     </div>
                     <div class="section-bottom">
-                        <div class="notification-detail">
-                            <div class="svg-like">
-                                <i class="iconfont icon-a-dianzan2"></i>
-                            </div>
-                            <div class="content">
-                                <div class="content-top">
-                                    <div class="user">Lansongxxx</div>
-                                    <div>赞了</div>
-                                    <div>你的</div>
-                                    <div>帖子</div>
+                        <div
+                            v-for="(item, index) in storageNotificationList[select]"
+                            :key="index"
+                        >
+                            <div class="notification-detail" v-if="item.type === 1">
+                                <div class="svg-like">
+                                    <i class="iconfont icon-a-dianzan2"></i>
                                 </div>
-                                <router-link 
-                                    to="/post/1"
-                                    class="content-section"
-                                >语文作业</router-link>
-                                <div class="content-bottom">2024-2-14 13:14</div>
-                            </div>
-                        </div>
-                        <div class="notification-detail">
-                            <div class="svg-comment">
-                                <i class="iconfont icon-a-xiaoxi1"></i>
-                            </div>
-                            <div class="content">
-                                <div class="content-top">
-                                    <div class="user">Lansongxxx</div>
-                                    <div>评论了</div>
-                                    <div>你的</div>
-                                    <div>帖子</div>
+                                <div class="content">
+                                    <div class="content-top">
+                                        <div class="user">{{ item.fromName }}</div>
+                                        <div>赞了</div>
+                                        <div>你的</div>
+                                        <div>帖子</div>
+                                    </div>
+                                    <router-link 
+                                        to="/post/1"
+                                        class="content-section"
+                                    >{{ item.toName }}</router-link>
+                                    <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
                                 </div>
-                                <router-link 
-                                    to="/post/1"
-                                    class="content-section"
-                                >语文作业</router-link>
-                                <div class="content-bottom">2024-2-14 13:14</div>
                             </div>
-                        </div>
-                        <div class="notification-detail">
-                            <div class="svg-collect">
-                                <i class="iconfont icon-shoucang01"></i>
-                            </div>
-                            <div class="content">
-                                <div class="content-top">
-                                    <div class="user">Lansongxxx</div>
-                                    <div>收藏了</div>
-                                    <div>你的</div>
-                                    <div>帖子</div>
+                            <div class="notification-detail" v-if="item.type === 5">
+                                <div class="svg-comment">
+                                    <i class="iconfont icon-a-xiaoxi1"></i>
                                 </div>
-                                <router-link 
-                                    to="/post/1"
-                                    class="content-section"
-                                >语文作业</router-link>
-                                <div class="content-bottom">2024-2-14 13:14</div>
-                            </div>
-                        </div>
-                        <div class="notification-detail">
-                            <div class="svg-share">
-                                <i class="iconfont icon-fenxiang"></i>
-                            </div>
-                            <div class="content">
-                                <div class="content-top">
-                                    <div class="user">Lansongxxx</div>
-                                    <div>分享了</div>
-                                    <div>你的</div>
-                                    <div>帖子</div>
+                                <div class="content">
+                                    <div class="content-top">
+                                        <div class="user">{{ item.fromName }}</div>
+                                        <div>评论了</div>
+                                        <div>你的</div>
+                                        <div>帖子</div>
+                                    </div>
+                                    <router-link 
+                                        to="/post/1"
+                                        class="content-section"
+                                    >{{ item.toName }}</router-link>
+                                    <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
                                 </div>
-                                <router-link 
-                                    to="/post/1"
-                                    class="content-section"
-                                >语文作业</router-link>
-                                <div class="content-bottom">2024-2-14 13:14</div>
                             </div>
-                        </div>
-                        <div class="notification-detail">
-                            <div class="svg-follow">
-                                <i class="iconfont icon-guanzhu"></i>
-                            </div>
-                            <div class="content">
-                                <div class="content-top-">
-                                    <div class="user">Lansongxxx</div>
-                                    <div>关注了</div>
-                                    <div>你</div>
+                            <div class="notification-detail" v-if="item.type === 3">
+                                <div class="svg-collect">
+                                    <i class="iconfont icon-shoucang01"></i>
                                 </div>
-                                <div class="content-bottom">2024-2-14 13:14</div>
+                                <div class="content">
+                                    <div class="content-top">
+                                        <div class="user">{{ item.fromName }}</div>
+                                        <div>收藏了</div>
+                                        <div>你的</div>
+                                        <div>帖子</div>
+                                    </div>
+                                    <router-link 
+                                        to="/post/1"
+                                        class="content-section"
+                                    >{{ item.toName }}</router-link>
+                                    <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
+                                </div>
+                            </div>
+                            <div class="notification-detail" v-if="item.type === 4">
+                                <div class="svg-share">
+                                    <i class="iconfont icon-fenxiang"></i>
+                                </div>
+                                <div class="content">
+                                    <div class="content-top">
+                                        <div class="user">{{ item.fromName }}</div>
+                                        <div>分享了</div>
+                                        <div>你的</div>
+                                        <div>帖子</div>
+                                    </div>
+                                    <router-link 
+                                        to="/post/1"
+                                        class="content-section"
+                                    >{{ item.toName }}</router-link>
+                                    <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
+                                </div>
+                            </div>
+                            <div class="notification-detail" v-if="item.type === 2">
+                                <div class="svg-follow">
+                                    <i class="iconfont icon-guanzhu"></i>
+                                </div>
+                                <div class="content">
+                                    <div class="content-top-">
+                                        <div class="user">{{ item.fromName }}</div>
+                                        <div>关注了</div>
+                                        <div>你</div>
+                                    </div>
+                                    <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -159,20 +176,60 @@
 <script setup lang="ts">
 import Nav from '@/components/navigation.vue'
 import CHeader from '@/components/header.vue'
-import { ref, onMounted } from 'vue'
-import { getNotifications, getNotificationsCount } from './utils'
+import { ref, onMounted, watch } from 'vue'
+import { turnTime } from '@/utils/public'
+import { getNotifications, getNotificationsCount, updateNotifications } from './utils'
 import type { ResponseGetNotification } from './utils'
 
+const select = ref<string>('all')
 const notificationCount = ref<number>(0)
-const notificationList = ref<ResponseGetNotification>({
-    notifications: [],
-    token: ''
+const notificationList = ref<any>([])
+const storageNotificationList = ref<any>({
+    all: ref<ResponseGetNotification[]>([]),
+    like: ref<ResponseGetNotification[]>([]),
+    follow: ref<ResponseGetNotification[]>([]),
+    collect: ref<ResponseGetNotification[]>([]),
+    comment: ref<ResponseGetNotification[]>([]),
 })
 
 onMounted(async() => {
-    getNotifications()
+    getNotificationList()
     notificationCount.value = await getNotificationsCount()
 })
+
+watch(select, () => {
+    getNotificationList()
+})
+
+const getNotificationList = async() => {
+    const type = turnNotificationType(select.value)
+    if (storageNotificationList.value[select.value].length === 0) {
+        notificationList.value.push(await getNotifications(type))
+        storageNotificationList.value[select.value].push(...notificationList.value[0])
+    }
+
+    setTimeout(() => {
+        updateNotifications()
+        notificationCount.value = 0
+    }, 5000)
+}
+
+const turnNotificationType = (type: string): number => {
+    switch (type) {
+        case 'like':
+            return 1
+        case 'follow':
+            return 2
+        case 'collect':
+            return 3
+        case 'share':
+            return 4
+        case 'comment':
+            return 5
+        default: 
+            return 0
+    }
+}
 </script>
 
 <style scoped lang="css">

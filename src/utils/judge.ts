@@ -9,3 +9,12 @@ export const judgePassword = (password: string):boolean => {
     const objExp = new RegExp(expression)
     return objExp.test(password)
 }
+
+export const judgeHasLogin = () => {
+    if (localStorage.getItem('LongToken') || sessionStorage.getItem('LongToken')) {
+        return true
+    }
+    else {
+        return false
+    }
+}
