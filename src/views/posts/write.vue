@@ -262,6 +262,8 @@ const createPost = (url: string) => {
     coverImage.value = ''
     nowTagsList.value = []
     isOperate.value = true
+    sessionStorage.removeItem('postTitle')
+    sessionStorage.removeItem('postContent')
     // router.push('/posts')
   })
 }
@@ -285,12 +287,11 @@ const publishPost = () => {
   }
 }
 const previewPost = () => {
-  sessionStorage.setItem('postTitle', postTitle.value)
   const originalText  = editorRef.value.getHtml()
   const withoutFirstP = originalText.slice(3)
   nowPostContent.value = withoutFirstP.slice(0, withoutFirstP.length - 4)
+  sessionStorage.setItem('postTitle', postTitle.value)
   sessionStorage.setItem('postContent', nowPostContent.value)
-  console.log(nowPostContent.value);
   window.open('/write/preview')
 }
 </script>    

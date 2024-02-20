@@ -1,5 +1,5 @@
 <template>
-    <div class="main-box">
+    <div class="main-box" @click="cancelShowSettingPopup()">
         <Nav class="nav"></Nav>
         <div class="contents">
             <CHeader class="cheader"></CHeader>
@@ -22,7 +22,7 @@
                                 <img :src="postDetail.author.url" alt="">
                                 <div>{{ postDetail.author.name }}</div>
                             </div>
-                            <button class="attention">关注</button>
+                            <button class="attention" v-if="!isMyPost">关注</button>
                         </div>
                     </header>
                     <section class="detail-section">
@@ -50,6 +50,18 @@
                                 <i class="iconfont icon-gengduo"></i>
                             </div>
                         </div>
+                        <div 
+                            class="setting" 
+                            @click="isShowSetting = true" 
+                            v-if="isMyPost"
+                        >
+                            <i class="iconfont icon-cog-solid"></i>
+                            <div>设置</div>
+                        </div>
+                        <div v-show="isShowSetting" class="setting-popup">
+                            <div @click="modifyPost()">修改帖子</div>
+                            <div>删除帖子</div>
+                        </div>
                     </footer>
                 </div>
             </div>
@@ -61,10 +73,15 @@
 import Nav from '@/components/navigation.vue'
 import CHeader from '@/components/header.vue'
 import { get } from '@/utils/request'
+import { useStore } from '@/store'
 import { turnTime } from '@/utils/public'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import type { responseGetPost } from './utils'
+import router from '@/router'
 
+const store = useStore()
+const myUserId = ref('')
+const isShowSetting = ref(false)
 const postDetail = ref<responseGetPost>({
     title: '',
     text: '',
@@ -89,11 +106,49 @@ onMounted(() => {
     getPost()
 })
 
+const modifyPost = () => {
+    const postId = location.href.split('/').pop()
+    sessionStorage.setItem('postTitle', postDetail.value.title)
+    sessionStorage.setItem('postContent', postDetail.value.text)
+    router.push('/write/modify/' + postId)
+}
+
+const isMyPost = computed(() => {
+    return myUserId.value === postDetail.value.author.userId
+})
+
+const cancelShowSettingPopup = () => {
+    document.addEventListener('click', (event) => {
+        const settingPopup = document.querySelector('.setting-popup') as HTMLElement;
+        const setting = document.querySelector('.setting') as HTMLElement;
+        if (!settingPopup.contains(event.target as Node) && !setting.contains(event.target as Node)) {
+            isShowSetting.value = false;
+        }
+        settingPopup.addEventListener('click', () => {
+            isShowSetting.value = false;
+        })
+    });
+}
+
+const getMyUserId = () => {
+    const type = store.getLoginType()
+    if (type === 1) {
+        myUserId.value = sessionStorage.getItem('UserId') as string
+    }
+    else if (type === 2) {
+        myUserId.value = localStorage.getItem('UserId') as string
+    }
+    else {
+        myUserId.value = ''
+    }
+}
+
 const getPost = () => {
     const postId = location.href.split('/').pop()
     const url = '/content/getPost?postId=' + postId
     get(url)
     .then((res: any) => {
+        getMyUserId()
         postDetail.value = res as responseGetPost
         console.log(postDetail.value);
     })
@@ -234,8 +289,47 @@ const getPost = () => {
                 }
 
                 .detail-footer {
+                    position: relative;
                     margin-top: 10px;
                     display: flex;
+                    justify-content: space-between;
+
+                    .setting {
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+
+                        i {
+                            font-size: 20px;
+                            margin-right: 5px;
+                        }
+                    }
+
+                    .setting-popup {
+                        position: absolute;
+                        width: 150px;
+                        right: 0;
+                        bottom: 30px;
+                        padding: 10px;
+                        background-color: #fff;
+                        box-shadow: 0 0 5px 1px #0000001f;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-around;
+
+                        div {
+                            width: 100%;
+                            height: 30px;
+                            line-height: 30px;
+                            padding-left: 10px;
+                            cursor: pointer;
+                            vertical-align: middle;
+                            user-select: none;
+                        }
+                        div:hover {
+                            background-color: #f5f5f5;
+                        }
+                    }
 
                     .situation {
                         display: flex;
