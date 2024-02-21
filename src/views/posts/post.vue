@@ -33,7 +33,7 @@
                             <div 
                                 class="like"
                                 v-if="!postDetail.liked"
-                                @click="likePost()"
+                                @click="likePost"
                             >
                                 <i class="iconfont icon-a-dianzan2"></i>
                                 <div>点赞 {{ postDetail.likeCount }}</div>
@@ -46,9 +46,17 @@
                                 <i class="iconfont icon-a-xiaoxi1"></i>
                                 <div>评论 {{ postDetail.commentCount }}</div>
                             </div>
-                            <div class="collect">
-                                <i class="iconfont icon-xihuan02"></i>
+                            <div 
+                                class="collect" 
+                                v-if="!postDetail.collected"
+                                @click="collectPost"
+                            >
+                                <i class="iconfont icon-shoucang01"></i>
                                 <div>收藏</div>
+                            </div>
+                            <div class="collected" v-if="postDetail.collected">
+                                <i class="iconfont icon-shoucang01"></i>
+                                <div>已收藏</div>
                             </div>
                             <div class="share">
                                 <i class="iconfont icon-fenxiang"></i>
@@ -124,6 +132,10 @@ onMounted(() => {
     getPost()
 })
 
+const collectPost = () => {
+    createRelation(3)
+}
+
 const likePost = () => {
     if (myUserId.value === '') {
         errorMsg('请先登录')
@@ -134,16 +146,25 @@ const likePost = () => {
         return
     }
     else {
-        post('/relation/createRelation', {
-            toId: postId,
-            toType: 4,
-            relationType: 1
-        })
-        .then(() => {
+        createRelation(1)
+    }
+}
+
+const createRelation = (type: number) => {
+    post('/relation/createRelation', {
+        toId: postId,
+        toType: 4,
+        relationType: type
+    })
+    .then(() => {
+        if (type === 1) {
             postDetail.value.liked = true
             postDetail.value.likeCount++
-        })
-    }
+        }
+        else if (type === 3) {
+            postDetail.value.collected = true
+        }
+    })
 }
 
 const deletePost = () => {
@@ -431,6 +452,7 @@ const getPost = () => {
                         .liked,
                         .remark,
                         .collect,
+                        .collected,
                         .share,
                         .more{
                             display: flex;
@@ -448,8 +470,10 @@ const getPost = () => {
                             color: #6d99ec;
                             font-weight: 600;
                         }
-                        .liked:hover {
-                            color: #494848;
+
+                        .collected {
+                            color: #ff9d5b;
+                            font-weight: 600;
                         }
                     }
                 }
