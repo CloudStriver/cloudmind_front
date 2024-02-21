@@ -30,9 +30,17 @@
                     </section>
                     <footer class="detail-footer">
                         <div class="situation">
-                            <div class="like">
+                            <div 
+                                class="like"
+                                v-if="!postDetail.liked"
+                                @click="likePost()"
+                            >
                                 <i class="iconfont icon-a-dianzan2"></i>
                                 <div>点赞 {{ postDetail.likeCount }}</div>
+                            </div>
+                            <div class="liked" v-if="postDetail.liked">
+                                <i class="iconfont icon-a-dianzan2"></i>
+                                <div>已点赞 {{ postDetail.likeCount }}</div>
                             </div>
                             <div class="remark">
                                 <i class="iconfont icon-a-xiaoxi1"></i>
@@ -85,7 +93,7 @@ import { turnTime } from '@/utils/public'
 import { ref, onMounted, computed } from 'vue'
 import type { responseGetPost } from './utils'
 import router from '@/router'
-import { successMsg } from '@/utils/message'
+import { errorMsg, successMsg } from '@/utils/message'
 
 const store = useStore()
 const myUserId = ref('')
@@ -115,6 +123,28 @@ const postDetail = ref<responseGetPost>({
 onMounted(() => {
     getPost()
 })
+
+const likePost = () => {
+    if (myUserId.value === '') {
+        errorMsg('请先登录')
+        return
+    }
+    else if (myUserId.value === postDetail.value.author.userId) {
+        errorMsg('不能给自己点赞')
+        return
+    }
+    else {
+        post('/relation/createRelation', {
+            toId: postId,
+            toType: 4,
+            relationType: 1
+        })
+        .then(() => {
+            postDetail.value.liked = true
+            postDetail.value.likeCount++
+        })
+    }
+}
 
 const deletePost = () => {
     isShowDeletePost.value = true
@@ -171,8 +201,6 @@ const getMyUserId = () => {
     else {
         myUserId.value = ''
     }
-    console.log(myUserId.value);
-    
 }
 
 const getPost = () => {
@@ -400,6 +428,7 @@ const getPost = () => {
                         display: flex;
 
                         .like, 
+                        .liked,
                         .remark,
                         .collect,
                         .share,
@@ -413,6 +442,14 @@ const getPost = () => {
                                 font-size: 20px;
                                 margin-right: 5px;
                             }
+                        }
+
+                        .liked {
+                            color: #6d99ec;
+                            font-weight: 600;
+                        }
+                        .liked:hover {
+                            color: #494848;
                         }
                     }
                 }
