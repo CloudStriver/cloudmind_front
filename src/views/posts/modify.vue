@@ -113,16 +113,16 @@
 </template>
   
 <script setup lang="ts">
-import '@wangeditor/editor/dist/css/style.css' // 引入 css
-import SparkMD5 from 'spark-md5'
-import { errorMsg, successMsg } from '@/utils/message'
-import { debounce } from '@/utils/optimize'
-import { cosUploadImage } from '@/utils/public-cos'
-import { getTagsList } from './utils'
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
-import { onBeforeUnmount, onUpdated, ref, shallowRef } from 'vue'
-import { post } from '@/utils/request'
 import router from '@/router'
+import SparkMD5 from 'spark-md5'
+import { getTagsList } from './utils'
+import { post } from '@/utils/request'
+import { debounce } from '@/utils/optimize'
+import '@wangeditor/editor/dist/css/style.css'
+import { cosUploadImage } from '@/utils/public-cos'
+import { errorMsg, successMsg } from '@/utils/message'
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import { onBeforeUnmount, onUpdated, ref, shallowRef, watch } from 'vue'
   
 const coverImage = ref('') // 封面图片
 const postTitle = ref(sessionStorage.getItem('postTitle'))// 文章标题
@@ -173,10 +173,8 @@ toolbarKeys: [
     'justifyJustify', // 两端对齐
     'justifyLeft', // 左对齐
     'justifyRight', // 右对齐
-]
+  ]
 }
-  
-
   
 onBeforeUnmount(() => {
     const editor = editorRef.value
@@ -190,6 +188,11 @@ onUpdated(() => {
     } else {
         isOperate.value = true
     }
+})
+
+watch([postTitle, valueHtml], () => {
+    sessionStorage.setItem('postTitle', postTitle.value as string)
+    sessionStorage.setItem('postContent', valueHtml.value as string)
 })
   
 const getTagList = debounce(async() => {
@@ -250,26 +253,26 @@ const handleCreated = (editor: any) => {
 }
 
 const updatePost = (url: string) => {
-    // const postId = location.href.split('/').pop()
-    // post('/content/updatePost', {
-    //     postId,
-    //     title: postTitle.value,
-    //     text: valueHtml.value,
-    //     tags: nowTagsList.value,
-    //     status: 1,
-    //     url: url
-    // })
-    // .then(() => {
-    //     successMsg('修改成功')
-    //     postTitle.value = ''
-    //     valueHtml.value = ''
-    //     coverImage.value = ''
-    //     nowTagsList.value = []
-    //     isOperate.value = true
-    //     sessionStorage.removeItem('postTitle')
-    //     sessionStorage.removeItem('postContent')
-    //     router.push('/post/' + postId)
-    // })
+    const postId = location.href.split('/').pop()
+    post('/content/updatePost', {
+        postId,
+        title: postTitle.value,
+        text: valueHtml.value,
+        tags: nowTagsList.value,
+        status: 1,
+        url: url
+    })
+    .then(() => {
+        successMsg('修改成功')
+        postTitle.value = ''
+        valueHtml.value = ''
+        coverImage.value = ''
+        nowTagsList.value = []
+        isOperate.value = true
+        sessionStorage.removeItem('postTitle')
+        sessionStorage.removeItem('postContent')
+        router.push('/post/' + postId)
+    })
 }
 const modifyPost = () => {
     const url = ref('')
@@ -291,11 +294,8 @@ const modifyPost = () => {
     }
 }
 const previewPost = () => {
-    const originalText  = editorRef.value.getHtml()
-    const withoutFirstP = originalText.slice(3)
-    nowPostContent.value = withoutFirstP.slice(0, withoutFirstP.length - 4)
     sessionStorage.setItem('postTitle', postTitle.value as string)
-    sessionStorage.setItem('postContent', nowPostContent.value)
+    sessionStorage.setItem('postContent', editorRef.value.getHtml())
     window.open('/write/preview')
 }
 </script>    
