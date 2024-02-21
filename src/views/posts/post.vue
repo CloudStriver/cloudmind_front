@@ -59,10 +59,17 @@
                             <div>设置</div>
                         </div>
                         <div v-show="isShowSetting" class="setting-popup">
-                            <div @click="modifyPost()">修改帖子</div>
-                            <div>删除帖子</div>
+                            <div @click="modifyPost">修改帖子</div>
+                            <div @click.stop="deletePost">删除帖子</div>
                         </div>
                     </footer>
+                    <div class="delete-post" v-if="isShowDeletePost">
+                        <div>执行此操作后，该文章将永久删除，是否继续？</div>
+                        <div class="delete-post-button">
+                            <button @click="isShowDeletePost = false">取消</button>
+                            <button @click="continueDelete">继续</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -72,16 +79,19 @@
 <script setup lang="ts">
 import Nav from '@/components/navigation.vue'
 import CHeader from '@/components/header.vue'
-import { get } from '@/utils/request'
+import { get, post } from '@/utils/request'
 import { useStore } from '@/store'
 import { turnTime } from '@/utils/public'
 import { ref, onMounted, computed } from 'vue'
 import type { responseGetPost } from './utils'
 import router from '@/router'
+import { successMsg } from '@/utils/message'
 
 const store = useStore()
 const myUserId = ref('')
 const isShowSetting = ref(false)
+const isShowDeletePost = ref(false)
+const postId = location.href.split('/').pop()
 const postDetail = ref<responseGetPost>({
     title: '',
     text: '',
@@ -106,14 +116,26 @@ onMounted(() => {
     getPost()
 })
 
+const deletePost = () => {
+    isShowDeletePost.value = true
+    isShowSetting.value = false
+}
+const continueDelete = () => {
+    post('/content/deletePost', { postId })
+    .then(() => {
+        successMsg('删除成功')
+        router.push('/posts')
+    })
+}
+
 const modifyPost = () => {
-    const postId = location.href.split('/').pop()
     sessionStorage.setItem('postTitle', postDetail.value.title)
     sessionStorage.setItem('postContent', postDetail.value.text)
     router.push('/write/modify/' + postId)
 }
 
 const isMyPost = computed(() => {
+    console.log(myUserId.value, postDetail.value.author.userId);
     return myUserId.value === postDetail.value.author.userId
 })
 
@@ -128,6 +150,14 @@ const cancelShowSettingPopup = () => {
             isShowSetting.value = false;
         })
     });
+    if (isShowDeletePost.value) {
+        const deletePost = document.querySelector('.delete-post') as HTMLElement;
+        document.addEventListener('click', (event) => {
+            if (!deletePost.contains(event.target as Node) && event.target !== deletePost) {
+                isShowDeletePost.value = false;
+            }
+        });
+    }
 }
 
 const getMyUserId = () => {
@@ -141,16 +171,16 @@ const getMyUserId = () => {
     else {
         myUserId.value = ''
     }
+    console.log(myUserId.value);
+    
 }
 
 const getPost = () => {
-    const postId = location.href.split('/').pop()
     const url = '/content/getPost?postId=' + postId
     get(url)
     .then((res: any) => {
         getMyUserId()
         postDetail.value = res as responseGetPost
-        console.log(postDetail.value);
     })
 }
 
@@ -168,6 +198,7 @@ const getPost = () => {
         width: 80px;
         float: left;
     }
+
 
     .contents {
         position: relative;
@@ -193,11 +224,45 @@ const getPost = () => {
             align-items: center;
             justify-content: center;
 
+
             .detail {
+                position: relative;
                 min-width: 700px;
                 max-width: 1000px;
                 background-color: #fff;
                 padding: 20px 30px;
+
+                .delete-post {
+                    position: absolute;
+                    width: 280px;
+                    height: 120px;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    padding: 11px;
+                    border-radius: 10px;
+                    background-color: #fff;
+                    box-shadow: 0 0 10px 1px #00000070;
+
+                    .delete-post-button {
+                        width: 100%;
+                        text-align: end;
+                        margin-top: 30px;
+
+                        button {
+                            width: 80px;
+                            height: 25px;
+                            border: none;
+                            margin-left: 20px;
+                        }
+
+                        button:last-child {
+                            background-color: #f5533a;
+                            color: #fff;
+                            border-radius: 5px;
+                        }
+                    }
+                }
 
                 .detail-header {
                     width: 100%;
