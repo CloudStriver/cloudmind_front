@@ -1,8 +1,7 @@
 <template>
     <div class="main-box">
-        <Nav class="nav"></Nav>
+        <CHeader class="cheader"></CHeader>
         <div class="contents">
-            <CHeader class="cheader"></CHeader>
             <section class="section">
                 <div class="notification-box">
                     <div class="section-top">
@@ -174,7 +173,6 @@
 </template>
 
 <script setup lang="ts">
-import Nav from '@/components/navigation.vue'
 import CHeader from '@/components/header.vue'
 import { ref, onMounted, watch } from 'vue'
 import { turnTime } from '@/utils/public'
@@ -237,26 +235,19 @@ const turnNotificationType = (type: string): number => {
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
 
-    .nav {
-        position: fixed;
-        height: 100%;
-        width: 80px;
-        float: left;
+    .cheader {
+        height: 70px;
     }
 
     .contents {
-        position: relative;
+        height: 100%;
+        padding-top: 20px;
         background-color: rgba(240, 245, 255, 1);
-        margin-left: 80px;
-        flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
-
-        .cheader {
-            height: 70px;
-        }
 
         .section {
             width: 100%;

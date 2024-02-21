@@ -1,8 +1,7 @@
 <template>
     <div class="main-box">
-        <Nav class="nav"></Nav>
+        <CHeader class="cheader"></CHeader>
         <div class="contents">
-            <CHeader></CHeader>
             <section class="section-top">
                 <activity class="activity"></activity>
             </section>
@@ -21,7 +20,6 @@
 </template>
 
 <script setup lang="ts">
-import Nav from '@/components/navigation.vue'
 import CHeader from '@/components/header.vue'
 import activity from '@/views/home/activity.vue'
 import recommend from '@/views/home/recommend.vue'
@@ -66,17 +64,15 @@ const firstGetUserDetail = () => {
 .main-box {
     width: 100%;
     display: flex;
-    
-    .nav {
+    flex-direction: column;
+
+    .cheader{
         position: fixed;
-        height: 100%;
-        width: 80px;
-        float: left;
     }
 
     .contents {
         background-color: rgba(240, 245, 255, 1);
-        margin-left: 80px;
+        padding-top: 100px;
         flex: 1;
         display: flex;
         flex-direction: column;
