@@ -38,7 +38,7 @@ import { getAllNotificationCount } from '@/utils/public'
 import Search from '@/components/search.vue'
 import Avatar from '@/components/avatar.vue'
 import Nav from '@/components/navigation.vue'
-import popup from '@/views/home/popup.vue'
+import popup from './popup.vue'
 
 const isLogin = ref(false)
 const isPopup = ref(false)

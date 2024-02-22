@@ -1,6 +1,11 @@
 <template>
     <div class="main-box">
         <router-link 
+            to="user/center"
+            class="center"
+            v-if="isLogin"
+        >个人中心</router-link>
+        <router-link 
             to="/user"
             class="user"
             v-if="isLogin"
@@ -27,7 +32,7 @@
 import { useStore } from '@/store/index'
 import { onMounted, ref } from 'vue'
 import { successMsg } from '@/utils/message';
-import { getUserDetail } from '../information/utils';
+import { getUserDetail } from '@/views/information/utils';
 import { judgeHasLogin } from '@/utils/judge';
 
 const store = useStore()
@@ -55,7 +60,8 @@ const logout = () => {
     flex-direction: column;
 
     .user,
-    .login {
+    .login,
+    .center {
         height: 20px;
         text-decoration: none;
         font-size: 14px;
@@ -80,9 +86,19 @@ const logout = () => {
 
     .user:hover,
     .login:hover,
-    .logout:hover {
+    .logout:hover,
+    .center:hover{
         color: rgb(59, 93, 155);
         font-weight: 600;
+    }
+
+    .user:active,
+    .login:active,
+    .center:active {
+        div {
+            color: rgb(59, 93, 155);
+        font-weight: 600;
+        }
     }
 }
 </style>
