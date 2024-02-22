@@ -19,7 +19,7 @@
                 class="router"
                 active-class="router-active"
             >
-                <i class="iconfont icon-sidenav-doc" style="font-size: 22px;"></i>
+                <i class="iconfont icon-sidenav-doc" style="font-size: 18px;"></i>
             </router-link>
             <router-link 
                 to="/space" 
@@ -78,44 +78,32 @@ watch(() => props.link, (newVal) => {
 
 <style scoped lang="css">
 .main-box {
-    width: 80px;
-    background-color: rgb(219, 235, 255);
-    padding-top: 10px;
     display: flex;
-    flex-direction: column;
 
     .nav-box {
-        width: 80px;
-        padding-top: 30px;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-around;
+        display: flex;
 
         .router {
-            width: 80px;
-            height: 50px;
             text-decoration: none;
-            margin-bottom: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
             
             i {
-                font-size: 25px;
-                color: rgb(137, 161, 208);
+                font-size: 22px;
+                margin: 25px;
+                color: #a0a0a0;
             }
 
         }
         .router:hover {
-            background-color: rgba(213, 228, 242, 0.978);
-        }
-       
-
-        .router-active {
-            border-right: 2px solid rgb(76, 145, 220);
             i {
-                color: rgb(76, 145, 220);
-                font-weight: 700;
+                color: rgb(165, 180, 197);
+            }
+        }
+        .router-active {
+            i {
+                color: rgb(107, 167, 232)
             }
         }
     }

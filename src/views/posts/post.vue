@@ -1,8 +1,7 @@
 <template>
     <div class="main-box" @click="cancelShowSettingPopup()">
-        <Nav class="nav"></Nav>
+        <CHeader class="cheader"></CHeader>
         <div class="contents">
-            <CHeader class="cheader"></CHeader>
             <div class="detail-box">
                 <div class="detail">
                     <header class="detail-header">
@@ -93,7 +92,6 @@
 </template>
 
 <script setup lang="ts">
-import Nav from '@/components/navigation.vue'
 import CHeader from '@/components/header.vue'
 import { get, post } from '@/utils/request'
 import { useStore } from '@/store'
@@ -240,31 +238,24 @@ const getPost = () => {
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
 
-    .nav {
-        position: fixed;
-        height: 100%;
-        width: 80px;
-        float: left;
+    .cheader {
+        width: 100%;
+        height: 70px;
     }
-
-
+        
     .contents {
         position: relative;
         background-color: rgba(240, 245, 255, 1);
         width: 100%;
-        margin-left: 80px;
+        padding-top: 20px;
         padding-bottom: 30px;
         display: flex;
         flex-direction: column;
         align-items: center;
         flex: 1;
         overflow-x: hidden;
-
-        .cheader {
-            width: 100%;
-            height: 70px;
-        }
 
         .detail-box {
             width: 100%;

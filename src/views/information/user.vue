@@ -1,6 +1,6 @@
 <template>
     <div class="main-box">
-        <Nav class="nav"></Nav>
+        <CHeader class="cheader"></CHeader>
         <div class="contents">
             <div class="operate-box">
                 <div class="avatar-name">
@@ -124,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import Nav from '@/components/navigation.vue'
+import CHeader from '@/components/header.vue'
 import avatar from '@/components/avatar.vue'
 import { ref, onMounted } from 'vue'
 import { useStore } from '@/store/index'
@@ -180,19 +180,17 @@ const changeAvatar = async(event: any) => {
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
 
-    .nav {
-        position: fixed;
-        height: 100%;
-        width: 80px;
-        float: left;
+    .cheader {
+        height: 70px;
     }
 
     .contents {
         width: 100%;
         height: 100%;
+        flex: 1;
         background-color: rgba(240, 245, 255, 1);
-        margin-left: 80px;
         padding-top: 50px;
         display: flex;
         justify-content: center;

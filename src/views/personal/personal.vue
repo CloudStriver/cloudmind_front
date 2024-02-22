@@ -1,6 +1,5 @@
 <template>
     <div class="main-box" @click="cancelPopup($event)">
-        <Nav class="nav" :link="fatherId"></Nav>
         <div class="drawer-box">
             <div 
                 class="drawer"
@@ -351,7 +350,6 @@
 </template>
 
 <script setup lang="ts">
-import Nav from '@/components/navigation.vue'
 import Search from '@/components/search.vue'
 import Popup from '@/views/personal/popup.vue'
 import { useStore } from '@/store/index';
@@ -786,11 +784,6 @@ const clickMusic = () => {
     height: 100%;
     display: flex;
     overflow: hidden;
-
-    .nav {
-        width: 80px;
-        z-index: 10;
-    }
 
     .drawer-box {
         position: relative;  

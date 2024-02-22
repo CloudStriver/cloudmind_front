@@ -1,13 +1,14 @@
 <template>
     <div class="main-box">
         <div class="header-box">
+            <Nav class="nav"></Nav>
             <search class="search"></search>
             <div class="header-right">
                 <i class="iconfont icon-calendar-check-solid"></i>
                 <router-link 
+                    class="router"
                     v-if="isLogin"
                     to="/notification" 
-                    style="text-decoration: none;"
                     @click="hasNotification = false"
                 >
                     <div class="notifications-count" v-if="hasNotification"></div>
@@ -36,6 +37,7 @@ import { judgeHasLogin } from '@/utils/judge'
 import { getAllNotificationCount } from '@/utils/public' 
 import Search from '@/components/search.vue'
 import Avatar from '@/components/avatar.vue'
+import Nav from '@/components/navigation.vue'
 import popup from '@/views/home/popup.vue'
 
 const isLogin = ref(false)
@@ -66,25 +68,28 @@ const timingGetNotificationCount = () => {
 
 <style scoped lang="css">
 .main-box {
-    width: 100%;
     height: 70px;
-    padding: 0 2% 0;
-    margin-bottom: 20px;
 
     .header-box {
         width: 100%;
         height: 70px;
-        background-color: rgba(207, 227, 252, 0.6);
+        background-color: rgb(218, 235, 255);
+        box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.1);
         padding: 0 60px 0;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
 
+        .nav {
+            margin-right: 50px;
+        }
+
         .search {
-            width: 300px;
+            width: 400px;
             height: 32px;
             padding: 0;
             margin: 0;
+            margin-right: 50px;
         }
 
         .header-right {
@@ -92,26 +97,35 @@ const timingGetNotificationCount = () => {
             align-items: center;
             position: relative;
 
-            .notifications-count {
-                position: absolute;
-                width: 13px;
-                height: 13px;
-                color: #fff;
-                background-color: #de3032;
-                border: 3px solid rgba(207, 227, 252, 1);
-                border-radius: 50%;
-                right: 128px;
-                top: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
             i {
                 font-size: 20px;
                 margin-right: 30px;
                 cursor: pointer;
-                color: #494848;
+                color: #818181;
+            }
+
+            .router {
+                text-decoration: none;
+
+                .notifications-count {
+                    position: absolute;
+                    width: 13px;
+                    height: 13px;
+                    color: #fff;
+                    background-color: #de3032;
+                    border: 3px solid rgba(207, 227, 252, 1);
+                    border-radius: 50%;
+                    right: 128px;
+                    top: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+            .router:hover {
+                i {
+                    color: rgb(165, 180, 197);
+                }
             }
 
             .avatar {

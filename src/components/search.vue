@@ -13,7 +13,7 @@
 
 <style scoped lang="css">
 .main-box {
-    width: 300px;
+    width: 400px;
     height: 32px;
     border-radius: 25px;
     border: 1.5px solid rgb(107, 167, 232);
@@ -23,7 +23,7 @@
 
     input {
         margin: 0 20px 0 15px;
-        width: 80%;
+        width: 83%;
         height: 96%;
         border: none;
         outline: none;

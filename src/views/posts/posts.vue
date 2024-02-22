@@ -1,8 +1,7 @@
 <template>
     <div class="main-box">
-        <Nav class="nav"></Nav>
+        <CHeader class="cheader"></CHeader>
         <div class="contents">
-            <CHeader class="cheader"></CHeader>
             <section class="section">
                 <div class="posts-box">
                     <div 
@@ -67,7 +66,6 @@
 </template>
 
 <script setup lang="ts">
-import Nav from '@/components/navigation.vue'
 import CHeader from '@/components/header.vue'
 import { ref, onMounted } from 'vue'
 import { getOtherPosts } from './utils'
@@ -121,26 +119,20 @@ const likePost = (thisPost: any) => {
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
 
-    .nav {
-        position: fixed;
-        height: 100%;
-        width: 80px;
-        float: left;
+    .cheader {
+        height: 70px;
     }
 
     .contents {
         position: relative;
         background-color: rgba(240, 245, 255, 1);
-        margin-left: 80px;
+        padding-top: 20px;
         flex: 1;
         overflow-x: hidden;
         display: flex;
         flex-direction: column;
-
-        .cheader {
-            height: 70px;
-        }
         
         .section {
             width: 100%;
