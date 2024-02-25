@@ -91,14 +91,5 @@ const logout = () => {
         color: rgb(59, 93, 155);
         font-weight: 600;
     }
-
-    .user:active,
-    .login:active,
-    .center:active {
-        div {
-            color: rgb(59, 93, 155);
-        font-weight: 600;
-        }
-    }
 }
 </style>

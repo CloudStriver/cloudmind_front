@@ -153,6 +153,8 @@ const likePost = (thisPost: any) => {
                 flex-direction: column;
                 align-items: center;
 
+                
+
                 .add-post {
                     position: absolute;
                     width: 150px;
