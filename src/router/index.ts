@@ -61,6 +61,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/write/modify/:postId',
     component: () => import('../views/posts/modify.vue'),
+  },
+  {
+    path: '/manage',
+    component: () => import('../views/manage/manage.vue'),
   }
 ]
 
