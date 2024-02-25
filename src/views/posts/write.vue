@@ -264,7 +264,7 @@ const createPost = (url: string) => {
     isOperate.value = true
     sessionStorage.removeItem('postTitle')
     sessionStorage.removeItem('postContent')
-    // router.push('/posts')
+    router.push('/posts')
   })
 }
 const publishPost = () => {
