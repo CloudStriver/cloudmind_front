@@ -6,18 +6,46 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "2506205",
+      "name": "帖子管理",
+      "font_class": "tieziguanli",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "3418328",
+      "name": "商品中心",
+      "font_class": "shangpinzhongxin",
+      "unicode": "e6c8",
+      "unicode_decimal": 59080
+    },
+    {
+      "icon_id": "9851600",
+      "name": "购物车",
+      "font_class": "gouwuche",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "11597962",
+      "name": "收藏夹",
+      "font_class": "shoucangjia",
+      "unicode": "e73a",
+      "unicode_decimal": 59194
+    },
+    {
+      "icon_id": "19545456",
+      "name": "订单中心",
+      "font_class": "dingdanzhongxin",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
       "icon_id": "33906946",
       "name": "管理中心-设置-01",
       "font_class": "guanlizhongxin-shezhi-01",
       "unicode": "ea26",
       "unicode_decimal": 59942
-    },
-    {
-      "icon_id": "36889984",
-      "name": "创作",
-      "font_class": "chuangzuo",
-      "unicode": "e7c2",
-      "unicode_decimal": 59330
     },
     {
       "icon_id": "1614453",

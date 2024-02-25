@@ -65,6 +65,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/manage',
     component: () => import('../views/manage/manage.vue'),
+  },
+  {
+    path: '/manage/post',
+    component: () => import('../views/manage/post.vue'),
   }
 ]
 
