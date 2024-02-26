@@ -110,7 +110,10 @@
                                 v-for="(post, index) in postsList.posts"
                                 :key="index"
                             >
-                                <h3>{{ post.title }}</h3>
+                                <h3 
+                                    @click="enterPost(post)"
+                                    class="title"
+                                >{{ post.title }}</h3>
                                 <div>
                                     <div class="type">原创</div>
                                 </div>
@@ -120,7 +123,7 @@
                                         <span>评论 {{ post.commentCount }}</span>
                                     </div>
                                     <div class="operate">
-                                        <span>编辑</span>
+                                        <span @click="modifyPost(post)">编辑</span>
                                         <span>删除</span>
                                         <span><i class="iconfont icon-gengduo"></i></span>
                                     </div>
@@ -139,6 +142,7 @@ import CHeader from '@/components/header.vue'
 import { onMounted, ref } from 'vue'
 import { getMyPostList } from './utils'
 import type { responseGetMyPostList } from './utils'
+import router from '@/router';
 
 const keyContent = ref<string>('')
 const postsList = ref<responseGetMyPostList>({
@@ -148,6 +152,16 @@ const postsList = ref<responseGetMyPostList>({
 onMounted(async() => {
     postsList.value = await getMyPostList('')
 })
+
+const enterPost = (post: any) => {
+    router.push('/post/' + post.postId)
+}
+
+const modifyPost = (post: any) => {
+    sessionStorage.setItem('postTitle', post.title)
+    sessionStorage.setItem('postContent', post.text)
+    router.push('/write/modify/' + post.postId)
+}
 
 const searchPostsList = async() => {
     const key = '&allFieldsKey=' + keyContent.value
@@ -294,10 +308,14 @@ const searchPostsList = async() => {
                         margin-bottom: 10px;
                         border-bottom: 0.5px solid #c7c7c758;
 
-                        h3 {
+                        .title {
                             margin: 0;
                             margin-bottom: 10px;
                             cursor: pointer;
+                        }
+                        .title:hover {
+                            color: #6d99ec;
+                            text-decoration: underline;
                         }
 
                         .type {
