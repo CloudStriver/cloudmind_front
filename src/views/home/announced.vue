@@ -1,5 +1,7 @@
 <template>
-    <div class="main-box"></div>
+    <div class="main-box">
+        <a href="https://beian.miit.gov.cn/" target="_blank">湘ICP备2023015545号</a>
+    </div>
 </template>
 
 <script setup lang="ts">

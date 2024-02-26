@@ -118,7 +118,6 @@ const mouseleaveClassifyPop = () => {
 <style scoped lang="css">
 .main-box {
     width: 790px;
-    height: 780px;
     background-color: #fff;
     display: flex;
     flex-direction: column;
@@ -128,6 +127,7 @@ const mouseleaveClassifyPop = () => {
         height: 50px;
         padding: 0 10px;
         border-bottom: 1px solid #e5e5e583;
+        background-color: #fff;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -138,8 +138,8 @@ const mouseleaveClassifyPop = () => {
             .option {
                 label {
                     margin-right: 20px;
-                    cursor: pointer;
                     user-select: none;
+                    cursor: pointer;
                 }
                 
                 input {
@@ -198,12 +198,9 @@ const mouseleaveClassifyPop = () => {
 
     .section {
         width: 100%;
-        height: 100%;
 
         .show-recommend {
             width: 100%;
-            height: 720px;
-            overflow-y: auto;
         }   
     }
 }
