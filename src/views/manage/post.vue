@@ -1,5 +1,12 @@
 <template>
-    <div class="main-box">
+    <div class="main-box" @click="cancelDeletePost">
+        <div class="delete-post" v-if="isDeletePost">
+            <div>执行此操作后，该文章将永久删除，是否继续？</div>
+            <div class="delete-post-button">
+                <button @click="isDeletePost = false">取消</button>
+                <button @click="continueDelete">继续</button>
+            </div>
+        </div>
         <CHeader class="cheader"></CHeader>
         <div class="contents-box">
             <div class="contents">
@@ -124,7 +131,7 @@
                                     </div>
                                     <div class="operate">
                                         <span @click="modifyPost(post)">编辑</span>
-                                        <span>删除</span>
+                                        <span @click.stop="deletePost(post.postId)">删除</span>
                                         <span><i class="iconfont icon-gengduo"></i></span>
                                     </div>
                                 </div>
@@ -142,9 +149,13 @@ import CHeader from '@/components/header.vue'
 import { onMounted, ref } from 'vue'
 import { getMyPostList } from './utils'
 import type { responseGetMyPostList } from './utils'
+import { successMsg } from '@/utils/message'
 import router from '@/router';
+import { post } from '@/utils/request'
 
 const keyContent = ref<string>('')
+const nowDeletePostId = ref('')
+const isDeletePost = ref(false)
 const postsList = ref<responseGetMyPostList>({
     posts: []
 })
@@ -153,8 +164,32 @@ onMounted(async() => {
     postsList.value = await getMyPostList('')
 })
 
+const continueDelete = () => {
+    const postId = nowDeletePostId.value
+    
+    post('/content/deletePost', { postId })
+    .then(() => {
+        successMsg('删除成功')
+        location.reload()
+    })
+}
+
+const cancelDeletePost = () => {
+    const deletePost = document.querySelector('.delete-post') as HTMLElement
+    document.addEventListener('click', (event) => {
+        if (event.target !== deletePost && !deletePost.contains(event.target as Node)) {
+            isDeletePost.value = false 
+        }
+    })
+}
+
 const enterPost = (post: any) => {
     router.push('/post/' + post.postId)
+}
+
+const deletePost = (id: any) => {
+    isDeletePost.value = true
+    nowDeletePostId.value = id
 }
 
 const modifyPost = (post: any) => {
@@ -173,6 +208,38 @@ const searchPostsList = async() => {
 .main-box {
     width: 100%;
     height: auto;
+
+    .delete-post {
+        position: absolute;
+        width: 280px;
+        height: 120px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 11px;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 0 10px 1px #00000070;
+
+        .delete-post-button {
+            width: 100%;
+            text-align: end;
+            margin-top: 30px;
+
+            button {
+                width: 80px;
+                height: 25px;
+                border: none;
+                margin-left: 20px;
+            }
+
+            button:last-child {
+                background-color: #f5533a;
+                color: #fff;
+                border-radius: 5px;
+            }
+        }
+    }
 
     .cheader {
         width: 100%;
