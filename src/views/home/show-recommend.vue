@@ -307,7 +307,8 @@ const trunNum = (type: string) => {
 <style scoped lang="css">
 .main-box {
     width: 100%;
-    padding: 5px 15px;    
+    padding: 5px 15px;  
+
     .goods-box {
         width: 100%;
         display: grid;
