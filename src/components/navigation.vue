@@ -50,6 +50,7 @@
                 <i class="iconfont icon-shopping-cart-solid"></i>
             </router-link>
             <router-link
+                v-if="store.getUserLongToken()"
                 to="/manage"
                 class="router"
                 active-class="router-active"

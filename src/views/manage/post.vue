@@ -120,7 +120,7 @@
                                         <span>评论 {{ post.commentCount }}</span>
                                     </div>
                                     <div class="operate">
-                                        <span>编辑</span>
+                                        <span @click="modifyPost(post)">编辑</span>
                                         <span>删除</span>
                                         <span><i class="iconfont icon-gengduo"></i></span>
                                     </div>
@@ -139,6 +139,7 @@ import CHeader from '@/components/header.vue'
 import { onMounted, ref } from 'vue'
 import { getMyPostList } from './utils'
 import type { responseGetMyPostList } from './utils'
+import router from '@/router';
 
 const keyContent = ref<string>('')
 const postsList = ref<responseGetMyPostList>({
@@ -149,6 +150,11 @@ onMounted(async() => {
     postsList.value = await getMyPostList('')
 })
 
+const modifyPost = (post: any) => {
+    sessionStorage.setItem('postTitle', post.title)
+    sessionStorage.setItem('postContent', post.text)
+    router.push('/write/modify/' + post.postId)
+}
 const searchPostsList = async() => {
     const key = '&allFieldsKey=' + keyContent.value
     postsList.value = await getMyPostList(key)
