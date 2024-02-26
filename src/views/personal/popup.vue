@@ -75,14 +75,11 @@ const uploadFiles = (event: any) => {
             const type = mime.getExtension(file.type) as string;
             const fatherId = getFatherIdFromHerf() || userId
             const createFilesUrlData = ref<createFiles>({
-                file: {
-                    name: file.name,
-                    url: '',
-                    type,
-                    fatherId,
-                    spaceSize: file.size,
-                    md5,
-                },
+                name: file.name,
+                type,
+                fatherId,
+                spaceSize: file.size,
+                md5,
             })
             if (i === event.target.files.length - 1) {
                 createFilesUrl(createFilesUrlData.value, true)

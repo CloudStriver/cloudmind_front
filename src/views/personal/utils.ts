@@ -5,14 +5,11 @@ import { turnTime } from '@/utils/public'
 
 //创建文件接口
 export interface createFiles {
-    file: {
-        name: string,
-        url: string,
-        type: string,
-        fatherId: string,
-        spaceSize: number,
-        md5?: string, //创建文件夹时不填，创建文件时要填
-    }
+    name: string,
+    type: string,
+    fatherId: string,
+    spaceSize: number,
+    md5?: string, //创建文件夹时不填，创建文件时要填
 }
 
 export interface responseGetPrivateFiles {
@@ -59,17 +56,13 @@ export const getPrivateFiles = async(id: string) => {
         backward: true,
         offset: 0
     })
-    const params = new URLSearchParams(data.value as any).toString()
-    const url = `/content/getPrivateFiles?${params}`
-    console.log(url);
-    console.log(params);
-    
-    
     const filesList = ref<responseGetPrivateFiles>({
         files: [],
         fatherNamePath: '',
         fatherIdPath: ''
     })
+    const params = new URLSearchParams(data.value as any).toString()
+    const url = `/content/getPrivateFiles?${params}`
     await get(url)
     .then((res: any) => {
         filesList.value = {
