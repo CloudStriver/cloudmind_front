@@ -1,356 +1,358 @@
 <template>
-    <div class="main-box" @click="cancelPopup($event)">
-        <div class="drawer-box">
-            <div 
-                class="drawer"
-                :style="{left: drawerLeft + 'px'}"
-                @dblclick="drawerHandle"
-            >
-                <div>
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+        <CHeader style="height: 70px;"></CHeader>
+        <div class="main-box" @click="cancelPopup($event)">
+            <div class="drawer-box">
+                <div 
+                    class="drawer"
+                    :style="{left: drawerLeft + 'px'}"
+                    @dblclick="drawerHandle"
+                >
+                    <div>
+                        <div
+                            class="main-classify"
+                            @click="openOrCloseClassify"
+                        >
+                            <i class="iconfont icon-sanjiaoxia" v-show="!isClassifyOpen"></i>
+                            <i class="iconfont icon-sanjiaoyou" v-show="isClassifyOpen"></i>
+                            <div>文件筛选</div>
+                        </div>
+                        <div class="classify" :style="{top: classifyTop + 'px'}">
+                            <div 
+                                class="files"
+                                ref="files"
+                                @click="clickFiles"
+                            >
+                                <i class="iconfont icon-file-alt-solid"></i>
+                                <div>文档</div>
+                            </div>
+                            <div 
+                                class="images"
+                                ref="images"
+                                @click="clickImages"
+                            >
+                                <i class="iconfont icon-image"></i>
+                                <div>图片</div>
+                            </div>
+                            <div 
+                                class="radios"
+                                ref="radios"
+                                @click="clickRadios"
+                            >
+                                <i class="iconfont icon-video-solid"></i>
+                                <div>视频</div>
+                            </div>
+                            <div class="music"
+                                ref="music"
+                                @click="clickMusic"
+                            >
+                                <i class="iconfont icon-music-solid"></i>
+                                <div>音乐</div>
+                            </div>
+                        </div>
+                    </div>
                     <div
-                        class="main-classify"
-                        @click="openOrCloseClassify"
-                    >
-                        <i class="iconfont icon-sanjiaoxia" v-show="!isClassifyOpen"></i>
-                        <i class="iconfont icon-sanjiaoyou" v-show="isClassifyOpen"></i>
-                        <div>文件筛选</div>
-                    </div>
-                    <div class="classify" :style="{top: classifyTop + 'px'}">
-                        <div 
-                            class="files"
-                            ref="files"
-                            @click="clickFiles"
-                        >
-                            <i class="iconfont icon-file-alt-solid"></i>
-                            <div>文档</div>
-                        </div>
-                        <div 
-                            class="images"
-                            ref="images"
-                            @click="clickImages"
-                        >
-                            <i class="iconfont icon-image"></i>
-                            <div>图片</div>
-                        </div>
-                        <div 
-                            class="radios"
-                            ref="radios"
-                            @click="clickRadios"
-                        >
-                            <i class="iconfont icon-video-solid"></i>
-                            <div>视频</div>
-                        </div>
-                        <div class="music"
-                            ref="music"
-                            @click="clickMusic"
-                        >
-                            <i class="iconfont icon-music-solid"></i>
-                            <div>音乐</div>
-                        </div>
+                        :style="{top: classifyTop + 'px'}"
+                        class="main-recycle"
+                        ref="recycle"
+                        @click="enterRecycle"
+                    >回收站</div>
+                    <div class="statistic">
                     </div>
                 </div>
-                <div
-                    :style="{top: classifyTop + 'px'}"
-                    class="main-recycle"
-                    ref="recycle"
-                    @click="enterRecycle"
-                >回收站</div>
-                <div class="statistic">
-                </div>
             </div>
-        </div>
-        <div class="check-file-details" v-if="isShowFileDetails">
-            <div class="details-box">
-                <header class="details-header">
-                    <div>详细信息</div>
-                    <i class="iconfont icon-cuowu1" @click="cancelShowFileDetails"></i>
-                </header>
-                <section class="details-section">
-                    <i class="iconfont icon-wenjian"></i>
-                </section>
-                <footer class="details-footer">
-                    <div class="details-footer-div-style">
-                        <div>文件名</div>
-                        <div>{{ fileDetails.name }}</div>
-                    </div>
-                    <div class="details-footer-div-style">
-                        <div>类型</div>
-                        <div>{{ fileDetails.type }}</div>
-                    </div>
-                    <div class="details-footer-div-style">
-                        <div>路径</div>
-                        <div>{{ fileDetails.path }}</div>
-                    </div>
-                    <div class="details-footer-div-style">
-                        <div>大小</div>
-                        <div>{{ fileDetails.size }}</div>
-                    </div>
-                    <div class="details-footer-div-style">
-                        <div>创建时间</div>
-                        <div>{{ fileDetails.createAt }}</div>
-                    </div>
-                    <div class="details-footer-div-style">
-                        <div>修改时间</div>
-                        <div>{{ fileDetails.updateAt }}</div>
-                    </div>
-                </footer>
-            </div>
-        </div>
-        <div class="create-folder-box" v-if="isCreateFolder">
-            <div class="create-folder">
-                <header class="create-folder-header">
-                    <div>新建文件夹</div>
-                    <i class="iconfont icon-cuowu1" @click="cancelCreateFolder"></i>
-                </header>
-                <section class="create-folder-section">
-                    <input 
-                        type="text" 
-                        v-model="createFolderName" 
-                        ref="folderName"
-                        @focus="selectText"
-                        class="folder-name"
-                    >
-                </section>
-                <footer class="create-folder-footer">
-                    <button @click="confirmCreateFolder">确定</button>
-                </footer>
-            </div>
-        </div>
-        <div class="move-files" v-if="isMoveFiles">
-            <div class="move-box">
-                <header class="move-box-header">
-                    <div>移动到</div>
-                    <i class="iconfont icon-cuowu1" @click="cancelMoveFiles"></i>
-                </header>
-                <section class="move-box-section">
-                    <div class="move-path">
-                        <div 
-                            class="move-path-item"
-                            v-for="(path, index) in movePath.path"
-                            :key="index"
-                            @click="jumpMovePath(index)"
-                        >{{ path }}
-                            <div>></div>
-                        </div>
-                        <div class="nowMovePath">{{ nowMovePath.path }}</div>
-                    </div>
-                    <div v-if="isMoveCreateFolder" class="move-add-folder">
+            <div class="check-file-details" v-if="isShowFileDetails">
+                <div class="details-box">
+                    <header class="details-header">
+                        <div>详细信息</div>
+                        <i class="iconfont icon-cuowu1" @click="cancelShowFileDetails"></i>
+                    </header>
+                    <section class="details-section">
                         <i class="iconfont icon-wenjian"></i>
+                    </section>
+                    <footer class="details-footer">
+                        <div class="details-footer-div-style">
+                            <div>文件名</div>
+                            <div>{{ fileDetails.name }}</div>
+                        </div>
+                        <div class="details-footer-div-style">
+                            <div>类型</div>
+                            <div>{{ fileDetails.type }}</div>
+                        </div>
+                        <div class="details-footer-div-style">
+                            <div>路径</div>
+                            <div>{{ fileDetails.path }}</div>
+                        </div>
+                        <div class="details-footer-div-style">
+                            <div>大小</div>
+                            <div>{{ fileDetails.size }}</div>
+                        </div>
+                        <div class="details-footer-div-style">
+                            <div>创建时间</div>
+                            <div>{{ fileDetails.createAt }}</div>
+                        </div>
+                        <div class="details-footer-div-style">
+                            <div>修改时间</div>
+                            <div>{{ fileDetails.updateAt }}</div>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+            <div class="create-folder-box" v-if="isCreateFolder">
+                <div class="create-folder">
+                    <header class="create-folder-header">
+                        <div>新建文件夹</div>
+                        <i class="iconfont icon-cuowu1" @click="cancelCreateFolder"></i>
+                    </header>
+                    <section class="create-folder-section">
                         <input 
                             type="text" 
+                            v-model="createFolderName" 
                             ref="folderName"
-                            v-model="moveCreateFolderName"
                             @focus="selectText"
-                            @blur="confirmMoveCreateFolder"
+                            class="folder-name"
                         >
-                        <i class="iconfont icon-cuowu"></i>
-                    </div>
-                    <div 
-                        class="move-filesList-box"
-                        v-for="(file, index) in moveFoldersList"
-                        :key="index"
-                        @click="enterFolder(file, index)"
-                    >
-                        <div class="move-filesList-contents">
+                    </section>
+                    <footer class="create-folder-footer">
+                        <button @click="confirmCreateFolder">确定</button>
+                    </footer>
+                </div>
+            </div>
+            <div class="move-files" v-if="isMoveFiles">
+                <div class="move-box">
+                    <header class="move-box-header">
+                        <div>移动到</div>
+                        <i class="iconfont icon-cuowu1" @click="cancelMoveFiles"></i>
+                    </header>
+                    <section class="move-box-section">
+                        <div class="move-path">
+                            <div 
+                                class="move-path-item"
+                                v-for="(path, index) in movePath.path"
+                                :key="index"
+                                @click="jumpMovePath(index)"
+                            >{{ path }}
+                                <div>></div>
+                            </div>
+                            <div class="nowMovePath">{{ nowMovePath.path }}</div>
+                        </div>
+                        <div v-if="isMoveCreateFolder" class="move-add-folder">
                             <i class="iconfont icon-wenjian"></i>
-                            <div>{{ file.name }}</div>
+                            <input 
+                                type="text" 
+                                ref="folderName"
+                                v-model="moveCreateFolderName"
+                                @focus="selectText"
+                                @blur="confirmMoveCreateFolder"
+                            >
+                            <i class="iconfont icon-cuowu"></i>
                         </div>
-                    </div>
-                </section>
-                <footer class="move-box-footer">
-                    <i class="iconfont icon-folder-add-line" @click="createFolder"></i>
-                    <button @click="confirmMove">确定</button>
-                </footer>
-            </div>
-        </div>
-        <div class="delete-file" v-if="isDeleteFile">
-            <div class="confirm-delete" v-if="isDelete">
-                <header class="confirm-delete-header">
-                    <div>彻底删除</div>
-                    <i class="iconfont icon-cuowu1" @click="cancelDeleteFile"></i>
-                </header>
-                <section class="confirm-delete-section">
-                    <div>执行此操作后该文件将永久删除，是否继续执行？</div>
-                </section>
-                <footer class="confirm-delete-footer">
-                    <button @click="confirmDeleteFile">彻底删除</button>
-                </footer>
-            </div>
-            <div class="delete-public" v-if="isDeletPublic">
-                <div>是否删除上传到社区空间中的该文件?</div>
-                <div>
-                    <button @click="confirmDeleteFileAndPublic">是</button>
-                    <button @click="deleteUrl">否</button>
-                </div>
-            </div>
-        </div>
-        <div 
-            class="contents" 
-            :style="{marginLeft: contentsMaginLeft + 'px'}"
-            v-show="!isRecycle"
-        >
-            <header class="header">
-                <div class="header-header">
-                    <div class="path">
                         <div 
-                            class="path-item"
-                            v-for="(item, index) in path"
+                            class="move-filesList-box"
+                            v-for="(file, index) in moveFoldersList"
                             :key="index"
-                            @click="jumpPath(index)"
-                        >{{ item }}
-                            <div>></div>
+                            @click="enterFolder(file, index)"
+                        >
+                            <div class="move-filesList-contents">
+                                <i class="iconfont icon-wenjian"></i>
+                                <div>{{ file.name }}</div>
+                            </div>
                         </div>
-                        <div class="nowPath">{{ nowPath }}</div>
+                    </section>
+                    <footer class="move-box-footer">
+                        <i class="iconfont icon-folder-add-line" @click="createFolder"></i>
+                        <button @click="confirmMove">确定</button>
+                    </footer>
+                </div>
+            </div>
+            <div class="delete-file" v-if="isDeleteFile">
+                <div class="confirm-delete" v-if="isDelete">
+                    <header class="confirm-delete-header">
+                        <div>彻底删除</div>
+                        <i class="iconfont icon-cuowu1" @click="cancelDeleteFile"></i>
+                    </header>
+                    <section class="confirm-delete-section">
+                        <div>执行此操作后该文件将永久删除，是否继续执行？</div>
+                    </section>
+                    <footer class="confirm-delete-footer">
+                        <button @click="confirmDeleteFile">彻底删除</button>
+                    </footer>
+                </div>
+                <div class="delete-public" v-if="isDeletPublic">
+                    <div>是否删除上传到社区空间中的该文件?</div>
+                    <div>
+                        <button @click="confirmDeleteFileAndPublic">是</button>
+                        <button @click="deleteUrl">否</button>
                     </div>
-                    <Search class="search"></Search> 
                 </div>
-                <div class="header-footer">
-                    <label for="allSelect">
-                        <input 
-                            type="checkbox"
-                            id="allSelect"
-                        >全选
-                    </label>
-                    <div class="sort">
-                        <i class="iconfont icon-paixu"></i>
-                        <span>按照时间排序</span>
+            </div>
+            <div 
+                class="contents" 
+                :style="{marginLeft: contentsMaginLeft + 'px'}"
+                v-show="!isRecycle"
+            >
+                <header class="header">
+                    <div class="header-header">
+                        <div class="path">
+                            <div 
+                                class="path-item"
+                                v-for="(item, index) in path"
+                                :key="index"
+                                @click="jumpPath(index)"
+                            >{{ item }}
+                                <div>></div>
+                            </div>
+                            <div class="nowPath">{{ nowPath }}</div>
+                        </div>
                     </div>
-                </div>
-            </header>
-            <footer class="footer" @contextmenu="contextmenuShowPopup($event)">
-                <Popup 
-                    class="contextmenu-popup"
-                    id="contextmenuPopup"
-                    v-show="isContexmenuPopup"
-                    @update="updateFilesList"
-                    :style="{left: popupLeft + 'px', top: popupRight + 'px'}"
-                    :createFolderData = "createFolderData"
-                ></Popup>
-                <div 
-                    class="file-popup" 
-                    v-show="isFilePopup"
-                    :style="{left: filePopupLeft + 'px', top: filePopupRight + 'px'}"
-                >
-                    <div class="upload-public">上传至社区</div>
-                    <div class="detail" @click="checkFileDetail">查看详细信息</div>
-                    <div class="download">下载</div>
-                    <div class="move" @click="moveFile">移动</div>
-                    <div class="recycle">移至回收站</div>
-                    <div class="delete" @click="deleteFile">彻底删除</div>
-                </div>
-                <div class="files-box">
+                    <div class="header-footer">
+                        <label for="allSelect">
+                            <input 
+                                type="checkbox"
+                                id="allSelect"
+                            >全选
+                        </label>
+                        <div class="sort">
+                            <i class="iconfont icon-paixu"></i>
+                            <span>按照时间排序</span>
+                        </div>
+                    </div>
+                </header>
+                <footer class="footer" @contextmenu="contextmenuShowPopup($event)">
+                    <Popup 
+                        class="contextmenu-popup"
+                        id="contextmenuPopup"
+                        v-show="isContexmenuPopup"
+                        @update="updateFilesList"
+                        :style="{left: popupLeft + 'px', top: popupRight + 'px'}"
+                        :createFolderData = "createFolderData"
+                    ></Popup>
                     <div 
-                        class="files-contents"
-                        v-for="(file, index) in filesList.files"
-                        :key="index"
-                        @contextmenu="contextmenuShowFilePopup(index)"
-                        @click="enterOrClick(file)"
+                        class="file-popup" 
+                        v-show="isFilePopup"
+                        :style="{left: filePopupLeft + 'px', top: filePopupRight + 'px'}"
                     >
-                        <div class="images">
-                            <i 
-                                class="iconfont icon-file-alt-solid"
-                                v-if="file.type !== '文件夹'" 
-                            ></i>
-                            <i 
-                                class="iconfont icon-wenjian"
-                                v-if="file.type === '文件夹'"
-                            ></i>
+                        <div class="upload-public">上传至社区</div>
+                        <div class="detail" @click="checkFileDetail">查看详细信息</div>
+                        <div class="download">下载</div>
+                        <div class="move" @click="moveFile">移动</div>
+                        <div class="recycle">移至回收站</div>
+                        <div class="delete" @click="deleteFile">彻底删除</div>
+                    </div>
+                    <div class="files-box">
+                        <div 
+                            class="files-contents"
+                            v-for="(file, index) in filesList.files"
+                            :key="index"
+                            @contextmenu="contextmenuShowFilePopup(index)"
+                            @click="enterOrClick(file)"
+                        >
+                            <div class="images">
+                                <i 
+                                    class="iconfont icon-file-alt-solid"
+                                    v-if="file.type !== '文件夹'" 
+                                ></i>
+                                <i 
+                                    class="iconfont icon-wenjian"
+                                    v-if="file.type === '文件夹'"
+                                ></i>
+                            </div>
+                            <div class="title">{{ getFileName(file.name) }}</div>
+                            <div class="time">{{ file.updateAt }}</div>
                         </div>
-                        <div class="title">{{ getFileName(file.name) }}</div>
-                        <div class="time">{{ file.updateAt }}</div>
-                    </div>
-                    <!-- <div class="contents">
-                    <div class="contents">
-                        <div class="images">
-                            <i class="iconfont icon-shipinwenjian radio"></i>
+                        <!-- <div class="contents">
+                        <div class="contents">
+                            <div class="images">
+                                <i class="iconfont icon-shipinwenjian radio"></i>
+                            </div>
+                            <div class="title">宋浩高数不挂科</div>
+                            <div class="time">2024/01/26 13:14</div>
                         </div>
-                        <div class="title">宋浩高数不挂科</div>
-                        <div class="time">2024/01/26 13:14</div>
-                    </div>
-                    <div class="contents">
-                        <div class="images">
-                            <i class="iconfont icon-yinlewenjian music"></i>
+                        <div class="contents">
+                            <div class="images">
+                                <i class="iconfont icon-yinlewenjian music"></i>
+                            </div>
+                            <div class="title">兰淞清唱合集</div>
+                            <div class="time">2024/01/26 13:14</div>
                         </div>
-                        <div class="title">兰淞清唱合集</div>
-                        <div class="time">2024/01/26 13:14</div>
+                        <div class="contents">
+                            <div class="images">
+                                <i class="iconfont icon-jianzhuanquan- image"></i>
+                            </div>
+                            <div class="title">兰淞自拍合集</div>
+                            <div class="time">2024/01/26 13:14</div>
+                        </div> -->
                     </div>
-                    <div class="contents">
-                        <div class="images">
-                            <i class="iconfont icon-jianzhuanquan- image"></i>
+                    <i 
+                        class="iconfont icon-jia add" 
+                        @click.stop="clickShowPopup"
+                    ></i>
+                    <Popup 
+                        id="add-popup"
+                        class="add-popup"
+                        v-show="isClickPopup"
+                        :createFolderData = "createFolderData"
+                        @update="updateFilesList"
+                    ></Popup>
+                </footer>
+            </div>
+            <div 
+                class="recycle-contents"
+                :style="{marginLeft: contentsMaginLeft + 'px'}"
+                v-show="isRecycle"
+            >
+                <header class="recycle-header">
+                    <div class="recycle-header-header">
+                        <div>回收站</div>
+                        <button>
+                            <i class="iconfont icon-lajitong"></i>
+                            清空回收站
+                        </button>
+                    </div>
+                    <div class="recycle-header-section">
+                        <label for="recycleAllSelect">
+                            <input 
+                                type="checkbox"
+                                id="recycleAllSelect"
+                            >全选
+                        </label>
+                    </div>
+                    <div class="recycle-header-footer">
+                        <div>文件名称</div>
+                        <div>大小</div>
+                        <div>删除时间</div>
+                        <div>剩余时间</div>
+                    </div>
+                </header>
+                <section class="recycle-footer">
+                    <div class="recycle-file-box">
+                        <div class="recycle-file-content">
+                            <div class="checkbox"></div>
+                            <i class="iconfont icon-wenjian"></i>
+                            <div>测试文件路径</div>
                         </div>
-                        <div class="title">兰淞自拍合集</div>
-                        <div class="time">2024/01/26 13:14</div>
-                    </div> -->
-                </div>
-                <i 
-                    class="iconfont icon-jia add" 
-                    @click.stop="clickShowPopup"
-                ></i>
-                <Popup 
-                    id="add-popup"
-                    class="add-popup"
-                    v-show="isClickPopup"
-                    :createFolderData = "createFolderData"
-                    @update="updateFilesList"
-                ></Popup>
-            </footer>
-        </div>
-        <div 
-            class="recycle-contents"
-            :style="{marginLeft: contentsMaginLeft + 'px'}"
-            v-show="isRecycle"
-        >
-            <header class="recycle-header">
-                <div class="recycle-header-header">
-                    <div>回收站</div>
-                    <button>
-                        <i class="iconfont icon-lajitong"></i>
-                        清空回收站
-                    </button>
-                </div>
-                <div class="recycle-header-section">
-                    <label for="recycleAllSelect">
-                        <input 
-                            type="checkbox"
-                            id="recycleAllSelect"
-                        >全选
-                    </label>
-                </div>
-                <div class="recycle-header-footer">
-                    <div>文件名称</div>
-                    <div>大小</div>
-                    <div>删除时间</div>
-                    <div>剩余时间</div>
-                </div>
-            </header>
-            <section class="recycle-footer">
-                <div class="recycle-file-box">
-                    <div class="recycle-file-content">
-                        <div class="checkbox"></div>
-                        <i class="iconfont icon-wenjian"></i>
-                        <div>测试文件路径</div>
+                        <div>10.3MB</div>
+                        <div>2024/01/26 13:14</div>
+                        <div>10天</div>
                     </div>
-                    <div>10.3MB</div>
-                    <div>2024/01/26 13:14</div>
-                    <div>10天</div>
-                </div>
-                <div class="recycle-file-box">
-                    <div class="recycle-file-content">
-                        <div class="checkbox"></div>
-                        <i class="iconfont icon-wenjian"></i>
-                        <div>测试文件路径</div>
+                    <div class="recycle-file-box">
+                        <div class="recycle-file-content">
+                            <div class="checkbox"></div>
+                            <i class="iconfont icon-wenjian"></i>
+                            <div>测试文件路径</div>
+                        </div>
+                        <div>10.3MB</div>
+                        <div>2024/01/26 13:14</div>
+                        <div>10天</div>
                     </div>
-                    <div>10.3MB</div>
-                    <div>2024/01/26 13:14</div>
-                    <div>10天</div>
-                </div>
-            </section>
+                </section>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import Search from '@/components/search.vue'
+import CHeader from '@/components/header.vue'
 import Popup from '@/views/personal/popup.vue'
 import { useStore } from '@/store/index';
 import { ref, onMounted, computed } from 'vue'
@@ -359,13 +361,13 @@ import type { createFiles, responseGetPrivateFiles } from './utils'
 import type { Ref } from 'vue'
 import { post } from '@/utils/request';
 import { errorMsg, successMsg } from '@/utils/message';
+import router from '@/router';
 
 const files = ref()
 const music = ref()
 const images = ref()
 const radios = ref()
 const recycle = ref()
-const classify = ref()
 const folderName = ref()
 const store = useStore();
 const isFlles = ref(false)
@@ -411,13 +413,10 @@ const nowClickFileIndex = ref(-1)
 const nowClickFolderIndex = ref(-1)
 const contentsMaginLeft = ref(150)
 const createFolderData = ref<createFiles>({
-    file: {
-        name: '新建文件夹',
-        url: '',
-        type: '文件夹',
-        fatherId: userId.value,
-        spaceSize: -1,
-    }
+    name: '新建文件夹',
+    type: '文件夹',
+    fatherId: userId.value,
+    spaceSize: -1,
 })
 const filesList = ref<responseGetPrivateFiles>({
     fatherNamePath: '',
@@ -436,7 +435,7 @@ const fileDetails = ref({
 onMounted(async() => { 
     userId.value = store.getUserId()
     fatherId.value = getFatherIdFromHerf() || userId.value
-    // filesList.value = await getPrivateFiles(fatherId.value)
+    filesList.value = await getPrivateFiles(fatherId.value)
     path.value = await getPath(filesList.value.fatherNamePath)
 })
 
@@ -604,13 +603,10 @@ const cancelCreateFolder = () => {
 
 const confirmCreateFolder = () => {
     createFolderData.value = {
-        file: {
-            name: createFolderName.value,
-            url: '',
-            type: '文件夹',
-            fatherId: fatherId.value,
-            spaceSize: -1,
-        }
+        name: createFolderName.value,
+        type: '文件夹',
+        fatherId: fatherId.value,
+        spaceSize: -1,
     }
 
     isCreateFolder.value = false
@@ -629,6 +625,7 @@ const updateFilesList = async (update: any) => {
 const jumpPath = async (index: number) => {
     const tempIdPath = filesList.value.fatherIdPath.split('/')
     fatherId.value = tempIdPath[index]
+    router.push('/personal/' + fatherId.value)
     store.setFatherId(fatherId.value)
     filesList.value = await getPrivateFiles(fatherId.value)
     path.value = await getPath(filesList.value.fatherNamePath)
@@ -699,6 +696,7 @@ const contextmenuShowFilePopup = (index: number) => {
 
 const enterOrClick = async(file: any) => {
     if (file.type === '文件夹') {
+        router.push('/personal/' + file.fileId)
         fatherId.value = file.fileId
         store.setFatherId(fatherId.value)
         filesList.value = await getPrivateFiles(fatherId.value)
@@ -780,7 +778,6 @@ const clickMusic = () => {
 
 <style scoped lang="css">
 .main-box {
-    width: 100%;
     height: 100%;
     display: flex;
     overflow: hidden;
@@ -1303,8 +1300,11 @@ const clickMusic = () => {
         }
     }
 
+    .cheader {
+        height: 70px;
+    }
+    
     .contents {
-        /* width: 100%; */
         height: 100%;
         background-color: #fff;
         transition: all 1s;
@@ -1353,10 +1353,6 @@ const clickMusic = () => {
                         font-weight: 550;
                         cursor: pointer;
                     }
-                }
-    
-                .search {
-                    width: 250px;
                 }
             }
 
