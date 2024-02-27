@@ -75,7 +75,7 @@ const timingGetNotificationCount = () => {
         height: 70px;
         background-color: rgb(218, 235, 255);
         box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.1);
-        padding: 0 10px 0;
+        padding: 0 50px 0;
         display: flex;
         justify-content: space-between;
         align-items: center;

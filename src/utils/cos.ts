@@ -25,7 +25,7 @@ const cos = new COS({
         // options.Key = users/md5.suffix 
          post('/content/askUploadFile', {
             name,
-            fileSize: options.Body.size
+            fileSize: options.SliceSize
         })
         .then((res: any) => {
             callback({
@@ -49,8 +49,18 @@ export const cosUploadFile = (file: any, md5: string, suffix: string) => {
         SliceSize: file.size,
         onProgress: (progressData: any) => {
             console.log(JSON.stringify(progressData));
+            cosUploadProgress = progressData.percent
         }
     }, (err: any, data: any) => {
         console.log(err || data);
     })
 }
+
+export let cosUploadProgress = {
+    set cosUploadProgress(value: number) {
+        this.cosUploadProgress = value
+    },
+    get cosUploadProgress() {
+        return this.cosUploadProgress
+    }
+} 
