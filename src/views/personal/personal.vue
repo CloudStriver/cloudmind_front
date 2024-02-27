@@ -630,7 +630,7 @@ const jumpPath = async (index: number) => {
 
 const getFileName = computed(() => {
     return (name: string) => {
-        return name.length > 10 ? name.slice(0, 10) + '...' : name
+        return name.length > 8 ? name.slice(0, 8) + '...' : name
     }
 })
 
