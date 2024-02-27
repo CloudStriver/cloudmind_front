@@ -507,13 +507,10 @@ const createFolder = () => {
 const confirmMoveCreateFolder = () => {
     isMoveCreateFolder.value = false
     const data = {
-        file: {
-            name: moveCreateFolderName.value,
-            url: '',
-            type: '文件夹',
-            fatherId: nowMovePath.value.fileId,
-            spaceSize: -1,
-        }
+        name: moveCreateFolderName.value,
+        type: '文件夹',
+        fatherId: nowMovePath.value.fileId,
+        spaceSize: -1,
     }
      post('/content/createFile', data)
     .then(async (res: any) => {
