@@ -661,7 +661,7 @@ const cancelPopup = (event: MouseEvent) => {
 }
 const contextmenuShowPopup = (event: any) => {
     const filePopup = document.querySelector('.files-contents') as HTMLElement;
-    if (filePopup && event.target.classList.contains('files-box')) {
+    if ((filePopup && event.target.classList.contains('files-box')) || filesList.value.files.length === 0) {
         isClickPopup.value = false
         isFilePopup.value = false
         isContexmenuPopup.value = true
