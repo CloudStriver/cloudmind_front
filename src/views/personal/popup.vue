@@ -35,7 +35,6 @@ import { ref, watch } from 'vue'
 import { useStore } from '@/store/index'
 import { post } from '@/utils/request'
 import { cosUploadFile } from '@/utils/cos'
-import { getFatherIdFromHerf } from './utils'
 import type { createFiles } from './utils'
 
 const store = useStore();
@@ -73,7 +72,7 @@ const uploadFiles = (event: any) => {
             const suffix = '.' + file.name.split('.').pop();
             const userId = store.getUserId();
             const type = mime.getExtension(file.type) as string;
-            const fatherId = getFatherIdFromHerf() || userId
+            const fatherId =  userId
             const createFilesUrlData = ref<createFiles>({
                 name: file.name,
                 type,
