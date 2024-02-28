@@ -356,7 +356,7 @@ import CHeader from '@/components/header.vue'
 import Popup from '@/views/personal/popup.vue'
 import { useStore } from '@/store/index';
 import { ref, onMounted, computed } from 'vue'
-import { getPrivateFiles, getFatherIdFromHerf, getFolderList } from './utils'
+import { getPrivateFiles, getFolderList } from './utils'
 import type { createFiles, responseGetPrivateFiles } from './utils'
 import type { Ref } from 'vue'
 import { post } from '@/utils/request';
@@ -434,7 +434,7 @@ const fileDetails = ref({
 
 onMounted(async() => { 
     userId.value = store.getUserId()
-    fatherId.value = getFatherIdFromHerf() || userId.value
+    // fatherId.value = getFatherIdFromHerf() || userId.value
     filesList.value = await getPrivateFiles(fatherId.value)
     path.value = await getPath(filesList.value.fatherNamePath)
 })

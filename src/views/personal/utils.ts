@@ -107,20 +107,6 @@ export const getFolderList = (id: string) => {
     return foldersList.value
 }
 
-//从url中获取fatherId
-const store = useStore()
-export const getFatherIdFromHerf = () => {
-    if (store.fatherId === "") {
-        const urls = window.location.href.split('/')
-        const fatherId = urls[urls.length - 1]
-        store.setFatherId(fatherId)
-        return fatherId
-    }
-    else {
-        return store.fatherId
-    }
-}
-
 //文件大小转换
 const getFileSize = (bits: number): string => {
     if (bits < 0) return '0B';

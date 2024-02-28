@@ -1,60 +1,67 @@
 <template>
     <div class="main-box">
         <img 
+            class="logo"
             src="../assets/images/logo.png" 
             alt="logo"
-            style="transform: scale(0.5);"
         >
         <div class="nav-box">
             <router-link 
                 to="/" 
-                class="router"
+                class="router-nav"
                 active-class="router-active"
             >
                 <i class="iconfont icon-home-solid"></i>
             </router-link>
             <router-link
                 v-if="store.getUserLongToken()"
-                :to="'/personal/' + fatherId"
-                class="router"
+                :to="'/personal/'"
+                class="router-nav"
                 active-class="router-active"
             >
                 <i class="iconfont icon-sidenav-doc" style="font-size: 18px;"></i>
             </router-link>
             <router-link 
                 to="/space" 
-                class="router"
+                class="router-nav"
                 active-class="router-active"
             >
                 <i class="iconfont icon-cube-solid"></i>
             </router-link>
             <router-link 
                 to="/posts" 
-                class="router"
+                class="router-nav"
                 active-class="router-active"
             >
                 <i class="iconfont icon-edit-solid"></i>
             </router-link>
             <router-link 
                 to="/5" 
-                class="router"
+                class="router-nav"
                 active-class="router-active"
             >
                 <i class="iconfont icon-huodong"></i>
             </router-link>
             <router-link 
                 to="/6" 
-                class="router"
+                class="router-nav"
                 active-class="router-active"
             >
                 <i class="iconfont icon-shopping-cart-solid"></i>
             </router-link>
             <router-link
                 to="/manage"
-                class="router"
+                class="router-nav"
                 active-class="router-active"
             >
                 <i class="iconfont icon-guanlizhongxin-shezhi-01"></i>
+            </router-link>
+            <router-link
+                :to="'/text-personal/'"
+                class="router-nav"
+                active-class="router-active"
+            >
+                <i class="iconfont icon-sidenav-doc" style="font-size: 18px;"></i>
             </router-link>
         </div>
     </div>
@@ -63,16 +70,12 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import { useStore } from '@/store/index';
-import { getFatherIdFromHerf } from '@/views/personal/utils'
 import router from '@/router';
 
 const store = useStore();
 const userId = store.getUserId()
 const fatherId = ref<string>(userId);
 const props = defineProps(['link'])
-onMounted(() => {
-    fatherId.value = getFatherIdFromHerf() || userId;
-})
 
 watch(() => props.link, (newVal) => {
     if (newVal) {
@@ -87,10 +90,14 @@ watch(() => props.link, (newVal) => {
 .main-box {
     display: flex;
 
+    .logo {
+        transform: scale(0.5);
+    }
+
     .nav-box {
         display: flex;
 
-        .router {
+        .router-nav {
             text-decoration: none;
             display: flex;
             justify-content: center;

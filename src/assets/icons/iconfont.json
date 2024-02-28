@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "952",
+      "name": "云上传",
+      "font_class": "yunshangchuan",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "29522605",
+      "name": "11H新建文件夹",
+      "font_class": "a-11Hxinjianwenjianjia",
+      "unicode": "e677",
+      "unicode_decimal": 58999
+    },
+    {
+      "icon_id": "6027491",
+      "name": "分类",
+      "font_class": "fenlei",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "27861137",
+      "name": "云传输",
+      "font_class": "yunchuanshu",
+      "unicode": "e721",
+      "unicode_decimal": 59169
+    },
+    {
       "icon_id": "2506205",
       "name": "帖子管理",
       "font_class": "tieziguanli",
