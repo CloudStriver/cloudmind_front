@@ -57,7 +57,7 @@
                 <i class="iconfont icon-guanlizhongxin-shezhi-01"></i>
             </router-link>
             <router-link
-                :to="'/text-personal/'"
+                :to="'/text-personal/' + fatherId"
                 class="router-nav"
                 active-class="router-active"
             >
@@ -81,6 +81,13 @@ watch(() => props.link, (newVal) => {
     if (newVal) {
         fatherId.value = newVal
         router.push('/personal/' + newVal)
+    }
+})
+
+watch(() => props.link, (newVal) => {
+    if (newVal) {
+        fatherId.value = newVal
+        router.push('/text-personal/' + newVal)
     }
 })
 
