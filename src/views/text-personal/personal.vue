@@ -14,10 +14,26 @@
 </template>
 
 <script setup lang="ts">
-import Drawer from './drawer.vue'
-import CHeader from '@/components/header.vue'
-import PathTitle from './path.vue'
 import Files from './files.vue'
+import Drawer from './drawer.vue'
+import PathTitle from './path.vue'
+import CHeader from '@/components/header.vue'
+import { onMounted, ref } from 'vue'
+import { getPersonalFatherId, getPrivateFilesList } from './utils'
+
+//根据路由在 <Files>组件中显示
+const fatherId = ref<string>("")
+onMounted(() => {
+    fatherId.value = getPersonalFatherId()
+    getPrivateFilesList({
+        limit: 40,
+        offset: 0,
+        sortType: 3,
+        backward: true,
+        onlyFatherId: fatherId.value
+    })
+})
+
 </script>
 
 <style scoped lang="css">
