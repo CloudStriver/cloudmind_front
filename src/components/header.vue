@@ -68,14 +68,11 @@ const timingGetNotificationCount = () => {
 
 <style scoped lang="css">
 .main-box {
-    height: 70px;
-
     .header-box {
         width: 100%;
         height: 70px;
         background-color: rgb(218, 235, 255);
         box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.1);
-        padding: 0 50px 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -85,7 +82,6 @@ const timingGetNotificationCount = () => {
             height: 32px;
             padding: 0;
             margin: 0;
-            margin-right: 150px;
         }
 
         .header-right {
@@ -95,9 +91,9 @@ const timingGetNotificationCount = () => {
 
             i {
                 font-size: 20px;
-                margin-right: 30px;
                 cursor: pointer;
                 color: #818181;
+                margin-right: 20px;
             }
 
             .router {
@@ -135,7 +131,6 @@ const timingGetNotificationCount = () => {
                 position: absolute;
                 width: 150px;
                 height: auto;
-                right: -55px;
                 top: 50px;
                 z-index: 10;
             }

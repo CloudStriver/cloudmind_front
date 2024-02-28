@@ -31,6 +31,10 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/text-personal/:fatherId?',
+    component: () => import('../views/text-personal/personal.vue')
+  },
+  {
     path: '/user',
     component: () => import('../views/information/user.vue'),
   },
