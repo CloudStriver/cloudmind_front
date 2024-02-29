@@ -1,5 +1,7 @@
-import { get } from '@/utils/request'
+import { get, post } from '@/utils/request'
 import { ref } from 'vue'
+
+//------------------------------------------------------------interface
 
 //搜索/查看用户文件列表的参数
 export interface requestPrivateFilesList {
@@ -24,13 +26,13 @@ export interface responsePrivateFilesList {
             type: string,
             path: string
             fatherId: string,
-            spaceSize: number,
+            spaceSize: string,
             isDel: number,
             zone: string,
             subZone: string,
             description: string,
-            updateAt: number,
-            createAt: number,
+            updateAt: string,
+            createAt: string,
         }
     ],
     total: number,
@@ -39,14 +41,28 @@ export interface responsePrivateFilesList {
     fatherNamePath: string
 }
 
-//在个人空间中，根据路由获取父文件id：fatherId
-//当处于根目录时，fatherId = userId
-export const getPersonalFatherId = ():string => {
-    const fatherId = location.href.split('/').pop() as string
-    return fatherId       
+//创建文件的参数
+export interface requestCreateFile {
+    fatherId: string;
+    md5: string;
+    name: string;
+    spaceSize: number;
+    type: string;
 }
 
-//搜索/查看用户文件列表
+//------------------------------------------------------------request
+
+//请求创建文件
+export const postCreateFile = async(data: requestCreateFile):Promise<string> => {
+    const fileId = ref<string>("")
+    await post('/content/createFile', data)
+    .then((res: any) => {
+        fileId.value = res.fileId
+    })
+    return fileId.value
+}
+
+//请求搜索/查看用户文件列表
 export const getPrivateFilesList = async(params: requestPrivateFilesList): Promise<responsePrivateFilesList> => {
     const filesList = ref<responsePrivateFilesList>({
         files: [
@@ -57,13 +73,13 @@ export const getPrivateFilesList = async(params: requestPrivateFilesList): Promi
                 type: "",
                 path: "",
                 fatherId: "",
-                spaceSize: 0,
+                spaceSize: "",
                 isDel: 0,
                 zone: "",
                 subZone: "",
                 description: "",
-                updateAt: 0,
-                createAt: 0,
+                updateAt: "",
+                createAt: "",
             }
         ],
         total: 0,
@@ -93,10 +109,12 @@ export const getPrivateFilesList = async(params: requestPrivateFilesList): Promi
             fatherNamePath: res.fatherNamePath
         }
     })
-    console.log(filesList.value);
     return filesList.value
 }
 
+//------------------------------------------------------------function
+
+//生成搜索/查看用户文件列表的请求URL
 const generateGetRequestURL = (params: requestPrivateFilesList) => {
     let query = "?"
     const key = Object.keys(params) as (keyof requestPrivateFilesList)[]
@@ -104,6 +122,13 @@ const generateGetRequestURL = (params: requestPrivateFilesList) => {
         query += (item + "=" + params[item] + "&")
     })
     return query
+}
+
+//在个人空间中，根据路由获取父文件id：fatherId
+//当处于根目录时，fatherId = userId
+export const getPersonalFatherId = ():string => {
+    const fatherId = location.href.split('/').pop() as string
+    return fatherId       
 }
 
 //时间戳转换为 YY-MM-DD HH:MM的形式
@@ -118,7 +143,7 @@ export const turnTime = (time: number) => {
 }
 
 //转换文件默认的大小
-const getFileSize = (bits: number): string => {
+export const getFileSize = (bits: number): string => {
     if (bits < 0) return '0B';
     else if (bits < 1024) {
         return bits + 'B'

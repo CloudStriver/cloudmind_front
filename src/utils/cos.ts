@@ -40,7 +40,7 @@ const cos = new COS({
     }
 })
 
-export const cosUploadFile = (file: any, md5: string, suffix: string) => {
+export const cosUploadFile = (file: any, md5: string, suffix: string, callback: Function) => {
     cos.uploadFile({
         Bucket,
         Region,
@@ -48,19 +48,20 @@ export const cosUploadFile = (file: any, md5: string, suffix: string) => {
         Body: file,
         SliceSize: file.size,
         onProgress: (progressData: any) => {
-            console.log(JSON.stringify(progressData));
-            cosUploadProgress = progressData.percent
+            if (progressData.percent === 1) {
+                callback()
+            }
         }
     }, (err: any, data: any) => {
         console.log(err || data);
     })
 }
 
-export let cosUploadProgress = {
-    set cosUploadProgress(value: number) {
-        this.cosUploadProgress = value
-    },
-    get cosUploadProgress() {
-        return this.cosUploadProgress
-    }
-} 
+// export let cosUploadProgress = {
+//     set cosUploadProgress(value: number) {
+//         this.cosUploadProgress = value
+//     },
+//     get cosUploadProgress() {
+//         return this.cosUploadProgress
+//     }
+// } 

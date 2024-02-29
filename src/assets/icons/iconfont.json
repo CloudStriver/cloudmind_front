@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "21967833",
+      "name": "上传文件1.1",
+      "font_class": "shangchuanwenjian11",
+      "unicode": "e6ad",
+      "unicode_decimal": 59053
+    },
+    {
+      "icon_id": "37919811",
+      "name": "上传文件夹",
+      "font_class": "shangchuanwenjianjia",
+      "unicode": "e6cd",
+      "unicode_decimal": 59085
+    },
+    {
       "icon_id": "952",
       "name": "云上传",
       "font_class": "yunshangchuan",

@@ -12,11 +12,13 @@
             >
                 <div class="images">
                     <i 
+                        v-if="file.type !== '文件夹'"
                         class="iconfont icon-file-alt-solid"
                     ></i>
-                    <!-- <i 
+                    <i 
+                        v-if="file.type === '文件夹'"
                         class="iconfont icon-wenjian"
-                    ></i> -->
+                    ></i>
                 </div>
                 <div class="name">{{ sliceFileName(file.name) }}</div>
                 <div class="time">{{ file.createAt }}</div>
@@ -26,11 +28,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useStore } from '@/store/index'
 import { getPersonalFatherId, getPrivateFilesList } from './utils'
 import type { responsePrivateFilesList } from './utils'
 
-//根据路由在 <Files>组件中显示
+const store = useStore()
 const fatherId = ref<string>("")
 const nowFilesList = ref<responsePrivateFilesList[]>([])
 
@@ -44,6 +47,15 @@ onMounted(async() => {
         onlyFatherId: fatherId.value
     })
     nowFilesList.value.push(tempFilesList)
+    console.log(nowFilesList.value[0].files[0]);
+    
+    sessionStorage.setItem('Path', nowFilesList.value[0].fatherNamePath)
+})
+
+watch(()=> store.tempFileData, (newVal) => {
+    if (newVal) {
+        nowFilesList.value[0].files.unshift(newVal.files[0])
+    }
 })
 
 const sliceFileName = (name: string) => {
@@ -73,6 +85,7 @@ const sliceFileName = (name: string) => {
         grid-column-gap: 10px;
         justify-content: space-between;
         align-items: center;
+        
         .files-contents {
             width: 150px; 
             height: 180px; 

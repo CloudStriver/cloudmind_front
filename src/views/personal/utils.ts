@@ -80,7 +80,7 @@ export const getPrivateFiles = async(id: string) => {
             })),
             fatherNamePath: res.fatherNamePath,
             fatherIdPath: res.fatherIdPath
-            }
+        }
     })
     return filesList.value
 }
