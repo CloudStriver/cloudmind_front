@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div class="main-box">
         <label class="upload-files" for="file">
             <i class="iconfont icon-file-upload-line"></i>
@@ -121,4 +121,4 @@ const uploadFiles = (event: any) => {
         background: #f5f5f5;
     }
 }
-</style>
+</style> -->
