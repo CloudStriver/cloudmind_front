@@ -128,7 +128,7 @@ import SparkMD5 from 'spark-md5'
 import { ref } from 'vue'
 import { useStore } from '@/store/index'
 import { cosUploadFile } from '@/utils/cos'
-import { getPersonalFatherId, postCreateFile, getFileSize } from './utils'
+import { postCreateFile, getFileSize, getPersonalFatherId } from './utils'
 import type { requestCreateFile } from './utils'
 
 const store = useStore()
@@ -152,24 +152,20 @@ const createFolder = () => {
     .then((res) => {
         const tempPath = sessionStorage.getItem('Path') as string
         store.tempFileData = {
-            files: [
-                {
-                    fileId: res,
-                    userId: "",
-                    name: data.name,
-                    type: data.type,
-                    path: tempPath + '/' + data.name,
-                    fatherId,
-                    spaceSize: getFileSize(data.spaceSize),
-                    md5: data.md5,
-                    isDel: 0,
-                    zone: "",
-                    subZone: "",
-                    description: "",
-                    createAt: new Date().toLocaleString(),
-                    updateAt: new Date().toLocaleString(),
-                }
-            ]
+            fileId: res,
+            userId: "",
+            name: data.name,
+            type: data.type,
+            path: tempPath + '/' + data.name,
+            fatherId,
+            spaceSize: getFileSize(data.spaceSize),
+            md5: data.md5,
+            isDel: 0,
+            zone: "",
+            subZone: "",
+            description: "",
+            createAt: new Date().toLocaleString(),
+            updateAt: new Date().toLocaleString(),
         }
         isShowCreateFolder.value = false
     })
@@ -203,24 +199,20 @@ const uploadFiles = (event: any) => {
                 .then(()=> {
                     const tempPath = sessionStorage.getItem('Path') as string
                     store.tempFileData = {
-                        files: [
-                            {
-                                fileId: "",
-                                userId: "",
-                                name: file.name,
-                                type,
-                                path: tempPath + '/' + file.name,
-                                fatherId,
-                                spaceSize: getFileSize(file.size),
-                                md5,
-                                isDel: 0,
-                                zone: "",
-                                subZone: "",
-                                description: "",
-                                createAt: new Date().toLocaleString(),
-                                updateAt: new Date().toLocaleString(),
-                            }
-                        ]
+                        fileId: "",
+                        userId: "",
+                        name: file.name,
+                        type,
+                        path: tempPath + '/' + file.name,
+                        fatherId,
+                        spaceSize: getFileSize(file.size),
+                        md5,
+                        isDel: 0,
+                        zone: "",
+                        subZone: "",
+                        description: "",
+                        createAt: new Date().toLocaleString(),
+                        updateAt: new Date().toLocaleString(),
                     }
                     filesCount.value--
                     if (filesCount.value === 0) {

@@ -18,7 +18,6 @@ import Files from './files.vue'
 import Drawer from './drawer.vue'
 import PathTitle from './path.vue'
 import CHeader from '@/components/header.vue'
-
 </script>
 
 <style scoped lang="css">

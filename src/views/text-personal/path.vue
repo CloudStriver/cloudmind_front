@@ -1,11 +1,14 @@
 <template>
     <div class="main-box"> 
         <div class="path">
-            <div class="path-item">
-                Coulea
+            <div
+                class="path-item"
+                v-for="(path, index) of pathData.pathName"
+                :key="index"
+            >{{ path }}
                 <div>></div>
             </div>
-            <div class="nowPath">ni</div>
+            <div class="nowPath">{{ nowPath.pathName }}</div>
         </div> 
         <div class="header-bottom">
             <label for="allSelect">
@@ -23,6 +26,32 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from 'vue'
+import { useStore } from '@/store'
+
+const store = useStore()
+const pathData = ref({
+    pathId: (sessionStorage.getItem("PathId") as string).split("/"),
+    pathName: (sessionStorage.getItem("PathName") as string).split("/")
+})
+const nowPath = ref({
+    pathId: pathData.value.pathId.pop() as string,
+    pathName: pathData.value.pathName.pop() as string
+})
+
+watch(() => store.pathChange, (newVal) => {
+    if (newVal) {
+        pathData.value = {
+            pathId: (sessionStorage.getItem("PathId") as string).split("/"),
+            pathName: (sessionStorage.getItem("PathName") as string).split("/")
+        }
+        nowPath.value = {
+            pathId: pathData.value.pathId.pop() as string,
+            pathName: pathData.value.pathName.pop() as string
+        }
+        console.log('2' + store.pathChange);
+    }
+})
 </script>
 
 <style scoped lang="css">

@@ -1,14 +1,11 @@
 <template>
     <div class="files-main-box">
-        <div
-            class="files-box"
-            v-for="(filesList, item) of nowFilesList"
-            :key="item"
-        >
+        <div class="files-box">
             <div 
                 class="files-contents"
-                v-for="(file, item) of filesList.files"
+                v-for="(file, item) of nowFilesList.files"
                 :key="item"
+                @click="toFile(file)"
             >
                 <div class="images">
                     <i 
@@ -28,38 +25,90 @@
 </template>
 
 <script setup lang="ts">
+import router from '@/router';
+import { useStore } from '@/store'
 import { onMounted, ref, watch } from 'vue'
-import { useStore } from '@/store/index'
 import { getPersonalFatherId, getPrivateFilesList } from './utils'
-import type { responsePrivateFilesList } from './utils'
+import type { responsePrivateFilesList, fileData } from './utils'
+import { onBeforeRouteUpdate } from 'vue-router';
 
 const store = useStore()
 const fatherId = ref<string>("")
-const nowFilesList = ref<responsePrivateFilesList[]>([])
+//存储页面文件列表
+const nowFilesList = ref<responsePrivateFilesList>({
+    files: [
+        {
+            fileId: '',
+            userId: '',
+            name: '',
+            type: '',
+            path: '',
+            fatherId: '',
+            spaceSize: '',
+            isDel: 0,
+            zone: '',
+            subZone: '',
+            description: '',
+            updateAt: '',
+            createAt: '',
+        }
+    ],
+    total: 0,
+    token: '',
+    fatherIdPath: '',
+    fatherNamePath: ''
+}) 
 
 onMounted(async() => {
     fatherId.value = getPersonalFatherId()
-    const tempFilesList = await getPrivateFilesList({
+    nowFilesList.value = await getPrivateFilesList({
         limit: 40,
         offset: 0,
         sortType: 3,
         backward: true,
         onlyFatherId: fatherId.value
     })
-    nowFilesList.value.push(tempFilesList)
-    sessionStorage.setItem('Path', nowFilesList.value[0].fatherNamePath)
+    sessionStorage.setItem('PathId', nowFilesList.value.fatherIdPath)
+    sessionStorage.setItem('PathName', nowFilesList.value.fatherNamePath)
 })
 
-watch(()=> store.tempFileData, (newVal) => {
-    if (newVal) {
-        nowFilesList.value[0].files.unshift(newVal.files[0])
+onBeforeRouteUpdate(async(to) => {
+    fatherId.value = to.params.fatherId as string
+    nowFilesList.value = await getPrivateFilesList({
+        limit: 40,
+        offset: 0,
+        sortType: 3,
+        backward: true,
+        onlyFatherId: fatherId.value
+    })
+    if (store.pathChange === 'false') {
+        store.pathChange = 'true'
     }
+    else {
+        store.pathChange = 'false'
+    }
+    console.log('1' + store.pathChange);
+    sessionStorage.setItem('PathId', nowFilesList.value.fatherIdPath)
+    sessionStorage.setItem('PathName', nowFilesList.value.fatherNamePath)
 })
+
+watch(() => store.tempFileData, (newVal) => {
+    nowFilesList.value.files.unshift(newVal)
+})
+
+const toFile = (file: fileData) => {
+    if (file.type === '文件夹') {
+        fatherId.value = file.fileId
+        router.push({name: 'text-personal', params: {fatherId: fatherId.value}})
+    }
+    else {
+        console.log('打开文件:' + file.fileId)
+    }
+}
 
 const sliceFileName = (name: string) => {
     return name.length < 8 ? name : (name.slice(0, 8) + "...")
 }
-
 </script>
 
 <style scoped lang="css">
