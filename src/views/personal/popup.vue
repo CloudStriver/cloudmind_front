@@ -1,6 +1,8 @@
-<!-- <template>
+<template>
     <div class="main-box">
-        <label class="upload-files" for="file">
+    </div>
+</template>
+        <!-- <label class="upload-files" for="file">
             <i class="iconfont icon-file-upload-line"></i>
             <div>上传文件</div>
             <input 

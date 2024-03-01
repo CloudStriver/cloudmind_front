@@ -57,7 +57,7 @@
                 <i class="iconfont icon-guanlizhongxin-shezhi-01"></i>
             </router-link>
             <router-link
-                :to="'/text-personal/' + fatherId"
+                :to="{name: 'text-personal', params: {fatherId: fatherId}}"
                 class="router-nav"
                 active-class="router-active"
             >

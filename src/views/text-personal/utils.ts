@@ -41,6 +41,24 @@ export interface responsePrivateFilesList {
     fatherNamePath: string
 }
 
+
+//进入文件夹时的文件类型
+export interface fileData {
+    fileId: string,
+    userId: string,
+    name: string,
+    type: string,
+    path: string
+    fatherId: string,
+    spaceSize: string,
+    isDel: number,
+    zone: string,
+    subZone: string,
+    description: string,
+    updateAt: string,
+    createAt: string,
+}
+
 //创建文件的参数
 export interface requestCreateFile {
     fatherId: string;

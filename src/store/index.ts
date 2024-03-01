@@ -16,26 +16,23 @@ export const useStore = defineStore('user', {
             fatherId: "",
             fatherIdName: "",
             isAutoLogin: "false",
+            pathChange: "false",
             tempFileData: {
-                files: [
-                    {
-                        fileId: "",
-                        userId: "",
-                        name: "",
-                        type: "",
-                        path: "",
-                        fatherId: "",
-                        spaceSize: "",
-                        md5: "",
-                        isDel: 0,
-                        zone: "",
-                        subZone: "",
-                        description: "",
-                        updateAt: "",
-                        createAt: "",
-                    }
-                ],
-            },
+                fileId: "",
+                userId: "",
+                name: "",
+                type: "",
+                path: "",
+                fatherId: "",
+                spaceSize: "",
+                md5: "",
+                isDel: 0,
+                zone: "",
+                subZone: "",
+                description: "",
+                updateAt: "",
+                createAt: "",
+            }
         }
     },
 
