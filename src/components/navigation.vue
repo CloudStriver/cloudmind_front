@@ -60,6 +60,7 @@
                 :to="{name: 'text-personal', params: {fatherId: fatherId}}"
                 class="router-nav"
                 active-class="router-active"
+                exact-active-class="router-active"
             >
                 <i class="iconfont icon-sidenav-doc" style="font-size: 18px;"></i>
             </router-link>
@@ -68,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useStore } from '@/store/index';
 import router from '@/router';
 

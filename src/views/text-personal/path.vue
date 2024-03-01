@@ -49,7 +49,6 @@ watch(() => store.pathChange, (newVal) => {
             pathId: pathData.value.pathId.pop() as string,
             pathName: pathData.value.pathName.pop() as string
         }
-        console.log('2' + store.pathChange);
     }
 })
 </script>

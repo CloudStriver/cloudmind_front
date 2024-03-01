@@ -87,7 +87,6 @@ onBeforeRouteUpdate(async(to) => {
     else {
         store.pathChange = 'false'
     }
-    console.log('1' + store.pathChange);
     sessionStorage.setItem('PathId', nowFilesList.value.fatherIdPath)
     sessionStorage.setItem('PathName', nowFilesList.value.fatherNamePath)
 })
