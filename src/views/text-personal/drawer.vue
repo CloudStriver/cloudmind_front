@@ -1,5 +1,22 @@
 <template>
-    <div class="main-box">
+    <div class="drawer-main-box">
+        <div class="create-folder-box" v-show="isShowCreateFolder">
+            <div class="folder-box">
+                <h5>新建文件夹</h5>
+                <div style="text-align: center;">
+                    <i class="iconfont icon-wenjian"></i>
+                    <p><input 
+                            type="text" 
+                            placeholder="请输入文件夹名称" 
+                            v-model="newFolderName"
+                        ></p>
+                </div>
+                <p class="button">
+                    <button @click="isShowCreateFolder = false">取消</button>
+                    <button @click="createFolder">确定</button>
+                </p>
+            </div>
+        </div>
         <div class="operate">
             <div class="transfer">
                 <div class="files-count" v-show="isShowFilesCount">{{ filesCount }}</div>
@@ -27,7 +44,7 @@
                     webkitdirectory
                 >
             </label>
-            <div class="create">
+            <div class="create" @click="isShowCreateFolder = true">
                 <i class="iconfont icon-a-11Hxinjianwenjianjia"></i>
                 <span>新建文件夹</span>
             </div>
@@ -110,14 +127,55 @@ import mime from 'mime'
 import SparkMD5 from 'spark-md5'
 import { ref } from 'vue'
 import { useStore } from '@/store/index'
+import { cosUploadFile } from '@/utils/cos'
 import { getPersonalFatherId, postCreateFile, getFileSize } from './utils'
 import type { requestCreateFile } from './utils'
-import { cosUploadFile } from '@/utils/cos'
 
 const store = useStore()
+const fatherId = getPersonalFatherId()
+const newFolderName = ref<string>("新建文件夹")
 const isShowFilesCount = ref<boolean>(false)
+const isShowCreateFolder = ref<boolean>(false)
 const filesCount = ref<number>(0)
 
+//新建文件夹
+const createFolder = () => {
+    const data: requestCreateFile = {
+        name: newFolderName.value,
+        type: '文件夹',
+        spaceSize: -1,
+        md5: "",
+        fatherId,
+    } 
+
+    postCreateFile(data)
+    .then((res) => {
+        const tempPath = sessionStorage.getItem('Path') as string
+        store.tempFileData = {
+            files: [
+                {
+                    fileId: res,
+                    userId: "",
+                    name: data.name,
+                    type: data.type,
+                    path: tempPath + '/' + data.name,
+                    fatherId,
+                    spaceSize: getFileSize(data.spaceSize),
+                    md5: data.md5,
+                    isDel: 0,
+                    zone: "",
+                    subZone: "",
+                    description: "",
+                    createAt: new Date().toLocaleString(),
+                    updateAt: new Date().toLocaleString(),
+                }
+            ]
+        }
+        isShowCreateFolder.value = false
+    })
+}
+
+//上传文件
 const uploadFiles = (event: any) => {
     filesCount.value = event.target.files.length
     if (event.target.files.length > 0) {
@@ -132,7 +190,6 @@ const uploadFiles = (event: any) => {
             spark.append(e.target.result)
             const md5 = spark.end()
             const suffix = '.' + file.name.split('.').pop()
-            const fatherId = getPersonalFatherId()
             const type = mime.getExtension(file.type) as string
             const data: requestCreateFile = {
                 name: file.name,
@@ -177,26 +234,101 @@ const uploadFiles = (event: any) => {
 </script>
 
 <style scoped lang="css">
-.main-box {
-    color: rgb(25, 80, 146);
+.create-folder-box {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #00000078;
+    top: 0;
+    left: 0;
+    padding: 20px 20px;
+    z-index: 2;
+    transition: all 0.3s;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+
+    .folder-box {
+        width: 300px;
+        height: 320px;
+        background-color: #fff;
+        box-shadow: 0 0 10px 1px #0000001a;
+        border-radius: 10px;
+        margin: auto;
+        padding: 20px;
+
+        h5 {
+            margin: 0;
+            margin-bottom: 20px;
+            font-weight: 500;
+            color: #3f3f3f;
+        }
+
+        i {
+            color: #96b0df;
+            font-size: 110px;
+        }
+
+        input {
+            width: 250px;
+            height: 35px;
+            padding: 10px;
+            margin-bottom: 30px;
+            border: none;
+            border-radius: 5px;
+            background-color: #96b0df14;
+            color: #3964b4;
+        }
+        input:focus {
+            outline: none;
+            border: 1px solid #96b0df;
+        }
+
+        .button {
+            text-align: end;
+
+            button {
+                width: 70px;
+                height: 35px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-left: 20px;
+            }
+            button:last-child {
+                background-color: #96b0dfaf;
+                color: #fff;
+            }
+            button:last-child:hover {
+                background-color: #96b0df;
+            }
+
+            button:active {
+                transform: scale(0.95);
+            }
+        }
+    }
+}
+.drawer-main-box {
+    width: 100%;
     background-color: rgba(240, 245, 255, 1);
+    border-right: 1px solid #c4c4c42b;
     padding: 10px 20px;
     display: flex;
     flex-direction: column;
 
     .operate {
-        padding-bottom: 10px;
+        width: 100%;
         margin-bottom: 20px;
         border-bottom: 1px solid rgba(25, 79, 146, 0.205);
+        color: rgb(25, 80, 146);
+
 
         .transfer,
         .upload,
         .create {
-            width: 100%;
-            height: 50px;
-            line-height: 50px;
             padding: 0 10px;
-            padding-bottom: 30px;
+            margin: 20px 0;
             text-align: start;
             cursor: pointer;
             display: block;
@@ -242,6 +374,7 @@ const uploadFiles = (event: any) => {
     }
 
     .classify-box {
+        color: rgb(25, 80, 146);
         margin-bottom: 20px;
         border-bottom: 1px solid rgba(25, 79, 146, 0.205);
 
@@ -258,7 +391,7 @@ const uploadFiles = (event: any) => {
 
         ul {
             .classify-li {
-                width: 100px;
+                width: 180px;
                 margin: 25px 0 25px 30px;
 
                 i {
@@ -290,7 +423,5 @@ const uploadFiles = (event: any) => {
     input[type="radio"] {
         display: none;
     }
-
-
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="main-box">
+    <div class="personal-main-box">
         <Drawer class="drawer"></Drawer>
         <div class="contents-box">
             <div class="header">
@@ -22,13 +22,15 @@ import CHeader from '@/components/header.vue'
 </script>
 
 <style scoped lang="css">
-.main-box {
+.personal-main-box {
+    width: 100%;
     height: 100%;
     display: flex;
+    overflow-y: hidden;
 
     .drawer {
+        width: 190px;
         height: 100%;
-        z-index: 2;
     }
 
     .contents-box {
@@ -37,6 +39,7 @@ import CHeader from '@/components/header.vue'
         flex-direction: column;
 
         .header {
+            width: 100%;
             display: flex;
             flex-direction: column;
             
@@ -52,11 +55,12 @@ import CHeader from '@/components/header.vue'
         }
 
         .bottom {
-            padding: 20px;
             flex: 1;
+            padding: 20px;
+            overflow-y: auto;
 
             .files {
-
+                height: 100%;
             }
         }
     }

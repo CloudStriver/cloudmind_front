@@ -1,5 +1,5 @@
 <template>
-    <div class="main-box">
+    <div class="files-main-box">
         <div
             class="files-box"
             v-for="(filesList, item) of nowFilesList"
@@ -47,8 +47,6 @@ onMounted(async() => {
         onlyFatherId: fatherId.value
     })
     nowFilesList.value.push(tempFilesList)
-    console.log(nowFilesList.value[0].files[0]);
-    
     sessionStorage.setItem('Path', nowFilesList.value[0].fatherNamePath)
 })
 
@@ -65,19 +63,12 @@ const sliceFileName = (name: string) => {
 </script>
 
 <style scoped lang="css">
-.main-box {
-    box-shadow: inset 0 0 10px 1px #8ca0b668;
+.files-main-box {
     padding: 10px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 150px);
-    grid-template-rows: repeat(auto-fill, 200px);
-    grid-row-gap: 10px;
-    grid-column-gap: 10px;
-    justify-content: space-between;
+    border-top: 1px solid #e5e5e586;
 
     .files-box {
         width: 100%;
-        flex: 1;
         display: grid;
         grid-template-columns: repeat(auto-fill, 150px);
         grid-template-rows: repeat(auto-fill, 200px);
