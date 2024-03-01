@@ -9,11 +9,17 @@
                             type="text" 
                             placeholder="请输入文件夹名称" 
                             v-model="newFolderName"
+                            maxlength="15"
                         ></p>
                 </div>
                 <p class="button">
-                    <button @click="isShowCreateFolder = false">取消</button>
-                    <button @click="createFolder">确定</button>
+                    <button @click="cancelCreateFolder">取消</button>
+                    <button 
+                        ref="folder"
+                        @click="createFolder" 
+                        style="background-color: #96b0dfaf;"
+                        :disabled="!isCreateFolderName"
+                    >确定</button>
                 </p>
             </div>
         </div>
@@ -125,31 +131,50 @@
 <script setup lang="ts">
 import mime from 'mime'
 import SparkMD5 from 'spark-md5'
-import { ref } from 'vue'
+import { ref, onBeforeUpdate } from 'vue'
 import { useStore } from '@/store/index'
 import { cosUploadFile } from '@/utils/cos'
 import { postCreateFile, getFileSize, getPersonalFatherId } from './utils'
 import type { requestCreateFile } from './utils'
 
+const folder = ref()
 const store = useStore()
-const fatherId = getPersonalFatherId()
+const fatherId = ref("")
 const newFolderName = ref<string>("新建文件夹")
 const isShowFilesCount = ref<boolean>(false)
 const isShowCreateFolder = ref<boolean>(false)
+const isCreateFolderName = ref<boolean>(false)
 const filesCount = ref<number>(0)
 
+onBeforeUpdate(() => {
+    if (newFolderName.value.length > 0) {
+        isCreateFolderName.value = true
+        folder.value.style.backgroundColor = '#96b0df'
+    }
+    else {
+        isCreateFolderName.value = false
+        folder.value.style.backgroundColor = '#96b0dfaf'
+    }
+})
+
+//取消新建文件夹
+const cancelCreateFolder = () => {
+    isShowCreateFolder.value = false
+    newFolderName.value = '新建文件夹'
+}
 //新建文件夹
 const createFolder = () => {
+    fatherId.value = getPersonalFatherId()
     const data: requestCreateFile = {
         name: newFolderName.value,
         type: '文件夹',
         spaceSize: -1,
         md5: "",
-        fatherId,
+        fatherId: fatherId.value,
     } 
 
     postCreateFile(data)
-    .then((res) => {
+    .then((res) => {        
         const tempPath = sessionStorage.getItem('Path') as string
         store.tempFileData = {
             fileId: res,
@@ -157,7 +182,7 @@ const createFolder = () => {
             name: data.name,
             type: data.type,
             path: tempPath + '/' + data.name,
-            fatherId,
+            fatherId: fatherId.value,
             spaceSize: getFileSize(data.spaceSize),
             md5: data.md5,
             isDel: 0,
@@ -168,6 +193,7 @@ const createFolder = () => {
             updateAt: new Date().toLocaleString(),
         }
         isShowCreateFolder.value = false
+        newFolderName.value = "新建文件夹"
     })
 }
 
@@ -192,19 +218,19 @@ const uploadFiles = (event: any) => {
                 type,
                 spaceSize: file.size,
                 md5: md5,
-                fatherId,
+                fatherId: getPersonalFatherId(),
             }
             cosUploadFile(file, md5, suffix, () => {
                 postCreateFile(data)
-                .then(()=> {
+                .then((res)=> {
                     const tempPath = sessionStorage.getItem('Path') as string
                     store.tempFileData = {
-                        fileId: "",
+                        fileId: res,
                         userId: "",
                         name: file.name,
                         type,
                         path: tempPath + '/' + file.name,
-                        fatherId,
+                        fatherId: fatherId.value,
                         spaceSize: getFileSize(file.size),
                         md5,
                         isDel: 0,
@@ -288,15 +314,7 @@ const uploadFiles = (event: any) => {
                 margin-left: 20px;
             }
             button:last-child {
-                background-color: #96b0dfaf;
                 color: #fff;
-            }
-            button:last-child:hover {
-                background-color: #96b0df;
-            }
-
-            button:active {
-                transform: scale(0.95);
             }
         }
     }
@@ -358,7 +376,7 @@ const uploadFiles = (event: any) => {
                 background-color: #f74444;
                 border-radius: 50%;
                 left: 25px;
-                top: 8px;
+                top: 0px;
                 text-align: center;
 
             }
