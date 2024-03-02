@@ -1,6 +1,6 @@
 <template>
     <div class="drawer-main-box">
-        <div class="create-folder-box" v-show="isShowCreateFolder">
+        <div class="create-folder-box" v-if="isShowCreateFolder">
             <div class="folder-box">
                 <h5>新建文件夹</h5>
                 <div style="text-align: center;">

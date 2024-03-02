@@ -5,6 +5,7 @@
                 class="option" 
                 v-if="isShowOptions"
                 :style="{left: optionLeft + 'px', top: optionTop + 'px'}"
+                @sendOptions="optionType"
             ></Option>
             <div 
                 class="files-contents"
@@ -40,11 +41,12 @@ import type { responsePrivateFilesList, fileData } from './utils'
 import { onBeforeRouteUpdate } from 'vue-router';
 
 const store = useStore()
-const optionLeft = ref<number>(0)
 const optionTop = ref<number>(0)
+const optionLeft = ref<number>(0)
 const fatherId = ref<string>("")
+const fileDetails = ref<fileData>()
 const isShowOptions = ref(false)
-const emit = defineEmits(['loading'])
+const emit = defineEmits(['loading', 'sendOptions', 'sendDetails'])
 //存储页面文件列表
 const nowFilesList = ref<responsePrivateFilesList>({
     files: [
@@ -113,6 +115,16 @@ const cancelShowOptions = (event: any) => {
     event.preventDefault()
 }
 
+const optionType = (sendOptions: string) => {
+    if (sendOptions === 'checkDetail') {
+        emit('sendOptions', sendOptions)
+        emit('sendDetails', fileDetails.value)
+    }
+    else {
+        console.log('其他操作')
+    }
+}
+
 const getOptions = (file: fileData, event: any) => {
     isShowOptions.value = true
     optionLeft.value = event.clientX
@@ -120,6 +132,10 @@ const getOptions = (file: fileData, event: any) => {
     if (event.clientX + 160 > window.innerWidth) {
         optionLeft.value = event.clientX - 160
     }
+    if (event.clientY + 220 > window.innerHeight) {
+        optionTop.value = event.clientY - 220
+    }
+    fileDetails.value = file
     event.preventDefault()
 }
 
