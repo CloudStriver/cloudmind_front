@@ -26,17 +26,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useStore } from '@/store'
 
 const store = useStore()
 const pathData = ref({
-    pathId: (sessionStorage.getItem("PathId") as string).split("/"),
-    pathName: (sessionStorage.getItem("PathName") as string).split("/")
+    pathId: [] as string[],
+    pathName: [] as string[]
 })
 const nowPath = ref({
-    pathId: pathData.value.pathId.pop() as string,
-    pathName: pathData.value.pathName.pop() as string
+    pathId: "",
+    pathName: ""
+})
+
+onMounted(() => {
+    pathData.value = {
+        pathId: (sessionStorage.getItem("PathId") as string).split("/"),
+        pathName: (sessionStorage.getItem("PathName") as string).split("/")
+    }
+    nowPath.value = {
+        pathId: pathData.value.pathId.pop() as string,
+        pathName: pathData.value.pathName.pop() as string
+    }
 })
 
 watch(() => store.pathChange, (newVal) => {
