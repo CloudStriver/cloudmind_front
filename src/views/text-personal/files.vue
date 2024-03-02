@@ -1,11 +1,17 @@
 <template>
-    <div class="files-main-box">
+    <div class="files-main-box" @click=cancelShowOptions($event)>
         <div class="files-box">
+            <Option 
+                class="option" 
+                v-if="isShowOptions"
+                :style="{left: optionLeft + 'px', top: optionTop + 'px'}"
+            ></Option>
             <div 
                 class="files-contents"
                 v-for="(file, item) of nowFilesList.files"
                 :key="item"
                 @click="toFile(file)"
+                @contextmenu="getOptions(file, $event)"
             >
                 <div class="images">
                     <i 
@@ -26,6 +32,7 @@
 
 <script setup lang="ts">
 import router from '@/router';
+import Option from './options.vue'
 import { useStore } from '@/store'
 import { onBeforeMount, ref, watch } from 'vue'
 import { getPersonalFatherId, getPrivateFilesList } from './utils'
@@ -33,7 +40,10 @@ import type { responsePrivateFilesList, fileData } from './utils'
 import { onBeforeRouteUpdate } from 'vue-router';
 
 const store = useStore()
+const optionLeft = ref<number>(0)
+const optionTop = ref<number>(0)
 const fatherId = ref<string>("")
+const isShowOptions = ref(false)
 const emit = defineEmits(['loading'])
 //存储页面文件列表
 const nowFilesList = ref<responsePrivateFilesList>({
@@ -98,6 +108,21 @@ watch(() => store.tempFileData, (newVal) => {
     nowFilesList.value.files.unshift(newVal)
 })
 
+const cancelShowOptions = (event: any) => {
+    isShowOptions.value = false
+    event.preventDefault()
+}
+
+const getOptions = (file: fileData, event: any) => {
+    isShowOptions.value = true
+    optionLeft.value = event.clientX
+    optionTop.value = event.clientY
+    if (event.clientX + 160 > window.innerWidth) {
+        optionLeft.value = event.clientX - 160
+    }
+    event.preventDefault()
+}
+
 const toFile = (file: fileData) => {
     if (file.type === '文件夹') {
         fatherId.value = file.fileId
@@ -127,6 +152,10 @@ const sliceFileName = (name: string) => {
         grid-column-gap: 10px;
         justify-content: space-between;
         align-items: center;
+
+        .option {
+            position: absolute;
+        }
         
         .files-contents {
             width: 150px; 
