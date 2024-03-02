@@ -7,22 +7,63 @@
                 <PathTitle v-if="isLoaded"></PathTitle>
             </div>
             <div class="bottom">
-                <Files class="files" @loading="judgeLoading"></Files>
+                <Files 
+                    class="files" 
+                    @loading="judgeLoading"
+                    @sendOptions="getOptionType"
+                    @sendDetails="getDetails"
+                ></Files>
             </div>
         </div>
+        <Popup 
+            class="popup" 
+            v-if="isShowPopup"
+            :sendContents="fileContents"
+            @sendOperations="getPopupOperations"
+        ></Popup>
     </div>
 </template>
 
 <script setup lang="ts">
+import Popup from './popup.vue'
 import Files from './files.vue'
 import Drawer from './drawer.vue'
 import PathTitle from './path.vue'
 import CHeader from '@/components/header.vue'
 import { ref } from 'vue'
 
+const fileContents = ref({
+    option: "",
+    contents: {
+        fileId: "",
+        userId: "",
+        name: "",
+        type: "",
+        path: "",
+        fatherId: "",
+        spaceSize: "",
+        createAt: "",
+        updateAt: ""
+    }
+})
+const isShowPopup = ref(false)
 const isLoaded = ref(false)
+
 const judgeLoading = (loading: boolean) => {
     isLoaded.value = loading
+}
+const getOptionType = (sendOptions: string) => {
+    fileContents.value.option = sendOptions
+    isShowPopup.value = true
+}
+const getDetails = (sendDetails: any) => {
+    fileContents.value.contents = sendDetails
+}
+
+const getPopupOperations = (sendOperations: string) => {
+    if (sendOperations === "cancelPopup") {
+        isShowPopup.value = false
+    }
 }
 </script>
 
@@ -32,6 +73,10 @@ const judgeLoading = (loading: boolean) => {
     height: 100%;
     display: flex;
     overflow-y: hidden;
+
+    .popup {
+        position: absolute;
+    }
 
     .drawer {
         width: 190px;
