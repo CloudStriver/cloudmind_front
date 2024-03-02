@@ -4,10 +4,10 @@
         <div class="contents-box">
             <div class="header">
                 <CHeader class="cheader"></CHeader>
-                <PathTitle></PathTitle>
+                <PathTitle v-if="isLoaded"></PathTitle>
             </div>
             <div class="bottom">
-                <Files class="files"></Files>
+                <Files class="files" @loading="judgeLoading"></Files>
             </div>
         </div>
     </div>
@@ -18,6 +18,12 @@ import Files from './files.vue'
 import Drawer from './drawer.vue'
 import PathTitle from './path.vue'
 import CHeader from '@/components/header.vue'
+import { ref } from 'vue'
+
+const isLoaded = ref(false)
+const judgeLoading = (loading: boolean) => {
+    isLoaded.value = loading
+}
 </script>
 
 <style scoped lang="css">

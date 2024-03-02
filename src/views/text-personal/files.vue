@@ -27,13 +27,14 @@
 <script setup lang="ts">
 import router from '@/router';
 import { useStore } from '@/store'
-import { onMounted, ref, watch } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import { getPersonalFatherId, getPrivateFilesList } from './utils'
 import type { responsePrivateFilesList, fileData } from './utils'
 import { onBeforeRouteUpdate } from 'vue-router';
 
 const store = useStore()
 const fatherId = ref<string>("")
+const emit = defineEmits(['loading'])
 //存储页面文件列表
 const nowFilesList = ref<responsePrivateFilesList>({
     files: [
@@ -59,7 +60,7 @@ const nowFilesList = ref<responsePrivateFilesList>({
     fatherNamePath: ''
 }) 
 
-onMounted(async() => {
+onBeforeMount(async() => {
     fatherId.value = getPersonalFatherId()
     nowFilesList.value = await getPrivateFilesList({
         limit: 40,
@@ -70,6 +71,8 @@ onMounted(async() => {
     })
     sessionStorage.setItem('PathId', nowFilesList.value.fatherIdPath)
     sessionStorage.setItem('PathName', nowFilesList.value.fatherNamePath)
+    emit('loading', true)
+    console.log('1');
 })
 
 onBeforeRouteUpdate(async(to) => {
