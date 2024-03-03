@@ -78,8 +78,8 @@ service.interceptors.response.use(
         const longToken = sessionStorage.getItem('LongToken')
         post('/auth/refreshToken', { longToken })
         .then((res: any) => {
-          console.log('刷新了token' + res.userId)
-          store.setUserSession (res.shortToken, res.longToken, res.userId)
+          const userId = sessionStorage.getItem('UserId') as string
+          store.setUserSession (res.shortToken, res.longToken, userId)
           return service(error.config)
         })
       }

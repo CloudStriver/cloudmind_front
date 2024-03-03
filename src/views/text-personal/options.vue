@@ -5,7 +5,7 @@
             <div class="line"></div>
             <div class="detail" @click="checkFileDetail">查看详细信息</div>
             <div class="download">下载</div>
-            <div class="move">移动</div>
+            <div class="move" @click="moveFile">移动</div>
             <div class="line"></div>
             <div class="recycle">移至回收站</div>
             <div class="delete">彻底删除</div>
@@ -17,6 +17,9 @@
 const emit = defineEmits(['sendOptions'])
 const checkFileDetail = () => {
     emit('sendOptions', "checkDetail")
+}
+const moveFile = () => {
+    emit('sendOptions', "moveFile")
 }
 </script>
 

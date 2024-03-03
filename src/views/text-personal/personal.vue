@@ -12,6 +12,7 @@
                     @loading="judgeLoading"
                     @sendOptions="getOptionType"
                     @sendDetails="getDetails"
+                    :sendRequest="requestMessage"
                 ></Files>
             </div>
         </div>
@@ -32,6 +33,7 @@ import PathTitle from './path.vue'
 import CHeader from '@/components/header.vue'
 import { ref } from 'vue'
 
+const requestMessage = ref("")
 const fileContents = ref({
     option: "",
     contents: {
@@ -46,8 +48,8 @@ const fileContents = ref({
         updateAt: ""
     }
 })
-const isShowPopup = ref(false)
 const isLoaded = ref(false)
+const isShowPopup = ref(false)
 
 const judgeLoading = (loading: boolean) => {
     isLoaded.value = loading
@@ -63,6 +65,10 @@ const getDetails = (sendDetails: any) => {
 const getPopupOperations = (sendOperations: string) => {
     if (sendOperations === "cancelPopup") {
         isShowPopup.value = false
+    }
+    if (sendOperations === 'refreshFiles') {
+        isShowPopup.value = false
+        requestMessage.value = "refreshFiles"
     }
 }
 </script>
