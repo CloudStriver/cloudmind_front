@@ -17,7 +17,7 @@
                     <button 
                         ref="folder"
                         @click="createFolder" 
-                        style="background-color: #96b0dfaf;"
+                        style="background-color: #96b0df;"
                         :disabled="!isCreateFolderName"
                     >确定</button>
                 </p>
@@ -143,17 +143,19 @@ const fatherId = ref("")
 const newFolderName = ref<string>("新建文件夹")
 const isShowFilesCount = ref<boolean>(false)
 const isShowCreateFolder = ref<boolean>(false)
-const isCreateFolderName = ref<boolean>(false)
+const isCreateFolderName = ref<boolean>(true)
 const filesCount = ref<number>(0)
 
 onBeforeUpdate(() => {
-    if (newFolderName.value.length > 0) {
-        isCreateFolderName.value = true
-        folder.value.style.backgroundColor = '#96b0df'
+    if (newFolderName.value.length === 0) {
+        isCreateFolderName.value = false
+        folder.value.style.backgroundColor = '#96b0dfaf'        
     }
     else {
-        isCreateFolderName.value = false
-        folder.value.style.backgroundColor = '#96b0dfaf'
+        isCreateFolderName.value = true
+        if (folder.value) {
+            folder.value.style.backgroundColor = '#96b0df'
+        }
     }
 })
 

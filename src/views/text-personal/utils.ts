@@ -70,6 +70,11 @@ export interface requestCreateFile {
 
 //------------------------------------------------------------request
 
+//请求移动文件
+export const postMoveFile = async(fileId: string, fatherId: string):Promise<void> => {
+    await post('/content/moveFile', { fileId, fatherId })
+}
+
 //请求创建文件
 export const postCreateFile = async(data: requestCreateFile):Promise<string> => {
     const fileId = ref<string>("")

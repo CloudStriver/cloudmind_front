@@ -47,6 +47,10 @@ const fatherId = ref<string>("")
 const fileDetails = ref<fileData>()
 const isShowOptions = ref(false)
 const emit = defineEmits(['loading', 'sendOptions', 'sendDetails'])
+const props = defineProps<{
+    sendRequest: string
+}>()
+
 //存储页面文件列表
 const nowFilesList = ref<responsePrivateFilesList>({
     files: [
@@ -109,6 +113,15 @@ onBeforeRouteUpdate(async(to) => {
 watch(() => store.tempFileData, (newVal) => {
     nowFilesList.value.files.unshift(newVal)
 })
+watch(() => props.sendRequest, async() => {
+    nowFilesList.value = await getPrivateFilesList({
+        limit: 40,
+        offset: 0,
+        sortType: 3,
+        backward: true,
+        onlyFatherId: fatherId.value
+    })
+})
 
 const cancelShowOptions = (event: any) => {
     isShowOptions.value = false
@@ -116,10 +129,10 @@ const cancelShowOptions = (event: any) => {
 }
 
 const optionType = (sendOptions: string) => {
-    if (sendOptions === 'checkDetail') {
+    if (sendOptions === 'checkDetail' || sendOptions === 'moveFile') {
         emit('sendOptions', sendOptions)
         emit('sendDetails', fileDetails.value)
-    }
+    } 
     else {
         console.log('其他操作')
     }
