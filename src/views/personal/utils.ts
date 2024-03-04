@@ -52,7 +52,7 @@ export const getPrivateFiles = async(id: string) => {
     const data = ref<getPrivateFiles>({
         sortType: 3,
         onlyFatherId: id,
-        limit: 40,
+        limit: 100,
         backward: true,
         offset: 0
     })
@@ -90,7 +90,7 @@ export const getFolderList = (id: string) => {
     const data = ref<getPrivateFiles>({
         sortType: 3,
         onlyFatherId: id,
-        limit: 40,
+        limit: 100,
         backward: true,
         offset: 0,
         onlyType: ['文件夹']
