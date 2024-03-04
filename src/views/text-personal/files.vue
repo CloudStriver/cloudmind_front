@@ -79,7 +79,7 @@ const nowFilesList = ref<responsePrivateFilesList>({
 onBeforeMount(async() => {
     fatherId.value = getPersonalFatherId()
     nowFilesList.value = await getPrivateFilesList({
-        limit: 40,
+        limit: 100,
         offset: 0,
         sortType: 3,
         backward: true,
@@ -94,7 +94,7 @@ onBeforeMount(async() => {
 onBeforeRouteUpdate(async(to) => {
     fatherId.value = to.params.fatherId as string
     nowFilesList.value = await getPrivateFilesList({
-        limit: 40,
+        limit: 100,
         offset: 0,
         sortType: 3,
         backward: true,
@@ -115,7 +115,7 @@ watch(() => store.tempFileData, (newVal) => {
 })
 watch(() => props.sendRequest, async() => {
     nowFilesList.value = await getPrivateFilesList({
-        limit: 40,
+        limit: 100,
         offset: 0,
         sortType: 3,
         backward: true,
@@ -145,8 +145,8 @@ const getOptions = (file: fileData, event: any) => {
     if (event.clientX + 160 > window.innerWidth) {
         optionLeft.value = event.clientX - 160
     }
-    if (event.clientY + 220 > window.innerHeight) {
-        optionTop.value = event.clientY - 220
+    if (event.clientY + 320 > window.innerHeight) {
+        optionTop.value = event.clientY - 320
     }
     fileDetails.value = file
     event.preventDefault()

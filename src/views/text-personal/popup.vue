@@ -180,7 +180,7 @@ onMounted(async() => {
             pathName: pathData.value.pathName.pop() as string
         }
         foldersList.value = await getPrivateFilesList({
-            limit: 40,
+            limit: 100,
             offset: 0,
             sortType: 3,
             backward: true,
@@ -202,7 +202,7 @@ const enterTheFolder = async(file: any) => {
         pathName: file.name
     }
     foldersList.value = await getPrivateFilesList({
-        limit: 40,
+        limit: 100,
         offset: 0,
         sortType: 3,
         backward: true,

@@ -75,12 +75,12 @@ watch(() => store.pathChange, (newVal) => {
         margin-bottom: 10px;
         color: rgb(61, 108, 171);
         display: flex;
-
+        
         .path-item {
-            display: flex;
             cursor: pointer;
             user-select: none;
             color: #b7b6b6;
+            display: flex;
 
             div {
                 margin: 0 5px;
