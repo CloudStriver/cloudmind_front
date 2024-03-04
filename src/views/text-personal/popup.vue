@@ -65,6 +65,7 @@
                             class="move-path-item"
                             v-for="(path, index) of pathData.pathName"
                             :key="index"
+                            @click="toPath(index)"
                         >{{ path }}
                             <div>></div>
                         </div>
@@ -189,6 +190,23 @@ onMounted(async() => {
         })
     }
 })
+
+const toPath = async(index: number) => {
+    pathData.value.pathId.splice(index + 1)
+    pathData.value.pathName.splice(index + 1)
+    nowPath.value = {
+        pathId: pathData.value.pathId.pop() as string,
+        pathName: pathData.value.pathName.pop() as string
+    }
+    foldersList.value = await getPrivateFilesList({
+        limit: 100,
+        offset: 0,
+        sortType: 3,
+        backward: true,
+        onlyFatherId: nowPath.value.pathId,
+        onlyType: ["文件夹"]
+    })
+}
 
 const enterTheFolder = async(file: any) => {
     if (file.fileId === props.sendContents.contents.fileId) {
