@@ -120,7 +120,7 @@
                 name="select"
                 id="recycle"
             >
-            <label for="recycle">
+            <label for="recycle" @click="() => emit('sendDrawerOptions', 'showRecycle')">
                 <i class="iconfont icon-lajitong"></i>
                 <span>回收站</span>
             </label>
@@ -142,9 +142,10 @@ const store = useStore()
 const fatherId = ref("")
 const newFolderName = ref<string>("新建文件夹")
 const isShowFilesCount = ref<boolean>(false)
-const isShowCreateFolder = ref<boolean>(false)
 const isCreateFolderName = ref<boolean>(true)
+const isShowCreateFolder = ref<boolean>(false)
 const filesCount = ref<number>(0)
+const emit = defineEmits(['sendDrawerOptions'])
 
 onBeforeUpdate(() => {
     if (newFolderName.value.length === 0) {
@@ -415,6 +416,11 @@ const uploadFiles = (event: any) => {
     }
 
     .recycle {
+        width: 100%;
+        height: 30px;
+        padding: 1px 10px;
+        cursor: pointer;
+
         label {
             color: rgb(206, 112, 112);
 
@@ -424,6 +430,10 @@ const uploadFiles = (event: any) => {
                 color: rgb(203, 76, 76);
             }
         }
+    }
+    .recycle:hover {
+        background-color: #dbdbdb4a;
+        border-radius: 20px;
     }
     
     ul {

@@ -7,7 +7,7 @@
             <div class="download">下载</div>
             <div class="move" @click="moveFile">移动</div>
             <div class="line"></div>
-            <div class="recycle">移至回收站</div>
+            <div class="recycle" @click="moveToRecycle">移至回收站</div>
             <div class="delete">彻底删除</div>
         </div>
     </div>
@@ -20,6 +20,10 @@ const checkFileDetail = () => {
 }
 const moveFile = () => {
     emit('sendOptions', "moveFile")
+}
+
+const moveToRecycle = () => {
+    emit('sendOptions', "moveToRecycle")
 }
 </script>
 

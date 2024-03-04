@@ -129,7 +129,7 @@ const cancelShowOptions = (event: any) => {
 }
 
 const optionType = (sendOptions: string) => {
-    if (sendOptions === 'checkDetail' || sendOptions === 'moveFile') {
+    if (sendOptions === 'checkDetail' || sendOptions === 'moveFile' || sendOptions === 'moveToRecycle') {
         emit('sendOptions', sendOptions)
         emit('sendDetails', fileDetails.value)
     } 

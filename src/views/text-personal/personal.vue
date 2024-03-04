@@ -1,19 +1,22 @@
 <template>
     <div class="personal-main-box">
-        <Drawer class="drawer"></Drawer>
+        <Drawer class="drawer" @sendDrawerOptions="getDrawerOptionType"></Drawer>
         <div class="contents-box">
             <div class="header">
                 <CHeader class="cheader"></CHeader>
-                <PathTitle v-if="isLoaded"></PathTitle>
+                <PathTitle v-if="isLoaded && isShowFiles"></PathTitle>
+                <RecycleTitle v-else></RecycleTitle>
             </div>
             <div class="bottom">
                 <Files 
+                    v-if="isShowFiles"
                     class="files" 
                     @loading="judgeLoading"
                     @sendOptions="getOptionType"
                     @sendDetails="getDetails"
                     :sendRequest="requestMessage"
                 ></Files>
+                <Recycle v-else></Recycle>
             </div>
         </div>
         <Popup 
@@ -30,6 +33,8 @@ import Popup from './popup.vue'
 import Files from './files.vue'
 import Drawer from './drawer.vue'
 import PathTitle from './path.vue'
+import Recycle from './recycle.vue'
+import RecycleTitle from './recycle-title.vue'
 import CHeader from '@/components/header.vue'
 import { ref } from 'vue'
 
@@ -50,10 +55,18 @@ const fileContents = ref({
 })
 const isLoaded = ref(false)
 const isShowPopup = ref(false)
+const isShowFiles = ref(true)
+
+const getDrawerOptionType = (sendDrawerOptions: string) => {
+    if (sendDrawerOptions === 'showRecycle') {
+        isShowFiles.value = false
+    }
+}
 
 const judgeLoading = (loading: boolean) => {
     isLoaded.value = loading
 }
+
 const getOptionType = (sendOptions: string) => {
     fileContents.value.option = sendOptions
     isShowPopup.value = true
@@ -112,11 +125,11 @@ const getPopupOperations = (sendOperations: string) => {
 
         .bottom {
             flex: 1;
-            padding: 20px;
             overflow-y: auto;
 
             .files {
                 height: 100%;
+                margin: 20px;
             }
         }
     }
