@@ -1,3 +1,4 @@
+import { successMsg } from '@/utils/message';
 import { get, post } from '@/utils/request'
 import { ref } from 'vue'
 
@@ -13,10 +14,12 @@ export interface requestPrivateFilesList {
 
     limit: number;
     offset: number;
-    sortType: number;
+    sortType?: number;
     backward: boolean;
-    onlyFatherId: string;
+    onlyFatherId?: string;
 }
+
+//搜索/查看用户文件列表的返回
 export interface responsePrivateFilesList {
     files: [
         {
@@ -39,6 +42,29 @@ export interface responsePrivateFilesList {
     token: string,
     fatherIdPath: string,
     fatherNamePath: string
+}
+
+//查看回收站的返回
+export interface responseRecycleFilesList {
+    files: [
+        {
+            fileId: string,
+            userId: string,
+            name: string,
+            type: string,
+            path: string
+            fatherId: string,
+            spaceSize: string,
+            isDel: number,
+            zone: string,
+            subZone: string,
+            description: string,
+            updateAt: string,
+            createAt: string,
+        }
+    ],
+    total: number,
+    token: string,
 }
 
 
@@ -69,6 +95,63 @@ export interface requestCreateFile {
 }
 
 //------------------------------------------------------------request
+
+//请求删除文件
+export const postDeleteFile = async(fileId: string):Promise<void> => {
+    await post('/content/deleteFile', { 
+        fileId,
+        deleteType: 2
+    })
+    .then(() => {
+        successMsg('成功移动至回收站')
+    })
+}
+
+//查看回收站文件列表的请求URL
+export const getRecycleFilesList = async(params: requestPrivateFilesList): Promise<responseRecycleFilesList> => {
+    const filesList = ref<responseRecycleFilesList>({
+        files: [
+            {
+                fileId: "",
+                userId: "",
+                name: "",
+                type: "",
+                path: "",
+                fatherId: "",
+                spaceSize: "",
+                isDel: 0,
+                zone: "",
+                subZone: "",
+                description: "",
+                updateAt: "",
+                createAt: "",
+            }
+        ],
+        total: 0,
+        token: "",
+    })
+    const url = '/content/getRecycleBinFiles' + generateGetRequestURL(params)
+    await get(url)
+    .then ((res: any) => {
+        filesList.value = {
+            files: res.files.map((file: any) => ({
+                fileId: file.fileId,
+                userId: file.userId,
+                name: file.name,
+                type: file.type,
+                path: `${res.fatherNamePath}/${file.name}`,
+                fatherId: file.fatherId,
+                md5: file.md5,
+                updateAt: turnTime(file.updateAt),
+                createAt: turnTime(file.createAt),
+                spaceSize: getFileSize(file.spaceSize),
+            })),
+            total: res.total,
+            token: res.token,
+        }
+    })
+    return filesList.value
+}
 
 //请求移动文件
 export const postMoveFile = async(fileId: string, fatherId: string):Promise<void> => {
@@ -138,9 +221,9 @@ export const getPrivateFilesList = async(params: requestPrivateFilesList): Promi
 //------------------------------------------------------------function
 
 //生成搜索/查看用户文件列表的请求URL
-const generateGetRequestURL = (params: requestPrivateFilesList) => {
+const generateGetRequestURL = (params: any) => {
     let query = "?"
-    const key = Object.keys(params) as (keyof requestPrivateFilesList)[]
+    const key = Object.keys(params)
     key.forEach((item) => {
         query += (item + "=" + params[item] + "&")
     })
