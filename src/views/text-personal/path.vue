@@ -5,6 +5,7 @@
                 class="path-item"
                 v-for="(path, index) of pathData.pathName"
                 :key="index"
+                @click="toPath(index)"
             >{{ path }}
                 <div>></div>
             </div>
@@ -28,6 +29,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { useStore } from '@/store'
+import router from '@/router'
 
 const store = useStore()
 const pathData = ref({
@@ -62,6 +64,10 @@ watch(() => store.pathChange, (newVal) => {
         }
     }
 })
+
+const toPath = (index: number) => {
+    router.push({name: 'text-personal', params: {fatherId: pathData.value.pathId[index]}})
+}
 </script>
 
 <style scoped lang="css">
