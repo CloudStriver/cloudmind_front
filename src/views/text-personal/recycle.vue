@@ -4,9 +4,13 @@
             class="recycle-file-content"
             v-for="(file, index) of recycleFilesList.files"
             :key="index"
+            @click="chooseFile(file)"
         >
             <div class="name-box">
-                <div class="checkbox"></div>
+                <div class="checkbox" v-if="!file.isChoose"></div>
+                <div class="checkbox-choose" v-else>
+                    <i class="iconfont icon-0-58"></i>
+                </div>
                 <i 
                     v-if="file.type !== '文件夹'"
                     class="iconfont icon-file-alt-solid"
@@ -47,6 +51,7 @@ const recycleFilesList = ref<responseRecycleFilesList>({
             description: "",
             updateAt: "",
             createAt: "",
+            isChoose: false
         }
     ],
     total: 0,
@@ -61,19 +66,23 @@ onMounted(async() => {
     })
     console.log(recycleFilesList.value);
 })
+
+const chooseFile = (file: any) => {
+    file.isChoose = !file.isChoose
+}
 </script>
 
 <style scoped lang="css">
 .recycle-box {
     width: 100%;
     height: 100%;
-    padding: 10px 20px;
+    padding: 10px 10px;
 
     .recycle-file-content {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 0;
+        padding: 10px;
         border-bottom: 1px solid #e5e5e5;
 
         .name-box {
@@ -87,6 +96,25 @@ onMounted(async() => {
                 border: 1px solid #e5e5e5;
                 border-radius: 50%;
                 margin-right: 10px;
+            }
+            .checkbox-choose {
+                width: 15px;
+                height: 15px;
+                border: 1px solid #e5e5e5;
+                border-radius: 50%;
+                margin-right: 10px;
+                background-color: #96b0df;
+                display: flex;
+                justify-content: center;
+                align-items: center;   
+
+                i {
+                    margin: 10px;
+                    color: #fff;
+                    font-size: 20px;
+                    font-weight: 700;
+
+                }
             }
 
             i {

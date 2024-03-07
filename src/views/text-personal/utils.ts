@@ -61,6 +61,7 @@ export interface responseRecycleFilesList {
             description: string,
             updateAt: string,
             createAt: string,
+            isChoose: boolean
         }
     ],
     total: number,
@@ -125,6 +126,7 @@ export const getRecycleFilesList = async(params: requestPrivateFilesList): Promi
                 description: "",
                 updateAt: "",
                 createAt: "",
+                isChoose: false 
             }
         ],
         total: 0,
