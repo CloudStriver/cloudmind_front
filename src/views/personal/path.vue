@@ -66,7 +66,7 @@ watch(() => store.pathChange, (newVal) => {
 })
 
 const toPath = (index: number) => {
-    router.push({name: 'text-personal', params: {fatherId: pathData.value.pathId[index]}})
+    router.push({name: 'personal', params: {fatherId: pathData.value.pathId[index]}})
 }
 </script>
 
@@ -108,6 +108,8 @@ const toPath = (index: number) => {
 
     .header-bottom {
         margin: 0 20px;
+        border-bottom: 1px solid #e5e5e586;
+        padding-bottom: 20px;
 
         display: flex;
         align-items: center;
