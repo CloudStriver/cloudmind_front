@@ -98,7 +98,9 @@ const firstGetUserDetail = () => {
     
                 .recommend {
                     width: 790px;
+                    min-height: 700px;
                     margin-right: 10px;
+                    background-color: #fff;
                 }
     
                 .right {
