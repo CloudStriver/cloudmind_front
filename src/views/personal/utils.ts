@@ -1,70 +1,140 @@
-import { useStore } from '@/store/index'
-import { get } from '@/utils/request'
+import { successMsg } from '@/utils/message';
+import { get, post } from '@/utils/request'
 import { ref } from 'vue'
-import { turnTime } from '@/utils/public'
 
-//创建文件接口
-export interface createFiles {
+//------------------------------------------------------------interface
+
+//搜索/查看用户文件列表的参数
+export interface requestPrivateFilesList {
+    id?: string;
+    name?: string;
+    onlyType?: string[];
+    lastToken?: string;
+    allFieldsKey?: string;
+
+    limit: number;
+    offset: number;
+    sortType?: number;
+    backward: boolean;
+    onlyFatherId?: string;
+}
+
+//搜索/查看用户文件列表的返回
+export interface responsePrivateFilesList {
+    files: [
+        {
+            fileId: string,
+            userId: string,
+            name: string,
+            type: string,
+            path: string
+            fatherId: string,
+            spaceSize: string,
+            isDel: number,
+            zone: string,
+            subZone: string,
+            description: string,
+            updateAt: string,
+            createAt: string,
+        }
+    ],
+    total: number,
+    token: string,
+    fatherIdPath: string,
+    fatherNamePath: string
+}
+
+//查看回收站的返回
+export interface responseRecycleFilesList {
+    files: [
+        {
+            fileId: string,
+            userId: string,
+            name: string,
+            type: string,
+            path: string
+            fatherId: string,
+            spaceSize: string,
+            isDel: number,
+            zone: string,
+            subZone: string,
+            description: string,
+            updateAt: string,
+            createAt: string,
+            isChoose: boolean
+        }
+    ],
+    total: number,
+    token: string,
+}
+
+
+//进入文件夹时的文件类型
+export interface fileData {
+    fileId: string,
+    userId: string,
     name: string,
     type: string,
+    path: string
     fatherId: string,
-    spaceSize: number,
-    md5?: string, //创建文件夹时不填，创建文件时要填
+    spaceSize: string,
+    isDel: number,
+    zone: string,
+    subZone: string,
+    description: string,
+    updateAt: string,
+    createAt: string,
 }
 
-export interface responseGetPrivateFiles {
-    files: {
-        fileId: string,
-        userId: string,
-        name: string,
-        type: string,
-        path: string,
-        fatherId: string,
-        spaceSize: string,
-        md5: string,
-        isDel: number,
-        zone: string,
-        subZone: string,
-        description: string,
-        updateAt: string,
-        createAt: string,
-    }[],
-    fatherNamePath: string,
-    fatherIdPath: string,
+//创建文件的参数
+export interface requestCreateFile {
+    fatherId: string;
+    md5: string;
+    name: string;
+    spaceSize: number;
+    type: string;
 }
 
-//搜索、查询用户文件列表接口
-export interface getPrivateFiles {
-    allFieldsKey?: string,
-    name?: string,
-    id?: string,
-    sortType: number,
-    onlyFatherId: string,
-    onlyType?: string[],
-    limit: number,
-    lastToken?: string,
-    backward: boolean,
-    offset: number,
-}
+//------------------------------------------------------------request
 
-//搜索、查询用户文件列表api
-export const getPrivateFiles = async(id: string) => {
-    const data = ref<getPrivateFiles>({
-        sortType: 3,
-        onlyFatherId: id,
-        limit: 100,
-        backward: true,
-        offset: 0
+//请求删除文件
+export const postDeleteFile = async(fileId: string):Promise<void> => {
+    await post('/content/deleteFile', { 
+        fileId,
+        deleteType: 2
     })
-    const filesList = ref<responseGetPrivateFiles>({
-        files: [],
-        fatherNamePath: '',
-        fatherIdPath: ''
+    .then(() => {
+        successMsg('成功移动至回收站')
     })
-    const params = new URLSearchParams(data.value as any).toString()
-    const url = `/content/getPrivateFiles?${params}`
+}
+
+//查看回收站文件列表的请求URL
+export const getRecycleFilesList = async(params: requestPrivateFilesList): Promise<responseRecycleFilesList> => {
+    const filesList = ref<responseRecycleFilesList>({
+        files: [
+            {
+                fileId: "",
+                userId: "",
+                name: "",
+                type: "",
+                path: "",
+                fatherId: "",
+                spaceSize: "",
+                isDel: 0,
+                zone: "",
+                subZone: "",
+                description: "",
+                updateAt: "",
+                createAt: "",
+                isChoose: false 
+            }
+        ],
+        total: 0,
+        token: "",
+    })
+    const url = '/content/getRecycleBinFiles' + generateGetRequestURL(params)
     await get(url)
-    .then((res: any) => {
+    .then ((res: any) => {
         filesList.value = {
             files: res.files.map((file: any) => ({
                 fileId: file.fileId,
@@ -75,40 +145,113 @@ export const getPrivateFiles = async(id: string) => {
                 fatherId: file.fatherId,
                 md5: file.md5,
                 updateAt: turnTime(file.updateAt),
+                createAt: turnTime(file.createAt),
                 spaceSize: getFileSize(file.spaceSize),
-                createAt: turnTime(file.createAt)
             })),
-            fatherNamePath: res.fatherNamePath,
-            fatherIdPath: res.fatherIdPath
+            total: res.total,
+            token: res.token,
         }
     })
     return filesList.value
 }
 
-//获取文件夹名列表
-export const getFolderList = (id: string) => {
-    const data = ref<getPrivateFiles>({
-        sortType: 3,
-        onlyFatherId: id,
-        limit: 100,
-        backward: true,
-        offset: 0,
-        onlyType: ['文件夹']
-    })
-    const params = new URLSearchParams(data.value as any).toString()
-    const url = `/content/getPrivateFiles?${params}`
-    const foldersList = ref<any>([])
-    get(url)
-    .then((res: any) => {
-        for (let i = 0; i < res.files.length; i ++) {
-            foldersList.value.push(res.files[i])
-        }
-    })
-    return foldersList.value
+//请求移动文件
+export const postMoveFile = async(fileId: string, fatherId: string):Promise<void> => {
+    await post('/content/moveFile', { fileId, fatherId })
 }
 
-//文件大小转换
-const getFileSize = (bits: number): string => {
+//请求创建文件
+export const postCreateFile = async(data: requestCreateFile):Promise<string> => {
+    const fileId = ref<string>("")
+    await post('/content/createFile', data)
+    .then((res: any) => {
+        fileId.value = res.fileId
+    })
+    return fileId.value
+}
+
+//请求搜索/查看用户文件列表
+export const getPrivateFilesList = async(params: requestPrivateFilesList): Promise<responsePrivateFilesList> => {
+    const filesList = ref<responsePrivateFilesList>({
+        files: [
+            {
+                fileId: "",
+                userId: "",
+                name: "",
+                type: "",
+                path: "",
+                fatherId: "",
+                spaceSize: "",
+                isDel: 0,
+                zone: "",
+                subZone: "",
+                description: "",
+                updateAt: "",
+                createAt: "",
+            }
+        ],
+        total: 0,
+        token: "",
+        fatherIdPath: "",
+        fatherNamePath: "",
+    })
+    const url = '/content/getPrivateFiles' + generateGetRequestURL(params)
+    await get(url)
+    .then ((res: any) => {
+        filesList.value = {
+            files: res.files.map((file: any) => ({
+                fileId: file.fileId,
+                userId: file.userId,
+                name: file.name,
+                type: file.type,
+                path: `${res.fatherNamePath}/${file.name}`,
+                fatherId: file.fatherId,
+                md5: file.md5,
+                updateAt: turnTime(file.updateAt),
+                createAt: turnTime(file.createAt),
+                spaceSize: getFileSize(file.spaceSize),
+            })),
+            total: res.total,
+            token: res.token,
+            fatherIdPath: res.fatherIdPath,
+            fatherNamePath: res.fatherNamePath
+        }
+    })
+    return filesList.value
+}
+
+//------------------------------------------------------------function
+
+//生成搜索/查看用户文件列表的请求URL
+const generateGetRequestURL = (params: any) => {
+    let query = "?"
+    const key = Object.keys(params)
+    key.forEach((item) => {
+        query += (item + "=" + params[item] + "&")
+    })
+    return query
+}
+
+//在个人空间中，根据路由获取父文件id：fatherId
+//当处于根目录时，fatherId = userId
+export const getPersonalFatherId = ():string => {
+    const fatherId = location.href.split('/').pop() as string
+    return fatherId       
+}
+
+//时间戳转换为 YY-MM-DD HH:MM的形式
+export const turnTime = (time: number) => {
+    const date = new Date(time); 
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');  
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
+//转换文件默认的大小
+export const getFileSize = (bits: number): string => {
     if (bits < 0) return '0B';
     else if (bits < 1024) {
         return bits + 'B'
@@ -126,4 +269,3 @@ const getFileSize = (bits: number): string => {
         return temp.toFixed(2) + 'GB';
     }
 }
-

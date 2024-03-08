@@ -15,9 +15,10 @@
             </router-link>
             <router-link
                 v-if="store.getUserLongToken()"
-                :to="'/personal/'"
+                :to="{name: 'personal', params: {fatherId: fatherId}}"
                 class="router-nav"
                 active-class="router-active"
+                exact-active-class="router-active"
             >
                 <i class="iconfont icon-sidenav-doc" style="font-size: 18px;"></i>
             </router-link>
@@ -56,14 +57,6 @@
             >
                 <i class="iconfont icon-guanlizhongxin-shezhi-01"></i>
             </router-link>
-            <router-link
-                :to="{name: 'text-personal', params: {fatherId: fatherId}}"
-                class="router-nav"
-                active-class="router-active"
-                exact-active-class="router-active"
-            >
-                <i class="iconfont icon-sidenav-doc" style="font-size: 18px;"></i>
-            </router-link>
         </div>
     </div>
 </template>
@@ -82,13 +75,6 @@ watch(() => props.link, (newVal) => {
     if (newVal) {
         fatherId.value = newVal
         router.push('/personal/' + newVal)
-    }
-})
-
-watch(() => props.link, (newVal) => {
-    if (newVal) {
-        fatherId.value = newVal
-        router.push('/text-personal/' + newVal)
     }
 })
 

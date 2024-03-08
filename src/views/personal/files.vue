@@ -155,7 +155,7 @@ const getOptions = (file: fileData, event: any) => {
 const toFile = (file: fileData) => {
     if (file.type === '文件夹') {
         fatherId.value = file.fileId
-        router.push({name: 'text-personal', params: {fatherId: fatherId.value}})
+        router.push({name: 'personal', params: {fatherId: fatherId.value}})
     }
     else {
         console.log('打开文件:' + file.fileId)
@@ -170,7 +170,6 @@ const sliceFileName = (name: string) => {
 <style scoped lang="css">
 .files-main-box {
     padding: 10px;
-    border-top: 1px solid #e5e5e586;
 
     .files-box {
         width: 100%;
