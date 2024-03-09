@@ -114,7 +114,7 @@ const getPopupOperations = (sendOperations: string) => {
             
             .cheader:deep(.header-box) {
                 height: 55px;
-                padding: 0 20px 0 0 ;
+                padding: 0;
                 background-color: #fff;
                 box-shadow: none;
             }

@@ -62,7 +62,7 @@ const firstGetUserDetail = () => {
 <style scoped lang="css">
 .main-box {
     width: 100%;
-    background-color: rgba(240, 245, 255, 1);
+    background-color: rgba(240, 245, 255, 0.5);
 
     .cheader{
         height: 70px;

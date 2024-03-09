@@ -123,11 +123,12 @@ const likePost = (thisPost: any) => {
 
     .cheader {
         height: 70px;
+        box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.1);
     }
 
     .contents {
         position: relative;
-        background-color: rgba(240, 245, 255, 1);
+        background-color: rgba(240, 245, 255, 0.5);
         padding-top: 20px;
         flex: 1;
         overflow-x: hidden;
@@ -146,8 +147,9 @@ const likePost = (thisPost: any) => {
             .posts-box {
                 position: absolute;
                 width: 850px;
-                background-color: #ffffff61;
                 padding: 20px;
+                background-color: #fff;
+                box-shadow: 0 0 10px 1px #a7a7a71f;
                 flex: 1;
                 display: flex;
                 flex-direction: column;
@@ -181,9 +183,8 @@ const likePost = (thisPost: any) => {
                 .posts {
                     width: 800px;
                     background-color: #fff;
-                    border-radius: 10px;
-                    box-shadow: 0 0 10px 2px #0808081f;
-                    padding: 20px 30px;
+                    border-bottom: 1px solid #e5e5e586;
+                    padding-bottom: 20px;
                     margin-bottom: 20px;
                     display: flex;
                     flex-direction: column;

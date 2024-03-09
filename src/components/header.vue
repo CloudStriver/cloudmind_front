@@ -88,6 +88,7 @@ const timingGetNotificationCount = () => {
             display: flex;
             align-items: center;
             position: relative;
+            padding-right: 20px;
 
             i {
                 font-size: 20px;
