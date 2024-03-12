@@ -1,5 +1,19 @@
 <template>
-    <div class="files-main-box" @click=cancelShowOptions($event)>
+    <div 
+        class="files-main-box" 
+        @click=cancelShowOptions($event)
+        @dragenter="dragenterFile()"
+    >
+        <div 
+            class="handle-drag" 
+            v-if="isDragFile"
+            @dragleave="dragleaveFile()"
+        >
+            <div class="handle-drag-contents">
+                <i class="iconfont icon-yunshangchuan"></i>
+                <p>上传</p>
+            </div>
+        </div>
         <div class="files-box">
             <Option 
                 class="option" 
@@ -45,6 +59,7 @@ const optionTop = ref<number>(0)
 const optionLeft = ref<number>(0)
 const fatherId = ref<string>("")
 const fileDetails = ref<fileData>()
+const isDragFile = ref(false)
 const isShowOptions = ref(false)
 const emit = defineEmits(['loading', 'sendOptions', 'sendDetails'])
 const props = defineProps<{
@@ -88,7 +103,6 @@ onBeforeMount(async() => {
     sessionStorage.setItem('PathId', nowFilesList.value.fatherIdPath)
     sessionStorage.setItem('PathName', nowFilesList.value.fatherNamePath)
     emit('loading', true)
-    console.log('1');
 })
 
 onBeforeRouteUpdate(async(to) => {
@@ -122,6 +136,13 @@ watch(() => props.sendRequest, async() => {
         onlyFatherId: fatherId.value
     })
 })
+
+const dragenterFile = () => {
+    isDragFile.value = true
+}
+const dragleaveFile = () => {
+    isDragFile.value = false 
+}
 
 const cancelShowOptions = (event: any) => {
     isShowOptions.value = false
@@ -170,6 +191,35 @@ const sliceFileName = (name: string) => {
 <style scoped lang="css">
 .files-main-box {
     padding: 10px;
+
+    .handle-drag {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(#bababa78, #00000090);
+
+        .handle-drag-contents {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%);
+            bottom: 30px;
+            text-align: center;
+            user-select: none;
+
+            i {
+                font-size: 120px;
+                color: #e1e1e1;
+            }
+
+            p {
+                color: #e1e1e1;
+                font-size: 30px;
+                font-weight: 700;
+            }
+        }
+    }
 
     .files-box {
         width: 100%;
