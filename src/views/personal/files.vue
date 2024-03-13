@@ -7,7 +7,10 @@
         <div 
             class="handle-drag" 
             v-if="isDragFile"
-            @dragleave="dragleaveFile()"
+            @dragleave="dragleaveFile($event)"
+            @drop="dropUploadFile($event)"
+            @dragover="allowDrag($event)"
+
         >
             <div class="handle-drag-contents">
                 <i class="iconfont icon-yunshangchuan"></i>
@@ -46,13 +49,16 @@
 </template>
 
 <script setup lang="ts">
+import mime from 'mime'
+import SparkMD5 from 'spark-md5'
 import router from '@/router';
 import Option from './options.vue'
 import { useStore } from '@/store'
+import { cosUploadFile } from '@/utils/cos'
 import { onBeforeMount, ref, watch } from 'vue'
-import { getPersonalFatherId, getPrivateFilesList } from './utils'
-import type { responsePrivateFilesList, fileData } from './utils'
 import { onBeforeRouteUpdate } from 'vue-router';
+import { getPersonalFatherId, getPrivateFilesList, getFileSize, postCreateFile } from './utils'
+import type { responsePrivateFilesList, fileData, requestCreateFile } from './utils'
 
 const store = useStore()
 const optionTop = ref<number>(0)
@@ -137,10 +143,58 @@ watch(() => props.sendRequest, async() => {
     })
 })
 
+const dropUploadFile = (event: any) => {
+    event.preventDefault()
+    //现阶段只允许上传文件
+    const file = event.dataTransfer.files[0]
+    isDragFile.value = false
+    const fileReader = new FileReader()
+    const spark = new SparkMD5.ArrayBuffer()
+    fileReader.readAsArrayBuffer(file)
+    fileReader.onload = (e: any) => {
+        spark.append(e.target.result)
+        const md5 = spark.end()
+        const suffix = '.' + file.name.split('.').pop()
+        const type = mime.getExtension(file.type) as string
+        const data: requestCreateFile = {
+            name: file.name,
+            type,
+            spaceSize: file.size,
+            md5: md5,
+            fatherId: getPersonalFatherId(),
+        }
+        cosUploadFile(file, md5, suffix, () => {
+            postCreateFile(data)
+            .then((res)=> {
+                const tempPath = sessionStorage.getItem('Path') as string
+                store.tempFileData = {
+                    fileId: res,
+                    userId: "",
+                    name: file.name,
+                    type,
+                    path: tempPath + '/' + file.name,
+                    fatherId: fatherId.value,
+                    spaceSize: getFileSize(file.size),
+                    md5,
+                    isDel: 0,
+                    zone: "",
+                    subZone: "",
+                    description: "",
+                    createAt: new Date().toLocaleString(),
+                    updateAt: new Date().toLocaleString(),
+                }
+            })
+        })
+    }
+}
 const dragenterFile = () => {
     isDragFile.value = true
 }
-const dragleaveFile = () => {
+const allowDrag = (event: any) => {
+    event.preventDefault()
+}
+const dragleaveFile = (event: any) => {
+    event.preventDefault()
     isDragFile.value = false 
 }
 
