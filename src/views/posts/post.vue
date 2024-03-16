@@ -87,12 +87,14 @@
                     </div>
                 </div>
             </div>
+            <Comment class="comments"></Comment>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
+import Comment from './comment.vue'
 import { get, post } from '@/utils/request'
 import { useStore } from '@/store'
 import { turnTime } from '@/utils/public'
@@ -469,6 +471,12 @@ const getPost = () => {
                     }
                 }
             }
+        }
+
+        .comments {
+            min-width: 700px;
+            max-width: 1000px;
+            margin-top: 10px;
         }
     }
 }
