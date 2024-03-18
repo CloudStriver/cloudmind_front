@@ -27,36 +27,10 @@
                                 </div>
                                 <div class="post-content">{{ htmlToText(post.userName + ": " +  post.text) }}</div>
                             </section>
-                            <footer class="posts-footer">
-                                <div class="post-detail">
-                                    <div 
-                                        class="like"
-                                        v-if="!post.liked"
-                                        @click="likePost(post)"
-                                    >
-                                        <i class="iconfont icon-a-dianzan2"></i>
-                                        <div>点赞 {{ post.likeCount }}</div>
-                                    </div>
-                                    <div class="liked" v-if="post.liked">
-                                        <i class="iconfont icon-a-dianzan2"></i>
-                                        <div>已点赞 {{ post.likeCount }}</div>
-                                    </div>
-                                    <div class="remark">
-                                        <i class="iconfont icon-a-xiaoxi1"></i>
-                                        <div>评论 {{ post.commentCount }}</div>
-                                    </div>
-                                    <i class="iconfont icon-gengduo i"></i>
-                                </div>
-                                <div class="tag-box">
-                                    <div
-                                        class="tag"
-                                        v-for="(tag, index) in post.tags"
-                                        :key="index"
-                                    >
-                                        <button>{{ tag }}</button>
-                                    </div>
-                                </div>
-                            </footer>
+                            <PostDetail
+                                :information="post"
+                                class="post-detail"
+                            ></PostDetail>
                         </div>
                     </div>
                 </div>
@@ -67,12 +41,11 @@
 
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
+import PostDetail from './post-information.vue'
 import { ref, onMounted } from 'vue'
 import { getOtherPosts } from './utils'
-import { post } from '@/utils/request'
 import { useStore } from '@/store/index'
 import type { responseGetOtherPosts } from './utils'
-import { errorMsg } from '@/utils/message'
 import router from '@/router'
 
 const store = useStore()
@@ -93,23 +66,6 @@ const htmlToText = (html: string) => {
 
 const toPostDetail = (postId: string) => {
     router.push('/post/' + postId)
-}
-
-const likePost = (thisPost: any) => {
-    const longToken = store.getUserLongToken()
-    if (!longToken) {
-        errorMsg('请先登录')
-        return
-    }
-    post('/relation/createRelation', {
-        toId: thisPost.postId,
-        toType: 4,
-        relationType: 1
-    })
-    .then(() => {
-        thisPost.liked = true
-        thisPost.likeCount ++
-    })
 }
 
 </script>
@@ -228,69 +184,9 @@ const likePost = (thisPost: any) => {
                         }
                     }
                     
-                    .posts-footer {
+                    .post-detail {
+                        width: 100%;
                         margin-top: 10px;
-                        color: #494848;
-                        cursor: pointer;
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-
-                        .post-detail {
-                            display: flex;
-
-                            .like,
-                            .liked,
-                            .remark {
-                                margin-right: 20px;
-                                display: flex;
-    
-                                i {
-                                    font-size: 20px;
-                                    margin-right: 3px;
-                                }
-                            }
-    
-                            .i {
-                                font-size: 20px;
-                                margin-right: 20px;
-                            }
-    
-                            .like:hover,
-                            .remark:hover {
-                                color: #6d99ec;
-                            }
-    
-                            i:hover {
-                                color: #6d99ec;
-                            }
-    
-                            .liked {
-                               color: #6d99ec;
-                               font-weight: 600;
-                            }
-                            .liked:hover {
-                                color: #494848;
-                            }
-                        }
-
-                        .tag-box {
-                            display: flex;
-                            
-                            .tag {
-                                display: flex;
-    
-                                button {
-                                    background-color: #b0d3f8;
-                                    color: #fff;
-                                    border: none;
-                                    border-radius: 5px;
-                                    padding: 5px 10px;
-                                    margin-right: 10px;
-                                    cursor: pointer;
-                                }
-                            }
-                        }
                     }
                 }
             }

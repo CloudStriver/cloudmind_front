@@ -32,38 +32,10 @@
                         <div class="post-content">{{ htmlToText(post.userName + ": " + post.text) }}</div>
                     </div>
                 </section>
-                <footer class="footer">
-                    <div class="show-situation">
-                        <div
-                            v-if="!post.liked"
-                            class="i-div" 
-                            @click="clickLike(post)"
-                        >
-                            <i class="iconfont icon-a-dianzan2"></i>
-                            <div>点赞 {{ post.likeCount }}</div>
-                        </div>
-                        <div class="liked i-div" v-if="post.liked">
-                            <i class="iconfont icon-a-dianzan2"></i>
-                            <div>已点赞 {{ post.likeCount }}</div>
-                        </div>
-                        <div class="i-div">
-                            <i class="iconfont icon-a-xiaoxi1"></i>
-                            <div>评论 {{ post.commentCount }}</div>
-                        </div>
-                        <div  class="i-div">
-                            <i class="iconfont icon-gengduo i"></i>
-                        </div>
-                    </div>
-                    <div style="display: flex;">
-                        <div 
-                            class="tags"
-                            v-for="(tag, index) in post.tags"
-                            :key="index"
-                        >
-                            <button>{{ tag }}</button>
-                        </div>
-                    </div>
-                </footer>
+                <PostDetail 
+                    :information="post"
+                    class="footer"
+                ></PostDetail>
             </div>
         </div>
         <div class="user-box" v-show="props.classify === 'user'">
@@ -94,6 +66,7 @@
 </template>
 
 <script setup lang="ts">
+import PostDetail from '../posts/post-information.vue'
 import { get, post } from '@/utils/request'
 import { useStore } from '@/store/index'
 import { ref, onMounted, watch } from 'vue'
@@ -382,46 +355,7 @@ const trunNum = (type: string) => {
             
             .footer {
                 width: 100%;
-                height: 30px;
                 margin-top: 10px;
-                cursor: pointer;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-
-                .show-situation {
-                    width: 400px;
-                    display: flex;
-
-                    .i-div {
-                        margin-right: 25px;
-                        display: flex;
-                        align-items: center;
-                        
-                        i {
-                            margin-right: 5px;
-                        }
-                    }
-
-                    .liked {
-                        color: #6d99ec;
-                        font-weight: 600;
-                    }
-                }
-
-                .tags {
-                    display: flex;
-    
-                    button {
-                        background-color: #b0d3f8;
-                        color: #fff;
-                        border: none;
-                        border-radius: 5px;
-                        padding: 5px 10px;
-                        margin-right: 10px;
-                        cursor: pointer;
-                    }
-                }
             }
         }
     }
