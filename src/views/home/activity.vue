@@ -8,7 +8,6 @@
 
 <style scoped lang="css">
 .main-box {
-    width: 1200px;
     height: 360px;
     background-color: #fff;
 }

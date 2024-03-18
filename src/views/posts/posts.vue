@@ -122,6 +122,7 @@ const likePost = (thisPost: any) => {
     flex-direction: column;
 
     .cheader {
+        width: 100%;
         height: 70px;
         box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.1);
     }

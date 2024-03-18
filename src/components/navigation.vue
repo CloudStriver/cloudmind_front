@@ -1,10 +1,11 @@
 <template>
-    <div class="main-box">
+    <div class="nav-main-box">
         <img 
-            class="logo"
-            src="../assets/images/logo.png" 
-            alt="logo"
+        class="logo"
+        src="../assets/images/logo.png" 
+        alt="logo"
         >
+        <i class="iconfont icon-gengduo-2 more"></i>
         <div class="nav-box">
             <router-link 
                 to="/" 
@@ -81,16 +82,20 @@ watch(() => props.link, (newVal) => {
 </script>
 
 <style scoped lang="css">
-.main-box {
+.nav-main-box {
     display: flex;
+    align-items: center;
 
+    .more {
+        font-size: 22px;
+        color: rgb(165, 180, 197);
+        cursor: pointer;
+    }
     .logo {
         transform: scale(0.5);
     }
 
     .nav-box {
-        display: flex;
-
         .router-nav {
             text-decoration: none;
             display: flex;
@@ -114,6 +119,23 @@ watch(() => props.link, (newVal) => {
                 color: rgb(107, 167, 232)
             }
         }
+    }
+}
+@media screen and (min-width: 780px){
+    .nav-box {
+        display: flex;
+    }
+    .more {
+        display: none;
+    }
+}
+@media screen and (max-width: 780px) {
+    .more {
+        display: block;
+        margin-right: 20px;
+    }
+    .nav-box {
+        display: none;
     }
 }
 </style>

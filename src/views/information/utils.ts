@@ -4,6 +4,7 @@ import { ref } from "vue"
 
 const store = useStore()
 
+//获取个人信息
 export const getUserDetail = async() => {
     const detail = ref({
         name: '',
@@ -31,3 +32,5 @@ export const getUserDetail = async() => {
     })
     return detail.value
 }
+
+//修改用户信息

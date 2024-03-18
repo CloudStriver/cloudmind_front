@@ -8,7 +8,7 @@
                         <div class="title">{{ postDetail.title }}</div>
                         <div class="other">
                             <div class="time">编写于 {{ turnTime(postDetail.updateTime) }}</div>
-                            <div class="tag" v-if="postDetail.tags.length != 1">
+                            <div class="tag" v-if="postDetail.tags.length >= 1">
                                 <div>标签:</div>
                                 <div 
                                     v-for="tag in postDetail.tags"
@@ -139,10 +139,6 @@ const collectPost = () => {
 const likePost = () => {
     if (myUserId.value === '') {
         errorMsg('请先登录')
-        return
-    }
-    else if (myUserId.value === postDetail.value.author.userId) {
-        errorMsg('不能给自己点赞')
         return
     }
     else {

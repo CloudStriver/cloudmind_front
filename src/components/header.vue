@@ -69,7 +69,7 @@ const timingGetNotificationCount = () => {
 <style scoped lang="css">
 .main-box {
     .header-box {
-        width: 100%;
+        /* width: 100%; */
         height: 70px;
         background-color: rgb(218, 235, 255);
         box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.1);
@@ -82,6 +82,7 @@ const timingGetNotificationCount = () => {
             height: 32px;
             padding: 0;
             margin: 0;
+            margin-right: 10px;
         }
 
         .header-right {

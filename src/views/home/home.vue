@@ -65,13 +65,14 @@ const firstGetUserDetail = () => {
     background-color: rgba(240, 245, 255, 0.5);
 
     .cheader{
+        width: 100%;
         height: 70px;
         position: fixed;
         z-index: 2;
     }
 
     .contents-box {
-        padding: 100px;
+        padding-top: 100px;
         display: flex;
         flex-direction: column;
 
@@ -82,7 +83,6 @@ const firstGetUserDetail = () => {
                 width: 100%;
 
                 .activity {
-                    max-width: 1200px;
                     height: 360px;
                     margin-bottom: 10px;
                     background-color: #fff;
@@ -94,7 +94,6 @@ const firstGetUserDetail = () => {
                 margin-bottom: 20px;
                 display: flex;
                 flex-direction: row;
-                /* justify-content: center; */
     
                 .recommend {
                     width: 790px;
@@ -123,22 +122,21 @@ const firstGetUserDetail = () => {
                     }
                 }
             }
-    
-            .footer {
-                height: 80px; 
-                width: 100%; 
-                border-top: 0.6px solid rgb(232, 232, 232); 
-                margin-top: 50px; display: flex; 
-                align-items: center; 
-                justify-content: center;
-            }
         }
 
     }
 }
 
-@media screen and (max-width: 1000px){
-
+@media screen and (min-width: 780px){
+    .activity {
+        width: 1200px;
+    }
+    
+}
+@media screen and (max-width: 780px){
+    .activity {
+        width: 750px;
+    }
     .section-top {
         width: 100%;
     }
