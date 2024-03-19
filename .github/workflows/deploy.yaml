@@ -2,7 +2,6 @@ name: CI/CD Pipeline
 on:
   push:
     branches: ["master"]
-    tags: ["v*.*.*"]
   pull_request:
     branches: ["master"]
 
@@ -28,7 +27,7 @@ jobs:
         run: yarn build
 
       - name: Configure COSCMD
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        if: github.event_name == 'push'
         env:
           COS_SECRET_ID: ${{ secrets.COS_SECRET_ID }}
           COS_SECRET_KEY: ${{ secrets.COS_SECRET_KEY }}
@@ -39,7 +38,7 @@ jobs:
           coscmd config -a $COS_SECRET_ID -s $COS_SECRET_KEY -b $COS_BUCKET_NAME -r $COS_BUCKET_REGION
 
       - name: Upload to COS Bucket
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        if: github.event_name == 'push'
         env:
           COS_UPLOAD_FROM_PATH: ${{ secrets.COS_UPLOAD_FROM_PATH }}
         run: coscmd upload -r $COS_UPLOAD_FROM_PATH /
