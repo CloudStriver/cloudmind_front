@@ -176,7 +176,7 @@
 import CHeader from '@/components/header.vue'
 import { ref, onMounted, watch } from 'vue'
 import { turnTime } from '@/utils/public'
-import { getNotifications, getNotificationsCount, updateNotifications } from './utils'
+import { getNotifications, getNotificationsCount } from './utils'
 import type { ResponseGetNotification } from './utils'
 
 const select = ref<string>('all')
@@ -207,9 +207,8 @@ const getNotificationList = async() => {
     }
 
     setTimeout(() => {
-        updateNotifications()
         notificationCount.value = 0
-    }, 5000)
+    }, 3000)
 }
 
 const turnNotificationType = (type: string): number => {

@@ -1,4 +1,4 @@
-import { get, post } from '@/utils/request'
+import { get } from '@/utils/request'
 import { ref } from 'vue'
 
 export interface ResponseGetNotification {
@@ -42,8 +42,4 @@ export const getNotificationsCount = async() => {
         count = res.total
     })
     return count
-}
-
-export const updateNotifications = () => {
-    post('/system/updateNotifications')
 }

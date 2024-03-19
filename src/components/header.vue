@@ -9,9 +9,9 @@
                     class="router"
                     v-if="isLogin"
                     to="/notification" 
-                    @click="hasNotification = false"
+                    @click="cancelShowNotification"
                 >
-                    <div class="notifications-count" v-if="hasNotification"></div>
+                    <div class="notifications-count" v-if="showNotification()">{{ notificationCount }}</div>
                     <i class="iconfont icon-bell"></i>
                 </router-link>
                 <i class="iconfont icon-cog-solid"></i>
@@ -42,34 +42,30 @@ import popup from './popup.vue'
 
 const isLogin = ref(false)
 const isPopup = ref(false)
-const hasNotification = ref(false)
-
+const notificationCount = ref(0)
 onMounted(() => {
     isLogin.value = judgeHasLogin()
     if (isLogin.value) {
-        timingGetNotificationCount()
+        getAllNotificationCount(() => {            
+        }).then((res) => {
+            notificationCount.value = res
+        })
     }
 })
 
 const mouseoverPopup = () => { isPopup.value = true } 
 const mouseleavePopup = () => { isPopup.value = false }
-const timingGetNotificationCount = () => {
-    if (!hasNotification.value) {
-        getAllNotificationCount(() => {
-        }).then((res) => {
-            hasNotification.value = res
-            setTimeout(() => {
-                timingGetNotificationCount()
-            }, 30000)
-        })
-    }
+const showNotification = () => { return notificationCount.value > 0 }
+const cancelShowNotification = () => {
+    notificationCount.value = 0
+    showNotification()
+    console.log(notificationCount.value);
 }
 </script>
 
 <style scoped lang="css">
 .main-box {
     .header-box {
-        /* width: 100%; */
         height: 70px;
         background-color: rgb(218, 235, 255);
         box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.1);
@@ -103,14 +99,14 @@ const timingGetNotificationCount = () => {
 
                 .notifications-count {
                     position: absolute;
-                    width: 13px;
-                    height: 13px;
+                    font-size: 10px;
+                    width: 15px;
+                    height: 15px;
                     color: #fff;
                     background-color: #de3032;
-                    border: 3px solid rgba(207, 227, 252, 1);
                     border-radius: 50%;
-                    right: 128px;
-                    top: 12px;
+                    right: 125px;
+                    top: 10px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
