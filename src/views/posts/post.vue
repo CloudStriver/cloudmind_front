@@ -8,7 +8,7 @@
                         <div class="title">{{ postDetail.title }}</div>
                         <div class="other">
                             <div class="time">编写于 {{ turnTime(postDetail.updateTime) }}</div>
-                            <div class="tag" v-if="postDetail.tags.length >= 1">
+                            <div class="tag" v-if="judgeTags">
                                 <div>标签:</div>
                                 <div 
                                     v-for="tag in postDetail.tags"
@@ -162,6 +162,13 @@ const createRelation = (type: number) => {
         }
     })
 }
+
+const judgeTags = computed(() => {
+    if (postDetail.value.tags !== null) {
+        return true
+    }
+    return false
+})
 
 const deletePost = () => {
     isShowDeletePost.value = true
