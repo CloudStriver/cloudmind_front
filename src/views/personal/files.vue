@@ -57,7 +57,7 @@ import { useStore } from '@/store'
 import { cosUploadFile } from '@/utils/cos'
 import { onBeforeMount, ref, watch } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router';
-import { getPersonalFatherId, getPrivateFilesList, getFileSize, postCreateFile } from './utils'
+import { getPersonalFatherId, getPrivateFilesList, getFileSize, postCreateFile, postAskDownloadFile } from './utils'
 import type { responsePrivateFilesList, fileData, requestCreateFile } from './utils'
 
 const store = useStore()
@@ -71,7 +71,6 @@ const emit = defineEmits(['loading', 'sendOptions', 'sendDetails'])
 const props = defineProps<{
     sendRequest: string
 }>()
-
 //存储页面文件列表
 const nowFilesList = ref<responsePrivateFilesList>({
     files: [
@@ -208,6 +207,11 @@ const optionType = (sendOptions: string) => {
         emit('sendOptions', sendOptions)
         emit('sendDetails', fileDetails.value)
     } 
+    else if (sendOptions === 'downloadFile')  {
+        const fileIdList = [fileDetails.value?.fileId] as string[]
+        const fileNameList = [fileDetails.value?.name] as string[]
+        postAskDownloadFile(fileIdList, fileNameList)
+    }
     else {
         console.log('其他操作')
     }

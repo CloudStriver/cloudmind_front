@@ -4,7 +4,7 @@
             <div class="upload-public">上传至社区</div>
             <div class="line"></div>
             <div class="detail" @click="checkFileDetail">查看详细信息</div>
-            <div class="download">下载</div>
+            <div class="download" @click="downloadFile">下载</div>
             <div class="move" @click="moveFile">移动</div>
             <div class="line"></div>
             <div class="recycle" @click="moveToRecycle">移至回收站</div>
@@ -24,6 +24,9 @@ const moveFile = () => {
 
 const moveToRecycle = () => {
     emit('sendOptions', "moveToRecycle")
+}
+const downloadFile = () => {
+    emit('sendOptions', "downloadFile")
 }
 </script>
 
