@@ -47,8 +47,8 @@ jobs:
       - name: Invalidate CDN cache
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         env:
-          TENCENT_CLOUD_SECRET_ID: ${{ secrets.TENCENT_CLOUD_SECRET_ID }}
-          TENCENT_CLOUD_SECRET_KEY: ${{ secrets.TENCENT_CLOUD_SECRET_KEY }}
+          TENCENTCLOUD_SECRET_ID: ${{ secrets.TENCENT_CLOUD_SECRET_ID }}
+          TENCENTCLOUD_SECRET_KEY: ${{ secrets.TENCENT_CLOUD_SECRET_KEY }}
           TENCENTCLOUD_REGION: ap-beijing
         run: |
           pip install tccli
