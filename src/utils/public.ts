@@ -1,13 +1,13 @@
 import { get } from './request'
 
-export const getAllNotificationCount = async(fn: () => void): Promise<boolean> => {
+export const getAllNotificationCount = async(fn: () => void): Promise<number> => {
     let total: number = 0
     await get('/system/getNotificationCount')
     .then((res: any) => {
         total = res.total
         fn()
     })
-    return total > 0
+    return total 
 }
 export const getTypeNotificationCount = async(type: number, fn: () => {}): Promise<number> => {
     let total: number = 0
