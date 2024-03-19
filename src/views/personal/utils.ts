@@ -108,15 +108,19 @@ export const postAskDownloadFile = (fileIds: string[], filesName: string[]) => {
         }
     })
 }
-const downloadFile = (url: string, filename: string) => {
+const downloadFile = (url: string, fileName: string) => {
+    //创建a标签并模拟点击，实现下载
     const link = document.createElement('a')
-    link.href = url
-    link.download = filename
-    link.style.display = 'none'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    fetch(url).then(res => res.blob()).then(blob => { 
+        link.href = URL.createObjectURL(blob)
+        link.download = fileName; 
+        document.body.appendChild(link)
+        link.click()
+        window.URL.revokeObjectURL(link.href);
+        document.body.removeChild(link);
+    })
 }
+
 //请求删除文件
 export const postDeleteFile = async(fileId: string):Promise<void> => {
     await post('/content/deleteFile', { 
