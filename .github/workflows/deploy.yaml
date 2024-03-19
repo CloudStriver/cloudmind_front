@@ -49,6 +49,7 @@ jobs:
         env:
           TENCENT_CLOUD_SECRET_ID: ${{ secrets.TENCENT_CLOUD_SECRET_ID }}
           TENCENT_CLOUD_SECRET_KEY: ${{ secrets.TENCENT_CLOUD_SECRET_KEY }}
+          TENCENTCLOUD_REGION: ap-beijing
         run: |
           pip install tccli
           tccli cdn PurgePathCache --cli-unfold-argument --Paths 'https://cloudmind.top/' --FlushType flush
