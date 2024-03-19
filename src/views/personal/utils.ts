@@ -97,6 +97,26 @@ export interface requestCreateFile {
 
 //------------------------------------------------------------request
 
+//请求下载文件
+export const postAskDownloadFile = (fileIds: string[], filesName: string[]) => {
+    post('/content/askDownloadFile', { fileIds })
+    .then((res: any) => {
+        const len = res.urls.length
+        for(let i = 0; i < len; i++) {
+            downloadFile(res.urls[i], filesName[i])
+            console.log(res.urls[i]);
+        }
+    })
+}
+const downloadFile = (url: string, filename: string) => {
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+}
 //请求删除文件
 export const postDeleteFile = async(fileId: string):Promise<void> => {
     await post('/content/deleteFile', { 
