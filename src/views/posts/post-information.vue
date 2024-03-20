@@ -30,8 +30,10 @@
         <div class="tag-box">
             <div
                 class="tag"
+                v-for="(tag, index) in props.information.tags"
+                :key="index"
             >
-                <button></button>
+                <button>{{ tag }}</button>
             </div>
         </div>
     </div>
