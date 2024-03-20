@@ -6,7 +6,7 @@ const Region = 'ap-guangzhou'
 const cos = new COS({
     getAuthorization: (options: any, callback: any) => {
         const name = options.Key.split('/')[1]
-         post('/content/askUploadAvatar', {
+         post('/auth/askUploadAvatar', {
             name,
             avatarSize: options.SliceSize
         })
