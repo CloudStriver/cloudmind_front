@@ -135,23 +135,6 @@ const htmlToText = (html: string) => {
     return div.innerText
 }
 
-const clickLike = (thisPost: any) => {
-    const longToken = store.getUserLongToken()
-    if (!longToken) {
-        errorMsg('请先登录')
-        return
-    }
-    post('/relation/createRelation', {
-        toId: thisPost.postId,
-        toType: 4,
-        relationType: 1
-    })
-    .then(() => {
-        thisPost.liked = true
-        thisPost.likeCount ++
-    })
-}
-
 const showPostImage = (url: string) => {
     return url !== ''
 }

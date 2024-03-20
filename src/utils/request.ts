@@ -56,7 +56,8 @@ service.interceptors.response.use(
             post('/auth/refreshToken', { longToken })
             .then((res: any) => {
               if (res !== undefined) {
-                store.setUserLocal (res.shortToken, res.longToken, res.userId)
+                const userId = localStorage.getItem('UserId') as string
+                store.setUserLocal (res.shortToken, res.longToken, userId)
                 return service(error.config)
               }
               else {
