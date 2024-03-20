@@ -132,7 +132,7 @@ const editorRef = shallowRef()
 const imageFile = ref()
 const isOperate = ref(true)
 const isShowOperate = ref(false)
-const isUploadImage = ref(coverImage.value !== 'undefined')
+const isUploadImage = ref(coverImage.value !== 'undefined' && coverImage.value !== null)
 const isShowSearchTag = ref(false)
 const nowTagsCount = ref(0)
 const tagContentsLeft = ref(0)
@@ -231,6 +231,8 @@ const handleClickTagOutside = (event: Event) => {
 const deleteImage = () => {
     coverImage.value = ''
     isUploadImage.value = false
+    imageFile.value = null
+    sessionStorage.removeItem('postUrl')
 }
 
 const showOperateImage = () => {
@@ -238,7 +240,6 @@ const showOperateImage = () => {
 }
 
 const uploadCoverImage = (event: Event) => {
-    
     const target = event.target as HTMLInputElement
     const file = target.files?.[0]
     if (file == null) return
