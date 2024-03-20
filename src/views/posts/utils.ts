@@ -18,6 +18,7 @@ export interface responseGetOtherPosts {
 export interface responseGetPost {
     title: string,
     text: string,
+    url:string,
     author: {
         userId: string,
         name: string,

@@ -124,16 +124,15 @@ import { errorMsg, successMsg } from '@/utils/message'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { onBeforeUnmount, onUpdated, ref, shallowRef, watch } from 'vue'
   
-const coverImage = ref('') // 封面图片
+const coverImage = ref(sessionStorage.getItem('postUrl') as string) // 封面图片
 const postTitle = ref(sessionStorage.getItem('postTitle'))// 文章标题
 const valueHtml = ref(sessionStorage.getItem('postContent')) // 文章内容
 const searchContent = ref('') 
-const nowPostContent = ref('')
 const editorRef = shallowRef()
 const imageFile = ref()
 const isOperate = ref(true)
 const isShowOperate = ref(false)
-const isUploadImage = ref(false)
+const isUploadImage = ref(coverImage.value !== 'undefined')
 const isShowSearchTag = ref(false)
 const nowTagsCount = ref(0)
 const tagContentsLeft = ref(0)

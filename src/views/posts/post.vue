@@ -111,6 +111,7 @@ const postId = location.href.split('/').pop()
 const postDetail = ref<responseGetPost>({
     title: '',
     text: '',
+    url: '',
     author: {
         userId: '',
         name: '',
@@ -185,6 +186,12 @@ const continueDelete = () => {
 const modifyPost = () => {
     sessionStorage.setItem('postTitle', postDetail.value.title)
     sessionStorage.setItem('postContent', postDetail.value.text)
+    if (postDetail.value.url) {
+        sessionStorage.setItem('postUrl', postDetail.value.url)
+    }
+    else {
+        sessionStorage.setItem('postUrl', '')
+    }
     router.push('/write/modify/' + postId)
 }
 
