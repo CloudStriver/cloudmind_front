@@ -176,6 +176,7 @@ export const getRecycleFilesList = async(params: requestPrivateFilesList): Promi
             token: res.token,
         }
     })
+    console.log(filesList.value);
     return filesList.value
 }
 
