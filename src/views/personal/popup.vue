@@ -34,32 +34,32 @@
                         <div class="details-footer-div-style">
                             <div>文件名</div>
                             <div><span
-                                    @mouseover="showDetails(props.sendContents.contents.name, $event)"
+                                    @mouseover="showDetails(props.sendContents.contents[0].name, $event)"
                                     @mouseleave="isShowDeatil = false"
-                                >{{ props.sendContents.contents.name }}</span></div>
+                                >{{ props.sendContents.contents[0].name }}</span></div>
                         </div>
                         <div class="details-footer-div-style">
                             <div>类型</div>
-                            <div>{{ props.sendContents.contents.type }}</div>
+                            <div>{{ props.sendContents.contents[0].type }}</div>
                         </div>
                         <div class="details-footer-div-style">
                             <div>路径</div>
                             <div><span
-                                    @mouseover="showDetails(props.sendContents.contents.path, $event)"
+                                    @mouseover="showDetails(props.sendContents.contents[0].path, $event)"
                                     @mouseleave="isShowDeatil = false"
-                                >{{ props.sendContents.contents.path }}</span></div>
+                                >{{ props.sendContents.contents[0].path }}</span></div>
                         </div>
                         <div class="details-footer-div-style">
                             <div>大小</div>
-                            <div>{{ props.sendContents.contents.spaceSize }}</div>
+                            <div>{{ props.sendContents.contents[0].spaceSize }}</div>
                         </div>
                         <div class="details-footer-div-style">
                             <div>创建时间</div>
-                            <div>{{ props.sendContents.contents.createAt }}</div>
+                            <div>{{ props.sendContents.contents[0].createAt }}</div>
                         </div>
                         <div class="details-footer-div-style">
                             <div>修改时间</div>
-                            <div>{{ props.sendContents.contents.updateAt }}</div>
+                            <div>{{ props.sendContents.contents[0].updateAt }}</div>
                         </div>
                     </footer>
                 </div>
@@ -134,7 +134,7 @@ const props = defineProps<{
             spaceSize: string,
             createAt: string,
             updateAt: string
-        }
+        }[]
     }
 }>()
 const details = ref("")
@@ -204,7 +204,8 @@ onMounted(async() => {
 })
 
 const confirmMoveToRecycle = () => {
-    postDeleteFile(props.sendContents.contents.fileId)
+    const filedIdList = props.sendContents.contents.map((file) => file.fileId)
+    postDeleteFile(filedIdList)
     .then(() => {
         cancelPopup()
         emit('sendOperations', "refreshFiles")
@@ -229,7 +230,7 @@ const toPath = async(index: number) => {
 }
 
 const enterTheFolder = async(file: any) => {
-    if (file.fileId === props.sendContents.contents.fileId) {
+    if (file.fileId === props.sendContents.contents[0].fileId) {
         errorMsg("不能移动到自己所在的文件夹")
         return
     }
@@ -249,7 +250,7 @@ const enterTheFolder = async(file: any) => {
     })
 }
 const confirmMove = () => {
-    postMoveFile(props.sendContents.contents.fileId, nowPath.value.pathId)
+    postMoveFile(props.sendContents.contents[0].fileId, nowPath.value.pathId)
     .then(() => {
         successMsg("移动成功")
         cancelPopup()

@@ -122,9 +122,9 @@ const downloadFile = (url: string, fileName: string) => {
 }
 
 //请求删除文件
-export const postDeleteFile = async(fileId: string):Promise<void> => {
+export const postDeleteFile = async(fileIds: string[]):Promise<void> => {
     await post('/content/deleteFile', { 
-        fileId,
+        fileIds,
         deleteType: 2
     })
     .then(() => {
