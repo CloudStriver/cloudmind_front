@@ -37,7 +37,7 @@
             >
                 <i class="iconfont icon-edit-solid"></i>
             </router-link>
-            <router-link 
+            <!-- <router-link 
                 to="/5" 
                 class="router-nav"
                 active-class="router-active"
@@ -50,7 +50,7 @@
                 active-class="router-active"
             >
                 <i class="iconfont icon-shopping-cart-solid"></i>
-            </router-link>
+            </router-link> -->
             <router-link
                 to="/manage"
                 class="router-nav"

@@ -64,7 +64,6 @@ onMounted(async() => {
         backward: true,
         offset: 0
     })
-    console.log(recycleFilesList.value);
 })
 
 const chooseFile = (file: any) => {
