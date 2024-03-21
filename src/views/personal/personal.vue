@@ -1,17 +1,20 @@
 <template>
     <div class="personal-main-box">
-        <Drawer class="drawer" @sendDrawerOptions="getDrawerOptionType"></Drawer>
+        <Drawer 
+            class="drawer" 
+            @sendDrawerOptions="getDrawerOptionType"
+            @sendDrawerSelectType="getDrawerSelectType"
+        ></Drawer>
         <div class="contents-box">
             <div class="header">
                 <CHeader class="cheader"></CHeader>
-                <PathTitle v-if="isLoaded && isShowFiles"></PathTitle>
+                <PathTitle v-if="isShowFiles"></PathTitle>
                 <RecycleTitle v-else></RecycleTitle>
             </div>
             <div class="bottom">
                 <Files 
                     v-if="isShowFiles"
                     class="files" 
-                    @loading="judgeLoading"
                     @sendOptions="getOptionType"
                     @sendDetails="getDetails"
                     :sendRequest="requestMessage"
@@ -36,8 +39,11 @@ import PathTitle from './path.vue'
 import Recycle from './recycle.vue'
 import RecycleTitle from './recycle-title.vue'
 import CHeader from '@/components/header.vue'
+import router from '@/router'
 import { ref } from 'vue'
+import { useStore } from '@/store'
 
+const store = useStore()
 const requestMessage = ref("")
 const fileContents = ref({
     option: "",
@@ -53,18 +59,21 @@ const fileContents = ref({
         updateAt: ""
     }
 })
-const isLoaded = ref(false)
 const isShowPopup = ref(false)
-const isShowFiles = ref(true)
-
+const isShowFiles = ref(!location.href.includes('recycle'))
 const getDrawerOptionType = (sendDrawerOptions: string) => {
     if (sendDrawerOptions === 'showRecycle') {
+        router.push('/personal/recycle')
         isShowFiles.value = false
     }
+    else {
+        const userId = store.getUserId()
+        router.push('/personal/' + userId)
+        isShowFiles.value = true
+    }
 }
-
-const judgeLoading = (loading: boolean) => {
-    isLoaded.value = loading
+const getDrawerSelectType = (sendDrawerSelectType: string) => {
+    // requestMessage.value = getSelectType(sendDrawerSelectType)
 }
 
 const getOptionType = (sendOptions: string) => {
@@ -83,6 +92,10 @@ const getPopupOperations = (sendOperations: string) => {
         isShowPopup.value = false
         requestMessage.value = "refreshFiles"
     }
+}
+
+const getSelectType = (type: string) => {
+    //
 }
 </script>
 

@@ -57,22 +57,30 @@
         </div>
         <div class="classify-box">
             <div class="sort">
-                <input 
-                    type="radio"
-                    name="select"
-                    id="sort" 
-                >
-                <label for="sort">
-                    <i class="iconfont icon-fenlei"></i>
-                    <span>文件筛选</span>
-                </label>
+                <i class="iconfont icon-fenlei"></i>
+                <span>文件筛选</span>
             </div>
             <ul>
                 <li class="classify-li">
                     <input 
                         type="radio"
                         name="classify"
+                        id="all"
+                        value="all"
+                        v-model="selectType"
+                    >
+                    <label for="all">
+                        <i class="iconfont icon-gengduo-2"></i>
+                        <span>全部</span>
+                    </label>
+                </li>
+                <li class="classify-li">
+                    <input 
+                        type="radio"
+                        name="classify"
                         id="file"
+                        value="file"
+                        v-model="selectType"
                     >
                     <label for="file">
                         <i class="iconfont icon-file-alt-solid"></i>
@@ -83,9 +91,11 @@
                     <input 
                         type="radio"
                         name="classify"
-                        id="file"
+                        id="image"
+                        value="image"
+                        v-model="selectType"
                     >
-                    <label for="file">
+                    <label for="image">
                         <i class="iconfont icon-image"></i>
                         <span>图片</span>
                     </label>
@@ -94,9 +104,11 @@
                     <input 
                         type="radio"
                         name="classify"
-                        id="file"
+                        id="video"
+                        value="video"
+                        v-model="selectType"
                     >
-                    <label for="file">
+                    <label for="video">
                         <i class="iconfont icon-video-solid"></i>
                         <span>视频</span>
                     </label>
@@ -105,9 +117,11 @@
                     <input 
                         type="radio"
                         name="classify"
-                        id="file"
+                        id="music"
+                        value="music"
+                        v-model="selectType"
                     >
-                    <label for="file">
+                    <label for="music">
                         <i class="iconfont icon-music-solid"></i>
                         <span>音乐</span>
                     </label>
@@ -116,11 +130,13 @@
         </div>
         <div class="recycle">
             <input 
-                type="radio"    
-                name="select"
+                type="radio"
+                name="classify"
                 id="recycle"
+                value="recycle"
+                v-model="selectType"
             >
-            <label for="recycle" @click="() => emit('sendDrawerOptions', 'showRecycle')">
+            <label for="recycle">
                 <i class="iconfont icon-lajitong"></i>
                 <span>回收站</span>
             </label>
@@ -131,7 +147,7 @@
 <script setup lang="ts">
 import mime from 'mime'
 import SparkMD5 from 'spark-md5'
-import { ref, onBeforeUpdate } from 'vue'
+import { ref, onBeforeUpdate, watch, onMounted } from 'vue'
 import { useStore } from '@/store/index'
 import { cosUploadFile } from '@/utils/cos'
 import { postCreateFile, getFileSize, getPersonalFatherId } from './utils'
@@ -140,12 +156,18 @@ import type { requestCreateFile } from './utils'
 const folder = ref()
 const store = useStore()
 const fatherId = ref("")
+const selectType = ref("")
+const recycleTurnSort = ref(false)
 const newFolderName = ref<string>("新建文件夹")
 const isShowFilesCount = ref<boolean>(false)
 const isCreateFolderName = ref<boolean>(true)
 const isShowCreateFolder = ref<boolean>(false)
 const filesCount = ref<number>(0)
-const emit = defineEmits(['sendDrawerOptions'])
+const emit = defineEmits(['sendDrawerOptions', 'sendDrawerSelectType'])
+
+onMounted(() => {
+    selectType.value = getSelectType()
+})
 
 onBeforeUpdate(() => {
     if (newFolderName.value.length === 0) {
@@ -159,6 +181,28 @@ onBeforeUpdate(() => {
         }
     }
 })
+
+watch(selectType, (newVal) => {
+    if (newVal === 'recycle') {
+        recycleTurnSort.value = false
+        emit('sendDrawerOptions', 'showRecycle')
+    }
+    else {
+        if (recycleTurnSort.value) {
+            return 
+        }
+        recycleTurnSort.value = true
+        emit('sendDrawerOptions', 'showFiles')
+        emit('sendDrawerSelectType', selectType.value)
+    }
+})
+
+const getSelectType = () => {
+    if (location.href.includes('recycle')) {
+        return 'recycle'
+    }
+    return 'all'
+}
 
 //取消新建文件夹
 const cancelCreateFolder = () => {
@@ -394,23 +438,39 @@ const uploadFiles = (event: any) => {
         .sort {
             margin-bottom: 10px;
             
-            label {
-                i {
-                    margin-right: 10px;
-                    font-size: 20px;
-                }
+            i {
+                margin-right: 10px;
+                font-size: 20px;
             }
         }
 
         ul {
             .classify-li {
-                width: 180px;
-                margin: 25px 0 25px 30px;
+                margin: 20px 25px;
+                padding-left: 10px;
+                height: 30px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                color: #96b0df;
 
                 i {
                     font-size: 20px;
                     margin-right: 10px;
                 }
+
+                .all-i {
+                    font-size: 22px;
+                }
+
+                input:checked + label {
+                    color: rgb(25, 80, 146);
+                }
+            }
+
+            .classify-li:hover {
+                background-color: #dbdbdb4a;
+                border-radius: 20px;
             }
         }
     }
@@ -420,13 +480,17 @@ const uploadFiles = (event: any) => {
         height: 30px;
         padding: 1px 10px;
         cursor: pointer;
+        color: rgb(211, 136, 136);
 
-        label {
-            color: rgb(206, 112, 112);
+        i {
+            font-size: 20px;
+            margin-right: 10px;
+            color: rgb(211, 136, 136);
+        }
 
+        input:checked + label {
+            color: rgb(203, 76, 76);
             i {
-                font-size: 20px;
-                margin-right: 10px;
                 color: rgb(203, 76, 76);
             }
         }

@@ -55,10 +55,11 @@ import router from '@/router';
 import Option from './options.vue'
 import { useStore } from '@/store'
 import { cosUploadFile } from '@/utils/cos'
-import { onBeforeMount, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router';
 import { getPersonalFatherId, getPrivateFilesList, getFileSize, postCreateFile, postAskDownloadFile } from './utils'
 import type { responsePrivateFilesList, fileData, requestCreateFile } from './utils'
+import { errorMsg } from '@/utils/message';
 
 const store = useStore()
 const optionTop = ref<number>(0)
@@ -96,18 +97,19 @@ const nowFilesList = ref<responsePrivateFilesList>({
     fatherNamePath: ''
 }) 
 
-onBeforeMount(async() => {
+onMounted(async() => {
     fatherId.value = getPersonalFatherId()
-    nowFilesList.value = await getPrivateFilesList({
-        limit: 100,
-        offset: 0,
-        sortType: 3,
-        backward: true,
-        onlyFatherId: fatherId.value
-    })
-    sessionStorage.setItem('PathId', nowFilesList.value.fatherIdPath)
-    sessionStorage.setItem('PathName', nowFilesList.value.fatherNamePath)
-    emit('loading', true)
+    if (fatherId.value !== 'recycle') {
+        nowFilesList.value = await getPrivateFilesList({
+            limit: 100,
+            offset: 0,
+            sortType: 3,
+            backward: true,
+            onlyFatherId: fatherId.value
+        })
+        sessionStorage.setItem('PathId', nowFilesList.value.fatherIdPath)
+        sessionStorage.setItem('PathName', nowFilesList.value.fatherNamePath)
+    }
 })
 
 onBeforeRouteUpdate(async(to) => {
@@ -133,13 +135,19 @@ watch(() => store.tempFileData, (newVal) => {
     nowFilesList.value.files.unshift(newVal)
 })
 watch(() => props.sendRequest, async() => {
-    nowFilesList.value = await getPrivateFilesList({
-        limit: 100,
-        offset: 0,
-        sortType: 3,
-        backward: true,
-        onlyFatherId: fatherId.value
-    })
+    if (props.sendRequest === 'refreshFiles') {
+        nowFilesList.value = await getPrivateFilesList({
+            limit: 100,
+            offset: 0,
+            sortType: 3,
+            backward: true,
+            onlyFatherId: fatherId.value
+        })
+    }
+    else {
+        errorMsg('后端未完成')
+    }
+      
 })
 
 const dropUploadFile = (event: any) => {
