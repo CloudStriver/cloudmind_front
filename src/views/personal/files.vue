@@ -65,7 +65,23 @@ const store = useStore()
 const optionTop = ref<number>(0)
 const optionLeft = ref<number>(0)
 const fatherId = ref<string>("")
-const fileDetails = ref<fileData>()
+const fileDetails = ref<fileData[]>(
+    [{
+        fileId: "",
+        userId: "",
+        name: "",
+        type: "",
+        path: "",
+        fatherId: "",
+        spaceSize: "",
+        isDel: 0,
+        zone: "",
+        subZone: "",
+        description: "",
+        updateAt: "",
+        createAt: "",
+    }]
+)
 const isDragFile = ref(false)
 const isShowOptions = ref(false)
 const emit = defineEmits(['loading', 'sendOptions', 'sendDetails'])
@@ -216,8 +232,8 @@ const optionType = (sendOptions: string) => {
         emit('sendDetails', fileDetails.value)
     } 
     else if (sendOptions === 'downloadFile')  {
-        const fileIdList = [fileDetails.value?.fileId] as string[]
-        const fileNameList = [fileDetails.value?.name] as string[]
+        const fileIdList = [fileDetails.value[0].fileId]
+        const fileNameList = [fileDetails.value[0].name]
         postAskDownloadFile(fileIdList, fileNameList)
     }
     else {
@@ -235,7 +251,7 @@ const getOptions = (file: fileData, event: any) => {
     if (event.clientY + 320 > window.innerHeight) {
         optionTop.value = event.clientY - 320
     }
-    fileDetails.value = file
+    fileDetails.value[0] = file
     event.preventDefault()
 }
 

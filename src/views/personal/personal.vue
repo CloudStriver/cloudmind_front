@@ -47,7 +47,7 @@ const store = useStore()
 const requestMessage = ref("")
 const fileContents = ref({
     option: "",
-    contents: {
+    contents: [{
         fileId: "",
         userId: "",
         name: "",
@@ -57,7 +57,7 @@ const fileContents = ref({
         spaceSize: "",
         createAt: "",
         updateAt: ""
-    }
+    }]
 })
 const isShowPopup = ref(false)
 const isShowFiles = ref(!location.href.includes('recycle'))
@@ -72,7 +72,7 @@ const getDrawerOptionType = (sendDrawerOptions: string) => {
         isShowFiles.value = true
     }
 }
-const getDrawerSelectType = (sendDrawerSelectType: string) => {
+const getDrawerSelectType = () => {
     // requestMessage.value = getSelectType(sendDrawerSelectType)
 }
 
@@ -94,9 +94,6 @@ const getPopupOperations = (sendOperations: string) => {
     }
 }
 
-const getSelectType = (type: string) => {
-    //
-}
 </script>
 
 <style scoped lang="css">
