@@ -111,16 +111,27 @@
                 </footer>
             </div>
         </div>
+        <div class="rename-box" v-if="props.sendContents.option === 'renameFile'">
+            <Rename class="rename"
+                :sendName="renameMsg"
+                @sendRename="getRename"
+            ></Rename>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import Rename from './rename-box.vue'
 import { onMounted, ref } from 'vue';
 import { getPrivateFilesList, postCreateFile, postMoveFile, postDeleteFile } from './utils'
 import type { responsePrivateFilesList, requestCreateFile } from './utils'
 import { errorMsg, successMsg } from '@/utils/message';
 
-const emit = defineEmits(['sendOperations'])
+const emit = defineEmits(['sendOperations', 'sendRenameMsg'])
+const renameMsg = ref({
+    fileId: "",
+    name: ""
+})
 const props = defineProps<{
     sendContents: {
         option: string,
@@ -201,14 +212,37 @@ onMounted(async() => {
             onlyType: ["文件夹"]
         })
     }
+    else if (props.sendContents.option === 'renameFile') {
+        renameMsg.value = {
+            fileId: (props.sendContents.contents as any).fileId,
+            name: (props.sendContents.contents as any).name
+        }
+    }
 })
+
+const getRename = (sendRename: any) => {
+    if (sendRename.option === 'cancel') {
+        cancelPopup()
+    }
+    else if (sendRename.option === 'confirm') {
+        cancelPopup()
+        emit('sendOperations', {
+            option: 'updateName',
+            name: sendRename.message
+        })
+    }
+}
 
 const confirmMoveToRecycle = () => {
     const filedIdList = props.sendContents.contents.map((file) => file.fileId)
     postDeleteFile(filedIdList)
     .then(() => {
         cancelPopup()
-        emit('sendOperations', "refreshFiles")
+        emit('sendOperations', 
+        {
+            option: "refreshFiles",
+            message: ""
+        })
     })
 }
 
@@ -254,7 +288,10 @@ const confirmMove = () => {
     .then(() => {
         successMsg("移动成功")
         cancelPopup()
-        emit('sendOperations', "refreshFiles")
+        emit('sendOperations', {
+            option: "refreshFiles",
+            message: ""
+        })
     })
 }
 
@@ -290,7 +327,10 @@ const cancelMoveCreateFolder = () => {
 }
 
 const cancelPopup = () => {
-    emit('sendOperations', "cancelPopup")
+    emit('sendOperations', {
+        option: "cancelPopup",
+        message: ""
+    })
 }
 const showDetails = (name: string, event: any) => {
     details.value = name
@@ -635,6 +675,21 @@ const showDetails = (name: string, event: any) => {
                     transform: scale(0.9);
                 }
             }
+        }
+    }
+
+    .rename-box {
+        width: 100%;
+        height: 100%;
+        padding: 50px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        display: flex;
+
+        .rename {
+            width: 380px;
+            height: 160px;
+            margin: auto;
         }
     }
 }

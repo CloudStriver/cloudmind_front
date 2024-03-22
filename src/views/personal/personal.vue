@@ -8,7 +8,7 @@
         <div class="contents-box">
             <div class="header">
                 <CHeader class="cheader"></CHeader>
-                <PathTitle v-if="isShowFiles"></PathTitle>
+                <PathTitle v-if="isShowFiles && isLoading"></PathTitle>
                 <RecycleTitle v-else></RecycleTitle>
             </div>
             <div class="bottom">
@@ -17,6 +17,7 @@
                     class="files" 
                     @sendOptions="getOptionType"
                     @sendDetails="getDetails"
+                    @loading="getLoading"
                     :sendRequest="requestMessage"
                 ></Files>
                 <Recycle v-else></Recycle>
@@ -59,6 +60,7 @@ const fileContents = ref({
         updateAt: ""
     }]
 })
+const isLoading = ref(false)
 const isShowPopup = ref(false)
 const isShowFiles = ref(!location.href.includes('recycle'))
 const getDrawerOptionType = (sendDrawerOptions: string) => {
@@ -76,6 +78,10 @@ const getDrawerSelectType = () => {
     // requestMessage.value = getSelectType(sendDrawerSelectType)
 }
 
+const getLoading = (loading: boolean) => {
+    isLoading.value = loading
+}
+
 const getOptionType = (sendOptions: string) => {
     fileContents.value.option = sendOptions
     isShowPopup.value = true
@@ -84,13 +90,16 @@ const getDetails = (sendDetails: any) => {
     fileContents.value.contents = sendDetails
 }
 
-const getPopupOperations = (sendOperations: string) => {
-    if (sendOperations === "cancelPopup") {
+const getPopupOperations = (sendOperations: any) => {
+    if (sendOperations.option === "cancelPopup") {
         isShowPopup.value = false
     }
-    if (sendOperations === 'refreshFiles') {
+    if (sendOperations.option === 'refreshFiles') {
         isShowPopup.value = false
         requestMessage.value = "refreshFiles"
+    }
+    if (sendOperations.option === 'updateName') {
+        requestMessage.value = sendOperations.name
     }
 }
 

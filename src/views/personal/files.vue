@@ -26,10 +26,10 @@
             ></Option>
             <div 
                 class="files-contents"
-                v-for="(file, item) of nowFilesList.files"
-                :key="item"
+                v-for="(file, index) of nowFilesList.files"
+                :key="index"
                 @click="toFile(file)"
-                @contextmenu="getOptions(file, $event)"
+                @contextmenu="getOptions(file, $event, index)"
             >
                 <div class="images">
                     <i 
@@ -59,7 +59,6 @@ import { onMounted, ref, watch } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router';
 import { getPersonalFatherId, getPrivateFilesList, getFileSize, postCreateFile, postAskDownloadFile } from './utils'
 import type { responsePrivateFilesList, fileData, requestCreateFile } from './utils'
-import { errorMsg } from '@/utils/message';
 
 const store = useStore()
 const optionTop = ref<number>(0)
@@ -82,6 +81,7 @@ const fileDetails = ref<fileData[]>(
         createAt: "",
     }]
 )
+const ctxIndex = ref(-1)
 const isDragFile = ref(false)
 const isShowOptions = ref(false)
 const emit = defineEmits(['loading', 'sendOptions', 'sendDetails'])
@@ -125,6 +125,7 @@ onMounted(async() => {
         })
         sessionStorage.setItem('PathId', nowFilesList.value.fatherIdPath)
         sessionStorage.setItem('PathName', nowFilesList.value.fatherNamePath)
+        emit('loading', true)
     }
 })
 
@@ -161,7 +162,7 @@ watch(() => props.sendRequest, async() => {
         })
     }
     else {
-        errorMsg('后端未完成')
+        nowFilesList.value.files[ctxIndex.value].name = sliceFileName(props.sendRequest)
     }
       
 })
@@ -231,6 +232,10 @@ const optionType = (sendOptions: string) => {
         emit('sendOptions', sendOptions)
         emit('sendDetails', fileDetails.value)
     } 
+    else if (sendOptions === 'renameFile') {
+        emit('sendOptions', sendOptions)
+        emit('sendDetails', fileDetails.value[0])
+    }
     else if (sendOptions === 'downloadFile')  {
         const fileIdList = [fileDetails.value[0].fileId]
         const fileNameList = [fileDetails.value[0].name]
@@ -241,7 +246,8 @@ const optionType = (sendOptions: string) => {
     }
 }
 
-const getOptions = (file: fileData, event: any) => {
+const getOptions = (file: fileData, event: any, index: number) => {
+    ctxIndex.value = index
     isShowOptions.value = true
     optionLeft.value = event.clientX
     optionTop.value = event.clientY
