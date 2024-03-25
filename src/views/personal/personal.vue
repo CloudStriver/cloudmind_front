@@ -45,7 +45,10 @@ import { ref } from 'vue'
 import { useStore } from '@/store'
 
 const store = useStore()
-const requestMessage = ref("")
+const requestMessage = ref({
+    option: "",
+    message: ""
+})
 const fileContents = ref({
     option: "",
     contents: [{
@@ -74,8 +77,11 @@ const getDrawerOptionType = (sendDrawerOptions: string) => {
         isShowFiles.value = true
     }
 }
-const getDrawerSelectType = () => {
-    // requestMessage.value = getSelectType(sendDrawerSelectType)
+const getDrawerSelectType = (sendDrawerSelectType: any) => {
+    requestMessage.value = {
+        option: "classifyFiles",
+        message: sendDrawerSelectType
+    }
 }
 
 const getLoading = (loading: boolean) => {
@@ -96,10 +102,16 @@ const getPopupOperations = (sendOperations: any) => {
     }
     if (sendOperations.option === 'refreshFiles') {
         isShowPopup.value = false
-        requestMessage.value = "refreshFiles"
+        requestMessage.value = {
+            option: "refreshFiles",
+            message: ""
+        }
     }
     if (sendOperations.option === 'updateName') {
-        requestMessage.value = sendOperations.name
+        requestMessage.value = {
+            option: "updateName",
+            message: sendOperations.name
+        }
     }
 }
 

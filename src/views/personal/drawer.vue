@@ -184,16 +184,11 @@ onBeforeUpdate(() => {
 
 watch(selectType, (newVal) => {
     if (newVal === 'recycle') {
-        recycleTurnSort.value = false
         emit('sendDrawerOptions', 'showRecycle')
     }
     else {
-        if (recycleTurnSort.value) {
-            return 
-        }
-        recycleTurnSort.value = true
         emit('sendDrawerOptions', 'showFiles')
-        emit('sendDrawerSelectType', selectType.value)
+        emit('sendDrawerSelectType', newVal)
     }
 })
 
