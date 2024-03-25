@@ -86,7 +86,10 @@ const isDragFile = ref(false)
 const isShowOptions = ref(false)
 const emit = defineEmits(['loading', 'sendOptions', 'sendDetails'])
 const props = defineProps<{
-    sendRequest: string
+    sendRequest: {
+        option: string,
+        message: string
+    }
 }>()
 //存储页面文件列表
 const nowFilesList = ref<responsePrivateFilesList>({
@@ -152,7 +155,7 @@ watch(() => store.tempFileData, (newVal) => {
     nowFilesList.value.files.unshift(newVal)
 })
 watch(() => props.sendRequest, async() => {
-    if (props.sendRequest === 'refreshFiles') {
+    if (props.sendRequest.option === 'refreshFiles') {
         nowFilesList.value = await getPrivateFilesList({
             limit: 100,
             offset: 0,
@@ -161,10 +164,13 @@ watch(() => props.sendRequest, async() => {
             onlyFatherId: fatherId.value
         })
     }
-    else {
-        nowFilesList.value.files[ctxIndex.value].name = sliceFileName(props.sendRequest)
+    else if (props.sendRequest.option === 'updateName') {
+        nowFilesList.value.files[ctxIndex.value].name = sliceFileName(props.sendRequest.message)
     }
-      
+    else if (props.sendRequest.option === 'classifyFiles') {
+        console.log('待后端完善');
+        console.log(props.sendRequest.message);
+    } 
 })
 
 const dropUploadFile = (event: any) => {
