@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { useStore } from '@/store/index'
 import { ElMessage } from 'element-plus'
+import { ElLoading } from 'element-plus'
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { errorMsg } from './message'
 
@@ -8,6 +9,18 @@ interface myResponseType<T> extends AxiosResponse {
     code: number,
     msg: string,
     data: T
+}
+let loading: any
+let loadingCount = 0
+const startLoading = () => {
+  loading = ElLoading.service({
+    lock: true,
+    text: '加载中...',
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
+}
+const endLoading = () => {
+  loading.close()
 }
 
 const service = axios.create({
@@ -22,7 +35,10 @@ const service = axios.create({
 const store = useStore()
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // const localToken = localStorage.getItem('ShortToken')
+    if (loadingCount === 0) {
+      startLoading()
+    }
+    loadingCount ++
     if (localStorage.getItem('LongToken') === null && sessionStorage.getItem('LongToken') === null) {
       return config
     }
@@ -44,6 +60,10 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   (response: any) => {
+    loadingCount --
+    if (loadingCount === 0) {
+      endLoading()
+    }
     return response.data
   },
   (error: any) => {
