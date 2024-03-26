@@ -8,7 +8,6 @@
                         <div class="notifications">
                             <div style="font-size: 22px; font-weight: 700;">通知中心</div>
                             <div class="notification"></div>
-                            <div class="notifications-count" v-if="notificationCount > 0">{{ notificationCount }}</div>
                         </div>
                         <div class="classify">
                             <div>
@@ -156,7 +155,7 @@
                                     <i class="iconfont icon-guanzhu"></i>
                                 </div>
                                 <div class="content">
-                                    <div class="content-top-">
+                                    <div class="content-top">
                                         <div class="user">{{ item.fromName }}</div>
                                         <div>关注了</div>
                                         <div>你</div>
@@ -165,6 +164,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="hint">暂无更多</div>
                     </div>
                 </div>
             </section>
@@ -180,7 +180,6 @@ import { getNotifications, getNotificationsCount } from './utils'
 import type { ResponseGetNotification } from './utils'
 
 const select = ref<string>('all')
-const notificationCount = ref<number>(0)
 const notificationList = ref<any>([])
 const storageNotificationList = ref<any>({
     all: ref<ResponseGetNotification[]>([]),
@@ -188,27 +187,29 @@ const storageNotificationList = ref<any>({
     follow: ref<ResponseGetNotification[]>([]),
     collect: ref<ResponseGetNotification[]>([]),
     comment: ref<ResponseGetNotification[]>([]),
+    share: ref<ResponseGetNotification[]>([])
 })
 
 onMounted(async() => {
     getNotificationList()
-    notificationCount.value = await getNotificationsCount()
 })
 
-watch(select, () => {
+watch(select, (newVal) => {
+    console.log(newVal);
     getNotificationList()
 })
 
 const getNotificationList = async() => {
     const type = turnNotificationType(select.value)
     if (storageNotificationList.value[select.value].length === 0) {
+        notificationList.value = []
         notificationList.value.push(await getNotifications(type))
         storageNotificationList.value[select.value].push(...notificationList.value[0])
     }
-
-    setTimeout(() => {
-        notificationCount.value = 0
-    }, 3000)
+    else {
+        notificationList.value = []
+        notificationList.value.push(storageNotificationList.value[select.value])
+    }
 }
 
 const turnNotificationType = (type: string): number => {
@@ -237,13 +238,15 @@ const turnNotificationType = (type: string): number => {
     flex-direction: column;
 
     .cheader {
-        height: 70px;
+        height: 80px;
+        position: float;
     }
 
     .contents {
         height: 100%;
-        padding-top: 20px;
+        padding-top: 10px;
         background-color: rgba(240, 245, 255, 1);
+        overflow-y: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -254,7 +257,6 @@ const turnNotificationType = (type: string): number => {
             padding-right: 20%;
             padding-bottom: 20px;
             flex: 1;
-            overflow-y: auto;
             display: flex;
             justify-content: center;
 
@@ -304,17 +306,6 @@ const turnNotificationType = (type: string): number => {
 
                         .notification {
                             background-color: #762222;
-                        }
-
-                        .notifications-count {
-                            height: 20px;
-                            padding: 5px;
-                            margin-left: 10px;
-                            color: #fff;
-                            background-color: #de3032;
-                            border-radius: 50px;
-                            display: flex;
-                            align-items: center;
                         }
                     }
                 }
@@ -434,20 +425,8 @@ const turnNotificationType = (type: string): number => {
                                 margin-bottom: 5px;
 
                                 .user {
+                                    color: #000;
                                     margin-right: 5px;
-                                    cursor: pointer;
-                                }
-                            }
-
-                            .content-top- {
-                                display: flex;
-                                font-size: 15px;
-                                margin-bottom: 5px;
-                                user-select: none;
-
-                                .user {
-                                    margin-right: 5px;
-                                    font-weight: 700;
                                     cursor: pointer;
                                 }
                             }
@@ -469,6 +448,13 @@ const turnNotificationType = (type: string): number => {
                                 color: #929292;
                             }
                         }
+                    }
+
+                    .hint {
+                        width: 100%;
+                        margin: 20px 0;
+                        color: #929292;
+                        text-align: center;
                     }
                 }
             }

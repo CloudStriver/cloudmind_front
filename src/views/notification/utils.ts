@@ -31,6 +31,8 @@ export const getNotifications = async(type: number) => {
             notifications: res.notifications
         }
     })
+    console.log(notifications.value.notifications);
+    
     return notifications.value.notifications
 }
 
