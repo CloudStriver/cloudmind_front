@@ -150,7 +150,7 @@ const likePost = () => {
 const createRelation = (type: number) => {
     post('/relation/createRelation', {
         toId: postId,
-        toType: 4,
+        toType: 3,
         relationType: type
     })
     .then(() => {
