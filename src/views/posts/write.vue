@@ -1,16 +1,16 @@
 <template>
   <div class="main-box" @click="handleClickTagOutside">
-    <div class="editor-box">
-      <header class="header">
-        <i class="iconfont icon-ffanhui- back"></i>
-        <Toolbar
-          class="toolbar"
-          :editor="editorRef"
-          :defaultConfig="toolbarConfig"
-          :mode="'default'"
-        />
-      </header>
-      <section class="section">
+    <header class="header-box">
+      <i class="iconfont icon-ffanhui- back"></i>
+      <Toolbar
+        class="toolbar"
+        :editor="editorRef"
+        :defaultConfig="toolbarConfig"
+        :mode="'default'"
+      />
+    </header>
+    <section class="section-box">
+      <div class="section">
         <div class="input">
           <input 
             type="text" 
@@ -20,7 +20,6 @@
         </div>
         <Editor
           class="editor"
-          style="min-height: 700px; overflow-y: hidden;"
           v-model="valueHtml"
           :defaultConfig="editorConfig"
           :mode="'default'"
@@ -107,8 +106,8 @@
             <button @click="publishPost" :disabled="isOperate">发布</button>
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -131,14 +130,21 @@ const searchContent = ref('')
 const nowPostContent = ref('')
 const editorRef = shallowRef()
 const imageFile = ref()
+const isSure = ref(false)
 const isOperate = ref(true)
 const isShowOperate = ref(false)
 const isUploadImage = ref(false)
+const isHasKeyWords = ref(false)
 const isShowSearchTag = ref(false)
 const nowTagsCount = ref(0)
 const tagContentsLeft = ref(0)
+const createFileType = ref(1)
 const tagsList = ref<string[]>([])
 const nowTagsList = ref<string[]>([])
+const keywordList = ref({
+  title: [],
+  content: []
+})
 const editorConfig = { placeholder: '请输入内容...' }
 const toolbarConfig = {
   toolbarKeys: [
@@ -252,19 +258,30 @@ const createPost = (url: string) => {
     title: postTitle.value,
     text: valueHtml.value,
     tags: nowTagsList.value,
-    status: 1,
-    url: url
+    status: createFileType.value,
+    url: url,
+    isSure: isSure.value
   })
-  .then(() => {
-    successMsg('发布成功')
-    postTitle.value = ''
-    valueHtml.value = ''
-    coverImage.value = ''
-    nowTagsList.value = []
-    isOperate.value = true
-    sessionStorage.removeItem('postTitle')
-    sessionStorage.removeItem('postContent')
-    router.push('/posts')
+  .then((res: any) => {
+    console.log(res)
+    if(res.keywords === null) {
+      successMsg('发布成功')
+      postTitle.value = ''
+      valueHtml.value = ''
+      coverImage.value = ''
+      nowTagsList.value = []
+      isOperate.value = true
+      sessionStorage.removeItem('postTitle')
+      sessionStorage.removeItem('postContent')
+      router.push('/posts')
+    }
+    else {
+      isHasKeyWords.value = true
+      keywordList.value = {
+        title: res.keywords[0],
+        content: res.keywords[1]
+      }
+    }
   })
 }
 const publishPost = () => {
@@ -299,94 +316,77 @@ const previewPost = () => {
 <style scoped lang="css">
 .main-box {
   width: 100%;
-  background-color: #fff;
-  overflow-y: auto;
+  height: 100%;
+  background-color: #f5f5f5;
   display: flex;
+  flex-direction: column;
 
-  .editor-box {
-    width: 100%;
-    padding-bottom: 20px;
-    margin: 0 auto;
-    box-sizing: border-box;
-    background-color: #f5f5f5;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+  .header-box {
+    background-color: #fff;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+    z-index: 3;
+    display: flex;
 
-    .header {
-      position: fixed;
-      width: 100%;
-      top: 0px;
-      background-color: #fff;
-      box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
-      margin: 0 auto;
-      margin-bottom: 20px;
-      z-index: 3;
-      display: flex;
-      justify-content: center;
-
-      .back {
-        position: absolute; 
-        top: 0;
-        left: 10px;
-        font-size: 35px;
-        margin-left: 10px;
-        cursor: pointer;
-        color: #b9b9b9;
-      }
-      .back:hover {
-        color: #000;
-      }
+    .back {
+      top: 0;
+      left: 10px;
+      font-size: 35px;
+      margin-left: 10px;
+      cursor: pointer;
+      color: #b9b9b9;
     }
+    .back:hover {
+      color: #000;
+    }
+  }
+
+  .section-box {
+    width: 100%;
+    height: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: flex; 
+    justify-content: center;
+    overflow-y: auto;
 
     .section {
       width: 1000px;
-      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-      margin: auto;
-      margin-top: 80px;
-      padding: 20px;
-      background-color: #fff;
 
       .input {
         font-weight: 700;
         background-color: #fff;
   
         input {
-          width: 100%;
+          width: 980px;
           font-size: 30px;
           font-weight: 700;
-          box-sizing: border-box;
-          border-radius: 5px;
           border: none;
-          border-bottom: 1px solid #ccc;
+          border-bottom: 1px solid #cccccc41;
           outline: none;
-          padding-bottom: 20px;
+          padding: 20px 0;
+          margin: 0 10px;
         }
         input::placeholder {
           font-size: 30px;
           color: #adadad;
         }
       }
-  
-      .editor {
-        background-color: #fff;
-        border-bottom: 1px solid #ccc;
-        margin-bottom: 20px;
-        color: #fff;
-      }
 
       .footer {
-        margin: 0 auto;
+        padding: 10px;
         background-color: #fff;
-
+  
         .image-box {
+          border-top: 1px solid #cccccc41;
+          padding-top: 20px;
           margin-bottom: 20px;
           display: flex;
-
+  
           .change-image {
             label {
               position: relative;
               cursor: pointer;
-
+  
               .operate-image {
                 position: absolute;
                 width: 220px;
@@ -396,7 +396,7 @@ const previewPost = () => {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-
+  
                 button {
                   width: 50px;
                   height: 30px;
@@ -422,13 +422,13 @@ const previewPost = () => {
                 }
                 
               }
-
+  
               div {
                 width: 220px;
                 height: 130px;
                 margin-left: 30px;
                 cursor: pointer;
-
+  
                 img {
                   width: 100%;
                   height: 100%;
@@ -450,7 +450,7 @@ const previewPost = () => {
               display: flex;
               justify-content: center;
               align-items: center;
-
+  
               div {
                 font-size: 20px;
                 color: #ccc;
@@ -460,13 +460,13 @@ const previewPost = () => {
             }
           }
         }
-
+  
         .add-tag-box {
           position: relative;
           height: 50px;
           display: flex;
           align-items: center;
-
+  
           .tag-contents {
             position: absolute;
             width: 250px;
@@ -475,7 +475,7 @@ const previewPost = () => {
             border-radius: 5px;
             background-color: #fff;
             box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-
+  
             .search {
               width: 100%;
               height: 40px;
@@ -486,14 +486,14 @@ const previewPost = () => {
               margin-bottom: 8px;
               display: flex;
               align-items: center;
-
+  
               i {
                 font-size: 20px;
                 font-weight: 700;
                 color: #2e4482;
                 margin-right: 10px;
               }
-
+  
               input {
                 width: 80%;
                 height: 30px;
@@ -501,12 +501,12 @@ const previewPost = () => {
                 outline: none;
               }
             }
-
+  
             .cur-tag-box {
               width: 100%;
               max-height: 250px;
               overflow-y: auto;
-
+  
               .cur-tag {
                 width: 100%;
                 height: 40px;
@@ -520,7 +520,7 @@ const previewPost = () => {
               }
             }
           }
-
+  
           .tag {
             height: 35px;
             padding: 8px 15px;
@@ -530,15 +530,15 @@ const previewPost = () => {
             border: 1px solid #ccc;
             border-radius: 20px;
             color: #3b5393;
-
+  
             i {
               font-size: 20px;
               color: #ccc;
               cursor: pointer;
             }
           }
-
-
+  
+  
           i {
             margin-left: 5px;
             font-size: 25px;
@@ -546,11 +546,11 @@ const previewPost = () => {
             cursor: pointer;
           }
         }
-
+  
         .operate {
           display: flex;
           justify-content: flex-end;
-
+  
           button {
             width: 100px;
             height: 40px;
@@ -560,7 +560,7 @@ const previewPost = () => {
             border-radius: 5px;
             cursor: pointer;
           }
-
+  
           button:nth-child(1) {
             background-color: #cccccc8b;
             color: #4e4c4c93;
@@ -569,7 +569,7 @@ const previewPost = () => {
             background-color: #5383dd;
             color: #fff;
           }
-
+  
           button:disabled {
             opacity: 0.5;
           }

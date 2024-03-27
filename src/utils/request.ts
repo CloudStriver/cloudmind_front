@@ -67,6 +67,7 @@ service.interceptors.response.use(
     return response.data
   },
   (error: any) => {
+    endLoading()
     const status = error.response.status
     if (status === 401) {
       if (localStorage.getItem('isAutoLogin') === "true") {//自动登录情况
