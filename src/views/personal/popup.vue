@@ -183,6 +183,7 @@ const folderData = ref<requestCreateFile>({
     spaceSize: -1,
     md5: "",
     fatherId: "",
+    category: 1,
 })
 const pathData = ref({
     pathId: [] as string[],
@@ -306,7 +307,8 @@ const confirmMoveCreateFolder = () => {
         type: '文件夹',
         spaceSize: -1,
         md5: "",
-        fatherId: nowPath.value.pathId
+        fatherId: nowPath.value.pathId,
+        category: 1
     }
     postCreateFile(folderData.value)
     .then((res) => {
