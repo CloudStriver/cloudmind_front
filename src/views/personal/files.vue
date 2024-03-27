@@ -57,7 +57,14 @@ import { useStore } from '@/store'
 import { cosUploadFile } from '@/utils/cos'
 import { onMounted, ref, watch } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router';
-import { getPersonalFatherId, getPrivateFilesList, getFileSize, postCreateFile, postAskDownloadFile } from './utils'
+import {
+  getPersonalFatherId,
+  getPrivateFilesList,
+  getFileSize,
+  postCreateFile,
+  postAskDownloadFile,
+  getCategory
+} from './utils'
 import type { responsePrivateFilesList, fileData, requestCreateFile } from './utils'
 
 const store = useStore()
@@ -168,10 +175,11 @@ watch(() => props.sendRequest, async() => {
         nowFilesList.value.files[ctxIndex.value].name = sliceFileName(props.sendRequest.message)
     }
     else if (props.sendRequest.option === 'classifyFiles') {
-        console.log('待后端完善');
-        console.log(props.sendRequest.message);
-    } 
+      await classifyFile()
+    }
 })
+
+
 
 const dropUploadFile = (event: any) => {
     event.preventDefault()
@@ -192,8 +200,9 @@ const dropUploadFile = (event: any) => {
             spaceSize: file.size,
             md5: md5,
             fatherId: getPersonalFatherId(),
+            category: getCategory(file.type),
         }
-        cosUploadFile(file, md5, suffix, () => {
+      cosUploadFile(file, md5, suffix, () => {
             postCreateFile(data)
             .then((res)=> {
                 const tempPath = sessionStorage.getItem('Path') as string
@@ -251,6 +260,45 @@ const optionType = (sendOptions: string) => {
         console.log('其他操作')
     }
 }
+
+// 文件筛选
+const classifyFile = async () => {
+  let category = 0;
+  switch (props.sendRequest.message) {
+    case "file":
+      category = 1
+      break;
+    case "image":
+      category = 2
+      break;
+    case "video":
+      category = 3
+      break;
+    case "music":
+      category = 4
+      break;
+  }
+  if (category !== 0) {
+    nowFilesList.value = await getPrivateFilesList({
+      limit: 100,
+      offset: 0,
+      sortType: 3,
+      backward: true,
+      onlyFatherId: fatherId.value,
+      onlyCategory: category,
+    })
+  } else {
+    nowFilesList.value = await getPrivateFilesList({
+      limit: 100,
+      offset: 0,
+      sortType: 3,
+      backward: true,
+      onlyFatherId: fatherId.value,
+    })
+  }
+}
+
+
 
 const getOptions = (file: fileData, event: any, index: number) => {
     ctxIndex.value = index

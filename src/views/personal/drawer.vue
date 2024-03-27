@@ -150,7 +150,7 @@ import SparkMD5 from 'spark-md5'
 import { ref, onBeforeUpdate, watch, onMounted } from 'vue'
 import { useStore } from '@/store/index'
 import { cosUploadFile } from '@/utils/cos'
-import { postCreateFile, getFileSize, getPersonalFatherId } from './utils'
+import {postCreateFile, getFileSize, getPersonalFatherId, getCategory} from './utils'
 import type { requestCreateFile } from './utils'
 
 const folder = ref()
@@ -213,6 +213,7 @@ const createFolder = () => {
         spaceSize: -1,
         md5: "",
         fatherId: fatherId.value,
+        category: 1,
     } 
 
     postCreateFile(data)
@@ -261,6 +262,7 @@ const uploadFiles = (event: any) => {
                 spaceSize: file.size,
                 md5: md5,
                 fatherId: getPersonalFatherId(),
+                category: getCategory(file.type),
             }
             cosUploadFile(file, md5, suffix, () => {
                 postCreateFile(data)
