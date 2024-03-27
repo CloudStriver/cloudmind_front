@@ -9,6 +9,7 @@ export interface requestPrivateFilesList {
     id?: string;
     name?: string;
     onlyType?: string[];
+    onlyCategory?: number;
     lastToken?: string;
     allFieldsKey?: string;
 
@@ -93,6 +94,7 @@ export interface requestCreateFile {
     name: string;
     spaceSize: number;
     type: string;
+    category: number;
 }
 
 //------------------------------------------------------------request
@@ -292,5 +294,18 @@ export const getFileSize = (bits: number): string => {
     else {
         const temp = bits / (1024*1024*1024);
         return temp.toFixed(2) + 'GB';
+    }
+}
+
+// 通过类型推断出分类
+export const getCategory = (type: String): number => {
+    if (type.startsWith('image/')) {
+        return 2; // 图片类型
+    } else if (type.startsWith('video/')) {
+        return 3; // 视频类型
+    } else if (type.startsWith('audio/')) {
+        return 4; // 音乐类型
+    } else {
+        return 1; // 其他类型
     }
 }
