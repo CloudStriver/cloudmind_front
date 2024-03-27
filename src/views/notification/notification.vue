@@ -239,7 +239,6 @@ const turnNotificationType = (type: string): number => {
 
     .cheader {
         height: 80px;
-        position: float;
     }
 
     .contents {
