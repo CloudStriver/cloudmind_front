@@ -257,6 +257,7 @@ const optionType = (sendOptions: string) => {
         postAskDownloadFile(fileIdList, fileNameList)
     }
     else {
+      console.log("其他操作")
     }
 }
 

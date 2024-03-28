@@ -44,7 +44,7 @@ const confirm = () => {
     post('/content/updateFile', {
         fileId: props.sendName.fileId,
         name: name.value
-    }).then((res:any) => {
+    }).then(() => {
         emit('sendRename', {
             option: 'confirm',
             message: name.value
