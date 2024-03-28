@@ -8,7 +8,10 @@
         <div class="contents-box">
             <div class="header">
                 <CHeader class="cheader"></CHeader>
-                <PathTitle v-if="isShowFiles && isLoading"></PathTitle>
+                <PathTitle 
+                    v-if="isShowFiles && isLoading"
+                    @sendPathMsg="getPathMsg"
+                ></PathTitle>
                 <RecycleTitle v-if="isShowRecycle"></RecycleTitle>
             </div>
             <div class="bottom">
@@ -67,6 +70,14 @@ const isShowRecycle = ref(location.href.includes('recycle'))
 const isLoading = ref(false)
 const isShowPopup = ref(false)
 const isShowFiles = ref(!location.href.includes('recycle'))
+
+const getPathMsg = (sendPathMsg: any) => {
+    requestMessage.value = {
+        option: sendPathMsg.option,
+        message: sendPathMsg.message
+    }
+}
+
 const getDrawerOptionType = (sendDrawerOptions: string) => {
     if (sendDrawerOptions === 'showRecycle') {
         router.push('/personal/recycle')
@@ -162,7 +173,6 @@ const getPopupOperations = (sendOperations: any) => {
             overflow-y: auto;
 
             .files {
-                height: 100%;
                 margin: 20px;
             }
         }
