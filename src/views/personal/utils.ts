@@ -250,7 +250,7 @@ export const getPrivateFilesList = async(params: requestPrivateFilesList): Promi
 //------------------------------------------------------------function
 
 //生成搜索/查看用户文件列表的请求URL
-const generateGetRequestURL = (params: any) => {
+export const generateGetRequestURL = (params: any) => {
     let query = "?"
     const key = Object.keys(params)
     key.forEach((item) => {

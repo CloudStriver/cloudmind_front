@@ -1,6 +1,9 @@
-import { get } from '@/utils/request'
 import { ref } from 'vue'
+import { useStore } from '@/store'
+import { errorMsg } from '@/utils/message'
+import { get, post } from '@/utils/request'
 
+const store = useStore()
 export interface responseGetOtherPosts {
     posts: {
         postId: string,
@@ -16,6 +19,7 @@ export interface responseGetOtherPosts {
 }
 
 export interface responseGetPost {
+    postId: string,
     title: string,
     text: string,
     url:string,
@@ -66,4 +70,36 @@ export const getTagsList = async(key: string) =>{
         tagsList.value = res.labels.map((label: any) => label.value)
     })
     return tagsList.value
+}
+
+export const cancelLikePost = (thisPost: any) => {
+    console.log(thisPost);
+    
+    post('/relation/deleteRelation', {
+        toId: thisPost.postId,
+        toType: 3,
+        relationType: 1
+    })
+    .then(() => {
+        thisPost.liked = false
+        thisPost.likeCount --
+    })
+}
+
+export const likePost = (thisPost: any) => {
+    const longToken = store.getUserLongToken()
+    if (!longToken) {
+        errorMsg('请先登录')
+        return
+    }
+    post('/relation/createRelation', {
+        toId: thisPost.postId,
+        toType: 3,
+        relationType: 1
+    })
+    .then(() => {
+        thisPost.liked = true
+        thisPost.likeCount ++
+        console.log('点赞成功');
+    })
 }

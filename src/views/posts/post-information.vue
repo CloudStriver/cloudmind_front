@@ -40,11 +40,8 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from '@/store'
-import { post } from '@/utils/request'
-import { errorMsg } from '@/utils/message'
+import { cancelLikePost, likePost } from './utils';
 
-const store = useStore()
 const props = defineProps<{
     information: {
         postId: string;
@@ -58,35 +55,6 @@ const props = defineProps<{
         tags: string[];
     }
 }>();
-
-const cancelLikePost = (thisPost: any) => {
-    post('/relation/deleteRelation', {
-        toId: thisPost.postId,
-        toType: 4,
-        relationType: 1
-    })
-    .then(() => {
-        thisPost.liked = false
-        thisPost.likeCount --
-    })
-}
-
-const likePost = (thisPost: any) => {
-    const longToken = store.getUserLongToken()
-    if (!longToken) {
-        errorMsg('请先登录')
-        return
-    }
-    post('/relation/createRelation', {
-        toId: thisPost.postId,
-        toType: 3,
-        relationType: 1
-    })
-    .then(() => {
-        thisPost.liked = true
-        thisPost.likeCount ++
-    })
-}
 </script>
 
 <style scoped lang="css">
