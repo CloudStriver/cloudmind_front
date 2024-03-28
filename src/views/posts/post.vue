@@ -32,12 +32,16 @@
                             <div 
                                 class="like"
                                 v-if="!postDetail.liked"
-                                @click="likePost"
+                                @click="likePost(postDetail)"
                             >
                                 <i class="iconfont icon-a-dianzan2"></i>
                                 <div>点赞 {{ postDetail.likeCount }}</div>
                             </div>
-                            <div class="liked" v-if="postDetail.liked">
+                            <div 
+                                class="liked" 
+                                v-if="postDetail.liked"
+                                @click="cancelLikePost(postDetail)"
+                            >
                                 <i class="iconfont icon-a-dianzan2"></i>
                                 <div>已点赞 {{ postDetail.likeCount }}</div>
                             </div>
@@ -101,7 +105,8 @@ import { turnTime } from '@/utils/public'
 import { ref, onMounted, computed } from 'vue'
 import type { responseGetPost } from './utils'
 import router from '@/router'
-import { errorMsg, successMsg } from '@/utils/message'
+import { successMsg } from '@/utils/message'
+import { cancelLikePost, likePost } from './utils';
 
 const store = useStore()
 const myUserId = ref('')
@@ -109,6 +114,7 @@ const isShowSetting = ref(false)
 const isShowDeletePost = ref(false)
 const postId = location.href.split('/').pop()
 const postDetail = ref<responseGetPost>({
+    postId: '',
     title: '',
     text: '',
     url: '',
@@ -135,16 +141,6 @@ onMounted(() => {
 
 const collectPost = () => {
     createRelation(3)
-}
-
-const likePost = () => {
-    if (myUserId.value === '') {
-        errorMsg('请先登录')
-        return
-    }
-    else {
-        createRelation(1)
-    }
 }
 
 const createRelation = (type: number) => {
@@ -240,6 +236,7 @@ const getPost = () => {
     .then((res: any) => {
         getMyUserId()
         postDetail.value = res as responseGetPost
+        postDetail.value.postId = postId as string
     })
 }
 
