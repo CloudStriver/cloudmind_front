@@ -176,7 +176,7 @@
 import CHeader from '@/components/header.vue'
 import { ref, onMounted, watch } from 'vue'
 import { turnTime } from '@/utils/public'
-import { getNotifications, getNotificationsCount } from './utils'
+import { getNotifications } from './utils'
 import type { ResponseGetNotification } from './utils'
 
 const select = ref<string>('all')

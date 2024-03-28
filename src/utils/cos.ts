@@ -50,7 +50,7 @@ export const cosUploadFile = (file: any, md5: string, suffix: string, callback: 
         onProgress: (progressData: any) => {
             console.log(progressData.percent)
         },
-        onFileFinish: function (err, data, options) {   /* 非必须 */
+        onFileFinish: function (err) {   /* 非必须 */
             if(!err) {
                 callback()
             }

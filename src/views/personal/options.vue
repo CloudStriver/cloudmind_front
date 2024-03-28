@@ -9,7 +9,7 @@
             <div class="move" @click="moveFile">移动</div>
             <div class="line"></div>
             <div class="recycle" @click="moveToRecycle">移至回收站</div>
-            <div class="delete">彻底删除</div>
+            <div class="delete" @click="cleanOutFile">彻底删除</div>
         </div>
     </div>
 </template>
@@ -23,6 +23,9 @@ const moveFile = () => {
     emit('sendOptions', "moveFile")
 }
 
+const cleanOutFile = () => {
+  emit('sendOptions', "cleanOutFile")
+}
 const moveToRecycle = () => {
     emit('sendOptions', "moveToRecycle")
 }

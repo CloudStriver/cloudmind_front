@@ -278,7 +278,7 @@ const cancelShowOptions = (event: any) => {
 }
 
 const optionType = (sendOptions: string) => {
-    if (sendOptions === 'checkDetail' || sendOptions === 'moveFile' || sendOptions === 'moveToRecycle') {
+    if (sendOptions === 'checkDetail' || sendOptions === 'moveFile' || sendOptions === 'moveToRecycle' || sendOptions === 'cleanOutFile') {
         emit('sendOptions', sendOptions)
         emit('sendDetails', fileDetails.value)
     } 
@@ -292,7 +292,7 @@ const optionType = (sendOptions: string) => {
         postAskDownloadFile(fileIdList, fileNameList)
     }
     else {
-        console.log('其他操作')
+      console.log("其他操作")
     }
 }
 

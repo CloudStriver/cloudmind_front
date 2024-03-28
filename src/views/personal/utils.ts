@@ -123,6 +123,17 @@ const downloadFile = (url: string, fileName: string) => {
     })
 }
 
+// 请求彻底删除文件
+export const postCleanOutFile = async(fileIdList: string[]) :Promise<void> => {
+   const fileId = fileIdList[0]
+    await post('/content/completelyRemoveFile', {
+        fileId
+    })
+        .then(() => {
+            successMsg('成功彻底删除')
+        })
+}
+
 //请求删除文件
 export const postDeleteFile = async(fileIds: string[]):Promise<void> => {
     await post('/content/deleteFile', { 
@@ -193,6 +204,7 @@ export const postCreateFile = async(data: requestCreateFile):Promise<string> => 
     await post('/content/createFile', data)
     .then((res: any) => {
         fileId.value = res.fileId
+        data.name = res.name
     })
     return fileId.value
 }

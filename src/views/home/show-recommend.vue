@@ -67,10 +67,8 @@
 
 <script setup lang="ts">
 import PostDetail from '../posts/post-information.vue'
-import { get, post } from '@/utils/request'
-import { useStore } from '@/store/index'
+import { get } from '@/utils/request'
 import { ref, onMounted, watch } from 'vue'
-import { errorMsg } from '@/utils/message';
 
 const storageContent = ref<any>({
     hotGoods: [],
@@ -115,7 +113,6 @@ const responseDetail = ref<ResponseDetail>({
     users: [],
     posts: [],
 })
-const store = useStore()
 
 onMounted(() => {
     getShow()

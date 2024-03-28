@@ -157,6 +157,7 @@ const folder = ref()
 const store = useStore()
 const fatherId = ref("")
 const selectType = ref("")
+// const recycleTurnSort = ref(false)
 const newFolderName = ref<string>("新建文件夹")
 const isShowFilesCount = ref<boolean>(false)
 const isCreateFolderName = ref<boolean>(true)
@@ -235,7 +236,7 @@ const createFolder = () => {
             updateAt: new Date().toLocaleString(),
         }
         isShowCreateFolder.value = false
-        newFolderName.value = "新建文件夹"
+        // newFolderName.value = res.name
     })
 }
 
