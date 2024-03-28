@@ -30,7 +30,24 @@
                 :key="index"
                 @click="toFile(file)"
                 @contextmenu="getOptions(file, $event, index)"
+                @mouseenter="textLog(index)"
+                @mouseleave="textLog(-1)"
             >
+                <div 
+                    v-show="mouseFileIndex === index"
+                    class="checkbox-choose"
+                    style="opacity: calc(0.3);"
+                    @click="chooseFile(index)"
+                >
+                    <i class="iconfont icon-0-58"></i>
+                </div>
+                <div 
+                    v-show="chooseFileList[index] === true"
+                    class="checkbox-choose"
+                    @click="cancelChooseFile(index)"
+                >
+                    <i class="iconfont icon-0-58"></i>
+                </div>
                 <div class="images">
                     <i 
                         v-if="file.type !== '文件夹'"
@@ -71,6 +88,7 @@ const store = useStore()
 const optionTop = ref<number>(0)
 const optionLeft = ref<number>(0)
 const fatherId = ref<string>("")
+const chooseFileList = ref<boolean[]>([])
 const fileDetails = ref<fileData[]>(
     [{
         fileId: "",
@@ -89,13 +107,14 @@ const fileDetails = ref<fileData[]>(
     }]
 )
 const ctxIndex = ref(-1)
+const mouseFileIndex = ref(-1)
 const isDragFile = ref(false)
 const isShowOptions = ref(false)
 const emit = defineEmits(['loading', 'sendOptions', 'sendDetails'])
 const props = defineProps<{
     sendRequest: {
         option: string,
-        message: string
+        message: any
     }
 }>()
 //存储页面文件列表
@@ -177,9 +196,25 @@ watch(() => props.sendRequest, async() => {
     else if (props.sendRequest.option === 'classifyFiles') {
       await classifyFile()
     }
+    else if (props.sendRequest.option === 'allSelect') {
+        if (props.sendRequest.message === true) {
+            chooseFileList.value = Array(nowFilesList.value.files.length).fill(true)
+        }
+        else {
+            chooseFileList.value = Array(nowFilesList.value.files.length).fill(false)
+        }        
+    }
+    else {
+        console.log('其他操作')
+    }
 })
 
-
+const chooseFile = (index: number) => {
+    chooseFileList.value[index] = true
+}
+const cancelChooseFile = (index: number) => {
+    chooseFileList.value[index] = false
+}
 
 const dropUploadFile = (event: any) => {
     event.preventDefault()
@@ -298,7 +333,9 @@ const classifyFile = async () => {
   }
 }
 
-
+const textLog = (index: number) => {
+    mouseFileIndex.value = index
+}
 
 const getOptions = (file: fileData, event: any, index: number) => {
     ctxIndex.value = index
@@ -378,6 +415,7 @@ const sliceFileName = (name: string) => {
         }
         
         .files-contents {
+            position: relative;
             width: 150px; 
             height: 180px; 
             margin-right: 10px;
@@ -386,6 +424,21 @@ const sliceFileName = (name: string) => {
             flex-direction: column;
             justify-content: center;
             align-items: center;
+
+            .checkbox-choose {
+                position: absolute;
+                width: 18px;
+                height: 18px;
+                top: 10px;
+                left: 10px;
+                color: #ffffff;
+                font-weight: 700;
+                border: 1px solid #fff;
+                background-color: #96b0df;
+                border-radius: 50%;
+                margin-right: 10px;
+                text-align: center
+            }
     
             .images {
                 width: 100px;
