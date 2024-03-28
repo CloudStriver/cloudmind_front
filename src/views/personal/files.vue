@@ -20,7 +20,7 @@
         <div class="files-box">
             <Option 
                 class="option" 
-                v-if="isShowOptions"
+                v-show="isShowOptions"
                 :style="{left: optionLeft + 'px', top: optionTop + 'px'}"
                 @sendOptions="optionType"
             ></Option>
@@ -412,6 +412,7 @@ const sliceFileName = (name: string) => {
 
         .option {
             position: absolute;
+            z-index: 2000;
         }
         
         .files-contents {
