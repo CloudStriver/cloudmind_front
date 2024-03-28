@@ -213,7 +213,7 @@ const createFolder = () => {
         md5: "",
         fatherId: fatherId.value,
         category: 1,
-    } 
+    }
 
     postCreateFile(data)
     .then((res) => {        
