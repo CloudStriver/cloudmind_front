@@ -3,7 +3,7 @@
         <header class="recycle-header">
             <div class="recycle-header-header">
                 <div>回收站</div>
-                <button>
+              <button>
                     <i class="iconfont icon-lajitong"></i>
                     清空回收站
                 </button>

@@ -48,10 +48,13 @@ export const cosUploadFile = (file: any, md5: string, suffix: string, callback: 
         Body: file,
         SliceSize: file.size,
         onProgress: (progressData: any) => {
-            if (progressData.percent === 1) {
+            console.log(progressData.percent)
+        },
+        onFileFinish: function (err, data, options) {   /* 非必须 */
+            if(!err) {
                 callback()
             }
-        }
+        },
     }, (err: any, data: any) => {
         console.log(err || data);
     })
