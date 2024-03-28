@@ -16,6 +16,7 @@
                 <input 
                     type="checkbox"
                     id="allSelect"
+                    v-model="allSelect"
                 >全选
             </label>
             <div class="sort">
@@ -32,6 +33,8 @@ import { useStore } from '@/store'
 import router from '@/router'
 
 const store = useStore()
+const emit = defineEmits(['sendPathMsg'])
+const allSelect = ref(false)
 const pathData = ref({
     pathId: [] as string[],
     pathName: [] as string[]
@@ -63,6 +66,12 @@ watch(() => store.pathChange, (newVal) => {
             pathName: pathData.value.pathName.pop() as string
         }
     }
+})
+watch(() => allSelect.value, (newVal) => {
+    emit('sendPathMsg', {
+        option: 'allSelect',
+        message: newVal
+    })
 })
 
 const toPath = (index: number) => {
