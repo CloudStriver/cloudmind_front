@@ -4,7 +4,7 @@
             <span 
                 class="row"
                 v-if="!props.information.liked"
-                @click="likePost(props.information)"
+                @click="createRelation(props.information, 3, 1)"
             >
                 <i class="iconfont icon-a-dianzan2"></i>
                 <div>点赞 {{ props.information.likeCount }}</div>
@@ -12,7 +12,7 @@
             <span
                 class="row liked"
                 v-else
-                @click="cancelLikePost(props.information)"
+                @click="cancelRelation(props.information, 3, 1)"
             >
                 <i class="iconfont icon-a-dianzan2"></i>
                 <div>已点赞 {{ props.information.likeCount }}</div>
@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { cancelLikePost, likePost } from './utils';
+import { cancelRelation, createRelation } from './utils';
 
 const props = defineProps<{
     information: {

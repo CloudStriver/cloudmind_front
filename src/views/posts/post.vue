@@ -32,7 +32,7 @@
                             <div 
                                 class="like"
                                 v-if="!postDetail.liked"
-                                @click="likePost(postDetail)"
+                                @click="createRelation(postDetail, 3, 1)"
                             >
                                 <i class="iconfont icon-a-dianzan2"></i>
                                 <div>点赞 {{ postDetail.likeCount }}</div>
@@ -40,7 +40,7 @@
                             <div 
                                 class="liked" 
                                 v-if="postDetail.liked"
-                                @click="cancelLikePost(postDetail)"
+                                @click="cancelRelation(postDetail, 3, 1)"
                             >
                                 <i class="iconfont icon-a-dianzan2"></i>
                                 <div>已点赞 {{ postDetail.likeCount }}</div>
@@ -52,12 +52,16 @@
                             <div 
                                 class="collect" 
                                 v-if="!postDetail.collected"
-                                @click="collectPost"
+                                @click="createRelation(postDetail, 3, 3)"
                             >
                                 <i class="iconfont icon-shoucang01"></i>
                                 <div>收藏</div>
                             </div>
-                            <div class="collected" v-if="postDetail.collected">
+                            <div 
+                                class="collected" 
+                                v-if="postDetail.collected"
+                                @click="cancelRelation(postDetail, 3, 3)"
+                            >
                                 <i class="iconfont icon-shoucang01"></i>
                                 <div>已收藏</div>
                             </div>
@@ -106,7 +110,7 @@ import { ref, onMounted, computed } from 'vue'
 import type { responseGetPost } from './utils'
 import router from '@/router'
 import { successMsg } from '@/utils/message'
-import { cancelLikePost, likePost } from './utils';
+import { cancelRelation, createRelation } from './utils';
 
 const store = useStore()
 const myUserId = ref('')
@@ -138,27 +142,6 @@ const postDetail = ref<responseGetPost>({
 onMounted(() => {
     getPost()
 })
-
-const collectPost = () => {
-    createRelation(3)
-}
-
-const createRelation = (type: number) => {
-    post('/relation/createRelation', {
-        toId: postId,
-        toType: 3,
-        relationType: type
-    })
-    .then(() => {
-        if (type === 1) {
-            postDetail.value.liked = true
-            postDetail.value.likeCount++
-        }
-        else if (type === 3) {
-            postDetail.value.collected = true
-        }
-    })
-}
 
 const judgeTags = computed(() => {
     if (postDetail.value.tags !== null) {

@@ -9,7 +9,7 @@
             <div class="header">
                 <CHeader class="cheader"></CHeader>
                 <PathTitle v-if="isShowFiles && isLoading"></PathTitle>
-                <RecycleTitle v-else></RecycleTitle>
+                <RecycleTitle v-if="isShowRecycle"></RecycleTitle>
             </div>
             <div class="bottom">
                 <Files 
@@ -20,7 +20,7 @@
                     @loading="getLoading"
                     :sendRequest="requestMessage"
                 ></Files>
-                <Recycle v-else></Recycle>
+                <Recycle v-if="isShowRecycle"></Recycle>
             </div>
         </div>
         <Popup 
@@ -63,17 +63,20 @@ const fileContents = ref({
         updateAt: ""
     }]
 })
+const isShowRecycle = ref(location.href.includes('recycle'))
 const isLoading = ref(false)
 const isShowPopup = ref(false)
 const isShowFiles = ref(!location.href.includes('recycle'))
 const getDrawerOptionType = (sendDrawerOptions: string) => {
     if (sendDrawerOptions === 'showRecycle') {
         router.push('/personal/recycle')
+        isShowRecycle.value = true
         isShowFiles.value = false
     }
     else {
         const userId = store.getUserId()
         router.push('/personal/' + userId)
+        isShowRecycle.value = false
         isShowFiles.value = true
     }
 }

@@ -72,21 +72,24 @@ export const getTagsList = async(key: string) =>{
     return tagsList.value
 }
 
-export const cancelLikePost = (thisPost: any) => {
-    console.log(thisPost);
-    
+export const cancelRelation = (thisPost: any, toType: number, relationType: number) => {
     post('/relation/deleteRelation', {
         toId: thisPost.postId,
-        toType: 3,
-        relationType: 1
+        toType,
+        relationType,
     })
     .then(() => {
-        thisPost.liked = false
-        thisPost.likeCount --
+        if (relationType === 1) {
+            thisPost.liked = false
+            thisPost.likeCount --
+        }
+        else if (relationType === 3) {
+            thisPost.collected = false
+        }
     })
 }
 
-export const likePost = (thisPost: any) => {
+export const createRelation = (thisPost: any, toType: number, relationType: number) => {
     const longToken = store.getUserLongToken()
     if (!longToken) {
         errorMsg('请先登录')
@@ -94,12 +97,16 @@ export const likePost = (thisPost: any) => {
     }
     post('/relation/createRelation', {
         toId: thisPost.postId,
-        toType: 3,
-        relationType: 1
+        toType,
+        relationType,
     })
     .then(() => {
-        thisPost.liked = true
-        thisPost.likeCount ++
-        console.log('点赞成功');
+        if (relationType === 1) {
+            thisPost.liked = true
+            thisPost.likeCount ++
+        }
+        else if (relationType === 3) {
+            thisPost.collected = true
+        }
     })
 }
