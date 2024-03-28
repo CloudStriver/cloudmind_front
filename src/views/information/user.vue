@@ -130,7 +130,7 @@ import { ref, onMounted } from 'vue'
 import { useStore } from '@/store/index'
 import SparkMD5 from 'spark-md5'
 import { cosUploadImage } from '@/utils/public-cos'
-import { getUserDetail } from './utils'
+import {getUserDetail, updateUser} from './utils'
 
 const store = useStore()
 const userId = store.getUserId()
@@ -168,9 +168,11 @@ const changeAvatar = async(event: any) => {
         const md5 = spark.end();
         const suffix = '.' + file.name.split('.').pop();
         cosUploadImage(file, md5, suffix, async () => {
+            await updateUser("https://cloudmind.top/users/" + md5 + suffix)
             detail.value = await getUserDetail() as any
             // location.reload()
         })
+
     }
 }
 </script>

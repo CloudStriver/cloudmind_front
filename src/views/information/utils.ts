@@ -1,5 +1,5 @@
 import { useStore  } from "@/store/index"
-import { get } from "@/utils/request"
+import {get, post} from "@/utils/request"
 import { ref } from "vue"
 
 const store = useStore()
@@ -33,4 +33,9 @@ export const getUserDetail = async() => {
     return detail.value
 }
 
-//修改用户信息
+// 修改用户信息
+export const updateUser = async (url: String)=>  {
+    await post('/content/updateUser', {
+        url: url,
+    })
+}
