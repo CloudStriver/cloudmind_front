@@ -236,7 +236,7 @@ const createFolder = () => {
             updateAt: new Date().toLocaleString(),
         }
         isShowCreateFolder.value = false
-        newFolderName.value = "新建文件夹"
+        // newFolderName.value = res.name
     })
 }
 

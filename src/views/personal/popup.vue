@@ -1,5 +1,15 @@
 <template>
     <div class="popup-main-box">
+      <div class="cleanOut-main-box" v-if="props.sendContents.option === 'cleanOutFile'">
+        <div class="cleanOut-box">
+          <div class="cleanOut">
+            <div class="button">
+              <button @click="cancelPopup">取消</button>
+              <button @click="confirmCleanOut">确定</button>
+            </div>
+          </div>
+        </div>
+      </div>
         <div class="recycle-main-box" v-if="props.sendContents.option === 'moveToRecycle'">
             <div class="recycle-box">
                 <div class="recycle">
@@ -123,7 +133,7 @@
 <script setup lang="ts">
 import Rename from './rename-box.vue'
 import { onMounted, ref } from 'vue';
-import { getPrivateFilesList, postCreateFile, postMoveFile, postDeleteFile } from './utils'
+import {getPrivateFilesList, postCreateFile, postMoveFile, postDeleteFile, postCleanOutFile} from './utils'
 import type { responsePrivateFilesList, requestCreateFile } from './utils'
 import { errorMsg, successMsg } from '@/utils/message';
 
@@ -234,6 +244,18 @@ const getRename = (sendRename: any) => {
     }
 }
 
+const confirmCleanOut = () => {
+  const filedIdList = props.sendContents.contents.map(content => content.fileId);
+  postCleanOutFile(filedIdList)
+      .then(() => {
+        cancelPopup()
+        emit('sendOperations',
+            {
+              option: "refreshFiles",
+              message: ""
+            })
+      })
+}
 const confirmMoveToRecycle = () => {
     const filedIdList = props.sendContents.contents.map((file) => file.fileId)
     postDeleteFile(filedIdList)
@@ -352,6 +374,65 @@ const showDetails = (name: string, event: any) => {
     left: 0;
     transition: all 0.3s;
     overflow-y: auto;
+
+    .cleanOut-main-box {
+      display: flex;
+
+      .cleanOut-box {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        padding: 50px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        display: flex;
+
+        .cleanOut {
+          position: relative;
+          width: 210px;
+          height: 50px;
+          background-color: rgb(240, 245, 254);
+          box-shadow: 0 0 30px 2px rgba(5, 5, 5, 0.1);
+          border-radius: 5px;
+          margin: auto;
+          padding: 10px;
+          user-select: none;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+
+          .button {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+
+            button {
+              width: 80px;
+              height: 25px;
+              border: none;
+              border-radius: 3px;
+              transition: all 0.1s;
+            }
+
+            button:first-child {
+              margin-right: 10px;
+              background-color: #e3e3e3a2;
+              color: #707070
+            }
+
+            button:last-child {
+              color: rgb(66, 100, 159);
+              background-color: rgb(250, 236, 228);
+            }
+
+            button:active {
+              transform: scale(0.9);
+            }
+          }
+        }
+      }
+    }
 
     .recycle-main-box {
         display: flex;
