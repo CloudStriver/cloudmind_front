@@ -216,7 +216,8 @@ const getShow = () => {
                     url: user.url,
                     description: user.description,
                     followCount: user.followCount,
-                    labels: user.labels
+                    labels: user.labels,
+                    followed: user.followed
                 }))
             }
             return 
@@ -242,7 +243,8 @@ const getShow = () => {
                     url: user.url,
                     description: user.description,
                     followCount: user.followCount,
-                    labels: user.labels
+                    labels: user.labels,
+                    followed: user.followed
                 }))
             };
             storageContent.value[index] = res.recommends.users
