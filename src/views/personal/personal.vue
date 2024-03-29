@@ -45,9 +45,7 @@ import RecycleTitle from './recycle-title.vue'
 import CHeader from '@/components/header.vue'
 import router from '@/router'
 import { ref } from 'vue'
-import { useStore } from '@/store'
 
-const store = useStore()
 const requestMessage = ref({
     option: "",
     message: ""
@@ -84,9 +82,7 @@ const getDrawerOptionType = (sendDrawerOptions: string) => {
         isShowRecycle.value = true
         isShowFiles.value = false
     }
-    else {
-        const userId = store.getUserId()
-        router.push('/personal/' + userId)
+    else if (sendDrawerOptions === 'showFiles'){
         isShowRecycle.value = false
         isShowFiles.value = true
     }
