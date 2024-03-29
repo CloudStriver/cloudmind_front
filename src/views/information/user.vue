@@ -64,7 +64,10 @@
                 </div>
             </div>
             <div class="show-contents" v-show="select === '个人资料'">
-                <header class="show-contents-header">个人资料</header>
+                <header class="show-contents-header">个人资料
+                  <button @click="toggleEdit" class="edit-button">{{ isEditing ? '取消' : '编辑' }}</button>
+                  <button v-if="isEditing" @click="saveChanges" class="edit-button">保存</button>
+                </header>
                 <footer class="show-contents-footer">
                     <div class="info">
                         <div class="first">
@@ -73,7 +76,10 @@
                             <div>昵</div>
                             <div>称</div>
                         </div>
-                        <div class="second">{{ detail.name }}</div>
+                        <div>
+                          <div v-if="!isEditing" class="second">{{ detail.name }}</div>
+                          <input v-else class="second" v-model="editableDetail.name">
+                        </div>
                     </div>
                     <div class="info">
                         <div class="first">
@@ -88,7 +94,15 @@
                             <div>性</div>
                             <div>别</div>
                         </div>
-                        <div class="second">{{ detail.sex }}</div>
+                        <div>
+                          <div v-if="!isEditing" class="second">{{ detail.sex }}</div>
+                          <div v-else class="second">
+                            <input type="radio" id="male" value="男" v-model="editableDetail.sex" name="sex">
+                            <label for="male">男</label>
+                            <input type="radio" id="female" value="女" v-model="editableDetail.sex" name="sex">
+                            <label for="female">女</label>
+                          </div>
+                        </div>
                     </div>
                     <div class="info">
                         <div class="first">
@@ -97,7 +111,10 @@
                             <div>姓</div>
                             <div>名</div>
                         </div>
-                        <div class="second">{{ detail.fullName }}</div>
+                        <div>
+                          <div v-if="!isEditing" class="second">{{ detail.fullName }}</div>
+                          <input v-else class="second" v-model="editableDetail.fullName">
+                        </div>
                     </div>
                     <div class="info">
                         <div class="first">
@@ -106,7 +123,10 @@
                             <div>证</div>
                             <div>号</div>
                         </div>
-                        <div class="second">{{ detail.idCard }}</div>
+                        <div>
+                          <div v-if="!isEditing" class="second">{{ detail.idCard }}</div>
+                          <input v-else class="second" v-model="editableDetail.idCard">
+                        </div>
                     </div>
                     <div class="info">
                         <div class="first">
@@ -115,7 +135,10 @@
                             <div>简</div>
                             <div>介</div>
                         </div>
-                        <div class="second">{{ detail.description }}</div>
+                        <div>
+                          <div v-if="!isEditing" class="second">{{ detail.description }}</div>
+                          <input v-else class="second" v-model="editableDetail.description">
+                        </div>
                     </div>
                 </footer>
             </div>
@@ -126,7 +149,7 @@
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
 import avatar from '@/components/avatar.vue'
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, computed} from 'vue'
 import { useStore } from '@/store/index'
 import SparkMD5 from 'spark-md5'
 import { cosUploadImage } from '@/utils/public-cos'
@@ -135,19 +158,38 @@ import {getUserDetail, updateUser} from './utils'
 const store = useStore()
 const userId = store.getUserId()
 const isChangeAvatar = ref(false)
+const isEditing = ref(false)
 const detail = ref({
     name: '',
     sex: '男',//1男 2女
     idCard: '未填写',
     fullName: '未填写',
-    description: '未填写',
+    description: '此人很懒，什么都没有写...',
     avatar: store.userAvatar
 })
+const editableDetail = ref({ ...detail.value })
 const select = ref('个人资料')
 
 onMounted(async() => {
     detail.value = await getUserDetail() as any
+    editableDetail.value = detail.value
 })
+
+const toggleEdit = () => {
+  if (isEditing.value) {
+    isEditing.value = false
+    editableDetail.value = { ...detail.value } // 取消时重置更改
+  } else {
+    isEditing.value = true
+  }
+}
+
+const saveChanges = async () => {
+  detail.value = { ...editableDetail.value }
+  isEditing.value = false
+  await updateUser({name: "1"})
+  // await updateUser({detail.value.name, detail.value.fullName, "", detail.value.sex == '男' ? 1 : 2, detail.value.idCard, detail.value.description})
+}
 
 const splitName = (name: string) => {
     return name.length  > 10 ? name.slice(0, 10) + '...' : name
@@ -168,9 +210,9 @@ const changeAvatar = async(event: any) => {
         const md5 = spark.end();
         const suffix = '.' + file.name.split('.').pop();
         cosUploadImage(file, md5, suffix, async () => {
-            await updateUser("https://cloudmind.top/users/" + md5 + suffix)
+            await updateUser("","", "https://cloudmind.top/users/" + md5 + suffix, 0,"","")
             detail.value = await getUserDetail() as any
-            // location.reload()
+            location.reload()
         })
 
     }
@@ -283,8 +325,14 @@ const changeAvatar = async(event: any) => {
                 font-weight: 600;
                 padding: 10px;
                 border-bottom: 2px solid rgba(240, 245, 255, 1);
+                .edit-button {
+                  margin-left: 642px;
+                  font-size: 20px;
+                  font-weight: 600;
+                  border-bottom: 2px solid rgba(240, 245, 255, 1);
+                }
             }
-            
+
             .show-contents-footer {
                 height: 350px;
                 padding-left: 20px;

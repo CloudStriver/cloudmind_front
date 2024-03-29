@@ -33,7 +33,7 @@
                     <div>
                         <div class="section-header">
                             <div class="section-header-select">
-                                <div class="select-post-box">
+                                <div class="select-post-box" @click="selectStatus('')">
                                     <input 
                                         type="radio"
                                         id="all"
@@ -42,29 +42,29 @@
                                     >
                                     <label for="all">全部 ({{ postsList.posts.length }})</label>
                                 </div>
-                                <div class="select-post-box">
+                                <div class="select-post-box" @click="selectStatus('&onlyStatus=1')">
                                     <input 
                                         type="radio"
-                                        id="all"
+                                        id="public"
                                         name="select-post"
                                     >
-                                    <label for="all">全部可见</label>
+                                    <label for="public">全部可见</label>
                                 </div>
-                                <div class="select-post-box">
+                                <div class="select-post-box" @click="selectStatus('&onlyStatus=2')">
                                     <input 
                                         type="radio"
-                                        id="all"
+                                        id="onlyMe"
                                         name="select-post"
                                     >
-                                    <label for="all">仅我可见</label>
+                                    <label for="onlyMe">仅我可见</label>
                                 </div>
-                                <div class="select-post-box">
-                                    <input 
+                                <div class="select-post-box" @click="selectStatus('&onlyStatus=3')">
+                                    <input
                                         type="radio"
-                                        id="all"
+                                        id="draft"
                                         name="select-post"
                                     >
-                                    <label for="all">草稿</label>
+                                    <label for="draft">草稿</label>
                                 </div>
                             </div>
                             <div class="section-header-classify">
@@ -164,6 +164,9 @@ onMounted(async() => {
     postsList.value = await getMyPostList('')
 })
 
+const selectStatus = async (url: String) => {
+  postsList.value = await getMyPostList(url)
+}
 const continueDelete = () => {
     const postId = nowDeletePostId.value
     
