@@ -187,8 +187,7 @@ const toggleEdit = () => {
 const saveChanges = async () => {
   detail.value = { ...editableDetail.value }
   isEditing.value = false
-  await updateUser({name: "1"})
-  // await updateUser({detail.value.name, detail.value.fullName, "", detail.value.sex == '男' ? 1 : 2, detail.value.idCard, detail.value.description})
+  await updateUser(detail.value.name, detail.value.fullName, "", detail.value.sex == '男' ? 1 : 2, detail.value.idCard, detail.value.description)
 }
 
 const splitName = (name: string) => {
