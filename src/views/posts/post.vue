@@ -141,6 +141,7 @@ const postDetail = ref<responseGetPost>({
         userId: '',
         name: '',
         url: '',
+        followed: false,
     },
     tags: [],
     viewCount: 0,
