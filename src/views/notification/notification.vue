@@ -84,15 +84,18 @@
                                 </div>
                                 <div class="content">
                                     <div class="content-top">
-                                        <div class="user">{{ item.fromName }}</div>
+                                        <router-link
+                                            :to="`/user/${item.fromId}`"
+                                            class="user-section"
+                                        >{{ item.fromName }}</router-link>
                                         <div>赞了</div>
                                         <div>你的</div>
                                         <div>帖子</div>
                                     </div>
-                                    <router-link 
-                                        to="/post/1"
-                                        class="content-section"
-                                    >{{ item.toName }}</router-link>
+                                  <router-link
+                                      :to="`/post/${item.toId}`"
+                                      class="content-section"
+                                  >{{ item.toName }}</router-link>
                                     <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
                                 </div>
                             </div>
@@ -102,13 +105,16 @@
                                 </div>
                                 <div class="content">
                                     <div class="content-top">
-                                        <div class="user">{{ item.fromName }}</div>
+                                        <router-link
+                                            :to="`/user/${item.fromId}`"
+                                            class="user-section"
+                                        >{{ item.fromName }}</router-link>
                                         <div>评论了</div>
                                         <div>你的</div>
                                         <div>帖子</div>
                                     </div>
                                     <router-link 
-                                        to="/post/1"
+                                        :to="`/post/${item.toId}`"
                                         class="content-section"
                                     >{{ item.toName }}</router-link>
                                     <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
@@ -120,13 +126,16 @@
                                 </div>
                                 <div class="content">
                                     <div class="content-top">
-                                        <div class="user">{{ item.fromName }}</div>
+                                        <router-link
+                                            :to="`/user/${item.fromId}`"
+                                            class="user-section"
+                                        >{{ item.fromName }}</router-link>
                                         <div>收藏了</div>
                                         <div>你的</div>
                                         <div>帖子</div>
                                     </div>
                                     <router-link 
-                                        to="/post/1"
+                                        :to="`/post/${item.toId}`"
                                         class="content-section"
                                     >{{ item.toName }}</router-link>
                                     <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
@@ -138,13 +147,16 @@
                                 </div>
                                 <div class="content">
                                     <div class="content-top">
-                                        <div class="user">{{ item.fromName }}</div>
+                                        <router-link
+                                            :to="`/user/${item.fromId}`"
+                                            class="user-section"
+                                        >{{ item.fromName }}</router-link>
                                         <div>分享了</div>
                                         <div>你的</div>
                                         <div>帖子</div>
                                     </div>
                                     <router-link 
-                                        to="/post/1"
+                                        :to="`/post/${item.toId}`"
                                         class="content-section"
                                     >{{ item.toName }}</router-link>
                                     <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
@@ -156,7 +168,10 @@
                                 </div>
                                 <div class="content">
                                     <div class="content-top">
-                                        <div class="user">{{ item.fromName }}</div>
+                                        <router-link
+                                            :to="`/user/${item.fromId}`"
+                                            class="user-section"
+                                        >{{ item.fromName }}</router-link>
                                         <div>关注了</div>
                                         <div>你</div>
                                     </div>
@@ -440,6 +455,18 @@ const turnNotificationType = (type: string): number => {
                             }
                             .content-section:hover {
                                 color: #8eaedc;
+                            }
+
+                            .user-section {
+                              text-decoration: none;
+                              color: #000;
+                              font-size: 12px;
+                              font-weight: 700;
+                              margin-bottom: 5px;
+                              cursor: pointer;
+                            }
+                            .user-section:hover {
+                              color: #8eaedc;
                             }
 
                             .content-bottom {

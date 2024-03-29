@@ -7,7 +7,7 @@ export interface ResponseGetNotification {
         fromId: string
         toName: string
         toId: string
-        toType: number
+        toUserId: string
         type: number
         createTime: number
     }>
