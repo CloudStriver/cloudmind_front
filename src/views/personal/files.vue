@@ -87,6 +87,7 @@ import type { responsePrivateFilesList, fileData, requestCreateFile } from './ut
 const store = useStore()
 const optionTop = ref<number>(0)
 const optionLeft = ref<number>(0)
+const isClassifyFiles = ref(false)
 const fatherId = ref<string>("")
 const chooseFileList = ref<boolean[]>([])
 const fileDetails = ref<fileData[]>(
@@ -159,6 +160,9 @@ onMounted(async() => {
 })
 
 onBeforeRouteUpdate(async(to) => {
+    if (isClassifyFiles.value) {
+        return
+    }
     fatherId.value = to.params.fatherId as string
     nowFilesList.value = await getPrivateFilesList({
         limit: 100,
@@ -298,39 +302,41 @@ const optionType = (sendOptions: string) => {
 
 // 文件筛选
 const classifyFile = async () => {
-  let category = 0;
-  switch (props.sendRequest.message) {
-    case "file":
-      category = 1
-      break;
-    case "image":
-      category = 2
-      break;
-    case "video":
-      category = 3
-      break;
-    case "music":
-      category = 4
-      break;
-  }
-  if (category !== 0) {
-    nowFilesList.value = await getPrivateFilesList({
-      limit: 100,
-      offset: 0,
-      sortType: 3,
-      backward: true,
-      onlyFatherId: fatherId.value,
-      onlyCategory: category,
-    })
-  } else {
-    nowFilesList.value = await getPrivateFilesList({
-      limit: 100,
-      offset: 0,
-      sortType: 3,
-      backward: true,
-      onlyFatherId: fatherId.value,
-    })
-  }
+    isClassifyFiles.value = true
+    let category = 0;
+    switch (props.sendRequest.message) {
+        case "file":
+        category = 1
+        break;
+        case "image":
+        category = 2
+        break;
+        case "video":
+        category = 3
+        break;
+        case "music":
+        category = 4
+        break;
+    }
+    if (category !== 0) {
+        nowFilesList.value = await getPrivateFilesList({
+        limit: 100,
+        offset: 0,
+        sortType: 3,
+        backward: true,
+        onlyFatherId: fatherId.value,
+        onlyCategory: category,
+        })
+    }
+    else {
+        nowFilesList.value = await getPrivateFilesList({
+        limit: 100,
+        offset: 0,
+        sortType: 3,
+        backward: true,
+        onlyFatherId: fatherId.value,
+        })
+    }
 }
 
 const textLog = (index: number) => {
@@ -354,6 +360,7 @@ const getOptions = (file: fileData, event: any, index: number) => {
 
 const toFile = (file: fileData) => {
     if (file.type === '文件夹') {
+        isClassifyFiles.value = false
         fatherId.value = file.fileId
         router.push({name: 'personal', params: {fatherId: fatherId.value}})
     }
