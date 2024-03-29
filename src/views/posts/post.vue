@@ -21,7 +21,22 @@
                                 <img :src="postDetail.author.url" alt="">
                                 <div>{{ postDetail.author.name }}</div>
                             </div>
-                            <button class="attention" v-if="!isMyPost">关注</button>
+                          <div
+                              class="follow"
+                              v-if="!postDetail.author.followed"
+                              @click="followUser(postDetail.author)"
+                          >
+                            <i class="iconfont icon-a-dianzan2"></i>
+                            <div>关注</div>
+                          </div>
+                          <div
+                              class="followed"
+                              v-if="postDetail.author.followed"
+                              @click="unfollowerUser(postDetail.author)"
+                          >
+                            <i class="iconfont icon-a-dianzan2"></i>
+                            <div>已关注</div>
+                          </div>
                         </div>
                     </header>
                     <section class="detail-section">
@@ -109,7 +124,7 @@ import { turnTime } from '@/utils/public'
 import { ref, onMounted, computed } from 'vue'
 import type { responseGetPost } from './utils'
 import router from '@/router'
-import { successMsg } from '@/utils/message'
+import {errorMsg, successMsg} from '@/utils/message'
 import { cancelRelation, createRelation } from './utils';
 
 const store = useStore()
@@ -222,6 +237,39 @@ const getPost = () => {
         postDetail.value.postId = postId as string
     })
 }
+
+const followUser = (user: any) => {
+  const longToken = store.getUserLongToken()
+  if (!longToken) {
+    errorMsg('请先登录')
+    return
+  }
+  post('/relation/createRelation', {
+    toId: user.userId,
+    toType:  1,
+    relationType: 2,
+  })
+    .then(() => {
+      user.followed = true
+    })
+}
+
+const unfollowerUser = (user: any) => {
+  const longToken = store.getUserLongToken()
+  if (!longToken) {
+    errorMsg('请先登录')
+    return
+  }
+  post('/relation/deleteRelation', {
+    toId: user.userId,
+    toType:  1,
+    relationType: 2,
+  })
+  .then(() => {
+    user.followed = false
+  })
+}
+
 
 </script>
 

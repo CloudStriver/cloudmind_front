@@ -27,6 +27,7 @@ export interface responseGetPost {
         userId: string,
         name: string,
         url: string,
+        followed: boolean
     }
     tags: string[],
     viewCount: number,

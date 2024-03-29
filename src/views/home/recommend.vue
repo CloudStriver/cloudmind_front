@@ -41,16 +41,16 @@
                     @mouseleave="mouseleaveClassifyPop"
                 ></i>
                 <div class="more-box" v-show="isShowClassify">
-                    <div>
-                        <input 
-                            id="goods"
-                            type="radio"
-                            name="select-classify"
-                            v-model="selectClassify"
-                            value="goods"
-                        >
-                        <label for="goods">商品</label>
-                    </div>
+<!--                    <div>-->
+<!--                        <input -->
+<!--                            id="goods"-->
+<!--                            type="radio"-->
+<!--                            name="select-classify"-->
+<!--                            v-model="selectClassify"-->
+<!--                            value="goods"-->
+<!--                        >-->
+<!--                        <label for="goods">商品</label>-->
+<!--                    </div>-->
                     <div>
                         <input 
                             id="file"

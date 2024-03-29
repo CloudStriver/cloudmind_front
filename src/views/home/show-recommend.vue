@@ -56,19 +56,38 @@
                         {{ tag }}
                     </div>
                 </div>
-                <button>
-                    <span>+</span>
-                    <span>关注</span>
-                </button>
+              <div
+                  class="follow"
+                  v-if="!user.followed"
+                  @click="followUser(user)"
+              >
+                <i class="iconfont icon-a-dianzan2"></i>
+                <div>关注</div>
+              </div>
+              <div
+                  class="followed"
+                  v-if="user.followed"
+                  @click="unfollowerUser(user)"
+              >
+                <i class="iconfont icon-a-dianzan2"></i>
+                <div>已关注</div>
+              </div>
             </div>
         </div>
     </div>
 </template>
 
+
 <script setup lang="ts">
 import PostDetail from '../posts/post-information.vue'
 import { get } from '@/utils/request'
 import { ref, onMounted, watch } from 'vue'
+import { post } from '@/utils/request'
+import {cancelRelation, createRelation} from "@/views/posts/utils";
+import {errorMsg} from "@/utils/message";
+import {useStore} from "@/store";
+
+const store = useStore()
 
 const storageContent = ref<any>({
     hotGoods: [],
@@ -96,6 +115,7 @@ interface ResponseDetail {
         description: string
         followCount: number
         labels: string[]
+        followed: boolean
     }[],
     posts?: {
         postId: string
@@ -250,11 +270,48 @@ const trunNum = (type: string) => {
         case 'Files':
             return 2
         case 'Goods':
-            return 3
-        case 'Posts':
             return 4
+        case 'Posts':
+            return 3
     }
 }
+
+
+
+const followUser = (user: any) => {
+  const longToken = store.getUserLongToken()
+  if (!longToken) {
+    errorMsg('请先登录')
+    return
+  }
+    post('/relation/createRelation', {
+      toId: user.userId,
+      toType:  1,
+      relationType: 2,
+    })
+    .then(() => {
+      user.followed = true
+      user.followCount++
+    })
+}
+
+const unfollowerUser = (user: any) => {
+  const longToken = store.getUserLongToken()
+  if (!longToken) {
+    errorMsg('请先登录')
+    return
+  }
+  post('/relation/deleteRelation', {
+    toId: user.userId,
+    toType:  1,
+    relationType: 2,
+  })
+    .then(() => {
+      user.followed = false
+      user.followCount--
+    })
+}
+
 </script>
 
 <style scoped lang="css">
@@ -383,27 +440,32 @@ const trunNum = (type: string) => {
                 }
             }
 
-            button {
-                width: 60px;
-                height: 30px;
-                line-height: 30px;
-                background-color: #f8d9c5;
-                box-shadow: 0 0 5px 1px #ebac82;
-                border: none;
-                border-radius: 5px;
-                color: #fff;
-                font-weight: 700;
-                cursor: pointer;
+          .follow, .followed {
+            width: 70px;
+            height: 30px;
+            line-height: 30px;
+            background-color: #f8d9c5;
+            box-shadow: 0 0 5px 1px #ebac82;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+          }
 
-                span:first-child {
-                    font-size: 17px;
-                    margin-right: 3px;
-                    vertical-align: top;
-                }
-            }
-            button:active {
-                box-shadow: none;
-            }
+          .follow i, .followed i {
+            font-size: 17px;
+            margin-right: 3px;
+          }
+
+          /* 按钮激活（被点击）时的样式 */
+          .follow:active, .followed:active {
+            box-shadow: none;
+          }
+
         }
     }
 }
