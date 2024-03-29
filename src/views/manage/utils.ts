@@ -28,6 +28,7 @@ export interface responseGetMyPostList {
 }
 
 export const getMyPostList = async(params: any) => {
+    console.log('getMyPostList')
     const postsList = ref<responseGetMyPostList>({
         posts: []
     })
