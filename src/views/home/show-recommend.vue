@@ -82,8 +82,9 @@
 import PostDetail from '../posts/post-information.vue'
 import { get } from '@/utils/request'
 import { ref, onMounted, watch } from 'vue'
+import { post } from '@/utils/request'
+import {errorMsg} from "@/utils/message";
 import {useStore} from "@/store";
-
 const store = useStore()
 
 const storageContent = ref<any>({
