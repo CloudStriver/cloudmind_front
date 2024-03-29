@@ -86,7 +86,6 @@ import { post } from '@/utils/request'
 import {cancelRelation, createRelation} from "@/views/posts/utils";
 import {errorMsg} from "@/utils/message";
 import {useStore} from "@/store";
-
 const store = useStore()
 
 const storageContent = ref<any>({
