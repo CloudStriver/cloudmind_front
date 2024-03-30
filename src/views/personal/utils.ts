@@ -4,6 +4,24 @@ import { ref } from 'vue'
 
 //------------------------------------------------------------interface
 
+// 文件信息
+interface File {
+    fileId: string;
+    userId: string;
+    name: string;
+    type: string;
+    path: string;
+    fatherId: string;
+    spaceSize: string;
+    isDel: number;
+    zone: string;
+    subZone: string;
+    description: string;
+    updateAt: string;
+    createAt: string;
+    isChoose: boolean;
+}
+
 //搜索/查看用户文件列表的参数
 export interface requestPrivateFilesList {
     id?: string;
@@ -47,24 +65,7 @@ export interface responsePrivateFilesList {
 
 //查看回收站的返回
 export interface responseRecycleFilesList {
-    files: [
-        {
-            fileId: string,
-            userId: string,
-            name: string,
-            type: string,
-            path: string
-            fatherId: string,
-            spaceSize: string,
-            isDel: number,
-            zone: string,
-            subZone: string,
-            description: string,
-            updateAt: string,
-            createAt: string,
-            isChoose: boolean
-        }
-    ],
+    files: File[],
     total: number,
     token: string,
 }
@@ -320,3 +321,4 @@ export const getCategory = (type: String): number => {
         return 1; // 其他类型
     }
 }
+

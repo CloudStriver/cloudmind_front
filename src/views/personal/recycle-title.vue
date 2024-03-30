@@ -3,7 +3,7 @@
         <header class="recycle-header">
             <div class="recycle-header-header">
                 <div>回收站</div>
-              <button>
+              <button @click="cleanOutRecycle">
                     <i class="iconfont icon-lajitong"></i>
                     清空回收站
                 </button>
@@ -27,6 +27,17 @@
 </template>
 
 <script setup lang="ts">
+
+import {post} from "@/utils/request";
+import {successMsg} from "@/utils/message";
+const emit = defineEmits(['sendRecycleTitleOptions'])
+const cleanOutRecycle = () => {
+  post('/content/emptyRecycleBin')
+      .then(() => {
+        successMsg('成功清空回收站')
+        emit('sendRecycleTitleOptions', "cleanOutRecycle")
+      })
+}
 </script>
 
 <style scoped lang="css">
