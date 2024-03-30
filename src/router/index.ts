@@ -71,6 +71,10 @@ const routes: RouteRecordRaw[] = [
     path: '/test',
     component: () => import('../views/test-posts/posts.vue'),
   },
+  {
+    path: '/test/editor',
+    component: () => import('../views/test-posts/text-editor.vue'),
+  },
 ]
 
 const router = createRouter({
