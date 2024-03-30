@@ -1,7 +1,7 @@
 <template>
     <div class="main-box">
-        <router-link 
-            to="user/center"
+        <router-link
+            :to="'user/center/' + store.getUserId()"
             class="center"
             v-if="isLogin"
         >个人中心</router-link>

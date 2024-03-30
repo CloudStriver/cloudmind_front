@@ -210,7 +210,6 @@ const changeAvatar = async(event: any) => {
         const suffix = '.' + file.name.split('.').pop();
         cosUploadImage(file, md5, suffix, async () => {
             await updateUser("","", "https://cloudmind.top/users/" + md5 + suffix, 0,"","")
-            detail.value = await getUserDetail() as any
             location.reload()
         })
 

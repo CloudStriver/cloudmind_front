@@ -63,7 +63,7 @@
             </div>
             <div class="rank-create">
                 <div class="create-post">
-                    <button>创建帖子</button>
+                    <button @click="router.push('/test/editor')">创建帖子</button>
                 </div>
                 <div class="post-rank">
                     <div class="post-rank-title">
@@ -144,6 +144,7 @@
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
 import { ref } from 'vue'
+import router from '@/router'
 
 const navSelect = ref('follow')
 </script>
