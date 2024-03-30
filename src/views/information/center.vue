@@ -8,7 +8,7 @@
                 </div>
                 <div class="user-information">
                     <div class="avatar">
-                        <img :src="avatar" alt="头像">
+                        <img :src="user.avatar" alt="头像">
                         <label
                             for="changeAvatar"
                             class="change-avatar" 
@@ -23,14 +23,15 @@
                     </div>
                     <div class="information">
                         <div class="name-tags">
-                            <div class="name">admin</div>
+                            <div class="name">{{user.name}}</div>
                             <div class="tags">
-                                <span>标签1</span>
-                                <span>标签2</span>
-                                <span>标签3</span>
+                              <span
+                                  v-for="tag in user.tags"
+                                  :key="tag"
+                              >{{ tag }}</span>
                             </div>
                         </div>
-                        <div class="description">这个人很懒，什么都没有留下</div>
+                        <div class="description">{{user.description}}</div>
                     </div>
                 </div>
             </div>
@@ -105,26 +106,18 @@
                     <div class="follow-star">
                         <div class="follow">
                             <p>关注了</p>
-                            <p>99+</p>
+                            <p>{{user.followCount}}</p>
                         </div>
                         <div class="star">
                             <p>关注者</p>
-                            <p>99+</p>
+                            <p>{{user.followedCount}}</p>
                         </div>
                     </div>
                     <div class="other">
                         <ul>
                             <li>
-                                <span>收集集</span>
-                                <span>99+</span>
-                            </li>
-                            <li>
-                                <span>关于标签</span>
-                                <span>99+</span>
-                            </li>
-                            <li>
                                 <span>加入于</span>
-                                <span>2024-03-39</span>
+                                <span>{{turnTime(user.createTime)}}</span>
                             </li>
                         </ul>
                     </div>
@@ -138,26 +131,30 @@
 import CHeader from '@/components/header.vue'
 import { useStore } from '@/store'
 import { ref, onMounted } from 'vue'
-
+import {getUserDetail, getUserInfo} from "@/views/information/utils";
+import {turnTime} from "../personal/utils";
 const store = useStore()
-const avatar = ref('')
-
-onMounted (() => {
-    avatar.value = getAvatar() as string
+const user = ref({
+  name: '',
+  sex: '',
+  description: '',
+  avatar: '',
+  tags: [],
+  followed: false,
+  followedCount: 0,
+  followCount: 0,
+  createTime: 0,
+})
+onMounted (async () => {
+  user.value = await getUser() as any
 })
 
-const getAvatar = () => {
-    const loginType = store.getLoginType()
-    if (loginType === 1) {
-        return sessionStorage.getItem('avatarUrl')
-    }
-    else if (loginType === 2) {
-        return localStorage.getItem('avatarUrl')
-    }
-    else {
-        return ''
-    }
+const getUser = async () => {
+  const urls = location.href.split("/")
+  const userId = urls[urls.length - 1]
+  return await getUserInfo(userId)
 }
+
 </script>
 
 <style scoped lang="css">
@@ -218,7 +215,7 @@ const getAvatar = () => {
                     width: 180px;
                     height: 180px;
                     border-radius: 50%;
-                    background-color: #5b3030;
+                    background-color: #ffffff;
                     top: -90px;
 
                     img {
