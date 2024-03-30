@@ -152,6 +152,7 @@ import { useStore } from '@/store/index'
 import { cosUploadFile } from '@/utils/cos'
 import {postCreateFile, getFileSize, getPersonalFatherId, getCategory} from './utils'
 import type { requestCreateFile } from './utils'
+import router from "@/router";
 
 const folder = ref()
 const store = useStore()
@@ -187,6 +188,8 @@ watch(selectType, (newVal) => {
         emit('sendDrawerOptions', 'showRecycle')
     }
     else {
+        const pathList = (sessionStorage.getItem("PathId") as string).split("/")
+        router.push('/personal/' + pathList[pathList.length - 1])
         emit('sendDrawerOptions', 'showFiles')
         emit('sendDrawerSelectType', newVal)
     }
