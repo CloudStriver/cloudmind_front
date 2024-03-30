@@ -125,9 +125,8 @@ const downloadFile = (url: string, fileName: string) => {
 
 // 请求彻底删除文件
 export const postCleanOutFile = async(fileIdList: string[]) :Promise<void> => {
-   const fileId = fileIdList[0]
     await post('/content/completelyRemoveFile', {
-        fileId
+        fileIds: fileIdList
     })
         .then(() => {
             successMsg('成功彻底删除')
@@ -189,7 +188,6 @@ export const getRecycleFilesList = async(params: requestPrivateFilesList): Promi
             token: res.token,
         }
     })
-    console.log(filesList.value);
     return filesList.value
 }
 
@@ -235,6 +233,7 @@ export const getPrivateFilesList = async(params: requestPrivateFilesList): Promi
         fatherNamePath: "",
     })
     const url = '/content/getPrivateFiles' + generateGetRequestURL(params)
+    console.log(url)
     await get(url)
     .then ((res: any) => {
         filesList.value = {
