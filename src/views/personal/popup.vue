@@ -3,9 +3,11 @@
       <div class="cleanOut-main-box" v-if="props.sendContents.option === 'cleanOutFile'">
         <div class="cleanOut-box">
           <div class="cleanOut">
+            <div>彻底删除</div>
+            <div>在执行彻底删除操作后，文件将无法恢复</div>
             <div class="button">
-              <button @click="cancelPopup">取消</button>
-              <button @click="confirmCleanOut">确定</button>
+                <button @click="cancelPopup">取消</button>
+                <button @click="confirmCleanOut">确定</button>
             </div>
           </div>
         </div>
@@ -375,65 +377,6 @@ const showDetails = (name: string, event: any) => {
     transition: all 0.3s;
     overflow-y: auto;
 
-    .cleanOut-main-box {
-      display: flex;
-
-      .cleanOut-box {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        padding: 50px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        display: flex;
-
-        .cleanOut {
-          position: relative;
-          width: 210px;
-          height: 50px;
-          background-color: rgb(240, 245, 254);
-          box-shadow: 0 0 30px 2px rgba(5, 5, 5, 0.1);
-          border-radius: 5px;
-          margin: auto;
-          padding: 10px;
-          user-select: none;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-
-          .button {
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-
-            button {
-              width: 80px;
-              height: 25px;
-              border: none;
-              border-radius: 3px;
-              transition: all 0.1s;
-            }
-
-            button:first-child {
-              margin-right: 10px;
-              background-color: #e3e3e3a2;
-              color: #707070
-            }
-
-            button:last-child {
-              color: rgb(66, 100, 159);
-              background-color: rgb(250, 236, 228);
-            }
-
-            button:active {
-              transform: scale(0.9);
-            }
-          }
-        }
-      }
-    }
-
     .recycle-main-box {
         display: flex;
 
@@ -450,6 +393,63 @@ const showDetails = (name: string, event: any) => {
                 position: relative;
                 width: 410px;
                 height: 150px;
+                background-color: rgb(240, 245, 254);
+                box-shadow: 0 0 30px 2px rgba(5, 5, 5, 0.1);
+                border-radius: 5px;
+                margin: auto;
+                padding: 10px;
+                user-select: none;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+
+                .button {
+                    width: 100%;
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: center;
+
+                    button {
+                        width: 80px;
+                        height: 25px;
+                        border: none;
+                        border-radius: 3px;
+                        transition: all 0.1s;
+                    }
+                    button:first-child {
+                        margin-right: 10px;
+                        background-color: #e3e3e3a2;
+                        color: #707070
+                    }
+                    button:last-child {
+                        color: rgb(66, 100, 159);
+                        background-color: rgb(250, 236, 228);
+                    }
+                    button:active {
+                        transform: scale(0.9);
+                    }
+                
+                }
+            }
+        }
+    }
+
+    .cleanOut-main-box {
+        display: flex;
+
+        .cleanOut-box {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            padding: 50px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+
+            .cleanOut {
+                position: relative;
+                width: 320px;
+                height: 130px;
                 background-color: rgb(240, 245, 254);
                 box-shadow: 0 0 30px 2px rgba(5, 5, 5, 0.1);
                 border-radius: 5px;

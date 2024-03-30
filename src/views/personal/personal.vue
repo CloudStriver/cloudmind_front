@@ -68,7 +68,7 @@ const isShowRecycle = ref(location.href.includes('recycle'))
 const isLoading = ref(false)
 const isShowPopup = ref(false)
 const isShowFiles = ref(!location.href.includes('recycle'))
-
+let isFirst = false
 const getPathMsg = (sendPathMsg: any) => {
     requestMessage.value = {
         option: sendPathMsg.option,
@@ -83,15 +83,21 @@ const getDrawerOptionType = (sendDrawerOptions: string) => {
         isShowFiles.value = false
     }
     else if (sendDrawerOptions === 'showFiles'){
+        const pathList = (sessionStorage.getItem("PathId") as string).split("/")
+        router.push('/personal/' + pathList[pathList.length - 1])
         isShowRecycle.value = false
         isShowFiles.value = true
     }
 }
 const getDrawerSelectType = (sendDrawerSelectType: any) => {
+  if(isFirst) {
     requestMessage.value = {
-        option: "classifyFiles",
-        message: sendDrawerSelectType
+      option: "classifyFiles",
+      message: sendDrawerSelectType
     }
+  } else {
+    isFirst = true
+  }
 }
 
 const getLoading = (loading: boolean) => {

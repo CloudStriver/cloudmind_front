@@ -33,9 +33,13 @@ export const getUserDetail = async() => {
     return detail.value
 }
 
-// 修改用户信息
-export const updateUser = async (url: String)=>  {
+export const updateUser = async (name?: String, fullName?:String, url?:String, sex?:number, idCard?:String,description?:String) => {
     await post('/content/updateUser', {
+        name: name,
+        fullName: fullName,
         url: url,
-    })
+        sex: sex,
+        idCard: idCard,
+        description: description
+    });
 }
