@@ -1,12 +1,382 @@
 <template>
-    <div>
-        <CHeader></CHeader>
+    <div class="center-box">
+        <CHeader class="cheader"></CHeader>
+        <section class="section">
+            <div class="user-information-box">
+                <div class="user-background">
+                    <button>点击上传背景图片</button>
+                </div>
+                <div class="user-information">
+                    <div class="avatar">
+                        <img :src="avatar" alt="头像">
+                        <label
+                            for="changeAvatar"
+                            class="change-avatar" 
+                        >
+                            <input 
+                                type="file" 
+                                style="display: none;" 
+                                id="changeAvatar"
+                            >
+                            <i class="iconfont icon-xiangji"></i>
+                        </label>
+                    </div>
+                    <div class="information">
+                        <div class="name-tags">
+                            <div class="name">admin</div>
+                            <div class="tags">
+                                <span>标签1</span>
+                                <span>标签2</span>
+                                <span>标签3</span>
+                            </div>
+                        </div>
+                        <div class="description">这个人很懒，什么都没有留下</div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-contents-box">
+                <div class="contents-box">
+                    <div class="contents-classify">
+                        <ul>
+                            <li>
+                                <input 
+                                    type="radio" 
+                                    name="classify"
+                                    id="dynamic"
+                                    value="dynamic"
+                                    checked
+                                >
+                                <label for="dynamic">动态</label>
+                            </li>
+                            <li>
+                                <input 
+                                    type="radio" 
+                                    name="classify"
+                                    id="file"
+                                    value="file"
+                                >
+                                <label for="file">文件</label>
+                            </li>
+                            <li>
+                                <input 
+                                    type="radio" 
+                                    name="classify"
+                                    id="post"
+                                    value="post"
+                                >
+                                <label for="post">帖子</label>
+                            </li>
+                            <li>
+                                <input 
+                                    type="radio" 
+                                    name="classify"
+                                    id="like"
+                                    value="like"
+                                >
+                                <label for="like">点赞</label>
+                            </li>
+                            <li>
+                                <input 
+                                    type="radio" 
+                                    name="classify"
+                                    id="collect"
+                                    value="collect"
+                                >
+                                <label for="collect">收藏</label>
+                            </li>
+                            <li>
+                                <input 
+                                    type="radio"
+                                    name="classify" 
+                                    id="follow"
+                                    value="follow"
+                                >
+                                <label for="follow">关注</label>
+                            </li>
+                        </ul>
+                        <div class="contents"></div>
+                    </div>
+                    <div class="show-contents">
+                        <div class="content">
+                        </div>
+                    </div>
+                </div>
+                <div class="user-other-information">
+                    <div class="follow-star">
+                        <div class="follow">
+                            <p>关注了</p>
+                            <p>99+</p>
+                        </div>
+                        <div class="star">
+                            <p>关注者</p>
+                            <p>99+</p>
+                        </div>
+                    </div>
+                    <div class="other">
+                        <ul>
+                            <li>
+                                <span>收集集</span>
+                                <span>99+</span>
+                            </li>
+                            <li>
+                                <span>关于标签</span>
+                                <span>99+</span>
+                            </li>
+                            <li>
+                                <span>加入于</span>
+                                <span>2024-03-39</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 </template>
 
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
+import { useStore } from '@/store'
+import { ref, onMounted } from 'vue'
+
+const store = useStore()
+const avatar = ref('')
+
+onMounted (() => {
+    avatar.value = getAvatar() as string
+})
+
+const getAvatar = () => {
+    const loginType = store.getLoginType()
+    if (loginType === 1) {
+        return sessionStorage.getItem('avatarUrl')
+    }
+    else if (loginType === 2) {
+        return localStorage.getItem('avatarUrl')
+    }
+    else {
+        return ''
+    }
+}
 </script>
 
 <style scoped lang="css">
+.center-box {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(240, 245, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+
+    .cheader {
+        width: 100%;
+        height: 80px;
+    }
+    
+    .section {
+        width: 100%;
+        flex: 1;
+        padding: 0 30px 20px;
+        overflow-y: auto;
+
+        .user-information-box {
+            max-width: 1200px;
+            background-color: #fff;
+            margin: auto;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+
+            .user-background {
+                position: relative;
+                height: 245.28px;
+                background: linear-gradient(90deg, rgba(180, 203, 224, 1) 12.5%, rgba(198, 223, 247, 0) 100%);
+
+                button {
+                    position: absolute;
+                    right: 10px;
+                    bottom: 10px;
+                    padding: 5px 10px;
+                    font-size: 11px;
+                    color: #686868;
+                    background-color: #ffffff00;
+                    border-radius: 510px;
+                    border: 0.5px solid rgba(0, 0, 0, 0.3);
+                    cursor: pointer;
+                }
+            }
+            
+            .user-information {
+                position: relative;
+                height: 159.6px;
+                padding: 0 50px;
+                border-radius: 5px;
+                box-shadow: 0px 2px 4px  rgba(0, 0, 0, 0.25);
+
+                .avatar {
+                    position: absolute;
+                    width: 180px;
+                    height: 180px;
+                    border-radius: 50%;
+                    background-color: #5b3030;
+                    top: -90px;
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 50%;
+                    }
+
+                    .change-avatar {
+                        position: absolute;
+                        right: -15px;
+                        bottom: -15px;
+                        width: 60px;
+                        height: 60px;
+                        background-color: #d7d7d738;
+                        border-radius: 50%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        cursor: pointer;
+
+                        i {
+                            font-size: 30px;
+                        }
+                    }
+                }
+
+                .information {
+                    height: 70px;
+                    margin-top: 45px;
+                    margin-left: 230px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+
+                    .name-tags {
+                        display: flex;
+                        align-items: center;
+
+                        .name {
+                            font-size: 30px;
+                            font-weight: bold;
+                            margin-right: 30px;
+                        }
+
+                        .tags {
+
+                            span {
+                                padding: 5px 15px;
+                                margin: 5px;
+                                font-size: 12px;
+                                color: rgba(42, 130, 228, 1);
+                                background: #ffe9d0;
+                                border-radius: 50px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .user-contents-box {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+
+            .contents-box {
+                width: 900px;
+                box-shadow: 0px 2px 4px  rgba(0, 0, 0, 0.25);
+                background-color: #fff;
+    
+                .contents-classify {
+    
+                    ul {
+                        height: 50px;
+                        margin: 0;
+                        list-style: none;
+                        background: rgba(230, 239, 250, 0.49);
+                        display: flex;
+                        align-items: center;
+    
+                        li {
+                            margin-right: 20px;
+                            font-size: 18px;
+    
+                            input {
+                                display: none;
+                            }
+                            input:checked + label {
+                                border-bottom: 2px solid rgba(42, 130, 228, 1);
+                            }
+                        }
+                    }
+                }
+    
+                .show-contents {
+                    min-height: 700px;
+                    background-color: #fff;
+                }
+            }
+
+            .user-other-information {
+                width: 280px;
+                display: flex;
+                flex-direction: column;
+
+                .follow-star {
+                    height: 80px;
+                    line-height: 30px;
+                    box-shadow: 0px 2px 4px  rgba(0, 0, 0, 0.25);
+                    margin-bottom: 10px;
+                    display: flex;
+                    align-items: center;
+
+                    .follow,
+                    .star {
+                        height: 100%;
+                        width: 50%;
+                        background-color: #fff;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+
+                        p {
+                            margin: 0;
+                        }
+                    }
+
+                    .follow {
+                        border-right: 1px solid #e0e0e0;
+                    }
+                }
+
+                .other {
+                    width: 100%;
+                    border-top: 1px solid #e0e0e0;
+                    
+                    ul {
+                        width: 100%;
+                        list-style: none;
+                        padding: 0;
+                        margin: 0;
+                        display: flex;
+                        flex-direction: column;
+
+                        li {
+                            display: flex;
+                            justify-content: space-between;
+                            padding: 10px 20px;
+                            font-size: 14px;
+                            border-bottom: 1px solid #e0e0e0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 </style>
