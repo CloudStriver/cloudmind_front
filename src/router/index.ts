@@ -66,7 +66,11 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/manage/post',
     component: () => import('../views/manage/post.vue'),
-  }
+  },
+  {
+    path: '/test',
+    component: () => import('../views/test-posts/posts.vue'),
+  },
 ]
 
 const router = createRouter({
