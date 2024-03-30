@@ -9,6 +9,7 @@
             </div>
         </div>
         <div id="vditor" name="description"></div> 
+    <div>
     </div>
 </template>
 
@@ -144,4 +145,7 @@ onMounted(() => {
         flex: 1;
     }
 }
+</script>
+
+<style scoped lang="css">
 </style>

@@ -64,6 +64,7 @@
             <div class="rank-create">
                 <div class="create-post">
                     <button @click="router.push('/test/editor')">创建帖子</button>
+                    <button>创建帖子</button>
                 </div>
                 <div class="post-rank">
                     <div class="post-rank-title">
