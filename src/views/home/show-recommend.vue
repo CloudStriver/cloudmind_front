@@ -46,8 +46,10 @@
             >
                 <img :src="user.url">
                 <div class="user-detail">
-                    <div>{{ user.name }}</div>
-                    <div>粉丝量：{{ user.followCount }}</div>
+                  <router-link
+                      :to="`/user/center/${user.userId}`"
+                  >{{ user.name }}</router-link>
+                    <div>粉丝量：{{ user.followedCount }}</div>
                     <div 
                         class="user-tag"
                         v-for="(tag, index) in user.labels"
@@ -111,7 +113,7 @@ interface ResponseDetail {
         name: string
         url: string
         description: string
-        followCount: number
+        followedCount: number
         labels: string[]
         followed: boolean
     }[],
@@ -215,7 +217,7 @@ const getShow = () => {
                     name: user.name,
                     url: user.url,
                     description: user.description,
-                    followCount: user.followCount,
+                    followedCount: user.followedCount,
                     labels: user.labels,
                     followed: user.followed
                 }))
@@ -242,7 +244,7 @@ const getShow = () => {
                     name: user.name,
                     url: user.url,
                     description: user.description,
-                    followCount: user.followCount,
+                    followedCount: user.followedCount,
                     labels: user.labels,
                     followed: user.followed
                 }))
@@ -291,7 +293,7 @@ const followUser = (user: any) => {
     })
     .then(() => {
       user.followed = true
-      user.followCount++
+      user.followedCount++
     })
 }
 
@@ -308,7 +310,7 @@ const unfollowerUser = (user: any) => {
   })
     .then(() => {
       user.followed = false
-      user.followCount--
+      user.followedCount--
     })
 }
 

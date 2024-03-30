@@ -46,7 +46,7 @@ const firstGetUserDetail = () => {
                 sessionStorage.setItem("Name", res.name)
                 location.reload()
             });
-        } 
+        }
         else if (loginType === 2 && localStorage.getItem("HasChecked") === 'false') {
             getUserDetail().then(res => {
                 localStorage.setItem("HasChecked", 'true')
