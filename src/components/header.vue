@@ -130,6 +130,7 @@ const cancelShowNotification = () => {
                 width: 150px;
                 height: auto;
                 top: 50px;
+                right: 15px;
                 z-index: 10;
             }
         }
