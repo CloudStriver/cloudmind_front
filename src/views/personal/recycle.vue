@@ -40,35 +40,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, watch} from 'vue'
 import { getRecycleFilesList } from './utils'
 import type { responseRecycleFilesList } from './utils'
 import { post } from '@/utils/request'
-
+const props = defineProps<{
+  RecycleMsg: {
+    option: string,
+    message: any
+  }
+}>()
 const ctxIndex = ref(-1)
 const optionsTop = ref(0)
 const optionsLeft = ref(0)
 const ctxTarget = ref()
 const isShowOptions = ref(false)
 const recycleFilesList = ref<responseRecycleFilesList>({
-    files: [
-        {
-            fileId: "",
-            userId: "",
-            name: "",
-            type: "",
-            path: "",
-            fatherId: "",
-            spaceSize: "",
-            isDel: 0,
-            zone: "",
-            subZone: "",
-            description: "",
-            updateAt: "",
-            createAt: "",
-            isChoose: false
-        }
-    ],
+    files: [],
     total: 0,
     token: ""
 })
@@ -84,11 +72,20 @@ onMounted(async() => {
 const cancelShowPop = (e: MouseEvent) => {
     isShowOptions.value = false
     const target = e.target as HTMLElement
+    console.log(target, ctxTarget)
     if (target.className !== ctxTarget.value.className && ctxTarget.value) {
         ctxIndex.value = -1
         ctxTarget.value = null
     }
 }
+
+watch(() => props.RecycleMsg, () => {
+  if(props.RecycleMsg.option == "cleanOutRecycle") {
+    recycleFilesList.value.files = [];
+  }
+})
+
+
 
 const deleteFiles = () => {
     const fileIds = getFilesId()

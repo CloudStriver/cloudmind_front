@@ -12,7 +12,7 @@
                     v-if="isShowFiles && isLoading"
                     @sendPathMsg="getPathMsg"
                 ></PathTitle>
-                <RecycleTitle v-if="isShowRecycle"></RecycleTitle>
+                <RecycleTitle v-if="isShowRecycle" @sendRecycleTitleOptions="getRecycleTitleOptions"></RecycleTitle>
             </div>
             <div class="bottom">
                 <Files 
@@ -23,7 +23,7 @@
                     @loading="getLoading"
                     :sendRequest="requestMessage"
                 ></Files>
-                <Recycle v-if="isShowRecycle"></Recycle>
+                <Recycle v-if="isShowRecycle" :RecycleMsg="RecycleMsg"></Recycle>
             </div>
         </div>
         <Popup 
@@ -45,7 +45,10 @@ import RecycleTitle from './recycle-title.vue'
 import CHeader from '@/components/header.vue'
 import router from '@/router'
 import { ref } from 'vue'
-
+const RecycleMsg = ref({
+    option: "",
+    message: "",
+})
 const requestMessage = ref({
     option: "",
     message: ""
@@ -76,6 +79,14 @@ const getPathMsg = (sendPathMsg: any) => {
     }
 }
 
+const getRecycleTitleOptions = (sendRecycleTitleOptions: string) => {
+    if(sendRecycleTitleOptions === 'cleanOutRecycle') {
+      RecycleMsg.value = {
+        option: sendRecycleTitleOptions,
+        message: "",
+      }
+    }
+}
 const getDrawerOptionType = (sendDrawerOptions: string) => {
     if (sendDrawerOptions === 'showRecycle') {
         router.push('/personal/recycle')
