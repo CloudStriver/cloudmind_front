@@ -5,11 +5,10 @@
             <div class="options">
                 <button>存入草稿</button>
                 <button>设置帖子相关信息</button>
-                <img src="../../assets//images/logo.png" alt="">
+                <img src="../../assets/images/logo.png" alt="">
             </div>
         </div>
         <div id="vditor" name="description"></div> 
-    <div>
     </div>
 </template>
 
@@ -145,7 +144,5 @@ onMounted(() => {
         flex: 1;
     }
 }
-</script>
 
-<style scoped lang="css">
 </style>

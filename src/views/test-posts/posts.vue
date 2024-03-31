@@ -4,37 +4,27 @@
         <section class="section">
             <nav class="nav">
                 <ul>
-                    <li>
-                        <input 
-                            type="radio"
-                            name="nav"
-                            id="follow"
-                            value="follow"
-                            v-model="navSelect"
-                            checked
-                        >
-                        <label for="follow"><i class="iconfont icon-shoucang01"></i>关注</label>
-                    </li>
-                    <li>
-                        <input 
-                            type="radio"
-                            name="nav"
-                            id="all"
-                            value="all"
-                            v-model="navSelect"
-                        >
-                        <label for="all"><i class="iconfont icon-fenlei"></i>全部</label>
-                    </li>
-                    <li>
-                        <input 
-                            type="radio"
-                            name="nav"
-                            id="choice"
-                            value="choice"
-                            v-model="navSelect"
-                        >
-                        <label for="choice"><i class="iconfont icon-fenlei"></i>选项</label>
-                    </li>
+                  <li>
+                    <input
+                        type="radio"
+                        name="nav"
+                        id="all"
+                        value="all"
+                        v-model="navSelect"
+                    >
+                    <label for="all"><i class="iconfont icon-fenlei"></i>全部</label>
+                  </li>
+                  <li v-for="zone in zoneList"
+                      :key="zone.zoneId">
+                    <input
+                        type="radio"
+                        name="nav"
+                        :id="`zone-${zone.zoneId}`"
+                        :value="zone.zoneId"
+                        v-model="navSelect"
+                    >
+                    <label :for="`zone-${zone.zoneId}`"><i class="iconfont icon-fenlei"></i>{{zone.value}}</label>
+                  </li>
                 </ul>
             </nav>
             <div class="posts">
@@ -53,10 +43,18 @@
                             <input 
                                 type="radio"
                                 name="posts"
-                                id="hot"
+                                id="latest"
                             >
-                            <label for="hot">热门</label>
+                            <label for="latest">最新</label>
                         </li>
+                      <li>
+                        <input
+                            type="radio"
+                            name="posts"
+                            id="follow"
+                        >
+                        <label for="follow">关注</label>
+                      </li>
                     </ul>
                 </div>
                 <div></div>
@@ -71,35 +69,23 @@
                         <span>
                             <span class="post-rank-span">文章排行榜</span>
                         </span>
-                        <span class="refresh-post-rank">
-                            <i class="iconfont icon-undo-alt-solid"></i>
-                            换一换</span>
+<!--                        <span class="refresh-post-rank">-->
+<!--                            <i class="iconfont icon-undo-alt-solid"></i>-->
+<!--                            换一换</span>-->
                     </div>
-                    <div class="posts-rank-contents">
+                    <div class="posts-rank-contents" v-for="(post,index) in postRankList"
+                         :key="post.postId">
                         <ul>
                             <li>
-                                <span>1</span>
-                                <span>这是一个标题</span>
-                            </li>
-                            <li>
-                                <span>2</span>
-                                <span>这是一个标题</span>
-                            </li>
-                            <li>
-                                <span>3</span>
-                                <span>这是一个标题</span>
-                            </li>
-                            <li>
-                                <span>4</span>
-                                <span>这是一个标题</span>
-                            </li>
-                            <li>
-                                <span>5</span>
-                                <span>这是一个标题</span>
+                                <span>{{index + 1}}</span>
+                                <router-link :to="`/post/${post.postId}`">
+                                  <span>{{post.title}}</span>
+                                </router-link>
                             </li>
                         </ul>
                     </div>
-                    <div class="post-rank-more">查看更多</div>
+                  <div class="post-rank-more" @click="loadMorePosts" v-if="!noMorePosts">查看更多</div>
+                  <div v-else  class="post-rank-more">没有更多文章了</div>
                 </div>
                 <div class="author-rank">
                     <div class="author-rank-title">
@@ -107,35 +93,28 @@
                             <span class="author-rank-span">作者排行榜</span>
                         </span>
                     </div>
-                    <div class="author-rank-contents">
+                    <div class="author-rank-contents" v-for="user in userRankList"
+                         :key="user.userId">
                         <ul>
                             <li>
                                 <div class="author">
                                     <div>
-                                        <img src="" alt="">
+                                        <img :src="user.url" alt="头像">
                                     </div>
                                     <div>
-                                        <p>作者1</p>
-                                        <p>作者简介</p>
+                                      <router-link :to="`/user/center/${user.userId}`">
+                                        <p>{{ user.name }}</p>
+                                      </router-link>
+                                        <p>{{ user.description}}</p>
                                     </div>
                                 </div>
-                                <button>关注</button>
-                            </li>
-                            <li>
-                                <div class="author">
-                                    <div>
-                                        <img src="" alt="">
-                                    </div>
-                                    <div>
-                                        <p>作者1</p>
-                                        <p>作者简介</p>
-                                    </div>
-                                </div>
-                                <button>关注</button>
+                                <button v-if="!user.followed" @click="followUser(user)">关注</button>
+                                <button v-else @click="unfollowerUser(user)">已关注</button>
                             </li>
                         </ul>
                     </div>
-                    <div class="author-rank-more">查看更多</div>
+                    <div class="author-rank-more" @click="loadMoreUsers" v-if="!noMoreUsers">查看更多</div>
+                    <div v-else  class="author-rank-more">没有更多作者了</div>
                 </div>
             </div>
         </section>
@@ -144,10 +123,98 @@
 
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
 import router from '@/router'
+import {
+  getPostRankList,
+  getUserRankList,
+  getZoneList,
+  type HotPost,
+  type HotUser,
+  type Zone
+} from "@/views/test-posts/utils";
+import {errorMsg} from "@/utils/message";
+import {useStore} from "@/store";
+import { post } from '@/utils/request'
+import { TargetType, RelationType } from '@/utils/consts'
+const store = useStore()
+const navSelect = ref('all')
+const zoneFatherId = ref('root')
+const noMoreUsers = ref(false)
+const noMorePosts = ref(false)
+const userRankList = ref<HotUser[]>([])
+const postRankList = ref<HotPost[]>([])
+const zoneList = ref<Zone[]>([])
+const pageSize = 10; // 假设每页加载10项
+let userPage = 1; // 当前用户列表页码
+let postPage = 1; // 当前帖子列表页码
 
-const navSelect = ref('follow')
+
+onMounted(async() => {
+     userRankList.value = await getUserRankList(pageSize, 0)
+     postRankList.value = await getPostRankList(pageSize, 0)
+     zoneList.value = await getZoneList(zoneFatherId.value, pageSize, 0)
+})
+
+
+// 加载下一页用户
+const loadMoreUsers = async () => {
+  const nextUsers = await getUserRankList(pageSize, userPage * pageSize);
+  if (nextUsers.length === 0) {
+    noMoreUsers.value = true;
+  } else {
+    userRankList.value = [...userRankList.value, ...nextUsers];
+    userPage++;
+    noMoreUsers.value = false;
+  }
+};
+
+// 加载下一页的帖子
+const loadMorePosts = async () => {
+  const nextPosts = await getPostRankList(pageSize, postPage * pageSize);
+  if (nextPosts.length === 0) {
+    noMorePosts.value = true;
+  } else {
+    postRankList.value = [...postRankList.value, ...nextPosts];
+    postPage++;
+    noMorePosts.value = false;
+  }
+};
+
+// 关注用户
+const followUser = (user: any) => {
+  const longToken = store.getUserLongToken()
+  if (!longToken) {
+    errorMsg('请先登录')
+    return
+  }
+  post('/relation/createRelation', {
+    toId: user.userId,
+    toType:  TargetType.User,
+    relationType: RelationType.Follow,
+  })
+  .then(() => {
+    user.followed = true
+  })
+}
+
+// 取消关注用户
+const unfollowerUser = (user: any) => {
+  const longToken = store.getUserLongToken()
+  if (!longToken) {
+    errorMsg('请先登录')
+    return
+  }
+  post('/relation/deleteRelation', {
+    toId: user.userId,
+    toType:  TargetType.User,
+    relationType: RelationType.Follow,
+  })
+  .then(() => {
+    user.followed = false
+  })
+}
+
 </script>
 
 <style scoped lang="css">
@@ -173,12 +240,11 @@ const navSelect = ref('follow')
 
         .nav {
             width: 200px;
-            height: 130px;
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
             margin-right: 30px;
-            
+
             ul {
                 list-style: none;
                 padding: 0;
