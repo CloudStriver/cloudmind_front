@@ -9,6 +9,7 @@
             </div>
         </div>
         <div id="vditor" name="description"></div> 
+    <div>
     </div>
 </template>
 
