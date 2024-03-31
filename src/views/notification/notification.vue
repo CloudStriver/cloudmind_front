@@ -239,7 +239,7 @@ const turnNotificationType = (type: string): number => {
             return 4
         case 'comment':
             return 5
-        default: 
+        default:
             return 0
     }
 }
