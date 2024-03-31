@@ -2,119 +2,160 @@
     <div class="posts-box">
         <CHeader class="cheader"></CHeader>
         <section class="section">
-            <nav class="nav">
-                <ul>
-                  <li>
-                    <input
-                        type="radio"
-                        name="nav"
-                        id="all"
-                        value="all"
-                        v-model="navSelect"
-                    >
-                    <label for="all"><i class="iconfont icon-fenlei"></i>全部</label>
-                  </li>
-                  <li v-for="zone in zoneList"
-                      :key="zone.zoneId">
-                    <input
-                        type="radio"
-                        name="nav"
-                        :id="`zone-${zone.zoneId}`"
-                        :value="zone.zoneId"
-                        v-model="navSelect"
-                    >
-                    <label :for="`zone-${zone.zoneId}`"><i class="iconfont icon-fenlei"></i>{{zone.value}}</label>
-                  </li>
-                </ul>
-            </nav>
-            <div class="posts">
-                <div class="posts-select">
-                    <ul>
-                        <li>
-                            <input 
-                                type="radio"
-                                name="posts"
-                                id="recommend"
-                                checked
-                            >
-                            <label for="recommend">推荐</label>
-                        </li>
-                        <li>
-                            <input 
-                                type="radio"
-                                name="posts"
-                                id="latest"
-                            >
-                            <label for="latest">最新</label>
-                        </li>
-                      <li>
-                        <input
-                            type="radio"
-                            name="posts"
-                            id="follow"
+            <div class="contents-box">
+                <div>
+                    <nav class="nav">
+                        <ul>
+                            <li>
+                                <input
+                                    type="radio"
+                                    name="nav"
+                                    id="all"
+                                    value="all"
+                                    v-model="navSelect"
+                                >
+                                <label for="all"><i class="iconfont icon-mn_remen"></i>热门</label>
+                            </li>
+                            <li>
+                                <input 
+                                    type="radio"
+                                    name="nav"
+                                    id="recommend"
+                                    value="recommend"
+                                    v-model="navSelect"
+                                >
+                                <label for="recommend"><i class="iconfont icon-tuijian"></i>推荐</label>
+                            </li>
+                            <li>
+                                <input 
+                                    type="radio"
+                                    name="nav"
+                                    id="follow"
+                                    value="follow"
+                                    v-model="navSelect"
+                                >
+                                <label for="follow"><i class="iconfont icon-guanzhu"></i>关注</label>
+                            </li>
+                            <li>
+                                <input 
+                                    type="radio"
+                                    name="nav"
+                                    id="new"
+                                    value="new"
+                                    v-model="navSelect"
+                                >
+                                <label for="new"><i class="iconfont icon-zuixin"></i>最新</label>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="posts">
+                    <div class="posts-select" >
+                        <div 
+                            class="zone"
+                            v-for="(zone) in zoneList"
+                            :key="zone.zoneId"
                         >
-                        <label for="follow">关注</label>
-                      </li>
-                    </ul>
-                </div>
-                <div></div>
-            </div>
-            <div class="rank-create">
-                <div class="create-post">
-                    <button @click="router.push('/test/editor')">创建帖子</button>
-                    <button>创建帖子</button>
-                </div>
-                <div class="post-rank">
-                    <div class="post-rank-title">
-                        <span>
-                            <span class="post-rank-span">文章排行榜</span>
-                        </span>
-<!--                        <span class="refresh-post-rank">-->
-<!--                            <i class="iconfont icon-undo-alt-solid"></i>-->
-<!--                            换一换</span>-->
+                            <input 
+                                type="radio"
+                                name="zone"
+                                :id="zone.zoneId"
+                                :value="zone.zoneId"
+                                v-model="zoneFatherId"
+                            >
+                            <label 
+                                :for="zone.zoneId" 
+                                @mouseover="mouseoverZone($event)"
+                                @mouseout="mouseoutZone($event)"
+                            >{{ zone.value }}</label>
+                        </div>
+                        <div 
+                            v-if="isShowZonePop"
+                            class="zone-pop"
+                            :style="{top: zonePopTop + 'px', left: zonePopLeft + 'px'}"
+                            @mouseover="isShowZonePop = true"
+                            @mouseout="isShowZonePop = false"
+                        >
+                            <ul>
+                                <li>二级分区1</li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="posts-rank-contents" v-for="(post,index) in postRankList"
-                         :key="post.postId">
-                        <ul>
-                            <li>
-                                <span>{{index + 1}}</span>
-                                <router-link :to="`/post/${post.postId}`">
-                                  <span>{{post.title}}</span>
-                                </router-link>
-                            </li>
-                        </ul>
+                    <div class="posts-contents">
+                        <div 
+                            class="content"
+                            v-for="post in postsList.posts"
+                            :key="post.postId"
+                        >
+                            <div class="information">
+                                <h2>{{ post.title }}</h2>
+                                <p>{{ splitContents(post.userName + ": " + post.text) }}</p>
+                                <PostDetail :information="post"></PostDetail>
+                            </div>
+                            <div v-if="post.url !== ''" class="image">
+                                <img :src="post.url" alt="图片">
+                            </div>
+                        </div>
                     </div>
-                  <div class="post-rank-more" @click="loadMorePosts" v-if="!noMorePosts">查看更多</div>
-                  <div v-else  class="post-rank-more">没有更多文章了</div>
                 </div>
-                <div class="author-rank">
-                    <div class="author-rank-title">
-                        <span>
-                            <span class="author-rank-span">作者排行榜</span>
-                        </span>
+                <div class="rank-create">
+                    <div class="create-post">
+                        <button @click="router.push('/test/editor')">创建帖子</button>
                     </div>
-                    <div class="author-rank-contents" v-for="user in userRankList"
-                         :key="user.userId">
-                        <ul>
-                            <li>
-                                <div class="author">
-                                    <div>
-                                        <img :src="user.url" alt="头像">
+                    <div class="post-rank">
+                        <div class="post-rank-title">
+                            <span>
+                                <span class="post-rank-span">文章排行榜</span>
+                            </span>
+                        </div>
+                        <div class="posts-rank-contents">
+                            <ul>
+                                <li 
+                                    v-for="(post,index) in postRankList"
+                                    :key="post.postId"
+                                >
+                                    <span>{{index + 1}}</span>
+                                    <router-link :to="`/post/${post.postId}`" class="router-link">
+                                      <span>{{post.title}}</span>
+                                    </router-link>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="post-rank-more" @click="loadMorePosts" v-if="!noMorePosts">查看更多</div>
+                        <div v-else  class="post-rank-more">没有更多文章了</div>
+                    </div>
+                    <div class="author-rank">
+                        <div class="author-rank-title">
+                            <span>
+                                <span class="author-rank-span">作者排行榜</span>
+                            </span>
+                        </div>
+                        <div 
+                            class="author-rank-contents" 
+                            v-for="user in userRankList"
+                            :key="user.userId"
+                        >
+                            <ul>
+                                <li>
+                                    <div class="author">
+                                        <div class="author-information">
+                                            <img :src="user.url" alt="头像">
+                                            <div class="information">
+                                                <router-link :to="`/user/center/${user.userId}`" class="router-link">
+                                                    <p>{{ user.name }}</p>
+                                                </router-link>
+                                                    <p>{{ splitDescription(user.description) }}</p>
+                                            </div>
+                                        </div>
+                                        <button v-if="!user.followed" @click="followUser(user)">关注</button>
+                                        <button v-else @click="unfollowerUser(user)">已关注</button>
                                     </div>
-                                    <div>
-                                      <router-link :to="`/user/center/${user.userId}`">
-                                        <p>{{ user.name }}</p>
-                                      </router-link>
-                                        <p>{{ user.description}}</p>
-                                    </div>
-                                </div>
-                                <button v-if="!user.followed" @click="followUser(user)">关注</button>
-                                <button v-else @click="unfollowerUser(user)">已关注</button>
-                            </li>
-                        </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="author-rank-more" @click="loadMoreUsers" v-if="!noMoreUsers">查看更多</div>
+                        <div v-else  class="author-rank-more">没有更多作者了</div>
                     </div>
-                    <div class="author-rank-more" @click="loadMoreUsers" v-if="!noMoreUsers">查看更多</div>
-                    <div v-else  class="author-rank-more">没有更多作者了</div>
                 </div>
             </div>
         </section>
@@ -123,50 +164,90 @@
 
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
+import PostDetail from './post-information.vue'
 import {onMounted, ref} from 'vue'
 import router from '@/router'
 import {
-  getPostRankList,
-  getUserRankList,
-  getZoneList,
-  type HotPost,
-  type HotUser,
-  type Zone
-} from "@/views/test-posts/utils";
-import {errorMsg} from "@/utils/message";
-import {useStore} from "@/store";
+    getPostRankList,
+    getUserRankList,
+    getZoneList,
+    getOtherPosts,
+    type HotPost,
+    type HotUser,
+    type Zone,
+    type responseGetOtherPosts
+} from "./utils";
+import { errorMsg } from "@/utils/message";
+import { useStore } from "@/store";
 import { post } from '@/utils/request'
 import { TargetType, RelationType } from '@/utils/consts'
+import { t } from '@wangeditor/editor';
+
 const store = useStore()
 const navSelect = ref('all')
 const zoneFatherId = ref('root')
 const noMoreUsers = ref(false)
 const noMorePosts = ref(false)
+const isShowZonePop = ref(false)
 const userRankList = ref<HotUser[]>([])
 const postRankList = ref<HotPost[]>([])
+    const postsList = ref<responseGetOtherPosts>({
+    posts: []
+})
+const zonePopTop = ref(0)
+const zonePopLeft = ref(0)
 const zoneList = ref<Zone[]>([])
 const pageSize = 10; // 假设每页加载10项
 let userPage = 1; // 当前用户列表页码
 let postPage = 1; // 当前帖子列表页码
 
-
 onMounted(async() => {
-     userRankList.value = await getUserRankList(pageSize, 0)
-     postRankList.value = await getPostRankList(pageSize, 0)
-     zoneList.value = await getZoneList(zoneFatherId.value, pageSize, 0)
+    userRankList.value = await getUserRankList(pageSize, 0)
+    postRankList.value = await getPostRankList(pageSize, 0)
+    zoneList.value = await getZoneList(zoneFatherId.value, pageSize, 0)
+    postsList.value = await getOtherPosts()
 })
 
+//移入移出分区
+const mouseoverZone = (event: MouseEvent) => {
+    isShowZonePop.value = true
+    zonePopTop.value = event.clientY - 65
+    zonePopLeft.value = event.clientX - 20
+}
+const mouseoutZone = (event: any) => {
+    const pop = document.querySelector('.zone-pop')
+    if (pop) {
+        pop.addEventListener('mouseover', () => {
+            isShowZonePop.value = true
+        })
+        pop.addEventListener('mouseout', () => {
+            isShowZonePop.value = false
+        })
+    }
+    else if (event.target.className !== 'zone-pop') {
+        isShowZonePop.value = false
+    }
+}
+
+const splitDescription = (text: string) => {
+    if (text.length > 6) return text.slice(0, 6) + '...'
+    return text
+}
+const splitContents = (content: string) => {
+    if (content.length > 80) return content.slice(0, 80) + '...'
+    return content
+}
 
 // 加载下一页用户
 const loadMoreUsers = async () => {
-  const nextUsers = await getUserRankList(pageSize, userPage * pageSize);
-  if (nextUsers.length === 0) {
-    noMoreUsers.value = true;
-  } else {
-    userRankList.value = [...userRankList.value, ...nextUsers];
-    userPage++;
-    noMoreUsers.value = false;
-  }
+    const nextUsers = await getUserRankList(pageSize, userPage * pageSize);
+    if (nextUsers.length === 0) {
+        noMoreUsers.value = true;
+    } else {
+        userRankList.value = [...userRankList.value, ...nextUsers];
+        userPage++;
+        noMoreUsers.value = false;
+    }
 };
 
 // 加载下一页的帖子
@@ -227,258 +308,367 @@ const unfollowerUser = (user: any) => {
 
     .cheader {
         width: 100%;
-        height: 80px;
+        height: 70px;
+        z-index: 1000;
     }
 
     .section {
         width: 100%;
         flex: 1;
-        padding: 10px 5% 0;
         overflow-y: auto;
-        display: flex;
-        justify-content: center;
 
-        .nav {
-            width: 200px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
-            margin-right: 30px;
+        .contents-box {
+            position: relative;
+            width: 100%;
+            padding: 0 5% 0;
+            margin: auto;
+            display: flex;
+            justify-content: center;
 
-            ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
 
-                li {
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-
-                    i {
-                        font-size: 20px;
-                        margin-right: 10px;
-                    }
-
-                    input {
-                        display: none;
-                    }
-
-                    label {
-                        width: 100%;
-                        padding: 10px;
-                        font-size: 16px;
-                    }
-
-                    input:checked + label {
-                        color: #1890ff;
-                        background-color: #f0f5ff;
-                    }
-                }
-            }
-        }
-
-        .posts {
-            width: 1000px;
-            padding: 10px;
-            background-color: #fff;
-            box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
-            margin-right: 30px;
-
-            .posts-select {
-                border-bottom: 1px solid #f0f0f0;
-                display: flex;
-
+            .nav {
+                width: 200px;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
+                margin-right: 30px;
+                margin-top: 10px;
+    
+    
                 ul {
                     list-style: none;
                     padding: 0;
                     margin: 0;
-                    display: flex;
-
+    
                     li {
-                        margin-right: 10px;
                         cursor: pointer;
                         display: flex;
                         align-items: center;
-
+    
+                        i {
+                            font-size: 20px;
+                            margin-right: 20px;
+                        }
+    
                         input {
                             display: none;
                         }
-
+    
                         label {
+                            width: 100%;
                             padding: 10px;
                             font-size: 16px;
                         }
-
+    
                         input:checked + label {
-                            border-bottom: 2px solid #1890ff;
+                            color: #1890ff;
+                            background-color: #f0f5ff;
                         }
                     }
                 }
             }
-        }
-        .rank-create {
-            width: 250px;
-
-            .create-post {
-                width: 100%;
-                height: 50px;
-                border-radius: 5px;
-                margin-bottom: 20px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-
-                button {
-                    width: 100%;
-                    height: 80%;
-                    background-color: #1890ff;
-                    box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
-                    color: #fff;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                }
-            }
-
-            .post-rank {
-                width: 100%;
+    
+            .posts {
+                width: 1000px;
+                margin-right: 30px;
+                padding: 10px;
+                margin-top: 10px;
                 background-color: #fff;
-                border-radius: 5px;
                 box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
-                padding: 15px;
-                margin-bottom: 30px;
-
-                .post-rank-title {
-                    padding-bottom: 10px;
+                display: flex;
+                flex-direction: column;
+    
+                .posts-select {
+                    max-height: 100px;
+                    overflow-y: auto;
                     border-bottom: 1px solid #f0f0f0;
                     display: flex;
-                    justify-content: space-between;
-                    align-items: center;
+                    flex-wrap: wrap;
+    
+                    .zone {
+                        height: 25px;
+                        padding: 0 10px;
+                        font-size: 14px;
+                        margin: 10px;
+                        border-radius: 5px;
+                        color: #61666D;
+                        display: flex;
+                        align-items: center;
+    
+                        input {
+                            display: none;
+                        }
+                        input:checked + label {
+                            color: #1890ff;
+                        }
 
-                    .post-rank-span {
-                        font-size: 16px;
-                        font-weight: 600;
+                        label {
+                            cursor: pointer;
+                        }
+                        label:hover {
+                            border-bottom: 1px solid #1890ff;
+                        }
                     }
 
-                    .refresh-post-rank {
-                        color: rgb(132, 132, 132);
-                        font-size: 12px;
-                        cursor: pointer;
-                        
+                    .zone-pop {
+                        position: absolute;
+                        width: 100px;
+                        background-color: #fff;
+                        box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
 
-                        i {
-                            font-size: 12px;
-                            margin-right: 5px;
+                        ul {
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+
+                            li {
+                                padding: 10px;
+                                cursor: pointer;
+                                font-size: 14px;
+                            }
+                        
                         }
                     }
                 }
+    
+                .posts-contents {
+                    .content {
+                        padding: 10px;
+                        border-bottom: 1px solid #f0f0f0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
 
-                .posts-rank-contents {
-                    ul {
-                        list-style: none;
-                        padding: 0;
-                        margin: 0;
+                        .information {
+                            flex: 1;
+                            margin-right: 10px;
 
-                        li {
-                            display: flex;
-                            align-items: center;
-                            padding: 10px 0;
+                            h2 {
+                                font-size: 20px;
+                                margin: 0;
+                                padding: 0;
+                            }
 
-                            span {
-                                font-size: 16px;
-                                margin-right: 20px;
+                            p {
+                                color: #61666D;
+                                font-size: 15px;
+                            }
+                        }
+    
+    
+                        .image {
+                            width: 180px;
+                            height: 100px;
+                            
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                border-radius: 10px;
                             }
                         }
                     }
                 }
-
-                .post-rank-more {
-                    padding: 10px 0 0 0;
-                    text-align: center;
-                    cursor: pointer;
-                    font-size: 13px;
-                    color: rgb(132, 132, 132);
-                    border-top: 1px solid #f0f0f0;
-                }
             }
-
-            .author-rank {
-                width: 100%;
-                background-color: #fff;
-                border-radius: 5px;
-                box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
-                padding: 15px;
-
-                .author-rank-title {
-                    padding-bottom: 10px;
-                    border-bottom: 1px solid #f0f0f0;
+    
+            .rank-create {
+                margin-top: 10px;
+                width: 250px;
+    
+                .create-post {
+                    width: 100%;
+                    height: 50px;
+                    border-radius: 5px;
+                    margin-bottom: 20px;
                     display: flex;
-                    justify-content: space-between;
+                    justify-content: center;
                     align-items: center;
-
-                    .author-rank-span {
-                        font-size: 16px;
-                        font-weight: 600;
+    
+                    button {
+                        width: 100%;
+                        height: 80%;
+                        background-color: #1890ff;
+                        box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
+                        color: #fff;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
                     }
                 }
-
-                .author-rank-contents {
-                    ul {
-                        list-style: none;
-                        padding: 0;
-                        margin: 0;
-
-                        li {
-                            padding: 15px 0;
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-
-                            .author {
-                                margin-right: 10px;
+    
+                .post-rank {
+                    width: 100%;
+                    background-color: #fff;
+                    border-radius: 5px;
+                    box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
+                    padding: 15px;
+                    margin-bottom: 30px;
+    
+                    .post-rank-title {
+                        padding-bottom: 10px;
+                        border-bottom: 1px solid #f0f0f0;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+    
+                        .post-rank-span {
+                            font-size: 16px;
+                            font-weight: 600;
+                        }
+    
+                        .refresh-post-rank {
+                            color: rgb(132, 132, 132);
+                            font-size: 12px;
+                            cursor: pointer;
+                            
+    
+                            i {
+                                font-size: 12px;
+                                margin-right: 5px;
+                            }
+                        }
+                    }
+    
+                    .posts-rank-contents {
+                        ul {
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+    
+                            li {
                                 display: flex;
                                 align-items: center;
-
-                                img {
-                                    width: 40px;
-                                    height: 40px;
-                                    border-radius: 50%;
-                                    margin-right: 10px;
-                                }
+                                padding: 10px 0;
+                                color: #61666D;
     
-                                p {
-                                    margin: 0;
+                                span {
+                                    width: 30px;
+                                    font-size: 16px;
                                 }
-                                p:first-child {
-                                    font-size: 15px;
-                                }
-                                p:last-child {
-                                    font-size: 12px;
-                                    color: rgb(132, 132, 132);
+
+                                .router-link {
+                                    text-decoration: none;
+                                    color: rgb(63, 63, 63);
+                                    font-size: 13px;
                                 }
                             }
-
-                            button {
-                                width: 60px;
-                                height: 30px;
-                                border: none;
-                                border-radius: 5px;
-                                cursor: pointer;
-                                background-color: #ffede0;
-                                color: #a37658;
+                            li:nth-child(1) {
+                                color: #ff4d4f;
+                                font-weight: 600;
+                            }
+                            li:nth-child(2) {
+                                color: #fa8c16;
+                                font-weight: 600;
+                            }
+                            li:nth-child(3) {
+                                color: #e7c943;
+                                font-weight: 600;
                             }
                         }
                     }
+    
+                    .post-rank-more {
+                        padding: 10px 0 0 0;
+                        text-align: center;
+                        cursor: pointer;
+                        font-size: 13px;
+                        color: rgb(132, 132, 132);
+                        border-top: 1px solid #f0f0f0;
+                    }
                 }
+    
+                .author-rank {
+                    width: 100%;
+                    background-color: #fff;
+                    border-radius: 5px;
+                    box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
+                    padding: 15px;
+    
+                    .author-rank-title {
+                        padding-bottom: 10px;
+                        border-bottom: 1px solid #f0f0f0;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+    
+                        .author-rank-span {
+                            font-size: 16px;
+                            font-weight: 600;
+                        }
+                    }
+    
+                    .author-rank-contents {
+                        ul {
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+    
+                            li {
+                                padding: 15px 0;
+                                border-bottom: 1px solid #f0f0f0;
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+    
+                                .author {
+                                    width: 100%;
+                                    margin-right: 10px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: space-between;
 
-                .author-rank-more {
-                    padding: 10px 0 0 0;
-                    text-align: center;
-                    cursor: pointer;
-                    font-size: 13px;
-                    color: rgb(132, 132, 132);
-                    border-top: 1px solid #f0f0f0;
+                                    .author-information {
+                                        flex: 1;
+                                        display: flex;
+
+                                        img {
+                                            width: 40px;
+                                            height: 40px;
+                                            border-radius: 50%;
+                                            margin-right: 10px;
+                                        }
+            
+                                        .information {
+                                            p {
+                                                margin: 0;
+                                            }
+                                            p:first-child {
+                                                font-size: 15px;
+                                                color: black
+                                            }
+                                            p:nth-child(2) {
+                                                font-size: 12px;
+                                                color: rgb(132, 132, 132);
+                                            }
+
+                                            .router-link {
+                                                text-decoration: none;
+                                            }
+                                        }
+                                    }
+    
+                                    button {
+                                        width: 60px;
+                                        height: 30px;
+                                        border: none;
+                                        border-radius: 5px;
+                                        cursor: pointer;
+                                        background-color: #ffede0;
+                                        color: #a37658;
+                                    }
+                                }
+                            }
+                        }
+                    }
+    
+                    .author-rank-more {
+                        padding: 10px 0 0 0;
+                        text-align: center;
+                        cursor: pointer;
+                        font-size: 13px;
+                        color: rgb(132, 132, 132);
+                        border-top: 1px solid #f0f0f0;
+                    }
                 }
             }
         }
