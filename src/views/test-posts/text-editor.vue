@@ -1,10 +1,9 @@
 <template>
     <div class="editor-box">
         <div class="header">
-            <input type="text" placeholder="输入标题..." />
+            <input type="text" placeholder="输入标题..." v-model="title"/>
             <div class="options">
-                <button>存入草稿</button>
-                <button>设置帖子相关信息</button>
+                <button class="button-setting" @click="sendEditorMsg">{{ operateType }}帖子相关信息</button>
                 <img src="../../assets/images/logo.png" alt="">
             </div>
         </div>
@@ -17,7 +16,14 @@ import Vditor from 'vditor'
 import "vditor/dist/index.css"
 import { onMounted, ref } from 'vue';
 
-const vditor = ref({})
+const props = defineProps<{
+    sendOperateType: string
+}>()
+const vditor = ref()
+const title = ref<string>('')
+const operateType = ref<string>('')
+const emit = defineEmits(['sendEditorContents'])
+
 onMounted(() => {
     vditor.value = new Vditor('vditor', {
         placeholder: '输入...',
@@ -81,7 +87,18 @@ onMounted(() => {
             }
         ],
     })
+    if (props.sendOperateType !== '') {
+        operateType.value = props.sendOperateType
+    }
 })
+
+const sendEditorMsg = () => {
+    const text = vditor.value.getValue()
+    emit('sendEditorContents', {
+        title: title.value,
+        text
+    })
+}
 </script>
 
 <style scoped lang="css">
@@ -94,7 +111,6 @@ onMounted(() => {
 
     .header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
 
         input {
@@ -116,22 +132,21 @@ onMounted(() => {
             align-items: center;
             gap: 20px;
 
-            button {
+            .button-setting {
                 padding: 10px 20px;
                 border: none;
                 outline: none;
                 cursor: pointer;
                 font-size: 20px;
-            }
-            button:first-child {
-                background-color: #f0f0f0;
-                border-radius: 5px;
-                color: #adadad;
-            }
-            button:nth-child(2) {
                 background-color: #7ebcff;
                 border-radius: 5px;
                 color: #ffffff;
+            }
+            .button-setting:hover {
+                background-color: #5e9bfc;
+            }
+            .button-setting:active {
+                background-color: #4d8af9;
             }
 
             img {

@@ -50,37 +50,37 @@
                     </nav>
                 </div>
                 <div class="posts">
-                    <div class="posts-select" >
-                        <div 
-                            class="zone"
-                            v-for="(zone) in zoneList"
-                            :key="zone.zoneId"
-                        >
-                            <input 
-                                type="radio"
-                                name="zone"
-                                :id="zone.zoneId"
-                                :value="zone.zoneId"
-                                v-model="zoneFatherId"
+                    <el-scrollbar height="100px">
+                        <div class="posts-select">
+                            <div 
+                                class="zone"
+                                v-for="(zone) in zoneList"
+                                :key="zone.zoneId"
                             >
-                            <label 
-                                :for="zone.zoneId" 
-                                @mouseover="mouseoverZone($event)"
-                                @mouseout="mouseoutZone($event)"
-                            >{{ zone.value }}</label>
+                                <input 
+                                    type="radio"
+                                    name="zone"
+                                    :id="zone.zoneId"
+                                    :value="zone.zoneId"
+                                    v-model="zoneFatherId"
+                                >
+                                <label 
+                                    :for="zone.zoneId" 
+                                >{{ zone.value }}</label>
+                            </div>
+                            <div 
+                                v-if="isShowZonePop"
+                                class="zone-pop"
+                                :style="{top: zonePopTop + 'px', left: zonePopLeft + 'px'}"
+                                @mouseover="isShowZonePop = true"
+                                @mouseout="isShowZonePop = false"
+                            >
+                                <ul>
+                                    <li>二级分区1</li>
+                                </ul>
+                            </div>
                         </div>
-                        <div 
-                            v-if="isShowZonePop"
-                            class="zone-pop"
-                            :style="{top: zonePopTop + 'px', left: zonePopLeft + 'px'}"
-                            @mouseover="isShowZonePop = true"
-                            @mouseout="isShowZonePop = false"
-                        >
-                            <ul>
-                                <li>二级分区1</li>
-                            </ul>
-                        </div>
-                    </div>
+                    </el-scrollbar>
                     <div class="posts-contents">
                         <div 
                             class="content"
@@ -100,7 +100,7 @@
                 </div>
                 <div class="rank-create">
                     <div class="create-post">
-                        <button @click="router.push('/test/editor')">创建帖子</button>
+                        <button @click="router.push('/test/write')">创建帖子</button>
                     </div>
                     <div class="post-rank">
                         <div class="post-rank-title">
@@ -181,7 +181,6 @@ import { errorMsg } from "@/utils/message";
 import { useStore } from "@/store";
 import { post } from '@/utils/request'
 import { TargetType, RelationType } from '@/utils/consts'
-import { t } from '@wangeditor/editor';
 
 const store = useStore()
 const navSelect = ref('all')
@@ -189,6 +188,7 @@ const zoneFatherId = ref('root')
 const noMoreUsers = ref(false)
 const noMorePosts = ref(false)
 const isShowZonePop = ref(false)
+const ismouseover = ref<Array<boolean>>([])
 const userRankList = ref<HotUser[]>([])
 const postRankList = ref<HotPost[]>([])
     const postsList = ref<responseGetOtherPosts>({
@@ -197,7 +197,7 @@ const postRankList = ref<HotPost[]>([])
 const zonePopTop = ref(0)
 const zonePopLeft = ref(0)
 const zoneList = ref<Zone[]>([])
-const pageSize = 10; // 假设每页加载10项
+const pageSize = 99999; // 假设每页加载10项
 let userPage = 1; // 当前用户列表页码
 let postPage = 1; // 当前帖子列表页码
 
@@ -207,27 +207,6 @@ onMounted(async() => {
     zoneList.value = await getZoneList(zoneFatherId.value, pageSize, 0)
     postsList.value = await getOtherPosts()
 })
-
-//移入移出分区
-const mouseoverZone = (event: MouseEvent) => {
-    isShowZonePop.value = true
-    zonePopTop.value = event.clientY - 65
-    zonePopLeft.value = event.clientX - 20
-}
-const mouseoutZone = (event: any) => {
-    const pop = document.querySelector('.zone-pop')
-    if (pop) {
-        pop.addEventListener('mouseover', () => {
-            isShowZonePop.value = true
-        })
-        pop.addEventListener('mouseout', () => {
-            isShowZonePop.value = false
-        })
-    }
-    else if (event.target.className !== 'zone-pop') {
-        isShowZonePop.value = false
-    }
-}
 
 const splitDescription = (text: string) => {
     if (text.length > 6) return text.slice(0, 6) + '...'
@@ -380,10 +359,9 @@ const unfollowerUser = (user: any) => {
     
                 .posts-select {
                     max-height: 100px;
-                    overflow-y: auto;
-                    border-bottom: 1px solid #f0f0f0;
-                    display: flex;
-                    flex-wrap: wrap;
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, 1fr);
+                    grid-template-rows: repeat(auto-fill, 50px);
     
                     .zone {
                         height: 25px;
@@ -432,6 +410,7 @@ const unfollowerUser = (user: any) => {
                 }
     
                 .posts-contents {
+                    border-top: 1px solid #f0f0f0;
                     .content {
                         padding: 10px;
                         border-bottom: 1px solid #f0f0f0;
