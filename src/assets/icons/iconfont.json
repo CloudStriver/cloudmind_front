@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "4182912",
+      "name": "AK-MN_热门",
+      "font_class": "mn_remen",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "7551991",
+      "name": "最新",
+      "font_class": "zuixin",
+      "unicode": "e63b",
+      "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "5770401",
+      "name": "推荐2",
+      "font_class": "tuijian",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "6737455",
+      "name": "全部 更多",
+      "font_class": "quanbu",
+      "unicode": "e6e2",
+      "unicode_decimal": 59106
+    },
+    {
+      "icon_id": "29865213",
+      "name": "我的关注",
+      "font_class": "wodeguanzhu",
+      "unicode": "e685",
+      "unicode_decimal": 59013
+    },
+    {
       "icon_id": "21967833",
       "name": "上传文件1.1",
       "font_class": "shangchuanwenjian11",
