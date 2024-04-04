@@ -10,11 +10,11 @@
                                 <input
                                     type="radio"
                                     name="nav"
-                                    id="all"
-                                    value="all"
+                                    id="hot"
+                                    value="hot"
                                     v-model="navSelect"
                                 >
-                                <label for="all"><i class="iconfont icon-mn_remen"></i>热门</label>
+                                <label for="hot"><i class="iconfont icon-mn_remen"></i>热门</label>
                             </li>
                             <li>
                                 <input 
@@ -84,7 +84,7 @@
                     <div class="posts-contents">
                         <div 
                             class="content"
-                            v-for="post in postsList.posts"
+                            v-for="post in postList"
                             :key="post.postId"
                         >
                             <div class="information">
@@ -168,32 +168,34 @@ import PostDetail from './post-information.vue'
 import {onMounted, ref} from 'vue'
 import router from '@/router'
 import {
-    getPostRankList,
-    getUserRankList,
-    getZoneList,
-    getOtherPosts,
     type HotPost,
     type HotUser,
     type Zone,
-    type responseGetOtherPosts
-} from "./utils";
+    type Post
+} from "./type";
+import {
+    getPostRankList,
+    getUserRankList,
+    getZoneList,
+} from "./utils"
 import { errorMsg } from "@/utils/message";
 import { useStore } from "@/store";
 import { post } from '@/utils/request'
 import { TargetType, RelationType } from '@/utils/consts'
 
 const store = useStore()
-const navSelect = ref('all')
-const zoneFatherId = ref('root')
-const noMoreUsers = ref(false)
-const noMorePosts = ref(false)
-const isShowZonePop = ref(false)
-const ismouseover = ref<Array<boolean>>([])
-const userRankList = ref<HotUser[]>([])
-const postRankList = ref<HotPost[]>([])
-    const postsList = ref<responseGetOtherPosts>({
-    posts: []
-})
+const navSelect = ref('all') // 选项 
+const zoneFatherId = ref('root') // 当前选择分区的父分区ID
+const noMoreUsers = ref(false) // 没有更多作者了
+const noMorePosts = ref(false) // 没有更多文章了
+const isShowZonePop = ref(false) 
+const ismouseover = ref<Array<boolean>>([]) 
+const userRankList = ref<HotUser[]>([]) // 作者排行榜
+const postRankList = ref<HotPost[]>([]) // 文章排行榜
+const postList = ref<Post[]>([]) // 最新帖子列表
+// const hotPostList = ref<Post[]>([]) // 热门帖子列表
+// const followPostList = ref<Post[]>([]) // 关注帖子列表
+// const recommendPostList = ref<Post[]>([])  // 推荐帖子列表
 const zonePopTop = ref(0)
 const zonePopLeft = ref(0)
 const zoneList = ref<Zone[]>([])
@@ -205,7 +207,7 @@ onMounted(async() => {
     userRankList.value = await getUserRankList(pageSize, 0)
     postRankList.value = await getPostRankList(pageSize, 0)
     zoneList.value = await getZoneList(zoneFatherId.value, pageSize, 0)
-    postsList.value = await getOtherPosts()
+    // hotPostList.value = await getHotPostList()
 })
 
 const splitDescription = (text: string) => {

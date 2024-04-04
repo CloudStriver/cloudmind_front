@@ -2,41 +2,18 @@ import { ref } from 'vue'
 import { useStore } from '@/store'
 import { errorMsg } from '@/utils/message'
 import { get, post } from '@/utils/request'
+import { 
+    type HotUser,
+    type HotPost,
+    type Post,
+    type Zone,
+} from './type'
+
+import {  CategoryType } from '@/utils/consts'
 
 const store = useStore()
 
-export interface HotUser {
-    userId: string
-    name: string
-    url: string
-    description: string
-    followed: boolean
-}
-
-export interface HotPost {
-    postId: string
-    title: string
-}
-
-export interface Zone {
-    zoneId: string
-    value: string
-}
-
-export interface responseGetOtherPosts {
-    posts: {
-        postId: string,
-        title: string,
-        text: string,
-        url: string,
-        tags: string[],
-        likeCount: number,
-        commentCount: number,
-        liked: boolean,
-        userName: string,
-    }[]
-}
-
+// 获取作者排行榜
 export const getUserRankList = async (limit: number, offset: number)  => {
     const rankList = ref<HotUser[]>([])
     await get('/rank/getHotRanks?targetType=1&limit=' + limit + "&offset=" + offset)
@@ -50,20 +27,18 @@ export const getUserRankList = async (limit: number, offset: number)  => {
                         description: user.description,
                         followed: user.followed,
                     }
-                ))
+                )) 
         }
     })
     return rankList.value
 }
 
-export const getOtherPosts = async () => {
-    const postsList = ref<responseGetOtherPosts>({
-        posts: []
-    })
+// 获取最新的帖子列表
+export const getNewPostList = async () => {
+    const postsList = ref<Post[]>([])
     await get('/content/getPosts')
     .then((res: any) => {
-        postsList.value = {
-            posts: res.posts.map((post: any) => ({
+        postsList.value =  res.posts.map((post: any) => ({
                 postId: post.postId,
                 title: post.title,
                 text: post.text,
@@ -73,12 +48,12 @@ export const getOtherPosts = async () => {
                 commentCount: post.commentCount,
                 liked: post.liked,
                 userName: post.userName
-            }))
-        }
+            })) 
     })
     return postsList.value
 }
 
+// 获取文章排行榜
 export const getPostRankList = async (limit: number, offset: number)  => {
     const rankList = ref<HotPost[]>([])
     await get('/rank/getHotRanks?targetType=3&limit=' + limit + "&offset=" + offset)
@@ -95,6 +70,7 @@ export const getPostRankList = async (limit: number, offset: number)  => {
     return rankList.value
 }
 
+// 获取分区列表
 export const getZoneList = async (fatherId: string, limit: number, offset: number)  => {
     const rankList = ref<Zone[]>([])
     await get('/content/getZones?fatherId=' + fatherId + '&limit=' + limit + "&offset=" + offset)
@@ -130,6 +106,7 @@ export const cancelRelation = (thisPost: any, toType: number, relationType: numb
     })
 }
 
+// 创建关系
 export const createRelation = (thisPost: any, toType: number, relationType: number) => {
     const longToken = store.getUserLongToken()
     if (!longToken) {
@@ -149,5 +126,24 @@ export const createRelation = (thisPost: any, toType: number, relationType: numb
         else if (relationType === 3) {
             thisPost.collected = true
         }
+    })
+}
+
+
+export const getHotPostList = () => {
+    const hotPostList = ref<Post[]>([])
+    get('/content/getPopularRecommend?category=' + CategoryType.PostCategory)
+    .then((res: any) => { 
+        hotPostList.value = res.recommends.posts.map((post: any) => ({
+                postId: post.postId,
+                title: post.title,
+                text: post.text,
+                url: post.url,
+                tags: post.tags,
+                likeCount: post.likeCount,
+                commentCount: post.commentCount,
+                liked: post.liked,
+                userName: post.userName 
+            }))
     })
 }

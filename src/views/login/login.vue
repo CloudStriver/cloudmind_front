@@ -118,11 +118,10 @@ onMounted(() => {
 const thirdLogin = () => {
     const code = location.href.split('=')[1]
     if (code) {
-        const url = '/auth/giteeLogin?code=' + code
+        const url = '/auth/qqLogin?code=' + code
         get(url)
         .then ((res: any) => {
             store.setUserLocal (res.shortToken, res.longToken, res.userId)
-            
             successMsg('登录成功')
             router.push('/')
         })
