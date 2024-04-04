@@ -1,5 +1,4 @@
 
-
 export enum TargetType {
     User = 1,
     File = 2,
@@ -17,4 +16,10 @@ export enum RelationType {
     Upload = 8,
     Download = 9,
     Publish = 10
+}
+
+export enum CategoryType {
+    UserCategory = 1,
+    FileCategory = 2,
+    PostCategory = 3
 }

@@ -10,10 +10,6 @@
               <i class="iconfont icon-qq qq" ></i>
             </a>
             <i class="iconfont icon-weixin weixin" @click="getQrCode"></i>
-            <i class="iconfont icon-gitub gitub"></i>
-            <a href="https://gitee.com/oauth/authorize?client_id=10dfe502136745d1f135474390c4cb6cd50fce3a5bf7a167891d3b0ec184d2eb&redirect_uri=https://cloudmind.top/login&response_type=code" target="_blank">
-                <i class="iconfont icon-gitee1 gitee"></i>
-            </a>
         </div>
       <div v-if="qrCodeUrl" class="qr-code-container">
         <img :src="qrCodeUrl" alt="WeChat QR Code" />
