@@ -21,9 +21,15 @@ export type Post = {
     title: string,
     text: string,
     url: string,
-    tags: string[],
+    tags: Tag[],
     likeCount: number,
     commentCount: number, 
     liked: boolean,
     userName: string, 
+}
+
+export type Tag = {
+    tagId: string,
+    zoneId: string,
+    value: string,
 }

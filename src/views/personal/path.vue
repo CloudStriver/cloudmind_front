@@ -113,6 +113,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { useStore } from '@/store'
 import router from '@/router'
+import {StoragePathId, StoragePathName} from "@/utils/consts";
 
 const store = useStore()
 const emit = defineEmits(['sendPathMsg'])
@@ -131,8 +132,8 @@ const nowPath = ref({
 
 onMounted(() => {
     pathData.value = {
-        pathId: (sessionStorage.getItem("PathId") as string).split("/"),
-        pathName: (sessionStorage.getItem("PathName") as string).split("/")
+        pathId: (sessionStorage.getItem(StoragePathId) as string).split("/"),
+        pathName: (sessionStorage.getItem(StoragePathName) as string).split("/")
     }
     nowPath.value = {
         pathId: pathData.value.pathId.pop() as string,
@@ -143,8 +144,8 @@ onMounted(() => {
 watch(() => store.pathChange, (newVal) => {
     if (newVal) {
         pathData.value = {
-            pathId: (sessionStorage.getItem("PathId") as string).split("/"),
-            pathName: (sessionStorage.getItem("PathName") as string).split("/")
+            pathId: (sessionStorage.getItem(StoragePathId) as string).split("/"),
+            pathName: (sessionStorage.getItem(StoragePathName) as string).split("/")
         }
         nowPath.value = {
             pathId: pathData.value.pathId.pop() as string,

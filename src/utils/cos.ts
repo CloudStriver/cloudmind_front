@@ -1,5 +1,6 @@
 import COS from 'cos-js-sdk-v5'
 import { post } from './request'
+import {AskUploadFileUrl} from "@/utils/consts";
 
 /*
 创建cos(全局唯一的，用来上传文件的) ->
@@ -23,7 +24,7 @@ const cos = new COS({
         // users/md5.suffix  从该字符传中提取md5和suffix
         const name = options.Key.split('/')[1]
         // options.Key = users/md5.suffix 
-         post('/content/askUploadFile', {
+         post(false, AskUploadFileUrl, {
             name,
             fileSize: options.SliceSize
         })

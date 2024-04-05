@@ -1,3 +1,5 @@
+import {StorageLongToken} from "@/utils/consts";
+
 export const judgeEmail = (email: string):boolean => {
     const expression = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
     const objExp = new RegExp(expression)
@@ -11,7 +13,7 @@ export const judgePassword = (password: string):boolean => {
 }
 
 export const judgeHasLogin = () => {
-    if (localStorage.getItem('LongToken') || sessionStorage.getItem('LongToken')) {
+    if (localStorage.getItem(StorageLongToken) || sessionStorage.getItem(StorageLongToken)) {
         return true
     }
     else {

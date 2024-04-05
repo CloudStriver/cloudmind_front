@@ -129,11 +129,9 @@
 
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
-import { useStore } from '@/store'
 import { ref, onMounted } from 'vue'
-import {getUserDetail, getUserInfo} from "@/views/information/utils";
-import {turnTime} from "../personal/utils";
-const store = useStore()
+import { getUserInfo} from "@/views/information/utils";
+import {turnTime} from "@/utils/utils";
 const user = ref({
   name: '',
   sex: '',

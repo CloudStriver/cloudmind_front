@@ -98,7 +98,7 @@ onBeforeMount(() => {
     createPostData.value = type
 })
 
-const getEditorText = (sendEditorContents: any) => {
+const getEditorText = () => {
     isClickSettingButton.value = true
 }
 const uploadCoverImage = (event: Event) => {

@@ -96,6 +96,7 @@ import { post, get } from '@/utils/request';
 import { useStore } from '@/store/index';
 import { errorMsg, successMsg } from '@/utils/message';
 import { judgeEmail, judgePassword } from '@/utils/judge'
+import {EmailLoginUrl, QQLoginUrl} from "@/utils/consts";
 
 const store = useStore()
 const captcha = ref()
@@ -118,8 +119,7 @@ onMounted(() => {
 const thirdLogin = () => {
     const code = location.href.split('=')[1]
     if (code) {
-        const url = '/auth/qqLogin?code=' + code
-        get(url)
+        get(false,`${QQLoginUrl}?code=${code}`)
         .then ((res: any) => {
             store.setUserLocal (res.shortToken, res.longToken, res.userId)
             successMsg('登录成功')
@@ -135,8 +135,7 @@ const judgeAccountInput = () => {
     isEmail.value = judgeEmail(email.value)
     if (isEmail.value) {
         isCaptcha.value = true
-    } 
-    else {
+    } else {
         isCaptcha.value = false
     }
 }
@@ -200,7 +199,7 @@ const login = () => {
     }
 
     if (judgeEmailAndPassword() && agreements.value && captcha.value.isSuccess) {
-        post('/auth/emailLogin', {
+        post(false, EmailLoginUrl, {
             email: email.value,
             password: password.value
         })

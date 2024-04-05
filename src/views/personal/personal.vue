@@ -45,6 +45,7 @@ import RecycleTitle from './recycle-title.vue'
 import CHeader from '@/components/header.vue'
 import router from '@/router'
 import { ref } from 'vue'
+import {StoragePathId} from "@/utils/consts";
 const RecycleMsg = ref({
     option: "",
     message: "",
@@ -94,7 +95,7 @@ const getDrawerOptionType = (sendDrawerOptions: string) => {
         isShowFiles.value = false
     }
     else if (sendDrawerOptions === 'showFiles'){
-        const pathList = (sessionStorage.getItem("PathId") as string).split("/")
+        const pathList = (sessionStorage.getItem(StoragePathId) as string).split("/")
         router.push('/personal/' + pathList[pathList.length - 1])
         isShowRecycle.value = false
         isShowFiles.value = true

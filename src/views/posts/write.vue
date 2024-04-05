@@ -122,6 +122,7 @@ import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { onBeforeUnmount, onUpdated, ref, shallowRef } from 'vue'
 import { post } from '@/utils/request'
 import router from '@/router'
+import {CreatePostUrl, StoragePostContent, StoragePostTitle} from "@/utils/consts";
 
 const coverImage = ref('') // 封面图片
 const valueHtml = ref('') // 文章内容
@@ -254,7 +255,7 @@ const handleCreated = (editor: any) => {
 }
 
 const createPost = (url: string) => {
-  post('/content/createPost', {
+  post(false, CreatePostUrl, {
     title: postTitle.value,
     text: valueHtml.value,
     tags: nowTagsList.value,
@@ -271,8 +272,8 @@ const createPost = (url: string) => {
       coverImage.value = ''
       nowTagsList.value = []
       isOperate.value = true
-      sessionStorage.removeItem('postTitle')
-      sessionStorage.removeItem('postContent')
+      sessionStorage.removeItem(StoragePostTitle)
+      sessionStorage.removeItem(StoragePostContent)
       router.push('/posts')
     }
     else {
@@ -307,8 +308,8 @@ const previewPost = () => {
   const originalText  = editorRef.value.getHtml()
   const withoutFirstP = originalText.slice(3)
   nowPostContent.value = withoutFirstP.slice(0, withoutFirstP.length - 4)
-  sessionStorage.setItem('postTitle', postTitle.value)
-  sessionStorage.setItem('postContent', nowPostContent.value)
+  sessionStorage.setItem(StoragePostTitle, postTitle.value)
+  sessionStorage.setItem(StoragePostContent, nowPostContent.value)
   window.open('/write/preview')
 }
 </script>    

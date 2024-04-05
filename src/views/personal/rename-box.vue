@@ -19,6 +19,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue' 
 import { post } from '@/utils/request'
+import {UpdateFileUrl} from "@/utils/consts";
 
 const props = defineProps<{
     sendName: {
@@ -41,7 +42,7 @@ const cancel = () => {
     })
 }
 const confirm = () => {
-    post('/content/updateFile', {
+    post(true, UpdateFileUrl, {
         fileId: props.sendName.fileId,
         name: name.value
     }).then((res:any) => {

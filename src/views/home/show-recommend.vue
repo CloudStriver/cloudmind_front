@@ -1,15 +1,10 @@
 <template>
     <div class="main-box">
         <div class="goods-box" v-show="props.classify === 'goods'">
-            <div 
-                class="goods" 
-
-            >
+            <div class="goods">
                 <header>
-                    
                 </header>
                 <section>
-
                 </section>
             </div>
         </div>
@@ -69,7 +64,7 @@
               <div
                   class="followed"
                   v-if="user.followed"
-                  @click="unfollowerUser(user)"
+                  @click="unFollowUser(user)"
               >
                 <i class="iconfont icon-a-dianzan2"></i>
                 <div>已关注</div>
@@ -84,10 +79,8 @@
 import PostDetail from '../posts/post-information.vue'
 import { get } from '@/utils/request'
 import { ref, onMounted, watch } from 'vue'
-import { post } from '@/utils/request'
-import {errorMsg} from "@/utils/message";
-import {useStore} from "@/store";
-const store = useStore()
+import type {Post, User} from "@/views/home/utils";
+import {followUser, judgeType, trunNum, unFollowUser} from "@/views/home/utils";
 
 const storageContent = ref<any>({
     hotGoods: [],
@@ -107,27 +100,11 @@ const props = defineProps<{
     classify: string,
     mainClassify: string
 }>()
+
+
 interface ResponseDetail {
-    users?: {
-        userId: string
-        name: string
-        url: string
-        description: string
-        followedCount: number
-        labels: string[]
-        followed: boolean
-    }[],
-    posts?: {
-        postId: string
-        title: string
-        text: string
-        url: string
-        tags: string[]
-        likeCount: number
-        commentCount: number
-        liked: boolean
-        userName: string
-    }[],
+    users?: User[],
+    posts?: Post[],
 }
 const responseDetail = ref<ResponseDetail>({
     users: [],
@@ -135,7 +112,7 @@ const responseDetail = ref<ResponseDetail>({
 })
 
 onMounted(() => {
-    getShow()
+  getShow()
 })
 
 watch(() => props.mainClassify, () => {
@@ -146,172 +123,112 @@ watch(() => props.classify, () => {
 })
 
 const htmlToText = (html: string) => {
-    const div = document.createElement('div')
-    div.innerHTML = html
-    if (div.innerText.length > 190) return div.innerText.slice(0, 190) + '...'
-    return div.innerText
+  const div = document.createElement('div')
+  div.innerHTML = html
+  if (div.innerText.length > 190) return div.innerText.slice(0, 190) + '...'
+  return div.innerText
 }
 
 const showPostImage = (url: string) => {
-    return url !== ''
+  return url !== ''
 }
 
 const getShow = () => {
-    const mainClassify = props.mainClassify
-    const classify = judgeType(props.classify) as string
-    const classifyNum = trunNum(classify) as number
-    const index = mainClassify + classify as any
-    
-    if (classify !== 'Users') {
-        if (storageContent.value[index].length !== 0) {
-            responseDetail.value = {
-                posts: (storageContent as any).value[index].map((post: any) => ({
-                    postId: post.postId,
-                    title: post.title,
-                    text: post.text,
-                    url: post.url,
-                    tags: post.tags,
-                    likeCount: post.likeCount,
-                    commentCount: post.commentCount,
-                    liked: post.liked,
-                    userName: post.userName
-                }))
-            }
-            return 
-        }
-        
-        const url = ref('')
-        if (mainClassify === 'hot') {
-            url.value = '/content/getPopularRecommend?category=' + classifyNum
-        }
-        else if (mainClassify === 'new') {
-            url.value = '/content/getLatestRecommend?category=' + classifyNum
-        }
-        else {
-            url.value = '/content/getRecommendByUser?category=' + classifyNum
-        }
-        
-        get(url.value)
-        .then((res: any) => {
-            responseDetail.value = {
-                posts: res.recommends.posts.map((post: any) => ({
-                    postId: post.postId,
-                    title: post.title,
-                    text: post.text,
-                    url: post.url,
-                    tags: post.tags,
-                    likeCount: post.likeCount,
-                    commentCount: post.commentCount,
-                    liked: post.liked,
-                    userName: post.userName
-                }))
-            };
-            storageContent.value[index] = res.recommends.posts
-        })
+  const mainClassify = props.mainClassify
+  const classify = judgeType(props.classify) as string
+  const classifyNum = trunNum(classify) as number
+  const index = mainClassify + classify as any
+
+  if (classify !== 'Users') {
+    if (storageContent.value[index].length !== 0) {
+      responseDetail.value = {
+        posts: (storageContent as any).value[index].map((post: any) => ({
+          postId: post.postId,
+          title: post.title,
+          text: post.text,
+          url: post.url,
+          tags: post.tags,
+          likeCount: post.likeCount,
+          commentCount: post.commentCount,
+          liked: post.liked,
+          userName: post.userName
+        }))
+      }
+      return
+    }
+
+    const url = ref('')
+    if (mainClassify === 'hot') {
+      url.value = '/content/getPopularRecommend?category=' + classifyNum
+    }
+    else if (mainClassify === 'new') {
+      url.value = '/content/getLatestRecommend?category=' + classifyNum
     }
     else {
-        if (storageContent.value[index].length !== 0) {
-            responseDetail.value = {
-                users: (storageContent as any).value[index].map((user: any) => ({
-                    userId: user.userId,
-                    name: user.name,
-                    url: user.url,
-                    description: user.description,
-                    followedCount: user.followedCount,
-                    labels: user.labels,
-                    followed: user.followed
-                }))
-            }
-            return 
-        }
-        
-        const url = ref('')
-        if (mainClassify === 'hot') {
-            url.value = '/content/getPopularRecommend?category=' + classifyNum
-        }
-        else if (mainClassify === 'new') {
-            url.value = '/content/getLatestRecommend?category=' + classifyNum
-        }
-        else {
-            url.value = '/content/getRecommendByUser?category=' + classifyNum
-        }
-        
-        get(url.value)
+      url.value = '/content/getRecommendByUser?category=' + classifyNum
+    }
+
+    get(false, url.value)
         .then((res: any) => {
-            responseDetail.value = {
-                users: res.recommends.users.map((user: any) => ({
-                    userId: user.userId,
-                    name: user.name,
-                    url: user.url,
-                    description: user.description,
-                    followedCount: user.followedCount,
-                    labels: user.labels,
-                    followed: user.followed
-                }))
-            };
-            storageContent.value[index] = res.recommends.users
+          responseDetail.value = {
+            posts: res.recommends.posts.map((post: any) => ({
+              postId: post.postId,
+              title: post.title,
+              text: post.text,
+              url: post.url,
+              tags: post.tags,
+              likeCount: post.likeCount,
+              commentCount: post.commentCount,
+              liked: post.liked,
+              userName: post.userName
+            }))
+          };
+          storageContent.value[index] = res.recommends.posts
         })
-    }
-}
-const judgeType = (type: string) => {
-    switch (type) {
-        case 'user':
-            return 'Users'
-        case 'file':
-            return 'Files'
-        case 'goods':
-            return 'Goods'
-        case 'posts':
-            return 'Posts'
-    }
-}
-const trunNum = (type: string) => {
-    switch (type) {
-        case 'Users':
-            return 1
-        case 'Files':
-            return 2
-        case 'Goods':
-            return 4
-        case 'Posts':
-            return 3
-    }
-}
-
-
-
-const followUser = (user: any) => {
-  const longToken = store.getUserLongToken()
-  if (!longToken) {
-    errorMsg('请先登录')
-    return
   }
-    post('/relation/createRelation', {
-      toId: user.userId,
-      toType:  1,
-      relationType: 2,
-    })
-    .then(() => {
-      user.followed = true
-      user.followedCount++
-    })
-}
+  else {
+    if (storageContent.value[index].length !== 0) {
+      responseDetail.value = {
+        users: (storageContent as any).value[index].map((user: any) => ({
+          userId: user.userId,
+          name: user.name,
+          url: user.url,
+          description: user.description,
+          followedCount: user.followedCount,
+          labels: user.labels,
+          followed: user.followed
+        }))
+      }
+      return
+    }
 
-const unfollowerUser = (user: any) => {
-  const longToken = store.getUserLongToken()
-  if (!longToken) {
-    errorMsg('请先登录')
-    return
+    const url = ref('')
+    if (mainClassify === 'hot') {
+      url.value = '/content/getPopularRecommend?category=' + classifyNum
+    }
+    else if (mainClassify === 'new') {
+      url.value = '/content/getLatestRecommend?category=' + classifyNum
+    }
+    else {
+      url.value = '/content/getRecommendByUser?category=' + classifyNum
+    }
+
+    get(false, url.value)
+        .then((res: any) => {
+          responseDetail.value = {
+            users: res.recommends.users.map((user: any) => ({
+              userId: user.userId,
+              name: user.name,
+              url: user.url,
+              description: user.description,
+              followedCount: user.followedCount,
+              labels: user.labels,
+              followed: user.followed
+            }))
+          };
+          storageContent.value[index] = res.recommends.users
+        })
   }
-  post('/relation/deleteRelation', {
-    toId: user.userId,
-    toType:  1,
-    relationType: 2,
-  })
-    .then(() => {
-      user.followed = false
-      user.followedCount--
-    })
 }
 
 </script>

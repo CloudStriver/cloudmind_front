@@ -1,4 +1,6 @@
 
+// ------------------------------------------枚举------------------------------------------------------------------------
+
 export enum TargetType {
     User = 1,
     File = 2,
@@ -23,3 +25,69 @@ export enum CategoryType {
     FileCategory = 2,
     PostCategory = 3
 }
+
+// -----------------------------------------URL-------------------------------------------------------------------------
+
+export const DeleteRelationUrl = "/relation/deleteRelation"
+export const CreateRelationUrl = "/relation/createRelation"
+
+export const GetHotRanksUrl = "/rank/getHotRanks"
+
+export const GetUserUrl = "/content/getUser"
+export const GetPostUrl = "/content/getPost"
+export const GetZonesUrl = "/content/getZones"
+export const GetPostsUrl = "/content/getPosts"
+export const MoveFileUrl = "/content/moveFile"
+export const CreateFileUrl = "/content/createFile"
+export const DeleteFileUrl = "/content/deleteFile"
+export const DeletePostUrl = "/content/deletePost"
+export const CreatePostUrl = "/content/createPost"
+export const UpdateUserUrl = "/content/updateUser"
+export const UpdatePostUrl = "/content/updatePost"
+export const GetUserDetailUrl = "/content/getUserDetail"
+export const GetPrivateFilesUrl = "/content/getPrivateFiles"
+
+export const AskDownloadFileUrl = "/content/askDownloadFile"
+export const EmptyRecycleBinUrl = "/content/emptyRecycleBin"
+export const GetRecycleBinFilesUrl = "/content/getRecycleBinFiles"
+export const GetRecommendByUserUrl  = "/content/getRecommendByUser"
+export const GetPopularRecommendUrl = "/content/getPopularRecommend"
+export const CompletelyRemoveFileUrl = "/content/completelyRemoveFile"
+export const RecoverRecycleBinFileUrl = "/content/recoverRecycleBinFile"
+export const UpdateFileUrl = "/content/updateFile"
+export const AskUploadFileUrl = "/content/askUploadFile"
+
+export const QQLoginUrl = "/auth/qqLogin"
+export const RegisterUrl = "/auth/register"
+export const SendEmailUrl = "/auth/sendEmail"
+export const CheckEmailUrl= "/auth/checkEmail"
+export const EmailLoginUrl = "/auth/emailLogin"
+export const WechatLoginUrl = "/auth/weixinLogin"
+export const RefreshTokenUrl = "/auth/refreshToken"
+export const WechatIsLoginUrl = "/auth/weixinIsLogin"
+
+export const GetNotificationsUrl= "/system/getNotifications"
+export const GetNotificationCountUrl = "/system/getNotificationCount"
+
+// ----------------------------------------Storage----------------------------------------------------------------------
+
+export const StorageDoGetUser = "DoGetUser" // 是否获取过用户信息
+export const StorageAvatarUrl= "AvatarUrl" // 头像URL
+export const StorageName= "Name" // 用户名
+export const StoragePostContent = "PostContent"
+export const StoragePostTitle = "PostTitle"
+export const StorageUserId = "UserId"
+export const StorageLongToken = "LongToken"
+export const StoragePostUrl = "PostUrl"
+export const StorageAutoLogin = "AutoLogin"
+export const StorageShortToken = "ShortToken"
+export const StoragePathId= "PathId"
+export const StoragePathName = "PathName"
+export const StoragePath = "Path"
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+export const UserAvatarUrl = "https://cloudmind.top/users/"
+
+// ---------------------------------------------------------------------------------------------------------------------
+

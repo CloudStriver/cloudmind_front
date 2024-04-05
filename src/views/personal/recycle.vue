@@ -44,6 +44,7 @@ import {ref, onMounted, watch} from 'vue'
 import { getRecycleFilesList } from './utils'
 import type { responseRecycleFilesList } from './utils'
 import { post } from '@/utils/request'
+import {DeleteFileUrl, RecoverRecycleBinFileUrl} from "@/utils/consts";
 const props = defineProps<{
   RecycleMsg: {
     option: string,
@@ -89,7 +90,7 @@ watch(() => props.RecycleMsg, () => {
 
 const deleteFiles = () => {
     const fileIds = getFilesId()
-    post('/content/deleteFile', {
+    post(true, DeleteFileUrl, {
         fileIds,
         deleteType: 3
     })
@@ -103,7 +104,7 @@ const deleteFiles = () => {
 }
 const recoverFiles = () => {
     const fileIds = getFilesId()
-    post('/content/recoverRecycleBinFile', {
+    post(true, RecoverRecycleBinFileUrl, {
         fileIds
     })
     .then(async() => {

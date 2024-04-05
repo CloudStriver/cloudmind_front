@@ -22,6 +22,7 @@ import {onUnmounted, ref} from "vue";
 import {get, post} from "@/utils/request";
 import router from "@/router";
 import {useStore} from "@/store";
+import {WechatIsLoginUrl, WechatLoginUrl} from "@/utils/consts";
 
 const store = useStore()
 const qrCodeUrl = ref('');
@@ -30,7 +31,7 @@ const pollingInterval = 2000; // 轮询间隔，例如 2000 毫秒（2秒）
 let pollingTimer: number | null = null; // 明确指定类型为 number | null
 
 const getQrCode = () => {
-   get("https://apisix.cloudmind.top/auth/weixinLogin").then((res: any) => {
+   get(false, WechatLoginUrl).then((res: any) => {
      qrCodeUrl.value = res.qrUrl
      tempUserId.value = res.tempUserId
      startPolling(); // 获取到 QR Code 后开始轮询
@@ -46,7 +47,7 @@ const startPolling = () => {
 
 // 检查登录状态
 const checkLoginStatus = () => {
-  post("https://apisix.cloudmind.top/auth/weixinIsLogin", {
+  post(false, WechatIsLoginUrl, {
     tempUserId: tempUserId.value,
   }).then((res: any) => {
     if (res.userId !== "") {
@@ -111,9 +112,6 @@ onUnmounted(() => {
     }
     .weixin {
         color: rgb(71, 211, 118);
-    }
-    .gitee {
-        color: #d83d3d;
     }
 
   .qr-code-container {

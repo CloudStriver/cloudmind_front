@@ -1,20 +1,19 @@
 import { ref } from 'vue'
-import { useStore } from '@/store'
-import { errorMsg } from '@/utils/message'
-import { get, post } from '@/utils/request'
+import { get } from '@/utils/request'
+import {GetPostsUrl} from "@/utils/consts";
+import type {Tag} from "@/views/test-posts/type";
 
-const store = useStore()
 export interface responseGetOtherPosts {
     posts: {
-        postId: string,
-        title: string,
-        text: string,
-        url: string,
-        tags: string[],
-        likeCount: number,
-        commentCount: number,
-        liked: boolean,
-        userName: string,
+        postId: string;
+        title: string;
+        text: string;
+        url: string;
+        userName: string;
+        likeCount: number;
+        liked: boolean;
+        commentCount: number;
+        tags: Tag[];
     }[]
 }
 
@@ -45,7 +44,7 @@ export const getOtherPosts = async () => {
     const postsList = ref<responseGetOtherPosts>({
         posts: []
     })
-    await get('/content/getPosts')
+    await get(false, GetPostsUrl)
     .then((res: any) => {
         postsList.value = {
             posts: res.posts.map((post: any) => ({
@@ -67,47 +66,47 @@ export const getOtherPosts = async () => {
 export const getTagsList = async(key: string) =>{
     const url = '/label/getLabels?key=' + key
     const tagsList = ref<string[]>([])
-    await get(url).then((res: any) => {
+    await get(false, url).then((res: any) => {
         tagsList.value = res.labels.map((label: any) => label.value)
     })
     return tagsList.value
 }
 
-export const cancelRelation = (thisPost: any, toType: number, relationType: number) => {
-    post('/relation/deleteRelation', {
-        toId: thisPost.postId,
-        toType,
-        relationType,
-    })
-    .then(() => {
-        if (relationType === 1) {
-            thisPost.liked = false
-            thisPost.likeCount --
-        }
-        else if (relationType === 3) {
-            thisPost.collected = false
-        }
-    })
-}
-
-export const createRelation = (thisPost: any, toType: number, relationType: number) => {
-    const longToken = store.getUserLongToken()
-    if (!longToken) {
-        errorMsg('请先登录')
-        return
-    }
-    post('/relation/createRelation', {
-        toId: thisPost.postId,
-        toType,
-        relationType,
-    })
-    .then(() => {
-        if (relationType === 1) {
-            thisPost.liked = true
-            thisPost.likeCount ++
-        }
-        else if (relationType === 3) {
-            thisPost.collected = true
-        }
-    })
-}
+// export const cancelRelation = (thisPost: any, toType: number, relationType: number) => {
+//     post('/relation/deleteRelation', {
+//         toId: thisPost.postId,
+//         toType,
+//         relationType,
+//     })
+//     .then(() => {
+//         if (relationType === 1) {
+//             thisPost.liked = false
+//             thisPost.likeCount --
+//         }
+//         else if (relationType === 3) {
+//             thisPost.collected = false
+//         }
+//     })
+// }
+//
+// export const createRelation = (thisPost: any, toType: number, relationType: number) => {
+//     const longToken = store.getUserLongToken()
+//     if (!longToken) {
+//         errorMsg('请先登录')
+//         return
+//     }
+//     post('/relation/createRelation', {
+//         toId: thisPost.postId,
+//         toType,
+//         relationType,
+//     })
+//     .then(() => {
+//         if (relationType === 1) {
+//             thisPost.liked = true
+//             thisPost.likeCount ++
+//         }
+//         else if (relationType === 3) {
+//             thisPost.collected = true
+//         }
+//     })
+// }
