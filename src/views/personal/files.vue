@@ -84,6 +84,7 @@ import {
 } from './utils'
 import type { responsePrivateFilesList, fileData, requestCreateFile } from './utils'
 import {FileSortType, StoragePath, StoragePathId, StoragePathName} from "@/utils/consts";
+import {StoragePath, StoragePathId, StoragePathName} from "@/utils/consts";
 
 const store = useStore()
 const optionTop = ref<number>(0)
