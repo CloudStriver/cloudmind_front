@@ -66,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import mime from 'mime'
+// import mime from 'mime'
 import SparkMD5 from 'spark-md5'
 import router from '@/router';
 import Option from './options.vue'
@@ -83,7 +83,7 @@ import {
   getCategory
 } from './utils'
 import type { responsePrivateFilesList, fileData, requestCreateFile } from './utils'
-import {StoragePath, StoragePathId, StoragePathName} from "@/utils/consts";
+import {FileSortType, StoragePath, StoragePathId, StoragePathName} from "@/utils/consts";
 
 const store = useStore()
 const optionTop = ref<number>(0)
@@ -112,6 +112,7 @@ const mouseFileIndex = ref(-1)
 const isDragFile = ref(false)
 const isShowOptions = ref(false)
 const emit = defineEmits(['loading', 'sendOptions', 'sendDetails'])
+const sortType = ref(FileSortType.CreateTimeAsc)
 const props = defineProps<{
     sendRequest: {
         option: string,
@@ -143,13 +144,14 @@ const nowFilesList = ref<responsePrivateFilesList>({
     fatherNamePath: ''
 }) 
 
+
 onMounted(async() => {
     fatherId.value = getPersonalFatherId()
     if (fatherId.value !== 'recycle') {
         nowFilesList.value = await getPrivateFilesList({
             limit: 100,
             offset: 0,
-            sortType: 3,
+            sortType: sortType.value,
             backward: true,
             onlyFatherId: fatherId.value
         })
@@ -164,7 +166,7 @@ onBeforeRouteUpdate(async(to) => {
     nowFilesList.value = await getPrivateFilesList({
         limit: 100,
         offset: 0,
-        sortType: 3,
+        sortType: sortType.value,
         backward: true,
         onlyFatherId: fatherId.value
     })
@@ -182,32 +184,45 @@ watch(() => store.tempFileData, (newVal) => {
     nowFilesList.value.files.unshift(newVal)
 })
 watch(() => props.sendRequest, async() => {
-    if (props.sendRequest.option === 'refreshFiles') {
+  switch (props.sendRequest.option) {
+    case 'refreshFiles':
         nowFilesList.value = await getPrivateFilesList({
-            limit: 100,
-            offset: 0,
-            sortType: 3,
-            backward: true,
-            onlyFatherId: fatherId.value
-        })
-    }
-    else if (props.sendRequest.option === 'updateName') {
+          limit: 100,
+          offset: 0,
+          sortType: sortType.value,
+          backward: true,
+          onlyFatherId: fatherId.value
+        });
+      break
+    case 'updateName':
         nowFilesList.value.files[ctxIndex.value].name = sliceFileName(props.sendRequest.message)
-    }
-    else if (props.sendRequest.option === 'classifyFiles') {
-      await classifyFile()
-    }
-    else if (props.sendRequest.option === 'allSelect') {
+        break
+    case  'classifyFiles':
+        await classifyFile()
+        break
+    case  'allSelect':
         if (props.sendRequest.message === true) {
-            chooseFileList.value = Array(nowFilesList.value.files.length).fill(true)
+          chooseFileList.value = Array(nowFilesList.value.files.length).fill(true)
+        } else {
+          chooseFileList.value = Array(nowFilesList.value.files.length).fill(false)
         }
-        else {
-            chooseFileList.value = Array(nowFilesList.value.files.length).fill(false)
-        }        
-    }
-    else {
+        break
+    case 'SortChanage':
+      sortType.value = getSortType(props.sendRequest.message)
+        console.log(props.sendRequest.message)
+        console.log(sortType.value)
+        nowFilesList.value = await getPrivateFilesList({
+          limit: 100,
+          offset: 0,
+          sortType: sortType.value,
+          backward: true,
+          onlyFatherId: fatherId.value
+        });
+        break
+    default:
         console.log('其他操作')
-    }
+        break
+  }
 })
 
 const chooseFile = (index: number) => {
@@ -215,6 +230,30 @@ const chooseFile = (index: number) => {
 }
 const cancelChooseFile = (index: number) => {
     chooseFileList.value[index] = false
+}
+
+const getSortType = (msg: any) => {
+   let sort = 0
+  switch (msg.type) {
+    case "createTime":
+      sort = 1
+      break
+    case "updateTime":
+      sort = 3
+      break
+    case "name":
+      sort = 5
+      break
+    case "type":
+      sort = 7
+      break
+    default:
+  }
+
+  if(msg.sort == "asc") {
+    sort ++
+  }
+  return sort
 }
 
 const dropUploadFile = (event: any) => {
@@ -229,7 +268,8 @@ const dropUploadFile = (event: any) => {
         spark.append(e.target.result)
         const md5 = spark.end()
         const suffix = '.' + file.name.split('.').pop()
-        const type = mime.getExtension(file.type) as string
+        // const type = mime.getExtension(file.type) as string
+        const type = file.type
         const data: requestCreateFile = {
             name: file.name,
             type,

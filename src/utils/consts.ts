@@ -26,6 +26,17 @@ export enum CategoryType {
     PostCategory = 3
 }
 
+export enum FileSortType {
+    CreateTimeDesc = 1,
+    CreateTimeAsc = 2,
+    UpdateTimeDesc = 3,
+    UpdateTimeAsc = 4,
+    FileNameDesc = 5,
+    FileNameAsc = 6,
+    FileTypeDesc = 7,
+    FileTypeAsc = 8
+}
+
 // -----------------------------------------URL-------------------------------------------------------------------------
 
 export const DeleteRelationUrl = "/relation/deleteRelation"

@@ -75,11 +75,11 @@ export const useStore = defineStore('user', {
             this.longToken = longToken
             this.isAutoLogin = "true"
 
-            sessionStorage.setItem(StorageUserId, userId)
-            sessionStorage.setItem(StorageShortToken, shortToken)
-            sessionStorage.setItem(StorageLongToken, longToken)
-            sessionStorage.setItem(StorageAutoLogin, "true")
-            sessionStorage.setItem(StorageDoGetUser, "false")
+            localStorage.setItem(StorageUserId, userId)
+            localStorage.setItem(StorageShortToken, shortToken)
+            localStorage.setItem(StorageLongToken, longToken)
+            localStorage.setItem(StorageAutoLogin, "true")
+            localStorage.setItem(StorageDoGetUser, "false")
         },
         getUserLongToken () {
             if (sessionStorage.getItem(StorageLongToken) !== null) {

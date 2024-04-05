@@ -145,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import mime from 'mime'
+// import mime from 'mime'
 import SparkMD5 from 'spark-md5'
 import { ref, onBeforeUpdate, watch, onMounted } from 'vue'
 import { useStore } from '@/store/index'
@@ -259,7 +259,8 @@ const uploadFiles = (event: any) => {
             spark.append(e.target.result)
             const md5 = spark.end()
             const suffix = '.' + file.name.split('.').pop()
-            const type = mime.getExtension(file.type) as string
+          // const type = mime.getExtension(file.type) as string
+          const type = file.type
             const data: requestCreateFile = {
                 name: file.name,
                 type,
