@@ -113,6 +113,7 @@ import { judgeEmail, judgePassword } from '@/utils/judge'
 import { errorMsg, successMsg } from '@/utils/message'
 import { post, get } from '@/utils/request'
 import { useStore } from '@/store/index'
+import {CheckEmailUrl, RegisterUrl, SendEmailUrl} from "@/utils/consts";
 
 const store = useStore()
 const email = ref('')
@@ -209,7 +210,7 @@ const judgeThisPassword = () => {
 const getCaptcah = () => {
     if (isEmail.value) {
         clickGetCaptcha.value = true
-        post('/auth/sendEmail', {
+        post(false, SendEmailUrl, {
             email: email.value,
             subject: '注册'
         })
@@ -243,8 +244,7 @@ const generateRrandomString = ():string => {
 
 const next = () => {
     if (isEmail.value && captcha.value.length === 6 && clickGetCaptcha.value) {
-        const url = '/auth/checkEmail?email=' + email.value + '&code=' + captcha.value
-        get(url)
+        get(false, `${CheckEmailUrl}?email=${email.value}&code=${captcha.value}`)
         .then((res: any) => {
             if (res.ok) {
                 isNext.value = true
@@ -271,7 +271,7 @@ const register = () => {
     if (judgeThisPassword()) {
         if (agreements.value) {
             const name = generateRrandomString()
-            post('/auth/register', {
+            post(false, RegisterUrl, {
                 name: name,
                 email: email.value,
                 sex: 1,

@@ -138,6 +138,7 @@ import { onMounted, ref } from 'vue';
 import {getPrivateFilesList, postCreateFile, postMoveFile, postDeleteFile, postCleanOutFile} from './utils'
 import type { responsePrivateFilesList, requestCreateFile } from './utils'
 import { errorMsg, successMsg } from '@/utils/message';
+import {StoragePathId, StoragePathName} from "@/utils/consts";
 
 const emit = defineEmits(['sendOperations', 'sendRenameMsg'])
 const renameMsg = ref({
@@ -209,8 +210,8 @@ const nowPath = ref({
 onMounted(async() => {
     if (props.sendContents.option === "moveFile") {
         pathData.value = {
-            pathId: (sessionStorage.getItem("PathId") as string).split("/"),
-            pathName: (sessionStorage.getItem("PathName") as string).split("/")
+            pathId: (sessionStorage.getItem(StoragePathId) as string).split("/"),
+            pathName: (sessionStorage.getItem(StoragePathName) as string).split("/")
         }
         nowPath.value = {
             pathId: pathData.value.pathId.pop() as string,

@@ -24,7 +24,11 @@
                           <div
                               class="follow"
                               v-if="!postDetail.author.followed"
-                              @click="followUser(postDetail.author)"
+                              @click="CreateRelation({
+                                          toId: postDetail.author.userId,
+                                          toType: TargetType.User,
+                                          relationType: RelationType.Follow,
+                              })"
                           >
                             <i class="iconfont icon-a-dianzan2"></i>
                             <div>关注</div>
@@ -32,7 +36,11 @@
                           <div
                               class="followed"
                               v-if="postDetail.author.followed"
-                              @click="unfollowerUser(postDetail.author)"
+                              @click="DeleteRelation({
+                                          toId: postDetail.author.userId,
+                                          toType: TargetType.User,
+                                          relationType: RelationType.Follow,
+                              })"
                           >
                             <i class="iconfont icon-a-dianzan2"></i>
                             <div>已关注</div>
@@ -47,7 +55,11 @@
                             <div 
                                 class="like"
                                 v-if="!postDetail.liked"
-                                @click="createRelation(postDetail, 3, 1)"
+                                @click="CreateRelation({
+                                          toId: postDetail.postId,
+                                          toType: TargetType.Post,
+                                          relationType: RelationType.Like,
+                                })"
                             >
                                 <i class="iconfont icon-a-dianzan2"></i>
                                 <div>点赞 {{ postDetail.likeCount }}</div>
@@ -55,7 +67,11 @@
                             <div 
                                 class="liked" 
                                 v-if="postDetail.liked"
-                                @click="cancelRelation(postDetail, 3, 1)"
+                                @click="DeleteRelation({
+                                          toId: postDetail.postId,
+                                          toType: TargetType.Post,
+                                          relationType: RelationType.Like,
+                              })"
                             >
                                 <i class="iconfont icon-a-dianzan2"></i>
                                 <div>已点赞 {{ postDetail.likeCount }}</div>
@@ -67,7 +83,11 @@
                             <div 
                                 class="collect" 
                                 v-if="!postDetail.collected"
-                                @click="createRelation(postDetail, 3, 3)"
+                                @click="CreateRelation({
+                                          toId: postDetail.postId,
+                                          toType: TargetType.Post,
+                                          relationType: RelationType.Collect,
+                                })"
                             >
                                 <i class="iconfont icon-shoucang01"></i>
                                 <div>收藏</div>
@@ -75,7 +95,11 @@
                             <div 
                                 class="collected" 
                                 v-if="postDetail.collected"
-                                @click="cancelRelation(postDetail, 3, 3)"
+                                @click="DeleteRelation({
+                                          toId: postDetail.postId,
+                                          toType: TargetType.Post,
+                                          relationType: RelationType.Collect,
+                                })"
                             >
                                 <i class="iconfont icon-shoucang01"></i>
                                 <div>已收藏</div>
@@ -120,12 +144,20 @@ import CHeader from '@/components/header.vue'
 import Comment from './comment.vue'
 import { get, post } from '@/utils/request'
 import { useStore } from '@/store'
-import { turnTime } from '@/utils/public'
 import { ref, onMounted, computed } from 'vue'
 import type { responseGetPost } from './utils'
 import router from '@/router'
-import {errorMsg, successMsg} from '@/utils/message'
-import { cancelRelation, createRelation } from './utils';
+import { successMsg} from '@/utils/message'
+import {turnTime} from "@/utils/utils";
+import {
+  DeletePostUrl,
+  GetPostUrl,
+  RelationType,
+  StoragePostContent,
+  StoragePostTitle, StoragePostUrl, StorageUserId,
+  TargetType
+} from "@/utils/consts";
+import {CreateRelation, DeleteRelation} from "@/utils/api";
 
 const store = useStore()
 const myUserId = ref('')
@@ -171,7 +203,7 @@ const deletePost = () => {
     isShowSetting.value = false
 }
 const continueDelete = () => {
-    post('/content/deletePost', { postId })
+    post(true, DeletePostUrl, { postId })
     .then(() => {
         successMsg('删除成功')
         router.push('/posts')
@@ -179,13 +211,13 @@ const continueDelete = () => {
 }
 
 const modifyPost = () => {
-    sessionStorage.setItem('postTitle', postDetail.value.title)
-    sessionStorage.setItem('postContent', postDetail.value.text)
+    sessionStorage.setItem(StoragePostTitle, postDetail.value.title)
+    sessionStorage.setItem(StoragePostContent, postDetail.value.text)
     if (postDetail.value.url) {
-        sessionStorage.setItem('postUrl', postDetail.value.url)
+        sessionStorage.setItem(StoragePostUrl, postDetail.value.url)
     }
     else {
-        sessionStorage.setItem('postUrl', '')
+        sessionStorage.setItem(StoragePostUrl, '')
     }
     router.push('/write/modify/' + postId)
 }
@@ -219,10 +251,10 @@ const cancelShowSettingPopup = () => {
 const getMyUserId = () => {
     const type = store.getLoginType()
     if (type === 1) {
-        myUserId.value = sessionStorage.getItem('UserId') as string
+        myUserId.value = sessionStorage.getItem(StorageUserId) as string
     }
     else if (type === 2) {
-        myUserId.value = localStorage.getItem('UserId') as string
+        myUserId.value = localStorage.getItem(StorageUserId) as string
     }
     else {
         myUserId.value = ''
@@ -230,47 +262,13 @@ const getMyUserId = () => {
 }
 
 const getPost = () => {
-    const url = '/content/getPost?postId=' + postId
-    get(url)
+    get(false,  `${GetPostUrl}?postId=${postId}`)
     .then((res: any) => {
         getMyUserId()
         postDetail.value = res as responseGetPost
         postDetail.value.postId = postId as string
     })
 }
-
-const followUser = (user: any) => {
-  const longToken = store.getUserLongToken()
-  if (!longToken) {
-    errorMsg('请先登录')
-    return
-  }
-  post('/relation/createRelation', {
-    toId: user.userId,
-    toType:  1,
-    relationType: 2,
-  })
-    .then(() => {
-      user.followed = true
-    })
-}
-
-const unfollowerUser = (user: any) => {
-  const longToken = store.getUserLongToken()
-  if (!longToken) {
-    errorMsg('请先登录')
-    return
-  }
-  post('/relation/deleteRelation', {
-    toId: user.userId,
-    toType:  1,
-    relationType: 2,
-  })
-  .then(() => {
-    user.followed = false
-  })
-}
-
 
 </script>
 

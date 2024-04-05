@@ -152,6 +152,7 @@ import type { responseGetMyPostList } from './utils'
 import { successMsg } from '@/utils/message'
 import router from '@/router';
 import { post } from '@/utils/request'
+import {DeletePostUrl, StoragePostContent, StoragePostTitle} from "@/utils/consts";
 
 const keyContent = ref<string>('')
 const nowDeletePostId = ref('')
@@ -170,7 +171,7 @@ const selectStatus = async (url: String) => {
 const continueDelete = () => {
     const postId = nowDeletePostId.value
     
-    post('/content/deletePost', { postId })
+    post(true, DeletePostUrl, { postId })
     .then(() => {
         successMsg('删除成功')
         location.reload()
@@ -196,8 +197,8 @@ const deletePost = (id: any) => {
 }
 
 const modifyPost = (post: any) => {
-    sessionStorage.setItem('postTitle', post.title)
-    sessionStorage.setItem('postContent', post.text)
+    sessionStorage.setItem(StoragePostTitle, post.title)
+    sessionStorage.setItem(StoragePostContent, post.text)
     router.push('/write/modify/' + post.postId)
 }
 

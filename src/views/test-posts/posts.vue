@@ -13,6 +13,7 @@
                                     id="hot"
                                     value="hot"
                                     v-model="navSelect"
+                                    checked
                                 >
                                 <label for="hot"><i class="iconfont icon-mn_remen"></i>热门</label>
                             </li>
@@ -90,7 +91,7 @@
                             <div class="information">
                                 <h2>{{ post.title }}</h2>
                                 <p>{{ splitContents(post.userName + ": " + post.text) }}</p>
-                                <PostDetail :information="post"></PostDetail>
+                                <PostDetail :Post="post"></PostDetail>
                             </div>
                             <div v-if="post.url !== ''" class="image">
                                 <img :src="post.url" alt="图片">
@@ -147,8 +148,13 @@
                                                     <p>{{ splitDescription(user.description) }}</p>
                                             </div>
                                         </div>
-                                        <button v-if="!user.followed" @click="followUser(user)">关注</button>
-                                        <button v-else @click="unfollowerUser(user)">已关注</button>
+                                        <button
+                                            v-if="!user.followed"
+                                            @click="followUser(user)"
+                                        >关注</button>
+                                        <button v-else
+                                                @click="unFollowUser(user)"
+                                        >已关注</button>
                                     </div>
                                 </li>
                             </ul>
@@ -165,49 +171,57 @@
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
 import PostDetail from './post-information.vue'
-import {onMounted, ref} from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import router from '@/router'
+import {type HotPost, type HotUser, type Post, type Zone} from "./type";
 import {
-    type HotPost,
-    type HotUser,
-    type Zone,
-    type Post
-} from "./type";
-import {
-    getPostRankList,
-    getUserRankList,
-    getZoneList,
+  followUser,
+  getFollowPostList,
+  getHotPostList,
+  getNewPostList,
+  getPostRankList,
+  getRecommendPostList,
+  getUserRankList,
+  getZoneList, unFollowUser,
 } from "./utils"
-import { errorMsg } from "@/utils/message";
-import { useStore } from "@/store";
-import { post } from '@/utils/request'
-import { TargetType, RelationType } from '@/utils/consts'
 
-const store = useStore()
-const navSelect = ref('all') // 选项 
+const navSelect = ref('all') // 选项
 const zoneFatherId = ref('root') // 当前选择分区的父分区ID
 const noMoreUsers = ref(false) // 没有更多作者了
 const noMorePosts = ref(false) // 没有更多文章了
 const isShowZonePop = ref(false) 
-const ismouseover = ref<Array<boolean>>([]) 
 const userRankList = ref<HotUser[]>([]) // 作者排行榜
 const postRankList = ref<HotPost[]>([]) // 文章排行榜
-const postList = ref<Post[]>([]) // 最新帖子列表
-// const hotPostList = ref<Post[]>([]) // 热门帖子列表
-// const followPostList = ref<Post[]>([]) // 关注帖子列表
-// const recommendPostList = ref<Post[]>([])  // 推荐帖子列表
+const postList = ref<Post[]>([]) // 帖子列表
 const zonePopTop = ref(0)
 const zonePopLeft = ref(0)
 const zoneList = ref<Zone[]>([])
-const pageSize = 99999; // 假设每页加载10项
+const pageSize = 10; // 假设每页加载10项
 let userPage = 1; // 当前用户列表页码
 let postPage = 1; // 当前帖子列表页码
 
 onMounted(async() => {
     userRankList.value = await getUserRankList(pageSize, 0)
     postRankList.value = await getPostRankList(pageSize, 0)
-    zoneList.value = await getZoneList(zoneFatherId.value, pageSize, 0)
-    // hotPostList.value = await getHotPostList()
+    zoneList.value = await getZoneList(zoneFatherId.value, 99999, 0)
+    postList.value = await getHotPostList()
+})
+
+watch(navSelect, async (newVal) => {
+  switch (newVal) {
+    case 'hot':
+      postList.value = await getHotPostList()
+      break
+    case 'recommend':
+      postList.value = await getRecommendPostList()
+      break
+    case 'follow':
+      postList.value = await getFollowPostList()
+      break
+    case 'new':
+      postList.value = await getNewPostList()
+      break
+  }
 })
 
 const splitDescription = (text: string) => {
@@ -243,39 +257,7 @@ const loadMorePosts = async () => {
   }
 };
 
-// 关注用户
-const followUser = (user: any) => {
-  const longToken = store.getUserLongToken()
-  if (!longToken) {
-    errorMsg('请先登录')
-    return
-  }
-  post('/relation/createRelation', {
-    toId: user.userId,
-    toType:  TargetType.User,
-    relationType: RelationType.Follow,
-  })
-  .then(() => {
-    user.followed = true
-  })
-}
 
-// 取消关注用户
-const unfollowerUser = (user: any) => {
-  const longToken = store.getUserLongToken()
-  if (!longToken) {
-    errorMsg('请先登录')
-    return
-  }
-  post('/relation/deleteRelation', {
-    toId: user.userId,
-    toType:  TargetType.User,
-    relationType: RelationType.Follow,
-  })
-  .then(() => {
-    user.followed = false
-  })
-}
 
 </script>
 

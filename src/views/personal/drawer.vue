@@ -153,6 +153,7 @@ import { cosUploadFile } from '@/utils/cos'
 import {postCreateFile, getFileSize, getPersonalFatherId, getCategory} from './utils'
 import type { requestCreateFile } from './utils'
 import router from "@/router";
+import {StoragePath, StoragePathId} from "@/utils/consts";
 
 const folder = ref()
 const store = useStore()
@@ -188,7 +189,7 @@ watch(selectType, (newVal) => {
         emit('sendDrawerOptions', 'showRecycle')
     }
     else {
-        const pathList = (sessionStorage.getItem("PathId") as string).split("/")
+        const pathList = (sessionStorage.getItem(StoragePathId) as string).split("/")
         router.push('/personal/' + pathList[pathList.length - 1])
         emit('sendDrawerOptions', 'showFiles')
         emit('sendDrawerSelectType', newVal)
@@ -221,7 +222,7 @@ const createFolder = () => {
 
     postCreateFile(data)
     .then((res) => {        
-        const tempPath = sessionStorage.getItem('Path') as string
+        const tempPath = sessionStorage.getItem(StoragePath) as string
         store.tempFileData = {
             fileId: res,
             userId: "",
@@ -270,7 +271,7 @@ const uploadFiles = (event: any) => {
             cosUploadFile(file, md5, suffix, () => {
                 postCreateFile(data)
                 .then((res)=> {
-                    const tempPath = sessionStorage.getItem('Path') as string
+                    const tempPath = sessionStorage.getItem(StoragePath) as string
                     store.tempFileData = {
                         fileId: res,
                         userId: "",

@@ -5,7 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from '@/store/index'
+import { useStore } from '@/store'
+import { StorageAvatarUrl} from "@/utils/consts";
 const store = useStore()
 
 const getAvatar = () => {
@@ -15,10 +16,10 @@ const getAvatar = () => {
         return avatarUrl as string
     }
     else if (loginType === 1) {       
-        return sessionStorage.getItem("avatarUrl") as string
+        return sessionStorage.getItem(StorageAvatarUrl) as string
     }
     else if (loginType === 2) { 
-        return localStorage.getItem("avatarUrl") as string
+        return localStorage.getItem(StorageAvatarUrl) as string
     }
 }
 </script>

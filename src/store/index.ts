@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import {StorageAutoLogin, StorageDoGetUser, StorageLongToken, StorageShortToken, StorageUserId} from "@/utils/consts";
 
 export const useStore = defineStore('user', {
     state: () =>{
@@ -47,11 +48,11 @@ export const useStore = defineStore('user', {
             this.fatherId = fatherId
         },
         getUserId () {
-            if (sessionStorage.getItem("UserId") !== null) {
-                this.userId = sessionStorage.getItem("UserId") as string
+            if (sessionStorage.getItem(StorageUserId) !== null) {
+                this.userId = sessionStorage.getItem(StorageUserId) as string
             }
-            else if (localStorage.getItem("UserId") !== null) {
-                this.userId = localStorage.getItem("UserId") as string
+            else if (localStorage.getItem(StorageUserId) !== null) {
+                this.userId = localStorage.getItem(StorageUserId) as string
             }
             return this.userId
         },
@@ -62,11 +63,11 @@ export const useStore = defineStore('user', {
             this.longToken = longToken
             this.isAutoLogin = "false"
 
-            sessionStorage.setItem("UserId", userId)
-            sessionStorage.setItem("ShortToken", shortToken)
-            sessionStorage.setItem("LongToken", longToken)
-            sessionStorage.setItem("isAutoLogin", "false")
-            sessionStorage.setItem("HasChecked", "false")
+            sessionStorage.setItem(StorageUserId, userId)
+            sessionStorage.setItem(StorageShortToken, shortToken)
+            sessionStorage.setItem(StorageLongToken, longToken)
+            sessionStorage.setItem(StorageAutoLogin, "false")
+            sessionStorage.setItem(StorageDoGetUser, "false")
         },
         setUserLocal (shortToken: string, longToken: string, userId: string) {
             this.userId = userId
@@ -74,26 +75,26 @@ export const useStore = defineStore('user', {
             this.longToken = longToken
             this.isAutoLogin = "true"
 
-            localStorage.setItem("UserId", userId)
-            localStorage.setItem("ShortToken", shortToken)
-            localStorage.setItem("LongToken", longToken)
-            localStorage.setItem("isAutoLogin", "true")
-            localStorage.setItem("HasChecked", "false")
+            sessionStorage.setItem(StorageUserId, userId)
+            sessionStorage.setItem(StorageShortToken, shortToken)
+            sessionStorage.setItem(StorageLongToken, longToken)
+            sessionStorage.setItem(StorageAutoLogin, "true")
+            sessionStorage.setItem(StorageDoGetUser, "false")
         },
         getUserLongToken () {
-            if (sessionStorage.getItem("LongToken") !== null) {
-                this.longToken = sessionStorage.getItem("LongToken") as string
+            if (sessionStorage.getItem(StorageLongToken) !== null) {
+                this.longToken = sessionStorage.getItem(StorageLongToken) as string
             }
-            else if (localStorage.getItem("LongToken") !== null) {
-                this.longToken = localStorage.getItem("LongToken") as string
+            else if (localStorage.getItem(StorageLongToken) !== null) {
+                this.longToken = localStorage.getItem(StorageLongToken) as string
             }
             return this.longToken
         },
         getLoginType () {
-            if (sessionStorage.getItem("isAutoLogin") !== null) {
+            if (sessionStorage.getItem(StorageAutoLogin) !== null) {
                 return 1
             }
-            else if (localStorage.getItem("isAutoLogin") !== null) {
+            else if (localStorage.getItem(StorageAutoLogin) !== null) {
                 return 2
             }
             else {

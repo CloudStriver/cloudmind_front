@@ -1,5 +1,6 @@
 import { get } from '@/utils/request'
 import { ref } from 'vue'
+import { GetNotificationsUrl} from "@/utils/consts";
 
 export interface ResponseGetNotification {
     notifications: Array<{
@@ -20,12 +21,12 @@ export const getNotifications = async(type: number) => {
 
     const url = ref('')
     if (type === 0) {
-        url.value = '/system/getNotifications'
+        url.value = GetNotificationsUrl
     }
     else {
-        url.value = `/system/getNotifications?onlyType=${type}`
+        url.value = `${GetNotificationsUrl}?onlyType=${type}`
     }
-    await get(url.value)
+    await get(true, url.value)
     .then((res: any) => {
         notifications.value = {
             notifications: res.notifications
@@ -34,14 +35,4 @@ export const getNotifications = async(type: number) => {
     console.log(notifications.value.notifications);
     
     return notifications.value.notifications
-}
-
-export const getNotificationsCount = async() => {
-    const url = '/system/getNotificationCount'
-    let count = 0
-    await get(url)
-    .then((res: any) => {
-        count = res.total
-    })
-    return count
 }

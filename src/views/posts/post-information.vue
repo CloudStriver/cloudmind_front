@@ -4,7 +4,11 @@
             <span 
                 class="row"
                 v-if="!props.information.liked"
-                @click="createRelation(props.information, 3, 1)"
+                @click="CreateRelation({
+                    toId: props.information.postId,
+                    toType: TargetType.Post,
+                    relationType: RelationType.Like,
+                })"
             >
                 <i class="iconfont icon-a-dianzan2"></i>
                 <div>点赞 {{ props.information.likeCount }}</div>
@@ -12,7 +16,11 @@
             <span
                 class="row liked"
                 v-else
-                @click="cancelRelation(props.information, 3, 1)"
+                @click="DeleteRelation({
+                    toId: props.information.postId,
+                    toType: TargetType.Post,
+                    relationType: RelationType.Like,
+                })"
             >
                 <i class="iconfont icon-a-dianzan2"></i>
                 <div>已点赞 {{ props.information.likeCount }}</div>
@@ -33,14 +41,17 @@
                 v-for="(tag, index) in props.information.tags"
                 :key="index"
             >
-                <button>{{ tag }}</button>
+                <button>{{ tag.value }}</button>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { cancelRelation, createRelation } from './utils';
+
+import {RelationType, TargetType} from "@/utils/consts";
+import {CreateRelation, DeleteRelation} from "@/utils/api";
+import type {Tag} from "@/views/test-posts/type";
 
 const props = defineProps<{
     information: {
@@ -52,7 +63,7 @@ const props = defineProps<{
         likeCount: number;
         liked: boolean;
         commentCount: number;
-        tags: string[];
+        tags: Tag[];
     }
 }>();
 </script>

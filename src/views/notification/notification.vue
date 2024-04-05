@@ -190,9 +190,10 @@
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
 import { ref, onMounted, watch } from 'vue'
-import { turnTime } from '@/utils/public'
+// import { turnTime } from '@/utils.ts/public'
 import { getNotifications } from './utils'
 import type { ResponseGetNotification } from './utils'
+import {turnTime} from "@/utils/utils";
 
 const select = ref<string>('all')
 const notificationList = ref<any>([])

@@ -1,14 +1,15 @@
 import { get } from '@/utils/request'
 import { ref } from 'vue'
 import { useStore } from '@/store'
+import {GetPostsUrl, StorageUserId} from "@/utils/consts";
 
 const store = useStore()
 const getMyUserId = () => {
     if (store.getLoginType() === 1) {
-        return sessionStorage.getItem('UserId')
+        return sessionStorage.getItem(StorageUserId)
     }
     else {
-        return localStorage.getItem('UserId')
+        return localStorage.getItem(StorageUserId)
     }
 }
 
@@ -28,15 +29,14 @@ export interface responseGetMyPostList {
 }
 
 export const getMyPostList = async(params: any) => {
-    console.log('getMyPostList')
     const postsList = ref<responseGetMyPostList>({
         posts: []
     })
-    const url = ref('/content/getPosts?onlyUserId=' + getMyUserId())
+    const url = ref(`${GetPostsUrl}?onlyUserId=' + ${getMyUserId()}`)
     if (params !== '&allFieldsKey=') {
-        url.value = '/content/getPosts?onlyUserId=' + getMyUserId() + params
+        url.value = `${GetPostsUrl}?onlyUserId=${getMyUserId()}${params}`
     }
-    await get(url.value)
+    await get(true, url.value)
     .then((res: any) => {
         postsList.value = {
             posts: res.posts.map((post: any) => ({

@@ -3,25 +3,25 @@
         <div class="detial-box">
             <span 
                 class="row"
-                v-if="!props.information.liked"
-                @click="createRelation(props.information, 3, 1)"
+                v-if="!Post.liked"
+                @click="likePost(Post)"
             >
                 <i class="iconfont icon-a-dianzan2"></i>
-                <div>点赞 {{ props.information.likeCount }}</div>
+                <div>点赞 {{ Post.likeCount }}</div>
             </span>
             <span
                 class="row liked"
                 v-else
-                @click="cancelRelation(props.information, 3, 1)"
+                @click="unLikePost(Post)"
             >
                 <i class="iconfont icon-a-dianzan2"></i>
-                <div>已点赞 {{ props.information.likeCount }}</div>
+                <div>已点赞 {{ Post.likeCount }}</div>
             </span>
             <span
                 class="row"
             >
                 <i class="iconfont icon-a-xiaoxi1"></i>
-                <div>评论 {{ props.information.commentCount }}</div>
+                <div>评论 {{ Post.commentCount }}</div>
             </span>
             <span class="row">
                 <i class="iconfont icon-gengduo"></i>
@@ -30,30 +30,21 @@
         <div class="tag-box">
             <div
                 class="tag"
-                v-for="(tag, index) in props.information.tags"
+                v-for="(tag, index) in Post.tags"
                 :key="index"
             >
-                <button>{{ tag }}</button>
+                <button>{{ tag.value }}</button>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { cancelRelation, createRelation } from './utils';
+import type {Post, Tag} from "@/views/test-posts/type";
+import {likePost, unLikePost} from "@/views/test-posts/utils";
 
 const props = defineProps<{
-    information: {
-        postId: string;
-        title: string;
-        text: string;
-        url: string;
-        userName: string;
-        likeCount: number;
-        liked: boolean;
-        commentCount: number;
-        tags: string[];
-    }
+  Post: Post
 }>();
 </script>
 

@@ -123,10 +123,11 @@ import { cosUploadImage } from '@/utils/public-cos'
 import { errorMsg, successMsg } from '@/utils/message'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { onBeforeUnmount, onUpdated, ref, shallowRef, watch } from 'vue'
+import {StoragePostContent, StoragePostTitle, StoragePostUrl, UpdatePostUrl} from "@/utils/consts";
   
-const coverImage = ref(sessionStorage.getItem('postUrl') as string) // 封面图片
-const postTitle = ref(sessionStorage.getItem('postTitle'))// 文章标题
-const valueHtml = ref(sessionStorage.getItem('postContent')) // 文章内容
+const coverImage = ref(sessionStorage.getItem(StoragePostUrl) as string) // 封面图片
+const postTitle = ref(sessionStorage.getItem(StoragePostTitle))// 文章标题
+const valueHtml = ref(sessionStorage.getItem(StoragePostContent)) // 文章内容
 const searchContent = ref('') 
 const editorRef = shallowRef()
 const imageFile = ref()
@@ -190,8 +191,8 @@ onUpdated(() => {
 })
 
 watch([postTitle, valueHtml], () => {
-    sessionStorage.setItem('postTitle', postTitle.value as string)
-    sessionStorage.setItem('postContent', valueHtml.value as string)
+    sessionStorage.setItem(StoragePostTitle, postTitle.value as string)
+    sessionStorage.setItem(StoragePostContent, valueHtml.value as string)
 })
   
 const getTagList = debounce(async() => {
@@ -232,7 +233,7 @@ const deleteImage = () => {
     coverImage.value = ''
     isUploadImage.value = false
     imageFile.value = null
-    sessionStorage.removeItem('postUrl')
+    sessionStorage.removeItem(StoragePostUrl)
 }
 
 const showOperateImage = () => {
@@ -254,7 +255,7 @@ const handleCreated = (editor: any) => {
 
 const updatePost = (url: string) => {
     const postId = location.href.split('/').pop()
-    post('/content/updatePost', {
+    post(true,UpdatePostUrl, {
         postId,
         title: postTitle.value,
         text: valueHtml.value,
@@ -269,8 +270,8 @@ const updatePost = (url: string) => {
         coverImage.value = ''
         nowTagsList.value = []
         isOperate.value = true
-        sessionStorage.removeItem('postTitle')
-        sessionStorage.removeItem('postContent')
+        sessionStorage.removeItem(StoragePostTitle)
+        sessionStorage.removeItem(StoragePostContent)
         router.push('/post/' + postId)
     })
 }
@@ -294,8 +295,8 @@ const modifyPost = () => {
     }
 }
 const previewPost = () => {
-    sessionStorage.setItem('postTitle', postTitle.value as string)
-    sessionStorage.setItem('postContent', editorRef.value.getHtml())
+    sessionStorage.setItem(StoragePostTitle, postTitle.value as string)
+    sessionStorage.setItem(StoragePostContent, editorRef.value.getHtml())
     window.open('/write/preview')
 }
 </script>    

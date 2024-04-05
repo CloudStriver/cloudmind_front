@@ -30,9 +30,10 @@
 
 import {post} from "@/utils/request";
 import {successMsg} from "@/utils/message";
+import {EmptyRecycleBinUrl} from "@/utils/consts";
 const emit = defineEmits(['sendRecycleTitleOptions'])
 const cleanOutRecycle = () => {
-  post('/content/emptyRecycleBin')
+  post(false, EmptyRecycleBinUrl)
       .then(() => {
         successMsg('成功清空回收站')
         emit('sendRecycleTitleOptions', "cleanOutRecycle")

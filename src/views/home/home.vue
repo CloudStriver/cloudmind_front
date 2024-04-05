@@ -27,6 +27,7 @@ import announced from '@/views/home/announced.vue'
 import { onMounted } from 'vue'
 import { useStore } from '@/store/index'
 import { getUserDetail } from '../information/utils'
+import {StorageAvatarUrl, StorageDoGetUser, StorageName} from "@/utils/consts";
 
 const store = useStore()
 
@@ -39,19 +40,19 @@ const firstGetUserDetail = () => {
     const loginType = store.getLoginType()
 
     if (longToken) {
-        if (loginType === 1 && sessionStorage.getItem("HasChecked") === 'false') {
+        if (loginType === 1 && sessionStorage.getItem(StorageDoGetUser) === 'false') {
             getUserDetail().then(res => {
-                sessionStorage.setItem("HasChecked", 'true')
-                sessionStorage.setItem("avatarUrl", res.avatar)
-                sessionStorage.setItem("Name", res.name)
+                sessionStorage.setItem(StorageDoGetUser, 'true')
+                sessionStorage.setItem(StorageAvatarUrl, res.avatar)
+                sessionStorage.setItem(StorageName, res.name)
                 location.reload()
             });
         }
-        else if (loginType === 2 && localStorage.getItem("HasChecked") === 'false') {
+        else if (loginType === 2 && localStorage.getItem(StorageDoGetUser) === 'false') {
             getUserDetail().then(res => {
-                localStorage.setItem("HasChecked", 'true')
-                localStorage.setItem("avatarUrl", res.avatar)
-                localStorage.setItem("Name", res.name)
+                localStorage.setItem(StorageDoGetUser, 'true')
+                localStorage.setItem(StorageAvatarUrl, res.avatar)
+                localStorage.setItem(StorageName, res.name)
                 location.reload()
             });
         }

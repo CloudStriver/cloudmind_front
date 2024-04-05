@@ -1,9 +1,9 @@
-import axios, { AxiosError } from 'axios'
-import { useStore } from '@/store/index'
-import { ElMessage } from 'element-plus'
-import { ElLoading } from 'element-plus'
-import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
-import { errorMsg } from './message'
+import type {AxiosResponse, InternalAxiosRequestConfig} from 'axios'
+import axios, {AxiosError} from 'axios'
+import {useStore} from '@/store/index'
+import {ElLoading, ElMessage} from 'element-plus'
+import {errorMsg} from './message'
+import {RefreshTokenUrl, StorageAutoLogin, StorageLongToken, StorageShortToken, StorageUserId} from "@/utils/consts";
 
 interface myResponseType<T> extends AxiosResponse {
     code: number,
@@ -24,7 +24,7 @@ const endLoading = () => {
 }
 
 const service = axios.create({
-  baseURL: 'https://apisix.cloudmind.top',
+  baseURL: 'https://apisix.cloudmind.top:30443',
   timeout: 10000,
   headers: {
     'X-Xh-Env': 'pro',
@@ -39,16 +39,14 @@ service.interceptors.request.use(
       startLoading()
     }
     loadingCount ++
-    if (localStorage.getItem('LongToken') === null && sessionStorage.getItem('LongToken') === null) {
+    if (localStorage.getItem(StorageLongToken) === null && sessionStorage.getItem(StorageLongToken) === null) {
       return config
     }
-    else if (localStorage.getItem('LongToken') === null && sessionStorage.getItem('LongToken') !== null) {
-      const localToken = sessionStorage.getItem('ShortToken')
-      config.headers['Authorization'] = localToken
+    else if (localStorage.getItem(StorageLongToken) === null && sessionStorage.getItem(StorageLongToken) !== null) {
+      config.headers['Authorization'] = sessionStorage.getItem(StorageShortToken)
     }
     else {
-      const localToken = localStorage.getItem('ShortToken')
-      config.headers['Authorization'] = localToken
+      config.headers['Authorization'] = localStorage.getItem(StorageShortToken)
     }
     
     return config
@@ -70,14 +68,14 @@ service.interceptors.response.use(
     endLoading()
     const status = error.response.status
     if (status === 401) {
-      if (localStorage.getItem('isAutoLogin') === "true") {//自动登录情况
-        const longToken = localStorage.getItem('LongToken')
+      if (localStorage.getItem(StorageAutoLogin) === "true") {//自动登录情况
+        const longToken = localStorage.getItem(StorageLongToken)
         if (longToken) {
           try {
-            post('/auth/refreshToken', { longToken })
+            post(true, '/auth/refreshToken', { longToken })
             .then((res: any) => {
               if (res !== undefined) {
-                const userId = localStorage.getItem('UserId') as string
+                const userId = localStorage.getItem(StorageUserId) as string
                 store.setUserLocal (res.shortToken, res.longToken, userId)
                 return service(error.config)
               }
@@ -96,11 +94,11 @@ service.interceptors.response.use(
           ElMessage.error('请前往登录')
         }
       }
-      else if (sessionStorage.getItem('isAutoLogin') === "false") {
-        const longToken = sessionStorage.getItem('LongToken')
-        post('/auth/refreshToken', { longToken })
+      else if (sessionStorage.getItem(StorageAutoLogin) === "false") {
+        const longToken = sessionStorage.getItem(StorageLongToken)
+        post(true, RefreshTokenUrl, { longToken })
         .then((res: any) => {
-          const userId = sessionStorage.getItem('UserId') as string
+          const userId = sessionStorage.getItem(StorageUserId) as string
           store.setUserSession (res.shortToken, res.longToken, userId)
           return service(error.config)
         })
@@ -117,21 +115,38 @@ service.interceptors.response.use(
 )
 
 export async function request<T>(config: InternalAxiosRequestConfig): Promise<AxiosResponse<myResponseType<T>, any>> {
-  const response = await service.request<myResponseType<T>>(config)
-  return response
+  return await service.request<myResponseType<T>>(config)
 }
 
-export async function get<T = any>(url: string, params?: any): Promise<AxiosResponse<myResponseType<T>, any>> {
-  const response = await service.get<myResponseType<T>>(url, params)
-  return response
+export async function get<T = any>(auth: boolean, url: string, params?: any): Promise<AxiosResponse<myResponseType<T>, any>> {
+  if (auth) {
+    const longToken = store.getUserLongToken()
+    if (!longToken) {
+      errorMsg('请先登录')
+      return Promise.reject('请先登录')
+    }
+  }
+  return await service.get<myResponseType<T>>(url, params)
 }
 
-export async function post<T = any>(url: string, data?: any ): Promise<AxiosResponse<myResponseType<T>, any>> {
-  const response = await service.post<myResponseType<T>>(url, data)
-  return response
+export async function post<T = any>(auth: boolean,url: string, data?: any): Promise<AxiosResponse<myResponseType<T>, any>> {
+  if (auth) {
+    const longToken = store.getUserLongToken()
+    if (!longToken) {
+      errorMsg('请先登录')
+      return Promise.reject('请先登录')
+    }
+  }
+  return await service.post<myResponseType<T>>(url, data)
 }
 
-export async function put<T = any>(url: string, data?: any ): Promise<AxiosResponse<myResponseType<T>, any>> {
-  const response = await service.put<myResponseType<T>>(url, data)
-  return response
+export async function put<T = any>(auth: boolean, url: string, data?: any ): Promise<AxiosResponse<myResponseType<T>, any>> {
+  if (auth) {
+    const longToken = store.getUserLongToken()
+    if (!longToken) {
+      errorMsg('请先登录')
+      return Promise.reject('请先登录')
+    }
+  }
+  return await service.put<myResponseType<T>>(url, data)
 }

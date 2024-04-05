@@ -22,7 +22,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount  } from 'vue'
-import { useStore } from '@/store/index'
+import { useStore } from '@/store'
+import {StorageAvatarUrl, StorageName, StoragePostContent, StoragePostTitle} from "@/utils/consts";
 
 const store = useStore()
 const avatarUrl = ref('')
@@ -46,21 +47,21 @@ const content = ref('')
 
 const setAvatarAndName = () => {
     if (store.getLoginType() === 1) {
-        avatarUrl.value = sessionStorage.getItem("avatarUrl") as string
-        name.value = sessionStorage.getItem("Name") as string
+        avatarUrl.value = sessionStorage.getItem(StorageAvatarUrl) as string
+        name.value = sessionStorage.getItem(StorageName) as string
     } else {
-        avatarUrl.value = localStorage.getItem("avatarUrl") as string
-        name.value = localStorage.getItem("Name") as string
+        avatarUrl.value = localStorage.getItem(StorageAvatarUrl) as string
+        name.value = localStorage.getItem(StorageName) as string
     }
-    title.value = sessionStorage.getItem("postTitle") as string
-    content.value = sessionStorage.getItem("postContent") as string
+    title.value = sessionStorage.getItem(StoragePostTitle) as string
+    content.value = sessionStorage.getItem(StoragePostContent) as string
     console.log(title.value);
     console.log(content.value);
 }
 
 onBeforeUnmount(() => {
-    sessionStorage.removeItem("postTitle")
-    sessionStorage.removeItem("postContent")
+    sessionStorage.removeItem(StoragePostTitle)
+    sessionStorage.removeItem(StoragePostContent)
 })
 
 </script>

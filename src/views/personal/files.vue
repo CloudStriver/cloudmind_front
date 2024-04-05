@@ -83,6 +83,7 @@ import {
   getCategory
 } from './utils'
 import type { responsePrivateFilesList, fileData, requestCreateFile } from './utils'
+import {StoragePath, StoragePathId, StoragePathName} from "@/utils/consts";
 
 const store = useStore()
 const optionTop = ref<number>(0)
@@ -152,8 +153,8 @@ onMounted(async() => {
             backward: true,
             onlyFatherId: fatherId.value
         })
-        sessionStorage.setItem('PathId', nowFilesList.value.fatherIdPath)
-        sessionStorage.setItem('PathName', nowFilesList.value.fatherNamePath)
+        sessionStorage.setItem(StoragePathId, nowFilesList.value.fatherIdPath)
+        sessionStorage.setItem(StoragePathName, nowFilesList.value.fatherNamePath)
         emit('loading', true)
     }
 })
@@ -173,8 +174,8 @@ onBeforeRouteUpdate(async(to) => {
     else {
         store.pathChange = 'false'
     }
-    sessionStorage.setItem('PathId', nowFilesList.value.fatherIdPath)
-    sessionStorage.setItem('PathName', nowFilesList.value.fatherNamePath)
+    sessionStorage.setItem(StoragePathId, nowFilesList.value.fatherIdPath)
+    sessionStorage.setItem(StoragePathName, nowFilesList.value.fatherNamePath)
 })
 
 watch(() => store.tempFileData, (newVal) => {
@@ -240,7 +241,7 @@ const dropUploadFile = (event: any) => {
       cosUploadFile(file, md5, suffix, () => {
             postCreateFile(data)
             .then((res)=> {
-                const tempPath = sessionStorage.getItem('Path') as string
+                const tempPath = sessionStorage.getItem(StoragePath) as string
                 store.tempFileData = {
                     fileId: res,
                     userId: "",

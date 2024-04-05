@@ -1,6 +1,7 @@
 import { useStore  } from "@/store/index"
 import {get, post} from "@/utils/request"
 import { ref } from "vue"
+import {GetUserDetailUrl, GetUserUrl, StorageAvatarUrl, UpdateUserUrl} from "@/utils/consts";
 
 const store = useStore()
 
@@ -15,7 +16,7 @@ export const getUserDetail = async() => {
         fullName: '',
         idCard: '',
     })
-    await get('/content/getUserDetail')
+    await get(false, GetUserDetailUrl)
     .then((res: any) => {
         detail.value.name = res.name
         detail.value.sex = res.sex === 1 ? '男' : '女'
@@ -25,10 +26,10 @@ export const getUserDetail = async() => {
         detail.value.avatar = res.url
         detail.value.tags = res.tags
         if (store.getLoginType() === 1) {
-            sessionStorage.setItem("avatarUrl", detail.value.avatar)
+            sessionStorage.setItem(StorageAvatarUrl, detail.value.avatar)
         }
         else {
-            localStorage.setItem("avatarUrl", detail.value.avatar)
+            localStorage.setItem(StorageAvatarUrl, detail.value.avatar)
         }
         store.setUserDetail(detail.value.name, detail.value.sex, detail.value.description, detail.value.avatar)
     })
@@ -48,7 +49,7 @@ export const getUserInfo = async (userId: string) => {
         followCount: 0,
         createTime: 0,
     })
-    await get('/content/getUser?userId=' + userId)
+    await get(false, `${GetUserUrl}?userId=${userId}`)
         .then((res: any) => {
             detail.value.name = res.name
             detail.value.sex = res.sex === 1 ? '男' : '女'
@@ -63,7 +64,7 @@ export const getUserInfo = async (userId: string) => {
     return detail.value
 }
 export const updateUser = async (name?: String, fullName?:String, url?:String, sex?:number, idCard?:String,description?:String) => {
-    await post('/content/updateUser', {
+    await post(true, UpdateUserUrl, {
         name: name,
         fullName: fullName,
         url: url,
