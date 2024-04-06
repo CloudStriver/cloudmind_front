@@ -6,7 +6,7 @@
             <div ></div>
         </div>
         <div>
-            <a href="https://graph.qq.com/oauth2.0/authorize?response_type=token&client_id=102103336&redirect_uri=https://cloudmind.top/login&scope=state">
+            <a href="https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=102103336&redirect_uri=https://cloudmind.top/login&scope=23123">
               <i class="iconfont icon-qq qq" ></i>
             </a>
             <i class="iconfont icon-weixin weixin" @click="getQrCode"></i>

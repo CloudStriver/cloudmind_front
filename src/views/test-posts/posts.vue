@@ -197,26 +197,26 @@ const zonePopTop = ref(0)
 const zonePopLeft = ref(0)
 const zoneList = ref<Zone[]>([])
 const pageSize = 10; // 假设每页加载10项
-let userPage = 1; // 当前用户列表页码
-let postPage = 1; // 当前帖子列表页码
-
+let userRankPage = 1; // 当前用户列表页码
+let postRankPage = 1; // 当前帖子列表页码
+let postPage = 1;
 onMounted(async() => {
     userRankList.value = await getUserRankList(pageSize, 0)
     postRankList.value = await getPostRankList(pageSize, 0)
     zoneList.value = await getZoneList(zoneFatherId.value, 99999, 0)
-    postList.value = await getHotPostList()
+    postList.value = await getHotPostList(pageSize,0)
 })
 
 watch(navSelect, async (newVal) => {
   switch (newVal) {
     case 'hot':
-      postList.value = await getHotPostList()
+      postList.value = await getHotPostList(pageSize, (postPage - 1) * pageSize)
       break
     case 'recommend':
-      postList.value = await getRecommendPostList()
+      postList.value = await getRecommendPostList(pageSize, (postPage - 1) * pageSize)
       break
     case 'follow':
-      postList.value = await getFollowPostList()
+      postList.value = await getFollowPostList(pageSize, (postPage - 1) * pageSize)
       break
     case 'new':
       postList.value = await getNewPostList()
@@ -235,24 +235,24 @@ const splitContents = (content: string) => {
 
 // 加载下一页用户
 const loadMoreUsers = async () => {
-    const nextUsers = await getUserRankList(pageSize, userPage * pageSize);
+    const nextUsers = await getUserRankList(pageSize, userRankPage * pageSize);
     if (nextUsers.length === 0) {
         noMoreUsers.value = true;
     } else {
         userRankList.value = [...userRankList.value, ...nextUsers];
-        userPage++;
+        userRankPage++;
         noMoreUsers.value = false;
     }
 };
 
 // 加载下一页的帖子
 const loadMorePosts = async () => {
-  const nextPosts = await getPostRankList(pageSize, postPage * pageSize);
+  const nextPosts = await getPostRankList(pageSize, postRankPage * pageSize);
   if (nextPosts.length === 0) {
     noMorePosts.value = true;
   } else {
     postRankList.value = [...postRankList.value, ...nextPosts];
-    postPage++;
+    postRankPage++;
     noMorePosts.value = false;
   }
 };

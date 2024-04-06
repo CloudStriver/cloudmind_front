@@ -41,6 +41,7 @@ export enum FileSortType {
 
 export const DeleteRelationUrl = "/relation/deleteRelation"
 export const CreateRelationUrl = "/relation/createRelation"
+export const GetRelationPathsUrl = "/relation/getRelationPaths"
 
 export const GetHotRanksUrl = "/rank/getHotRanks"
 

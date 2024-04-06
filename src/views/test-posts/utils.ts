@@ -11,7 +11,7 @@ import {
     CategoryType,
     GetHotRanksUrl,
     GetPopularRecommendUrl, GetPostsUrl,
-    GetRecommendByUserUrl,
+    GetRecommendByUserUrl, GetRelationPathsUrl,
     GetZonesUrl, RelationType,
     TargetType
 } from '@/utils/consts'
@@ -89,7 +89,7 @@ export const getZoneList = async (fatherId: string, limit: number, offset: numbe
 
 
 
-export const getHotPostList = async () => {
+export const getHotPostList = async (limit: number, offset: number) => {
     const postList = ref<Post[]>([]) // 帖子列表
     await get(false, `${GetPopularRecommendUrl}?category=${CategoryType.PostCategory}`)
     .then((res: any) => {
@@ -108,7 +108,7 @@ export const getHotPostList = async () => {
     return postList.value
 }
 
-export const getRecommendPostList = async () => {
+export const getRecommendPostList = async (limit: number, offset: number) => {
     const postList = ref<Post[]>([])
     await get(false, `${GetRecommendByUserUrl}?category=${CategoryType.PostCategory}`)
         .then((res: any) => {
@@ -127,22 +127,22 @@ export const getRecommendPostList = async () => {
     return postList.value
 }
 
-export const getFollowPostList = async () => {
+export const getFollowPostList = async (limit: number, offset: number) => {
     const postList = ref<Post[]>([])
-    // await get('/content/getRecommendByUser?category=' + CategoryType.PostCategory)
-    //     .then((res: any) => {
-    //         postList.value = res.recommends.posts.map((post: any) => ({
-    //             postId: post.postId,
-    //             title: post.title,
-    //             text: post.text,
-    //             url: post.url,
-    //             tags: post.tags,
-    //             likeCount: post.likeCount,
-    //             commentCount: post.commentCount,
-    //             liked: post.liked,
-    //             userName: post.userName
-    //         }))
-    //     })
+    await get(true, `${GetRelationPathsUrl}?relationType=${RelationType.Publish}&limit=${limit}&offset=${offset}`)
+        .then((res: any) => {
+            postList.value = res.posts.map((post: any) => ({
+                postId: post.postId,
+                title: post.title,
+                text: post.text,
+                url: post.url,
+                tags: post.tags,
+                likeCount: post.likeCount,
+                commentCount: post.commentCount,
+                liked: post.liked,
+                userName: post.userName
+            }))
+        })
     return postList.value
 }
 
