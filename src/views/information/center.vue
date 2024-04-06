@@ -45,6 +45,7 @@
                                     name="classify"
                                     id="dynamic"
                                     value="dynamic"
+                                    v-model="classify"
                                     checked
                                 >
                                 <label for="dynamic">动态</label>
@@ -55,6 +56,7 @@
                                     name="classify"
                                     id="file"
                                     value="file"
+                                    v-model="classify"
                                 >
                                 <label for="file">文件</label>
                             </li>
@@ -64,6 +66,7 @@
                                     name="classify"
                                     id="post"
                                     value="post"
+                                    v-model="classify"
                                 >
                                 <label for="post">帖子</label>
                             </li>
@@ -73,6 +76,7 @@
                                     name="classify"
                                     id="like"
                                     value="like"
+                                    v-model="classify"
                                 >
                                 <label for="like">点赞</label>
                             </li>
@@ -82,6 +86,7 @@
                                     name="classify"
                                     id="collect"
                                     value="collect"
+                                    v-model="classify"
                                 >
                                 <label for="collect">收藏</label>
                             </li>
@@ -91,6 +96,7 @@
                                     name="classify" 
                                     id="follow"
                                     value="follow"
+                                    v-model="classify"
                                 >
                                 <label for="follow">关注</label>
                             </li>
@@ -98,8 +104,7 @@
                         <div class="contents"></div>
                     </div>
                     <div class="show-contents">
-                        <div class="content">
-                        </div>
+                        <List></List>
                     </div>
                 </div>
                 <div class="user-other-information">
@@ -129,9 +134,12 @@
 
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
-import { ref, onMounted } from 'vue'
+import List from './contents-list.vue'
+import { ref, onMounted, watch } from 'vue'
 import { getUserInfo} from "@/views/information/utils";
 import {turnTime} from "@/utils/utils";
+
+const classify = ref('dynamic')
 const user = ref({
   name: '',
   sex: '',
@@ -143,8 +151,13 @@ const user = ref({
   followCount: 0,
   createTime: 0,
 })
+
 onMounted (async () => {
   user.value = await getUser() as any
+})
+
+watch (() => classify.value, (newVal) => {
+  console.log(newVal)
 })
 
 const getUser = async () => {
@@ -291,6 +304,7 @@ const getUser = async () => {
                     ul {
                         height: 50px;
                         margin: 0;
+                        padding: 10px;
                         list-style: none;
                         background: rgba(230, 239, 250, 0.49);
                         display: flex;
@@ -298,7 +312,7 @@ const getUser = async () => {
     
                         li {
                             margin-right: 20px;
-                            font-size: 18px;
+                            font-size: 16px;
     
                             input {
                                 display: none;

@@ -21,30 +21,30 @@
                                 <img :src="postDetail.author.url" alt="">
                                 <div>{{ postDetail.author.name }}</div>
                             </div>
-                          <div
-                              class="follow"
-                              v-if="!postDetail.author.followed"
-                              @click="CreateRelation({
+                            <div
+                                class="follow"
+                                v-if="!postDetail.author.followed"
+                                @click="CreateRelation({
                                           toId: postDetail.author.userId,
                                           toType: TargetType.User,
                                           relationType: RelationType.Follow,
                               })"
-                          >
-                            <i class="iconfont icon-a-dianzan2"></i>
-                            <div>关注</div>
-                          </div>
-                          <div
-                              class="followed"
-                              v-if="postDetail.author.followed"
-                              @click="DeleteRelation({
-                                          toId: postDetail.author.userId,
-                                          toType: TargetType.User,
-                                          relationType: RelationType.Follow,
-                              })"
-                          >
-                            <i class="iconfont icon-a-dianzan2"></i>
-                            <div>已关注</div>
-                          </div>
+                            >
+                                <i class="iconfont icon-a-dianzan2"></i>
+                                <div>关注</div>
+                            </div>
+                            <div
+                                class="followed"
+                                v-if="postDetail.author.followed"
+                                @click="DeleteRelation({
+                                            toId: postDetail.author.userId,
+                                            toType: TargetType.User,
+                                            relationType: RelationType.Follow,
+                                })"
+                            >
+                                <i class="iconfont icon-a-dianzan2"></i>
+                                <div>已关注</div>
+                            </div>
                         </div>
                     </header>
                     <section class="detail-section">
