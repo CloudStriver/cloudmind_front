@@ -1,6 +1,6 @@
 <template>
     <div class="list-box">
-        <div v-if="isFollow" class="contents">
+        <div v-if="!isFollow" class="contents">
             <div class="detail">
                 <h1>标题</h1>
                 <p>内容</p>
@@ -42,7 +42,7 @@
                 </footer>
             </div>
         </div>
-        <div v-if="!isFollow" class="contents">
+        <div v-if="isFollow" class="contents">
             <div class="header">
                 <ul>
                     <li>
