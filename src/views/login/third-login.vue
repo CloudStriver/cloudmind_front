@@ -115,9 +115,9 @@ onUnmounted(() => {
     }
 
   .qr-code-container {
-    position: relative;
-    width: 100%;
-    height: 100vh; /* 使用视口高度作为容器高度，确保容器填满整个屏幕 */
+    position: absolute;
+    top: 50%;
+    left: 50%;
   }
 
   .qr-code-container img {
