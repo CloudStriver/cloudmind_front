@@ -82,6 +82,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/test/post/:postId',
     component: () => import('../views/test-posts/post.vue'),
+  },
+  {
+    path: '/search',
+    component: () => import('../views/search/search.vue'),
   }
 ]
 
