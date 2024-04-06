@@ -91,7 +91,7 @@
                             <div class="information">
                                 <h2>{{ post.title }}</h2>
                                 <p>{{ splitContents(post.userName + ": " + post.text) }}</p>
-                                <PostDetail :Post="post"></PostDetail>
+                                <PostDetail :PostInfo="post"></PostDetail>
                             </div>
                             <div v-if="post.url !== ''" class="image">
                                 <img :src="post.url" alt="图片">

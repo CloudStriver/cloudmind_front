@@ -26,55 +26,55 @@
                 </div>
                 <div class="sort-box" v-show="isShowSort">
                     <ul>
-                        <li>
-                            <input 
-                                type="radio"
-                                name="typeSort"
-                                id="name"
-                                v-model="typeSort"
-                                value="name"
-                                checked
-                            >
-                            <i v-show="typeSort === 'name'" class="iconfont icon-0-58"></i>
-                            <i v-show="typeSort !== 'name'" class="iconfont icon-0-58 i"></i>
-                            <label for="name">名称</label>
-                        </li>
-                        <li>
-                            <input 
-                                type="radio"
-                                name="typeSort"
-                                id="createTime"
-                                v-model="typeSort"
-                                value="createTime"
-                            >
-                            <i v-show="typeSort === 'createTime'" class="iconfont icon-0-58"></i>
-                            <i v-show="typeSort !== 'createTime'" class="iconfont icon-0-58 i"></i>
-                            <label for="createTime">创建时间</label>
-                        </li>
-                        <li>
-                            <input 
-                                type="radio"
-                                name="typeSort"
-                                id="updateTime"
-                                v-model="typeSort"
-                                value="updateTime"
-                            >
-                            <i v-show="typeSort === 'updateTime'" class="iconfont icon-0-58" ></i>
-                            <i v-show="typeSort !== 'updateTime'" class="iconfont icon-0-58 i" ></i>
-                            <label for="updateTime">修改时间</label>
-                        </li>
-                        <li>
-                            <input 
-                                type="radio"
-                                name="typeSort"
-                                id="size"
-                                v-model="typeSort"
-                                value="size"
-                            >
-                            <i v-show="typeSort === 'size'" class="iconfont icon-0-58"></i>
-                            <i v-show="typeSort !== 'size'" class="iconfont icon-0-58 i"></i>
-                            <label for="size">文件大小</label>
-                        </li>
+                      <li>
+                        <input
+                            type="radio"
+                            name="typeSort"
+                            id="createTime"
+                            v-model="typeSort"
+                            value="createTime"
+                            checked
+                        >
+                        <i v-show="typeSort === 'createTime'" class="iconfont icon-0-58"></i>
+                        <i v-show="typeSort !== 'createTime'" class="iconfont icon-0-58 i"></i>
+                        <label for="createTime">创建时间</label>
+                      </li>
+                      <li>
+                          <input
+                              type="radio"
+                              name="typeSort"
+                              id="name"
+                              v-model="typeSort"
+                              value="name"
+                          >
+                          <i v-show="typeSort === 'name'" class="iconfont icon-0-58"></i>
+                          <i v-show="typeSort !== 'name'" class="iconfont icon-0-58 i"></i>
+                          <label for="name">名称</label>
+                      </li>
+                      <li>
+                          <input
+                              type="radio"
+                              name="typeSort"
+                              id="updateTime"
+                              v-model="typeSort"
+                              value="updateTime"
+                          >
+                          <i v-show="typeSort === 'updateTime'" class="iconfont icon-0-58" ></i>
+                          <i v-show="typeSort !== 'updateTime'" class="iconfont icon-0-58 i" ></i>
+                          <label for="updateTime">修改时间</label>
+                      </li>
+                      <li>
+                          <input
+                              type="radio"
+                              name="typeSort"
+                              id="type"
+                              v-model="typeSort"
+                              value="type"
+                          >
+                          <i v-show="typeSort === 'type'" class="iconfont icon-0-58"></i>
+                          <i v-show="typeSort !== 'type'" class="iconfont icon-0-58 i"></i>
+                          <label for="type">文件类型</label>
+                      </li>
                     </ul>
                     <div class="line"></div>
                     <ul>
@@ -117,7 +117,7 @@ import {StoragePathId, StoragePathName} from "@/utils/consts";
 
 const store = useStore()
 const emit = defineEmits(['sendPathMsg'])
-const typeSort = ref("name")
+const typeSort = ref("createTime")
 const sort = ref("asc")
 const allSelect = ref(false)
 const isShowSort = ref(false)
@@ -153,12 +153,36 @@ watch(() => store.pathChange, (newVal) => {
         }
     }
 })
+
 watch(() => allSelect.value, (newVal) => {
     emit('sendPathMsg', {
         option: 'allSelect',
         message: newVal
     })
 })
+
+watch(() => sort.value, (newSort) => {
+  console.log("ChangeSort1")
+  emit('sendPathMsg', {
+    option: 'SortChanage',
+    message: {
+      sort: newSort,
+      type: typeSort
+    }
+  })
+})
+
+watch(() => typeSort.value, (newTypeSort) => {
+  console.log("ChangeSort2")
+  emit('sendPathMsg', {
+    option: 'SortChanage',
+    message: {
+      sort: sort,
+      type: newTypeSort
+    }
+  })
+})
+
 
 const cancelShowSort = (e: MouseEvent) => {
     //还需要再完善取消弹框的方法
@@ -175,6 +199,8 @@ const clickSort = () => {
 const toPath = (index: number) => {
     router.push({name: 'personal', params: {fatherId: pathData.value.pathId[index]}})
 }
+
+
 </script>
 
 <style scoped lang="css">

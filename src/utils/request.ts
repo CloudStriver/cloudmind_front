@@ -68,6 +68,7 @@ service.interceptors.response.use(
     endLoading()
     const status = error.response.status
     if (status === 401) {
+      console.log("shuaxin")
       if (localStorage.getItem(StorageAutoLogin) === "true") {//自动登录情况
         const longToken = localStorage.getItem(StorageLongToken)
         if (longToken) {

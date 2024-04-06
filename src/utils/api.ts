@@ -1,6 +1,5 @@
 // 取消关注用户
 import type {Relation} from "@/utils/type";
-import {errorMsg} from "@/utils/message";
 import {post} from "@/utils/request";
 import {CreateRelationUrl, DeleteRelationUrl} from "@/utils/consts";
 

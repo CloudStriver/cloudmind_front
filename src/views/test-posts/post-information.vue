@@ -3,25 +3,25 @@
         <div class="detial-box">
             <span 
                 class="row"
-                v-if="!Post.liked"
-                @click="likePost(Post)"
+                v-if="!props.PostInfo.liked"
+                @click="likePost(props.PostInfo)"
             >
                 <i class="iconfont icon-a-dianzan2"></i>
-                <div>点赞 {{ Post.likeCount }}</div>
+                <div>点赞 {{ props.PostInfo.likeCount }}</div>
             </span>
             <span
                 class="row liked"
                 v-else
-                @click="unLikePost(Post)"
+                @click="unLikePost(props.PostInfo)"
             >
                 <i class="iconfont icon-a-dianzan2"></i>
-                <div>已点赞 {{ Post.likeCount }}</div>
+                <div>已点赞 {{ props.PostInfo.likeCount }}</div>
             </span>
             <span
                 class="row"
             >
                 <i class="iconfont icon-a-xiaoxi1"></i>
-                <div>评论 {{ Post.commentCount }}</div>
+                <div>评论 {{ props.PostInfo.commentCount }}</div>
             </span>
             <span class="row">
                 <i class="iconfont icon-gengduo"></i>
@@ -30,7 +30,7 @@
         <div class="tag-box">
             <div
                 class="tag"
-                v-for="(tag, index) in Post.tags"
+                v-for="(tag, index) in props.PostInfo.tags"
                 :key="index"
             >
                 <button>{{ tag.value }}</button>
@@ -40,11 +40,11 @@
 </template>
 
 <script setup lang="ts">
-import type {Post, Tag} from "@/views/test-posts/type";
+import type {Post} from "@/views/test-posts/type";
 import {likePost, unLikePost} from "@/views/test-posts/utils";
 
 const props = defineProps<{
-  Post: Post
+  PostInfo: Post
 }>();
 </script>
 
