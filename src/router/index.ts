@@ -40,26 +40,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/notification/notification.vue'),
   },
   {
-    path: '/posts',
-    component: () => import('../views/posts/posts.vue'),
-  },
-  {
-    path: '/post/:postId',
-    component: () => import('../views/posts/post.vue'),
-  },
-  {
-    path: '/write/',
-    component: () => import('../views/posts/write.vue'),
-  },
-  {
-    path: '/write/preview',
-    component: () => import('../views/posts/preview.vue'),
-  },
-  {
-    path: '/write/modify/:postId',
-    component: () => import('../views/posts/modify.vue'),
-  },
-  {
     path: '/manage',
     component: () => import('../views/manage/manage.vue'),
   },

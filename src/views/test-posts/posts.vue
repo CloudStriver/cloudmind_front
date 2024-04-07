@@ -174,16 +174,16 @@ import PostDetail from './post-information.vue'
 import {onMounted, ref, watch} from 'vue'
 import router from '@/router'
 import {
+  enterPost,
   getFollowPostList,
   getHotPostList,
   getNewPostList,
   getPostRankList,
   getRecommendPostList,
   getUserRankList,
-  getZoneList,
 } from "./utils"
 import type {HotPost, HotUser, Post, Zone} from "@/utils/type";
-import {followHotUser, unFollowHotUser} from "@/utils/utils";
+import {followHotUser, getZoneList, unFollowHotUser} from "@/utils/utils";
 import {useStore} from "@/store";
 
 const store = useStore()
@@ -227,9 +227,7 @@ watch(navSelect, async (newVal) => {
   }
 })
 
-const enterPost = (id: string) => {
-    router.push('/test/post/' + id)
-}
+
 
 const splitDescription = (text: string) => {
     if (text.length > 6) return text.slice(0, 6) + '...'

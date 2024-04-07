@@ -41,6 +41,28 @@ export type Post = {
     userName: string
 }
 
+export type PostDetail = {
+    title: string,
+    text: string,
+    status: number,
+    url: string,
+    author: {
+        userId: string,
+        name: string,
+        url: string
+    },
+    tags: [],
+    viewCount: number,
+    likeCount: number,
+    commentCount: number,
+    shareCount: number,
+    collectCount: number,
+    liked: boolean,
+    collected: boolean,
+    createTime: number,
+    updateTime: number
+}
+
 export type HotPost =  {
     postId: string
     title: string
@@ -55,6 +77,7 @@ export type Zone =  {
 export type Tag = {
     tagId: string,
     zoneId: string,
+    subZoneId: string,
     value: string,
 }
 
@@ -67,4 +90,13 @@ export type Notification =  {
     toUserId: string
     type: number
     createTime: number
+}
+
+export type PostInfo = {
+    title: string
+    text: string
+    url: string
+    tags: Tag[]
+    status: number,
+    isSure: boolean
 }

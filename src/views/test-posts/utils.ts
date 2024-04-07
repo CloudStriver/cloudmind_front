@@ -5,10 +5,11 @@ import {
     GetHotRanksUrl,
     GetPopularRecommendUrl, GetPostsUrl,
     GetRecommendByUserUrl, GetRelationPathsUrl,
-    GetZonesUrl, RelationType,
+     RelationType,
     TargetType
 } from '@/utils/consts'
-import type {HotPost, HotUser, Post, Zone} from "@/utils/type";
+import type {HotPost, HotUser, Post} from "@/utils/type";
+import router from "@/router";
 
 
 // 获取作者排行榜
@@ -65,20 +66,7 @@ export const getPostRankList = async (limit: number, offset: number)  => {
     return rankList.value
 }
 
-// 获取分区列表
-export const getZoneList = async (fatherId: string, limit: number, offset: number)  => {
-    const rankList = ref<Zone[]>([])
-    await get(false, `${GetZonesUrl}?fatherId=${fatherId}&limit=${limit}&offset${offset}`)
-        .then((res: any) => {
-            if (res.zones) {
-                rankList.value = res.zones.map((zone: any) => ({
-                            zoneId: zone.id,
-                            value: zone.value,
-                }))
-            }
-        })
-    return rankList.value
-}
+
 
 
 
@@ -139,5 +127,6 @@ export const getFollowPostList = async (limit: number, offset: number) => {
     return postList.value
 }
 
-
-
+export const enterPost = (id: string) => {
+    router.push('/test/post/' + id)
+}

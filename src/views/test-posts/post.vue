@@ -8,38 +8,51 @@
                         <ul>
                             <li>
                                 <i class="iconfont icon-a-dianzan2"></i>
-                                <div>1k</div>
+                                <div @click="CreateRelation({
+                                  toId: postId,
+                                  toType: TargetType.Post,
+                                  relationType: RelationType.Like,
+                                })">{{postDetail?.likeCount}}</div>
                             </li>
                             <li>
                                 <i class="iconfont icon-a-xiaoxi1"></i>
-                                <div>1k</div>
+                                <div>{{ postDetail?.commentCount }}</div>
                             </li>
                             <li>
                                 <i class="iconfont icon-shoucang01"></i>
-                                <div>1k</div>
+                                <div @click="CreateRelation({
+                                  toId: postId,
+                                  toType: TargetType.Post,
+                                  relationType: RelationType.Collect,
+                                })">{{ postDetail?.collectCount }}</div>
                             </li>
                             <li>
                                 <i class="iconfont icon-fenxiang"></i>
-                                <div>1k</div>
+                                <div @click="CreateRelation({
+                                  toId: postId,
+                                  toType: TargetType.Post,
+                                  relationType: RelationType.Share,
+                                })"
+                                >{{ postDetail?.shareCount }}</div>
                             </li>
                         </ul>
                     </div>
                     <article class="article">
-                        <h1>标题</h1>
+                        <h1>{{ postDetail?.title}}</h1>
                         <div class="post-detail">
-                            <span>作者</span>
-                            <span>2024-04-07</span>
+                            <span>{{ postDetail?.author.name}}</span>
+                            <span>{{ turnTime( postDetail?.createTime) }}</span>
                             <span>浏览量: 8k</span>
                         </div>
-                        <p>内容</p>
+                        <p>{{ postDetail?.text}}</p>
                     </article>
                 </div>
                 <div class="right">
                     <div class="user-box">
                         <div class="user">
-                            <img src="" alt="" />
+                            <img :src="postDetail?.author.url" alt="" />
                             <div>
-                                <span>用户名</span>
+                                <span>{{ postDetail?.author.name}}</span>
                                 <span>个性签名</span>
                                 <span>tag</span>
                             </div>
@@ -58,7 +71,9 @@
                                 <p>粉丝</p>
                             </div>
                         </div>
-                        <button>关注</button>
+                        <div v-if="postDetail?.author.userId !== store.getUserId()">
+                          <button>关注</button>
+                        </div>
                     </div>
                     <div class="catalogue">
                         <span>目录</span>
@@ -70,10 +85,10 @@
                     </div>
                     <div class="recommend">
                         <span>推荐</span>
-                        <ul>
-                            <li>推荐1</li>
-                            <li>推荐2</li>
-                            <li>推荐3</li>
+                        <ul v-for="(post,index) in postList" :key="index">
+                            <li>
+                              <div class="post-title" @click="changePost(post.postId)">{{post.title}}</div>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -82,7 +97,34 @@
     </div>
 </template>
 <script setup lang="ts">
+import type {Post, PostDetail} from "@/utils/type";
 import CHeader from '@/components/header.vue'
+import {onMounted, ref} from "vue";
+import {getPostDetail, getPostRecommendByPostId, turnTime} from "@/utils/utils";
+import {useStore} from "@/store";
+import {enterPost} from "@/views/test-posts/utils";
+import {CreateRelation} from "@/utils/api";
+import {RelationType, TargetType} from "@/utils/consts";
+
+const postDetail = ref<PostDetail>()
+const postList = ref<Post[]>([])
+const store = useStore()
+const postId = ref('')
+
+onMounted(async () => {
+  const urls = location.href.split("/")
+  postId.value = urls[urls.length - 1]
+  postDetail.value = await getPostDetail(postId.value)
+  postList.value = await getPostRecommendByPostId(postId.value)
+})
+
+const changePost = async (nowPostId: string) => {
+  postId.value = nowPostId
+  enterPost(nowPostId)
+  postDetail.value = await getPostDetail(nowPostId)
+  postList.value = await getPostRecommendByPostId(nowPostId)
+}
+
 </script>
 <style scoped lang="css">
 .post-box {
@@ -285,6 +327,10 @@ import CHeader from '@/components/header.vue'
                             font-size: 15px;
                             color: #666;
                             margin: 10px;
+
+                            div:hover {
+                              color: #1890ff;
+                            }
                         }
                     }
                 }

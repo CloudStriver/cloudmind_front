@@ -45,6 +45,13 @@ export enum NotificationType {
     Comment = 5
 }
 
+export enum PostStatusType {
+    Public = 1,
+    Private = 2,
+    Draft = 3
+}
+
+
 // -----------------------------------------URL-------------------------------------------------------------------------
 
 export const DeleteRelationUrl = "/relation/deleteRelation"
@@ -68,17 +75,19 @@ export const UpdateUserUrl = "/content/updateUser"
 export const UpdatePostUrl = "/content/updatePost"
 export const GetUserDetailUrl = "/content/getUserDetail"
 export const GetPrivateFilesUrl = "/content/getPrivateFiles"
-
 export const AskDownloadFileUrl = "/content/askDownloadFile"
 export const EmptyRecycleBinUrl = "/content/emptyRecycleBin"
 export const GetRecycleBinFilesUrl = "/content/getRecycleBinFiles"
 export const GetLatestRecommendUrl = "/content/getLatestRecommend"
 export const GetRecommendByUserUrl  = "/content/getRecommendByUser"
+export const GetRecommendByItemUrl = "/content/getRecommendByItem"
 export const GetPopularRecommendUrl = "/content/getPopularRecommend"
 export const CompletelyRemoveFileUrl = "/content/completelyRemoveFile"
 export const RecoverRecycleBinFileUrl = "/content/recoverRecycleBinFile"
 export const UpdateFileUrl = "/content/updateFile"
 export const AskUploadFileUrl = "/content/askUploadFile"
+
+export const GetTagListUrl = "/label/getLabels"
 
 export const QQLoginUrl = "/auth/qqLogin"
 export const RegisterUrl = "/auth/register"

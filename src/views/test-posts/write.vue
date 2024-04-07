@@ -6,7 +6,7 @@
             @sendEditorContents="getEditorText"
         />
         <div class="setting-box" v-if="isClickSettingButton">
-            <ShowSetting></ShowSetting>
+            <ShowSetting :sendPostData="postData"></ShowSetting>
         </div>
     </div>
 </template>
@@ -17,17 +17,24 @@ import ShowSetting from './text-setting.vue'
 import { ref, onBeforeMount } from 'vue'
 
 const createPostData = ref('')
-
 const isClickSettingButton = ref(false)
-
+const postData = ref({
+    text: '',
+    title: '',
+})
 onBeforeMount(() => {
     const option = location.href.split('/').pop()
     const type = option === 'write' ? '设置' : option === 'edit' ? '编辑' : ''
     createPostData.value = type
 })
 
-const getEditorText = () => {
+const getEditorText = (sendEditorContents: any) => {
     isClickSettingButton.value = true
+    console.log(sendEditorContents)
+    postData.value = {
+        text: sendEditorContents.text,
+        title: sendEditorContents.title
+    }
 }
 
 </script>
