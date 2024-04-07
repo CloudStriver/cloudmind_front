@@ -51,37 +51,35 @@
                     </nav>
                 </div>
                 <div class="posts">
-                    <el-scrollbar height="100px">
-                        <div class="posts-select">
-                            <div 
-                                class="zone"
-                                v-for="(zone) in zoneList"
-                                :key="zone.zoneId"
+                    <div class="posts-select">
+                        <div 
+                            class="zone"
+                            v-for="(zone) in zoneList"
+                            :key="zone.zoneId"
+                        >
+                            <input 
+                                type="radio"
+                                name="zone"
+                                :id="zone.zoneId"
+                                :value="zone.zoneId"
+                                v-model="zoneFatherId"
                             >
-                                <input 
-                                    type="radio"
-                                    name="zone"
-                                    :id="zone.zoneId"
-                                    :value="zone.zoneId"
-                                    v-model="zoneFatherId"
-                                >
-                                <label 
-                                    :for="zone.zoneId" 
-                                >{{ zone.value }}</label>
-                            </div>
-                            <div 
-                                v-if="isShowZonePop"
-                                class="zone-pop"
-                                :style="{top: zonePopTop + 'px', left: zonePopLeft + 'px'}"
-                                @mouseover="isShowZonePop = true"
-                                @mouseout="isShowZonePop = false"
-                            >
-                                <ul>
-                                    <li>二级分区1</li>
-                                </ul>
-                            </div>
+                            <label 
+                                :for="zone.zoneId" 
+                            >{{ zone.value }}</label>
                         </div>
-                    </el-scrollbar>
+                        <div 
+                            v-if="isShowZonePop"
+                            class="zone-pop"
+                            :style="{top: zonePopTop + 'px', left: zonePopLeft + 'px'}"
+                            @mouseover="isShowZonePop = true"
+                            @mouseout="isShowZonePop = false"
+                        >
+                            <ul>
+                                <li>二级分区1</li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="posts-contents">
                         <div 
                             class="content"
@@ -89,7 +87,7 @@
                             :key="post.postId"
                         >
                             <div class="information">
-                                <h2>{{ post.title }}</h2>
+                                <h2 @click="enterPost(post.postId)">{{ post.title }}</h2>
                                 <p>{{ splitContents(post.userName + ": " + post.text) }}</p>
                                 <PostDetail :PostInfo="post"></PostDetail>
                             </div>
@@ -204,6 +202,7 @@ const pageSize = 10; // 假设每页加载10项
 let userRankPage = 1; // 当前用户列表页码
 let postRankPage = 1; // 当前帖子列表页码
 let postPage = 1;
+
 onMounted(async() => {
     userRankList.value = await getUserRankList(pageSize, 0)
     postRankList.value = await getPostRankList(pageSize, 0)
@@ -227,6 +226,10 @@ watch(navSelect, async (newVal) => {
       break
   }
 })
+
+const enterPost = (id: string) => {
+    router.push('/test/post/' + id)
+}
 
 const splitDescription = (text: string) => {
     if (text.length > 6) return text.slice(0, 6) + '...'
@@ -346,11 +349,12 @@ const loadMorePosts = async () => {
                 flex-direction: column;
     
                 .posts-select {
+                    width: 100%;
                     max-height: 100px;
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, 1fr);
-                    grid-template-rows: repeat(auto-fill, 50px);
-    
+                    overflow-y: auto;
+                    display: flex;
+                    flex-wrap: wrap;
+
                     .zone {
                         height: 25px;
                         padding: 0 10px;
@@ -398,7 +402,6 @@ const loadMorePosts = async () => {
                 }
     
                 .posts-contents {
-                    border-top: 1px solid #f0f0f0;
                     .content {
                         padding: 10px;
                         border-bottom: 1px solid #f0f0f0;
@@ -414,6 +417,10 @@ const loadMorePosts = async () => {
                                 font-size: 20px;
                                 margin: 0;
                                 padding: 0;
+                                cursor: pointer;
+                            }
+                            h2:hover {
+                                color: #1890ff;
                             }
 
                             p {
