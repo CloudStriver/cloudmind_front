@@ -183,12 +183,7 @@ const judgePasswordBlur = () => {
 }
 
 const judgeEmailAndPassword = () => {
-    if (isEmail.value && isPassword.value) {
-        return true
-    }
-    else {
-        return false
-    }
+    return isEmail.value && isPassword.value;
 }
 
 const login = () => {

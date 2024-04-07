@@ -37,11 +37,21 @@ export enum FileSortType {
     FileTypeAsc = 8
 }
 
+export enum NotificationType {
+    Like = 1,
+    Follow = 2,
+    Collect = 3,
+    Share = 4,
+    Comment = 5
+}
+
 // -----------------------------------------URL-------------------------------------------------------------------------
 
 export const DeleteRelationUrl = "/relation/deleteRelation"
 export const CreateRelationUrl = "/relation/createRelation"
 export const GetRelationPathsUrl = "/relation/getRelationPaths"
+export const GetFromRelationsUrl = "/relation/getFromRelations"
+export const GetToRelationsUrl = "/relation/getToRelations"
 
 export const GetHotRanksUrl = "/rank/getHotRanks"
 
@@ -62,6 +72,7 @@ export const GetPrivateFilesUrl = "/content/getPrivateFiles"
 export const AskDownloadFileUrl = "/content/askDownloadFile"
 export const EmptyRecycleBinUrl = "/content/emptyRecycleBin"
 export const GetRecycleBinFilesUrl = "/content/getRecycleBinFiles"
+export const GetLatestRecommendUrl = "/content/getLatestRecommend"
 export const GetRecommendByUserUrl  = "/content/getRecommendByUser"
 export const GetPopularRecommendUrl = "/content/getPopularRecommend"
 export const CompletelyRemoveFileUrl = "/content/completelyRemoveFile"

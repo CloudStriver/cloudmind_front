@@ -83,7 +83,6 @@
 </template>
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
-import { ref } from 'vue'
 </script>
 <style scoped lang="css">
 .post-box {

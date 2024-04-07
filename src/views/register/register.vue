@@ -1,14 +1,19 @@
 <template>
     <div class="main-box">
         <div class="panel">
-            <img src="../../assets/images/background-circle.png" class="circle">
+            <img
+                src="../../assets/images/background-circle.png"
+                class="circle"
+                alt=""
+            >
             <img 
                 class="illustration"
                 src="../../assets/images/illustration.png" 
+                alt=""
             >
             <div class="contents">
                 <div class="cloudmind">
-                    <img src="../../assets/images/cloudmind.png">
+                    <img src="../../assets/images/cloudmind.png" alt="">
                 </div>
                 <div class="switch">
                     <button style="cursor: pointer;" @click="login">登 录</button>
@@ -41,7 +46,11 @@
                             v-model="captcha"
                             @blur="captchaBlur"
                         >
-                        <button @click="getCaptcah" class="captcha-button">{{ captchaMessage }}</button> 
+                        <button
+                            @click="getCaptcah"
+                            class="captcha-button"
+                            :disabled="isButtonDisabled"
+                        >{{ captchaMessage }}</button>
                     </div>
                     <div class="captcha-msg" v-show="errorCaptcha">* {{ captchaMsg }}</div>
                     <div class="password" v-if="setPassword">
@@ -112,7 +121,7 @@ import { ref } from 'vue'
 import { judgeEmail, judgePassword } from '@/utils/judge'
 import { errorMsg, successMsg } from '@/utils/message'
 import { post, get } from '@/utils/request'
-import { useStore } from '@/store/index'
+import { useStore } from '@/store'
 import {CheckEmailUrl, RegisterUrl, SendEmailUrl} from "@/utils/consts";
 
 const store = useStore()
@@ -137,6 +146,7 @@ const isConfirmassword = ref(false)
 const clickGetCaptcha = ref(false)
 const errorConfirmPassword = ref(false)
 const captchaMessage = ref('获取验证码')
+const isButtonDisabled = ref(false) // 新增一个响应式变量来控制按钮的disabled状态
 
 const emailBlur = () => {
     if (email.value === '') {
@@ -199,17 +209,13 @@ const confirmPasswordBlur = () => {
 }
 
 const judgeThisPassword = () => {
-    if (isPassword.value && isConfirmassword.value) {
-        return true
-    }
-    else {
-        return false
-    }
+    return isPassword.value && isConfirmassword.value;
 }
 
 const getCaptcah = () => {
     if (isEmail.value) {
         clickGetCaptcha.value = true
+        isButtonDisabled.value = true // 点击后立即禁用按钮
         post(false, SendEmailUrl, {
             email: email.value,
             subject: '注册'
@@ -222,6 +228,7 @@ const getCaptcah = () => {
             if (time === 0) {
                 clearInterval(timer)
                 captchaMessage.value = '重新获取'
+              isButtonDisabled.value = false
             }
         }, 1000)
         

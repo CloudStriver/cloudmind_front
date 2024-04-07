@@ -40,8 +40,8 @@
 </template>
 
 <script setup lang="ts">
-import type {Post} from "@/views/test-posts/type";
-import {likePost, unLikePost} from "@/views/test-posts/utils";
+import type {Post} from "@/utils/type";
+import {likePost, unLikePost} from "@/utils/utils";
 
 const props = defineProps<{
   PostInfo: Post

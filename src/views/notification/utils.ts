@@ -1,38 +1,43 @@
 import { get } from '@/utils/request'
 import { ref } from 'vue'
-import { GetNotificationsUrl} from "@/utils/consts";
+import {GetNotificationsUrl, NotificationType} from "@/utils/consts";
+import {type Notification} from '@/utils/type'
 
-export interface ResponseGetNotification {
-    notifications: Array<{
-        fromName: string
-        fromId: string
-        toName: string
-        toId: string
-        toUserId: string
-        type: number
-        createTime: number
-    }>
-}
-
-export const getNotifications = async(type: number) => {
-    const notifications = ref<ResponseGetNotification>({
-        notifications: []
-    })
-
+export const getNotificationList = async(select: string) => {
+    const notificationList = ref<Notification[]>([])
     const url = ref('')
-    if (type === 0) {
+    if (select === 'all') {
         url.value = GetNotificationsUrl
     }
     else {
-        url.value = `${GetNotificationsUrl}?onlyType=${type}`
+        url.value = `${GetNotificationsUrl}?onlyType=${getOnlyType(select)}`
     }
     await get(true, url.value)
     .then((res: any) => {
-        notifications.value = {
-            notifications: res.notifications
-        }
+        notificationList.value = res.notifications.map((notification:any) => ({
+            fromName: notification.fromName,
+            fromId: notification.fromId,
+            toName: notification.toName,
+            toId: notification.toId,
+            toUserId: notification.toUserId,
+            type: notification.type,
+            createTime: notification.createTime
+        }))
     })
-    console.log(notifications.value.notifications);
-    
-    return notifications.value.notifications
+    return notificationList.value
+}
+
+const getOnlyType = (select: string) => {
+    switch (select) {
+        case 'like':
+            return NotificationType.Like
+        case 'follow':
+            return NotificationType.Follow
+        case 'collect':
+            return NotificationType.Collect
+        case 'share':
+            return NotificationType.Share
+        case 'comment':
+            return NotificationType.Comment
+    }
 }

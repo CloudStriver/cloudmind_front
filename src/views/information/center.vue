@@ -72,26 +72,6 @@
                             </li>
                             <li>
                                 <input 
-                                    type="radio" 
-                                    name="classify"
-                                    id="like"
-                                    value="like"
-                                    v-model="classify"
-                                >
-                                <label for="like">点赞</label>
-                            </li>
-                            <li>
-                                <input 
-                                    type="radio" 
-                                    name="classify"
-                                    id="collect"
-                                    value="collect"
-                                    v-model="classify"
-                                >
-                                <label for="collect">收藏</label>
-                            </li>
-                            <li>
-                                <input 
                                     type="radio"
                                     name="classify" 
                                     id="follow"
@@ -104,7 +84,7 @@
                         <div class="contents"></div>
                     </div>
                     <div class="show-contents">
-                        <List></List>
+                        <List :SendContentMsg="classify"></List>
                     </div>
                 </div>
                 <div class="user-other-information">
@@ -135,7 +115,7 @@
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
 import List from './contents-list.vue'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { getUserInfo} from "@/views/information/utils";
 import {turnTime} from "@/utils/utils";
 
@@ -156,9 +136,7 @@ onMounted (async () => {
   user.value = await getUser() as any
 })
 
-watch (() => classify.value, (newVal) => {
-  console.log(newVal)
-})
+
 
 const getUser = async () => {
   const urls = location.href.split("/")

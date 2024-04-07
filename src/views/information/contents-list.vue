@@ -1,103 +1,217 @@
 <template>
     <div class="list-box">
-        <div v-if="!isFollow" class="contents">
-            <div class="detail">
-                <h1>标题</h1>
-                <p>内容</p>
-                <footer class="detail-footer">
-                    <div class="situation">
-                        <div 
-                            class="like"
-                        >
-                            <i class="iconfont icon-a-dianzan2"></i>
-                            <div>点赞</div>
-                        </div>
-                        <div 
-                            class="liked" 
-                        >
-                            <i class="iconfont icon-a-dianzan2"></i>
-                            <div>已点赞 1k</div>
-                        </div>
-                        <div class="remark">
-                            <i class="iconfont icon-a-xiaoxi1"></i>
-                            <div>评论 1k</div>
-                        </div>
-                        <div 
-                            class="collect" 
-                        >
-                            <i class="iconfont icon-shoucang01"></i>
-                            <div>收藏</div>
-                        </div>
-                        <div 
-                            class="collected" 
-                        >
-                            <i class="iconfont icon-shoucang01"></i>
-                            <div>已收藏</div>
-                        </div>
-                        <div class="share">
-                            <i class="iconfont icon-fenxiang"></i>
-                            <div>分享</div>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+      <div v-if="props.SendContentMsg === 'dynamic'" class="contents">
+<!--        <div class="detail">-->
+<!--          <h1>标题</h1>-->
+<!--          <p>内容</p>-->
+<!--          <footer class="detail-footer">-->
+<!--            <div class="situation">-->
+<!--              <div-->
+<!--                  class="like"-->
+<!--              >-->
+<!--                <i class="iconfont icon-a-dianzan2"></i>-->
+<!--                <div>点赞</div>-->
+<!--              </div>-->
+<!--              <div-->
+<!--                  class="liked"-->
+<!--              >-->
+<!--                <i class="iconfont icon-a-dianzan2"></i>-->
+<!--                <div>已点赞 1k</div>-->
+<!--              </div>-->
+<!--              <div class="remark">-->
+<!--                <i class="iconfont icon-a-xiaoxi1"></i>-->
+<!--                <div>评论 1k</div>-->
+<!--              </div>-->
+<!--              <div-->
+<!--                  class="collect"-->
+<!--              >-->
+<!--                <i class="iconfont icon-shoucang01"></i>-->
+<!--                <div>收藏</div>-->
+<!--              </div>-->
+<!--              <div-->
+<!--                  class="collected"-->
+<!--              >-->
+<!--                <i class="iconfont icon-shoucang01"></i>-->
+<!--                <div>已收藏</div>-->
+<!--              </div>-->
+<!--              <div class="share">-->
+<!--                <i class="iconfont icon-fenxiang"></i>-->
+<!--                <div>分享</div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </footer>-->
+<!--        </div>-->
+      </div>
+      <div v-else-if="SendContentMsg === 'follow'" class="contents">
+        <div class="header">
+          <ul>
+            <li>
+              <input
+                  type="radio"
+                  name="select"
+                  id="headerFollow"
+                  v-model="select"
+                  value="headerFollow"
+                  checked
+              >
+              <label for="headerFollow" @click="getFollowUserList(store.getUserId())">关注</label>
+            </li>
+            <li>
+              <input
+                  type="radio"
+                  name="select"
+                  id="fans"
+                  value="fans"
+                  v-model="select"
+              >
+              <label for="fans" @click="getFollowedUserList(store.getUserId())">粉丝</label>
+            </li>
+          </ul>
         </div>
-        <div v-if="isFollow" class="contents">
-            <div class="header">
-                <ul>
-                    <li>
-                        <input 
-                            type="radio"
-                            name="select"
-                            id="headerFollow"
-                            v-model="select"
-                            value="headerFollow"
-                        >
-                        <label for="headerFollow">关注</label>
-                    </li>
-                    <li>
-                        <input 
-                            type="radio"
-                            name="select"
-                            id="fans"
-                            value="fans"
-                            v-model="select"
-                        >
-                        <label for="fans">粉丝</label>
-                    </li>
-                    <li>
-                        <input 
-                            type="radio"
-                            name="select"
-                            id="zone"
-                            value="zone"
-                            v-model="select"
-                            checked
-                        >
-                        <label for="zone">关注的分区</label>
-                    </li>
-                </ul>
+        <div
+            v-for="(user, index) in followUserList"
+            class="detail-follow"
+            :key="index"
+        >
+          <div class="image">
+            <img :src="user.url" alt="">
+          </div>
+          <div class="user">
+            <p>{{ user.name }}</p>
+            <p>{{ user.description}}</p>
+          </div>
+          <div v-if="store.getUserLongToken()">
+            <div v-if="user.followed" class="button">
+              <button @click="unFollowUser(user)">已关注</button>
             </div>
-            <div class="detail-follow">
-                <div class="image">
-                    <img src="" alt="">
-                </div>
-                <div class="user">
-                    <p>admin</p>
-                    <p>内容</p>
-                </div>
-                <div class="button">
-                    <button>已关注</button>
-                </div>
+            <div v-else class="button">
+              <button @click="followUser(user)">关注</button>
             </div>
+          </div>
         </div>
+      </div>
+      <div v-else class="contents">
+        <div class="header">
+          <ul>
+            <li>
+              <input
+                  type="radio"
+                  name="select"
+                  id="publish"
+                  value="publish"
+                  v-model="select"
+                  checked
+              >
+              <label for="publish">发布</label>
+            </li>
+            <li>
+              <input
+                  type="radio"
+                  name="select"
+                  id="like"
+                  v-model="select"
+                  value="like"
+              >
+              <label for="like">点赞</label>
+            </li>
+            <li>
+              <input
+                  type="radio"
+                  name="select"
+                  id="collect"
+                  value="collect"
+                  v-model="select"
+              >
+              <label for="collect">收藏</label>
+            </li>
+          </ul>
+        </div>
+
+        <div v-if="props.SendContentMsg === 'post'">
+          <div
+              class="detail"
+              v-for="(post, index) in postList"
+              :key="index"
+          >
+              <h1>{{ post.title }}</h1>
+              <p>{{ post.text }}</p>
+              <footer class="detail-footer">
+                  <div class="situation">
+                      <div class="like" v-if="!post.liked">
+                          <i class="iconfont icon-a-dianzan2"></i>
+                          <button @click="likePost(post)">点赞 {{ post.likeCount }} </button>
+                      </div>
+                      <div class="liked" v-else>
+                          <i class="iconfont icon-a-dianzan2"></i>
+                          <button @click="unLikePost(post)">已点赞 {{ post.likeCount }} </button>
+                      </div>
+                      <div class="remark">
+                          <i class="iconfont icon-a-xiaoxi1"></i>
+                          <div>评论 {{ post.commentCount }}</div>
+                      </div>
+                      <div
+                          class="collect"
+                      >
+                          <i class="iconfont icon-shoucang01"></i>
+                          <div>收藏</div>
+                      </div>
+<!--                      <div-->
+<!--                          class="collected"-->
+<!--                      >-->
+<!--                          <i class="iconfont icon-shoucang01"></i>-->
+<!--                          <div>已收藏</div>-->
+<!--                      </div>-->
+                      <div class="share">
+                          <i class="iconfont icon-fenxiang"></i>
+                          <div>分享</div>
+                      </div>
+                  </div>
+              </footer>
+          </div>
+        </div>
+      </div>
     </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import {onMounted, ref, watch} from 'vue'
+import {
+  getFollowedUserList,
+  getFollowUserList,
+  getPostList
+} from "@/views/information/utils";
+import {useStore} from "@/store";
+import type {Post, User} from "@/utils/type";
+import {followUser, likePost, unFollowUser, unLikePost} from "@/utils/utils";
 
-const select = ref('follow')
-const isFollow = ref(false)
+const store = useStore()
+const followUserList = ref<User[]>([]) // 关注用户列表
+const postList = ref<Post[]>([])
+// const fileList = ref<File[]>([])
+const select = ref('headerFollow')
+const props = defineProps<{
+  SendContentMsg: string
+}>();
+
+onMounted(async () => {
+})
+watch(()=> props.SendContentMsg, async (newVal) => {
+ switch (newVal) {
+   case 'follow':
+     followUserList.value = await getFollowUserList(getUserId())
+     break;
+   case 'post':
+     postList.value = await getPostList(getUserId())
+     break;
+   case 'file':
+     break;
+ }
+})
+
+const getUserId = () => {
+  const urls = location.href.split("/")
+  return urls[urls.length - 1]
+}
+
 </script>
 <style scoped lang="css">
 .list-box {

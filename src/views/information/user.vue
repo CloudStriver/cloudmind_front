@@ -150,7 +150,7 @@
 import CHeader from '@/components/header.vue'
 import avatar from '@/components/avatar.vue'
 import {ref, onMounted} from 'vue'
-import { useStore } from '@/store/index'
+import { useStore } from '@/store'
 import SparkMD5 from 'spark-md5'
 import { cosUploadImage } from '@/utils/public-cos'
 import {getUserDetail, updateUser} from './utils'

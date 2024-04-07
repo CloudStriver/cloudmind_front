@@ -1,7 +1,7 @@
 // 取消关注用户
 import type {Relation} from "@/utils/type";
-import {post} from "@/utils/request";
-import {CreateRelationUrl, DeleteRelationUrl} from "@/utils/consts";
+import {get, post} from "@/utils/request";
+import {CreateRelationUrl, DeleteRelationUrl, GetFromRelationsUrl, GetToRelationsUrl} from "@/utils/consts";
 
 export const DeleteRelation = (relation: Relation) =>  {
     return new Promise<void>((resolve, reject) => {
@@ -35,45 +35,12 @@ export const CreateRelation = async(relation: Relation)=>  {
     })
 }
 
+export const GetFromRelation = async(relation: Relation): Promise<any> => {
+   return  await get(true, `${GetFromRelationsUrl}?fromId=${relation.fromId}&fromType=${relation.fromType}&toType=${relation.toType}&relationType=${relation.relationType}`)
+}
 
-// // 关注用户
-// export const CreateRelationImpl = (toId: string, toType: TargetType, relationType: RelationType, relationExist: boolean, RelationCount?: number) => {
-//     const relation :Relation =  {
-//         fromId: "",
-//         fromType: TargetType.User,
-//         toId: toId,
-//         toType: toType,
-//         relationType: relationType,
-//     }
-//     CreateRelationInterface(relation)
-//         .then(() => {
-//             relationExist = true
-//             if (RelationCount) {
-//                 RelationCount ++
-//             }
-//         })
-//         .catch(error => {
-//             errorMsg(error)
-//         })
-// }
-//
-// // 取消关注用户
-// export const DeleteRelationImpl = (toId: string, toType: TargetType, relationType: RelationType, relationExist: boolean, RelationCount?: number) => {
-//     const relation :Relation =  {
-//         fromId: "",
-//         fromType: TargetType.User,
-//         toId: toId,
-//         toType: toType,
-//         relationType: relationType,
-//     }
-//     DeleteRelationInterface(relation)
-//         .then(() => {
-//             relationExist = false
-//             if (RelationCount) {
-//                 RelationCount --
-//             }
-//         })
-//         .catch(error => {
-//             errorMsg(error)
-//         })
-// }
+export const GetToRelation = async(relation: Relation) :Promise<any> => {
+    return await get(true, `${GetToRelationsUrl}?toId=${relation.toId}&toType=${relation.toType}&fromType=${relation.fromType}&relationType=${relation.relationType}`)
+}
+
+

@@ -51,7 +51,7 @@
 
 import {RelationType, TargetType} from "@/utils/consts";
 import {CreateRelation, DeleteRelation} from "@/utils/api";
-import type {Tag} from "@/views/test-posts/type";
+import type {Tag} from "@/utils/type";
 
 const props = defineProps<{
     information: {

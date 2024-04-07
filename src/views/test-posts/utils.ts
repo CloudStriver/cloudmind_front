@@ -1,12 +1,5 @@
 import { ref } from 'vue'
 import { get } from '@/utils/request'
-import { 
-    type HotUser,
-    type HotPost,
-    type Post,
-    type Zone,
-} from './type'
-
 import {
     CategoryType,
     GetHotRanksUrl,
@@ -15,7 +8,7 @@ import {
     GetZonesUrl, RelationType,
     TargetType
 } from '@/utils/consts'
-import {CreateRelation, DeleteRelation} from "@/utils/api";
+import type {HotPost, HotUser, Post, Zone} from "@/utils/type";
 
 
 // 获取作者排行榜
@@ -89,7 +82,7 @@ export const getZoneList = async (fatherId: string, limit: number, offset: numbe
 
 
 
-export const getHotPostList = async (limit: number, offset: number) => {
+export const getHotPostList = async () => {
     const postList = ref<Post[]>([]) // 帖子列表
     await get(false, `${GetPopularRecommendUrl}?category=${CategoryType.PostCategory}`)
     .then((res: any) => {
@@ -108,7 +101,7 @@ export const getHotPostList = async (limit: number, offset: number) => {
     return postList.value
 }
 
-export const getRecommendPostList = async (limit: number, offset: number) => {
+export const getRecommendPostList = async () => {
     const postList = ref<Post[]>([])
     await get(false, `${GetRecommendByUserUrl}?category=${CategoryType.PostCategory}`)
         .then((res: any) => {
@@ -146,45 +139,5 @@ export const getFollowPostList = async (limit: number, offset: number) => {
     return postList.value
 }
 
-export const unLikePost = (post: Post) => {
-    DeleteRelation({
-        toId: post.postId,
-        toType: TargetType.Post,
-        relationType: RelationType.Like,
-    }).then(() => {
-        post.liked = false
-        post.likeCount --
-    })
-}
-
-export const likePost = (post: Post) => {
-    CreateRelation({
-        toId: post.postId,
-        toType: TargetType.Post,
-        relationType: RelationType.Like,
-    }).then(() => {
-        post.liked = true
-        post.likeCount ++
-    })
-}
 
 
-export const unFollowUser = (user: HotUser) => {
-    DeleteRelation({
-        toId: user.userId,
-        toType: TargetType.User,
-        relationType: RelationType.Follow,
-    }).then(() => {
-        user.followed = false
-    })
-}
-
-export const followUser = (user: HotUser) => {
-    CreateRelation({
-        toId: user.userId,
-        toType: TargetType.User,
-        relationType: RelationType.Follow,
-    }).then(() => {
-        user.followed = false
-    })
-}
