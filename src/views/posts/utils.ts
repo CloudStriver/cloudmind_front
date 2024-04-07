@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { get } from '@/utils/request'
 import {GetPostsUrl} from "@/utils/consts";
-import type {Tag} from "@/views/test-posts/type";
+import type {Tag} from "@/utils/type";
 
 export interface responseGetOtherPosts {
     posts: {

@@ -29,11 +29,12 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from '@/store/index'
+import { useStore } from '@/store'
 import { onMounted, ref } from 'vue'
 import { successMsg } from '@/utils/message';
-import { getUserDetail } from '@/views/information/utils';
+// import { getUserDetail } from '@/views/information/utils';
 import { judgeHasLogin } from '@/utils/judge';
+import router from "@/router";
 
 const store = useStore()
 const isLogin = ref(false)
@@ -45,9 +46,8 @@ onMounted(() => {
 const logout = () => {
     store.loginOut()
     isLogin.value = false
-    getUserDetail()
     successMsg('退出登录成功')
-    location.reload()
+    router.push('/')
 }
 </script>
 

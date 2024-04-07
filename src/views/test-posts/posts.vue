@@ -148,13 +148,15 @@
                                                     <p>{{ splitDescription(user.description) }}</p>
                                             </div>
                                         </div>
-                                        <button
-                                            v-if="!user.followed"
-                                            @click="followUser(user)"
-                                        >关注</button>
-                                        <button v-else
-                                                @click="unFollowUser(user)"
-                                        >已关注</button>
+                                        <div v-if="user.userId !== store.getUserId()">
+                                          <button
+                                              v-if="!user.followed"
+                                              @click="followHotUser(user)"
+                                          >关注</button>
+                                          <button v-else
+                                                  @click="unFollowHotUser(user)"
+                                          >已关注</button>
+                                        </div>
                                     </div>
                                 </li>
                             </ul>
@@ -173,18 +175,20 @@ import CHeader from '@/components/header.vue'
 import PostDetail from './post-information.vue'
 import {onMounted, ref, watch} from 'vue'
 import router from '@/router'
-import {type HotPost, type HotUser, type Post, type Zone} from "./type";
 import {
-  followUser,
   getFollowPostList,
   getHotPostList,
   getNewPostList,
   getPostRankList,
   getRecommendPostList,
   getUserRankList,
-  getZoneList, unFollowUser,
+  getZoneList,
 } from "./utils"
+import type {HotPost, HotUser, Post, Zone} from "@/utils/type";
+import {followHotUser, unFollowHotUser} from "@/utils/utils";
+import {useStore} from "@/store";
 
+const store = useStore()
 const navSelect = ref('all') // 选项
 const zoneFatherId = ref('root') // 当前选择分区的父分区ID
 const noMoreUsers = ref(false) // 没有更多作者了

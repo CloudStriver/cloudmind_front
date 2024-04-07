@@ -75,107 +75,107 @@
                     </div>
                     <div class="section-bottom">
                         <div
-                            v-for="(item, index) in storageNotificationList[select]"
+                            v-for="(notification, index) in notificationList"
                             :key="index"
                         >
-                            <div class="notification-detail" v-if="item.type === 1">
+                            <div class="notification-detail" v-if="notification.type === NotificationType.Like">
                                 <div class="svg-like">
                                     <i class="iconfont icon-a-dianzan2"></i>
                                 </div>
                                 <div class="content">
                                     <div class="content-top">
                                         <router-link
-                                            :to="`/user/center/${item.fromId}`"
+                                            :to="`/user/center/${notification.fromId}`"
                                             class="user-section"
-                                        >{{ item.fromName }}</router-link>
+                                        >{{ notification.fromName }}</router-link>
                                         <div>赞了</div>
                                         <div>你的</div>
                                         <div>帖子</div>
                                     </div>
                                   <router-link
-                                      :to="`/post/${item.toId}`"
+                                      :to="`/post/${notification.toId}`"
                                       class="content-section"
-                                  >{{ item.toName }}</router-link>
-                                    <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
+                                  >{{ notification.toName }}</router-link>
+                                    <div class="content-bottom">{{ turnTime(notification.createTime) }}</div>
                                 </div>
                             </div>
-                            <div class="notification-detail" v-if="item.type === 5">
+                            <div class="notification-detail" v-if="notification.type === NotificationType.Comment">
                                 <div class="svg-comment">
                                     <i class="iconfont icon-a-xiaoxi1"></i>
                                 </div>
                                 <div class="content">
                                     <div class="content-top">
                                         <router-link
-                                            :to="`/user/center/${item.fromId}`"
+                                            :to="`/user/center/${notification.fromId}`"
                                             class="user-section"
-                                        >{{ item.fromName }}</router-link>
+                                        >{{ notification.fromName }}</router-link>
                                         <div>评论了</div>
                                         <div>你的</div>
                                         <div>帖子</div>
                                     </div>
                                     <router-link 
-                                        :to="`/post/${item.toId}`"
+                                        :to="`/post/${notification.toId}`"
                                         class="content-section"
-                                    >{{ item.toName }}</router-link>
-                                    <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
+                                    >{{ notification.toName }}</router-link>
+                                    <div class="content-bottom">{{ turnTime(notification.createTime) }}</div>
                                 </div>
                             </div>
-                            <div class="notification-detail" v-if="item.type === 3">
+                            <div class="notification-detail" v-if="notification.type === NotificationType.Collect">
                                 <div class="svg-collect">
                                     <i class="iconfont icon-shoucang01"></i>
                                 </div>
                                 <div class="content">
                                     <div class="content-top">
                                         <router-link
-                                            :to="`/user/center/${item.fromId}`"
+                                            :to="`/user/center/${notification.fromId}`"
                                             class="user-section"
-                                        >{{ item.fromName }}</router-link>
+                                        >{{ notification.fromName }}</router-link>
                                         <div>收藏了</div>
                                         <div>你的</div>
                                         <div>帖子</div>
                                     </div>
                                     <router-link 
-                                        :to="`/post/${item.toId}`"
+                                        :to="`/post/${notification.toId}`"
                                         class="content-section"
-                                    >{{ item.toName }}</router-link>
-                                    <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
+                                    >{{ notification.toName }}</router-link>
+                                    <div class="content-bottom">{{ turnTime(notification.createTime) }}</div>
                                 </div>
                             </div>
-                            <div class="notification-detail" v-if="item.type === 4">
+                            <div class="notification-detail" v-if="notification.type === NotificationType.Share">
                                 <div class="svg-share">
                                     <i class="iconfont icon-fenxiang"></i>
                                 </div>
                                 <div class="content">
                                     <div class="content-top">
                                         <router-link
-                                            :to="`/user/center/${item.fromId}`"
+                                            :to="`/user/center/${notification.fromId}`"
                                             class="user-section"
-                                        >{{ item.fromName }}</router-link>
+                                        >{{ notification.fromName }}</router-link>
                                         <div>分享了</div>
                                         <div>你的</div>
                                         <div>帖子</div>
                                     </div>
                                     <router-link 
-                                        :to="`/post/${item.toId}`"
+                                        :to="`/post/${notification.toId}`"
                                         class="content-section"
-                                    >{{ item.toName }}</router-link>
-                                    <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
+                                    >{{ notification.toName }}</router-link>
+                                    <div class="content-bottom">{{ turnTime(notification.createTime) }}</div>
                                 </div>
                             </div>
-                            <div class="notification-detail" v-if="item.type === 2">
+                            <div class="notification-detail" v-if="notification.type === NotificationType.Follow">
                                 <div class="svg-follow">
                                     <i class="iconfont icon-guanzhu"></i>
                                 </div>
                                 <div class="content">
                                     <div class="content-top">
                                         <router-link
-                                            :to="`/user/center/${item.fromId}`"
+                                            :to="`/user/center/${notification.fromId}`"
                                             class="user-section"
-                                        >{{ item.fromName }}</router-link>
+                                        >{{ notification.fromName }}</router-link>
                                         <div>关注了</div>
                                         <div>你</div>
                                     </div>
-                                    <div class="content-bottom">{{ turnTime(item.createTime) }}</div>
+                                    <div class="content-bottom">{{ turnTime(notification.createTime) }}</div>
                                 </div>
                             </div>
                         </div>
@@ -190,60 +190,21 @@
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
 import { ref, onMounted, watch } from 'vue'
-// import { turnTime } from '@/utils.ts/public'
-import { getNotifications } from './utils'
-import type { ResponseGetNotification } from './utils'
+import {getNotificationList} from './utils'
 import {turnTime} from "@/utils/utils";
-
+import {type Notification} from '@/utils/type'
+import {NotificationType} from "@/utils/consts";
 const select = ref<string>('all')
-const notificationList = ref<any>([])
-const storageNotificationList = ref<any>({
-    all: ref<ResponseGetNotification[]>([]),
-    like: ref<ResponseGetNotification[]>([]),
-    follow: ref<ResponseGetNotification[]>([]),
-    collect: ref<ResponseGetNotification[]>([]),
-    comment: ref<ResponseGetNotification[]>([]),
-    share: ref<ResponseGetNotification[]>([])
-})
+const notificationList = ref<Notification[]>([])
 
 onMounted(async() => {
-    getNotificationList()
+    notificationList.value = await getNotificationList(select.value)
 })
 
-watch(select, (newVal) => {
-    console.log(newVal);
-    getNotificationList()
+watch(select, async () => {
+  notificationList.value = await getNotificationList(select.value)
 })
 
-const getNotificationList = async() => {
-    const type = turnNotificationType(select.value)
-    if (storageNotificationList.value[select.value].length === 0) {
-        notificationList.value = []
-        notificationList.value.push(await getNotifications(type))
-        storageNotificationList.value[select.value].push(...notificationList.value[0])
-    }
-    else {
-        notificationList.value = []
-        notificationList.value.push(storageNotificationList.value[select.value])
-    }
-}
-
-const turnNotificationType = (type: string): number => {
-    switch (type) {
-        case 'like':
-            return 1
-        case 'follow':
-            return 2
-        case 'collect':
-            return 3
-        case 'share':
-            return 4
-        case 'comment':
-            return 5
-        default:
-            return 0
-    }
-}
 </script>
 
 <style scoped lang="css">

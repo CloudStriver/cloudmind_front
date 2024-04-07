@@ -11,7 +11,7 @@
         <div class="posts-box" v-show="props.classify === 'posts'">
             <div 
                 class="posts" 
-                v-for="(post, index) in responseDetail.posts"
+                v-for="(post, index) in postList"
                 :key="index"
             >
                 <router-link 
@@ -19,10 +19,10 @@
                     :to="'/post/' + post.postId"
                 >{{ post.title }}</router-link>
                 <section class="posts-section">
-                    <img src="" v-if="showPostImage(post.url)">
+                    <img src="" v-if="showPostImage(post.url)" alt="">
                     <div class="posts-layout">
                         <div v-if="post.url !== ''" class="post-image">
-                            <img :src="post.url">
+                            <img :src="post.url" alt="">
                         </div>
                         <div class="post-content">{{ htmlToText(post.userName + ": " + post.text) }}</div>
                     </div>
@@ -36,7 +36,7 @@
         <div class="user-box" v-show="props.classify === 'user'">
             <div 
                 class="user"
-                v-for="(user, index) in responseDetail.users"
+                v-for="(user, index) in userList"
                 :key="index"
             >
                 <img :src="user.url">
@@ -53,23 +53,25 @@
                         {{ tag }}
                     </div>
                 </div>
-              <div
-                  class="follow"
-                  v-if="!user.followed"
-                  @click="followUser(user)"
-              >
-                <i class="iconfont icon-a-dianzan2"></i>
-                <div>关注</div>
+                <div v-if="user.userId !== store.getUserId()">
+                  <div
+                      class="follow"
+                      v-if="!user.followed"
+                      @click="followUser(user)"
+                  >
+                    <i class="iconfont icon-a-dianzan2"></i>
+                    <div>关注</div>
+                  </div>
+                  <div
+                      class="followed"
+                      v-else
+                      @click="unFollowUser(user)"
+                  >
+                    <i class="iconfont icon-a-dianzan2"></i>
+                    <div>已关注</div>
+                  </div>
+                </div>
               </div>
-              <div
-                  class="followed"
-                  v-if="user.followed"
-                  @click="unFollowUser(user)"
-              >
-                <i class="iconfont icon-a-dianzan2"></i>
-                <div>已关注</div>
-              </div>
-            </div>
         </div>
     </div>
 </template>
@@ -77,49 +79,28 @@
 
 <script setup lang="ts">
 import PostDetail from '../posts/post-information.vue'
-import { get } from '@/utils/request'
-import { ref, onMounted, watch } from 'vue'
-import type {Post, User} from "@/views/home/utils";
-import {followUser, judgeType, trunNum, unFollowUser} from "@/views/home/utils";
+import {onMounted, ref, watch} from 'vue'
+import type {Post, User} from "@/utils/type";
+import {followUser, getPostRecommend, getUserRecommend, unFollowUser} from "@/utils/utils";
+import {TargetType} from "@/utils/consts";
+import {useStore} from "@/store";
 
-const storageContent = ref<any>({
-    hotGoods: [],
-    newGoods: [],
-    recommendGoods: [],
-    hotFiles: [],
-    newFiles: [],
-    recommendFiles: [],
-    hotPosts: [],
-    newPosts: [],
-    recommendPosts: [],
-    hotUsers: [],
-    newUsers: [],
-    recommendUsers: [],
-})
+const store = useStore()
 const props = defineProps<{
     classify: string,
     mainClassify: string
 }>()
-
-
-interface ResponseDetail {
-    users?: User[],
-    posts?: Post[],
-}
-const responseDetail = ref<ResponseDetail>({
-    users: [],
-    posts: [],
-})
-
+const userList = ref<User[]>([])
+const postList = ref<Post[]>([])
 onMounted(() => {
   getShow()
 })
 
 watch(() => props.mainClassify, () => {
-    getShow()
+  getShow()
 })
 watch(() => props.classify, () => {
-    getShow()
+  getShow()
 })
 
 const htmlToText = (html: string) => {
@@ -133,103 +114,19 @@ const showPostImage = (url: string) => {
   return url !== ''
 }
 
-const getShow = () => {
-  const mainClassify = props.mainClassify
-  const classify = judgeType(props.classify) as string
-  const classifyNum = trunNum(classify) as number
-  const index = mainClassify + classify as any
-
-  if (classify !== 'Users') {
-    if (storageContent.value[index].length !== 0) {
-      responseDetail.value = {
-        posts: (storageContent as any).value[index].map((post: any) => ({
-          postId: post.postId,
-          title: post.title,
-          text: post.text,
-          url: post.url,
-          tags: post.tags,
-          likeCount: post.likeCount,
-          commentCount: post.commentCount,
-          liked: post.liked,
-          userName: post.userName
-        }))
-      }
-      return
-    }
-
-    const url = ref('')
-    if (mainClassify === 'hot') {
-      url.value = '/content/getPopularRecommend?category=' + classifyNum
-    }
-    else if (mainClassify === 'new') {
-      url.value = '/content/getLatestRecommend?category=' + classifyNum
-    }
-    else {
-      url.value = '/content/getRecommendByUser?category=' + classifyNum
-    }
-
-    get(false, url.value)
-        .then((res: any) => {
-          responseDetail.value = {
-            posts: res.recommends.posts.map((post: any) => ({
-              postId: post.postId,
-              title: post.title,
-              text: post.text,
-              url: post.url,
-              tags: post.tags,
-              likeCount: post.likeCount,
-              commentCount: post.commentCount,
-              liked: post.liked,
-              userName: post.userName
-            }))
-          };
-          storageContent.value[index] = res.recommends.posts
-        })
-  }
-  else {
-    if (storageContent.value[index].length !== 0) {
-      responseDetail.value = {
-        users: (storageContent as any).value[index].map((user: any) => ({
-          userId: user.userId,
-          name: user.name,
-          url: user.url,
-          description: user.description,
-          followedCount: user.followedCount,
-          labels: user.labels,
-          followed: user.followed
-        }))
-      }
-      return
-    }
-
-    const url = ref('')
-    if (mainClassify === 'hot') {
-      url.value = '/content/getPopularRecommend?category=' + classifyNum
-    }
-    else if (mainClassify === 'new') {
-      url.value = '/content/getLatestRecommend?category=' + classifyNum
-    }
-    else {
-      url.value = '/content/getRecommendByUser?category=' + classifyNum
-    }
-
-    get(false, url.value)
-        .then((res: any) => {
-          responseDetail.value = {
-            users: res.recommends.users.map((user: any) => ({
-              userId: user.userId,
-              name: user.name,
-              url: user.url,
-              description: user.description,
-              followedCount: user.followedCount,
-              labels: user.labels,
-              followed: user.followed
-            }))
-          };
-          storageContent.value[index] = res.recommends.users
-        })
+const getShow = async () => {
+  switch (props.classify) {
+    case "user":
+      userList.value = await getUserRecommend(props.mainClassify, TargetType.User)
+      break;
+    case "files":
+      break;
+    case "post":
+      postList.value = await getPostRecommend(props.mainClassify, TargetType.Post)
+      break;
   }
 }
+
 
 </script>
 
