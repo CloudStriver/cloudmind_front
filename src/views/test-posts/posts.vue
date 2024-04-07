@@ -207,16 +207,16 @@ onMounted(async() => {
     userRankList.value = await getUserRankList(pageSize, 0)
     postRankList.value = await getPostRankList(pageSize, 0)
     zoneList.value = await getZoneList(zoneFatherId.value, 99999, 0)
-    postList.value = await getHotPostList(pageSize,0)
+    postList.value = await getHotPostList()
 })
 
 watch(navSelect, async (newVal) => {
   switch (newVal) {
     case 'hot':
-      postList.value = await getHotPostList(pageSize, (postPage - 1) * pageSize)
+      postList.value = await getHotPostList()
       break
     case 'recommend':
-      postList.value = await getRecommendPostList(pageSize, (postPage - 1) * pageSize)
+      postList.value = await getRecommendPostList()
       break
     case 'follow':
       postList.value = await getFollowPostList(pageSize, (postPage - 1) * pageSize)
