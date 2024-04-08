@@ -377,8 +377,6 @@ const getUserId = () => {
                 }
             }
         }
-
-        .detail-follow {
             position: relative;
             padding-bottom: 10px;
             margin-bottom: 10px;
