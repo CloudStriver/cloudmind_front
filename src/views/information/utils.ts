@@ -130,7 +130,7 @@ export const getPostList = async (userId: string) => {
         relationType: RelationType.Publish,
     })
         .then((res:any)=>{
-            postList.value = res.post.map((post: any) => ({
+            postList.value = res.posts.map((post: any) => ({
                 postId: post.postId,
                 title: post.title,
                 text: post.text,

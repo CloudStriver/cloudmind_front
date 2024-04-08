@@ -133,37 +133,39 @@
               v-for="(post, index) in postList"
               :key="index"
           >
-              <h1>{{ post.title }}</h1>
-              <p>{{ post.text }}</p>
+              <h1 @click="enterPost(post.postId)">{{ post.title }}</h1>
+              <p>{{ splitContents(post.userName + ": " + post.text) }}</p>
               <footer class="detail-footer">
                   <div class="situation">
-                      <div class="like" v-if="!post.liked">
+                      <div
+                           class="like"
+                           v-if="!post.liked"
+                           @click="likePost(post)"
+                      >
                           <i class="iconfont icon-a-dianzan2"></i>
-                          <button @click="likePost(post)">点赞 {{ post.likeCount }} </button>
+                          <div>点赞 {{ post.likeCount }} </div>
                       </div>
-                      <div class="liked" v-else>
+                      <div
+                          class="liked"
+                          v-else
+                          @click="unLikePost(post)"
+                      >
                           <i class="iconfont icon-a-dianzan2"></i>
-                          <button @click="unLikePost(post)">已点赞 {{ post.likeCount }} </button>
+                          <div>已点赞 {{ post.likeCount }} </div>
                       </div>
                       <div class="remark">
                           <i class="iconfont icon-a-xiaoxi1"></i>
                           <div>评论 {{ post.commentCount }}</div>
                       </div>
-                      <div
-                          class="collect"
-                      >
-                          <i class="iconfont icon-shoucang01"></i>
-                          <div>收藏</div>
-                      </div>
-<!--                      <div-->
-<!--                          class="collected"-->
-<!--                      >-->
-<!--                          <i class="iconfont icon-shoucang01"></i>-->
-<!--                          <div>已收藏</div>-->
+<!--                      <div class="view">-->
+<!--                        <i class="iconfont icon-a-xiaoxi1"></i>-->
+<!--                        <div> {{ post.viewCount }}</div>-->
 <!--                      </div>-->
-                      <div class="share">
-                          <i class="iconfont icon-fenxiang"></i>
-                          <div>分享</div>
+                      <div class="more">
+                          <i class="iconfont icon-gengduo"></i>
+                      </div>
+                      <div v-if="post.url !== ''" class="image">
+                        <img :src="post.url" alt="">
                       </div>
                   </div>
               </footer>
@@ -181,7 +183,8 @@ import {
 } from "@/views/information/utils";
 import {useStore} from "@/store";
 import type {Post, User} from "@/utils/type";
-import {followUser, likePost, unFollowUser, unLikePost} from "@/utils/utils";
+import {followUser, likePost, splitContents, unFollowUser, unLikePost} from "@/utils/utils";
+import {enterPost} from "@/views/posts/utils";
 
 const store = useStore()
 const followUserList = ref<User[]>([]) // 关注用户列表
@@ -237,8 +240,8 @@ const getUserId = () => {
         
                 .situation {
                     display: flex;
-        
-                    .like, 
+
+                    .like,
                     .liked,
                     .remark,
                     .collect,
@@ -264,6 +267,18 @@ const getUserId = () => {
                     .collected {
                         color: #ff9d5b;
                         font-weight: 600;
+                    }
+
+                    .image {
+                      width: 180px;
+                      height: 100px;
+
+                      img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 10px;
+                      }
                     }
                 }
             }

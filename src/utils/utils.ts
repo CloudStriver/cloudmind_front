@@ -271,3 +271,14 @@ export const getPostStatus = (status: string) => {
             return 0
     }
 }
+
+
+export const splitDescription = (text: string) => {
+    if (text.length > 6) return text.slice(0, 6) + '...'
+    return text
+}
+
+export const splitContents = (content: string) => {
+    if (content.length > 80) return content.slice(0, 80) + '...'
+    return content
+}

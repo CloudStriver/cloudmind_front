@@ -184,7 +184,7 @@ import {
   getUserRankList,
 } from "./utils"
 import type {HotPost, HotUser, Post, Zone} from "@/utils/type";
-import {followHotUser, getZoneList, unFollowHotUser} from "@/utils/utils";
+import {followHotUser, getZoneList, splitContents, splitDescription, unFollowHotUser} from "@/utils/utils";
 import {useStore} from "@/store";
 
 const store = useStore()
@@ -227,17 +227,6 @@ watch(navSelect, async (newVal) => {
       break
   }
 })
-
-
-
-const splitDescription = (text: string) => {
-    if (text.length > 6) return text.slice(0, 6) + '...'
-    return text
-}
-const splitContents = (content: string) => {
-    if (content.length > 80) return content.slice(0, 80) + '...'
-    return content
-}
 
 // 加载下一页用户
 const loadMoreUsers = async () => {

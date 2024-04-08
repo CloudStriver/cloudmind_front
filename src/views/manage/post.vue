@@ -171,10 +171,12 @@ const selectStatus = async (url: String) => {
 const continueDelete = () => {
     const postId = nowDeletePostId.value
     
-    post(true, DeletePostUrl, { postId })
+    post(true, DeletePostUrl, {
+      // postIds: []String{postId}
+    })
     .then(() => {
-        successMsg('删除成功')
-        location.reload()
+        successMsg('删除成功' + postId)
+        // location.reload()
     })
 }
 

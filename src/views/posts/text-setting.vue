@@ -158,6 +158,9 @@ import {onMounted, ref} from 'vue'
 import type {Tag, Zone} from "@/utils/type";
 import {createPost, getPostStatus, getTagList, getZoneList} from "@/utils/utils";
 import {enterPost} from "@/views/posts/utils";
+import {cosUploadFile} from "@/utils/cos";
+import SparkMD5 from "spark-md5";
+import {cosUploadImage} from "@/utils/public-cos";
 
 const isShowSetting = ref(true)
 const sureOption = ref(false)
@@ -165,6 +168,7 @@ const isHasUploadImage = ref(false)
 const ishowImageOperate = ref(false) 
 const isShowAddTags = ref(false)
 const coverImageUrl = ref('')
+const imageFile = ref()
 const tagList = ref<Tag[]>([])
 const selectTagList = ref<Tag[]>([])
 const firstZoneList = ref<Zone[]>([])
@@ -205,7 +209,7 @@ const uploadCoverImage = (event: Event) => {
     const target = event.target as HTMLInputElement
     const file = target.files?.[0]
     if (file == null) return
-    console.log("上传")
+    imageFile.value = file
     isHasUploadImage.value = true
     coverImageUrl.value = URL.createObjectURL(file)
 }
@@ -230,25 +234,45 @@ const selectFirstZone = async (zoneId: string) => {
 }
 
 const publishPost = async () => {
-   await createPost({
+  const url = ref('')
+  if(imageFile.value) {
+    const fileReader = new FileReader();
+    const spark = new SparkMD5.ArrayBuffer();
+    fileReader.readAsArrayBuffer(imageFile.value);
+    fileReader.onload = (e: any) => {
+      spark.append(e.target.result);
+      const md5 = spark.end();
+      const suffix = '.' + imageFile.value.name.split('.').pop();
+      url.value = "https://cloudmind.top/users/" + md5 + suffix
+      CreatePost(url.value)
+      cosUploadImage(imageFile.value, md5, suffix, async () => {})
+    }
+  }
+  else {
+    await CreatePost(url.value)
+  }
+}
+
+const CreatePost = async(url: string) => {
+  await createPost({
     title: props.sendPostData.title,
     text: props.sendPostData.text,
-    url: coverImageUrl.value,
+    url: url,
     tags: selectTagList.value,
     status: getPostStatus(postStatus.value),
     isSure: isSure.value,
   })
-       .then((res:any)=> {
-            if(res.keywords === null) {
-              enterPost(res.postId)
-            } else {
-              keywords.value = res.keywords
-              console.log(keywords.value[0].keywords)
-              console.log(keywords.value[1].keywords)
-              sureOption.value = true
-              isShowSetting.value = false
-            }
-       })
+      .then((res:any)=> {
+        if(res.keywords === null) {
+          enterPost(res.postId)
+        } else {
+          keywords.value = res.keywords
+          console.log(keywords.value[0].keywords)
+          console.log(keywords.value[1].keywords)
+          sureOption.value = true
+          isShowSetting.value = false
+        }
+      })
 }
 
 const noPublishPost = () => {

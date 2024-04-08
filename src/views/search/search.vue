@@ -3,21 +3,24 @@
         <CHeader></CHeader>
         <nav class="nav">
             <ul>
-                <li>
-                    <input 
-                        type="radio"
-                        name="select"
-                        id="synthesis"
-                        value="synthesis"
-                    >
-                    <label for="synthesis">综合</label>
-                </li>
+<!--                <li>-->
+<!--                    <input -->
+<!--                        type="radio"-->
+<!--                        name="select"-->
+<!--                        id="synthesis"-->
+<!--                        value="synthesis"-->
+<!--                        v-model="selectContent"-->
+<!--                        checked-->
+<!--                    >-->
+<!--                    <label for="synthesis">综合</label>-->
+<!--                </li>-->
                 <li>
                     <input 
                         type="radio"
                         name="select"
                         id="post"
                         value="post"
+                        v-model="selectContent"
                     >
                     <label for="post">帖子</label>
                 </li>
@@ -27,6 +30,7 @@
                         name="select"
                         id="files"
                         value="files"
+                        v-model="selectContent"
                     >
                     <label for="files">文件</label>
                 </li>
@@ -36,6 +40,7 @@
                         name="select"
                         id="users"
                         value="users"
+                        v-model="selectContent"
                     >
                     <label for="users">用户</label>
                 </li>
@@ -51,6 +56,8 @@
                                 name="selectSecond"
                                 id="synthesis_2"
                                 value="synthesis_2"
+                                v-model="selectSort"
+                                checked
                             >
                             <label for="synthesis_2">综合排序</label>
                         </li>
@@ -60,6 +67,7 @@
                                 name="selectSecond"
                                 id="new"
                                 value="new"
+                                v-model="selectSort"
                             >
                             <label for="new">最新优先</label>
                         </li>
@@ -69,6 +77,7 @@
                                 name="selectSecond"
                                 id="hot"
                                 value="hot"
+                                v-model="selectSort"
                             >
                             <label for="hot">热度优先</label>
                         </li>
@@ -116,10 +125,11 @@ import CHeader from '@/components/header.vue'
 import { onMounted } from 'vue';
 import { ref } from 'vue';
 const keyword = ref('')
+const selectContent = ref('')
+const selectSort = ref('')
 
 onMounted(() => {
-    keyword.value = location.href.split('/').pop() as string 
-    console.log(keyword.value)
+    keyword.value = location.href.split('/').pop() as string
 })
 
 
