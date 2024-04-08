@@ -6,7 +6,10 @@
             @sendEditorContents="getEditorText"
         />
         <div class="setting-box" v-if="isClickSettingButton">
-            <ShowSetting :sendPostData="postData"></ShowSetting>
+            <ShowSetting 
+                :sendPostData="postData"
+                @sendSettingContents = "getSettingOperate"
+            ></ShowSetting>
         </div>
     </div>
 </template>
@@ -27,6 +30,12 @@ onBeforeMount(() => {
     const type = option === 'write' ? '设置' : option === 'edit' ? '编辑' : ''
     createPostData.value = type
 })
+
+const getSettingOperate = (sendSettingContents: any) => {
+    if (sendSettingContents === 'close') {
+        isClickSettingButton.value = false
+    }
+}
 
 const getEditorText = (sendEditorContents: any) => {
     isClickSettingButton.value = true

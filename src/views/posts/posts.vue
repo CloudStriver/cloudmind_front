@@ -98,7 +98,7 @@
                     </div>
                 </div>
                 <div class="rank-create">
-                    <div class="create-post">
+                    <div class="create-post" v-if="store.getUserLongToken()">
                         <button @click="router.push('/write')">创建帖子</button>
                         <button @click="router.push('/manage/post')">管理帖子</button>
                     </div>
@@ -439,21 +439,22 @@ const loadMorePosts = async () => {
     
                 .create-post {
                     width: 100%;
-                    height: 50px;
                     border-radius: 5px;
-                    margin-bottom: 20px;
+                    margin-bottom: 10px;
                     display: flex;
+                    flex-direction: column;
                     justify-content: center;
                     align-items: center;
     
                     button {
                         width: 100%;
-                        height: 80%;
+                        height: 40px;
                         background-color: #1890ff;
                         box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
                         color: #fff;
                         border: none;
                         border-radius: 5px;
+                        margin-bottom: 20px;
                         cursor: pointer;
                     }
                 }
