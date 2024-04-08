@@ -145,6 +145,21 @@
             </div>
             </div>
         </div>
+        <div v-if="props.SendContentMsg === 'file'">
+          <div class="file-contents">
+            <div 
+                class="content"
+                v-for="file in fileList"
+                :key="file.fileId"
+            >
+                <div class="information">
+                    <h2>标题</h2>
+                    <p>内容</p>
+                    <PostDetail :PostInfo="file"></PostDetail>
+                </div>
+            </div>
+            </div>
+        </div>
       </div>
     </div>
 </template>
@@ -164,6 +179,7 @@ import {enterPost} from "@/views/posts/utils";
 const store = useStore()
 const followUserList = ref<User[]>([]) // 关注用户列表
 const postList = ref<Post[]>([])
+const fileList = ref<any[]>([])
 // const fileList = ref<File[]>([])
 const select = ref('headerFollow')
 const props = defineProps<{
@@ -332,7 +348,35 @@ const getUserId = () => {
             }
         }
 
-        .detail-follow {
+        .file-contents {
+            .content {
+                padding: 10px;
+                border-bottom: 1px solid #f0f0f0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .information {
+                    flex: 1;
+                    margin-right: 10px;
+
+                    h2 {
+                        font-size: 20px;
+                        margin: 0;
+                        padding: 0;
+                        cursor: pointer;
+                    }
+                    h2:hover {
+                        color: #1890ff;
+                    }
+
+                    p {
+                        color: #61666D;
+                        font-size: 15px;
+                    }
+                }
+            }
+        }
             position: relative;
             padding-bottom: 10px;
             margin-bottom: 10px;
