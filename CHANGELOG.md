@@ -1,4 +1,10 @@
 
+## 2024-04-08
+
+### ⚡ Performance Improvements | 优化
+
+* 实现回车登录和注册
+
 ## 2024-04-07
 
 ### ✨ Features | 新功能

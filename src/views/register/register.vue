@@ -117,7 +117,7 @@
 <script setup lang="ts">
 import router from '../../router/index'
 import Third from '@/views/login/third-login.vue'
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { judgeEmail, judgePassword } from '@/utils/judge'
 import { errorMsg, successMsg } from '@/utils/message'
 import { post, get } from '@/utils/request'
@@ -147,6 +147,25 @@ const clickGetCaptcha = ref(false)
 const errorConfirmPassword = ref(false)
 const captchaMessage = ref('获取验证码')
 const isButtonDisabled = ref(false) // 新增一个响应式变量来控制按钮的disabled状态
+
+
+onMounted(() => {
+    document.addEventListener('keydown', handleEnterKey);
+})
+
+onUnmounted(() => {
+    document.removeEventListener('keydown', handleEnterKey);
+})
+
+const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+        if (!isNext.value) {
+            next()
+        } else {
+            register()
+        }
+    }
+}
 
 const emailBlur = () => {
     if (email.value === '') {
