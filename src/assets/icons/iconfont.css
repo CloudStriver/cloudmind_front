@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4414354 */
-  src: url('iconfont.woff2?t=1711875976321') format('woff2'),
-       url('iconfont.woff?t=1711875976321') format('woff'),
-       url('iconfont.ttf?t=1711875976321') format('truetype');
+  src: url('iconfont.woff2?t=1712579048143') format('woff2'),
+       url('iconfont.woff?t=1712579048143') format('woff'),
+       url('iconfont.ttf?t=1712579048143') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-liulanliang:before {
+  content: "\e620";
 }
 
 .icon-mn_remen:before {
@@ -120,7 +124,6 @@
 .icon-a-xiaoxi1:before {
   content: "\eb3f";
 }
-
 
 .icon-a-dianzan2:before {
   content: "\ec0e";

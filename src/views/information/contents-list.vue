@@ -128,53 +128,28 @@
         </div>
 
         <div v-if="props.SendContentMsg === 'post'">
-          <div
-              class="detail"
-              v-for="(post, index) in postList"
-              :key="index"
-          >
-              <h1 @click="enterPost(post.postId)">{{ post.title }}</h1>
-              <p>{{ splitContents(post.userName + ": " + post.text) }}</p>
-              <footer class="detail-footer">
-                  <div class="situation">
-                      <div
-                           class="like"
-                           v-if="!post.liked"
-                           @click="likePost(post)"
-                      >
-                          <i class="iconfont icon-a-dianzan2"></i>
-                          <div>点赞 {{ post.likeCount }} </div>
-                      </div>
-                      <div
-                          class="liked"
-                          v-else
-                          @click="unLikePost(post)"
-                      >
-                          <i class="iconfont icon-a-dianzan2"></i>
-                          <div>已点赞 {{ post.likeCount }} </div>
-                      </div>
-                      <div class="remark">
-                          <i class="iconfont icon-a-xiaoxi1"></i>
-                          <div>评论 {{ post.commentCount }}</div>
-                      </div>
-<!--                      <div class="view">-->
-<!--                        <i class="iconfont icon-a-xiaoxi1"></i>-->
-<!--                        <div> {{ post.viewCount }}</div>-->
-<!--                      </div>-->
-                      <div class="more">
-                          <i class="iconfont icon-gengduo"></i>
-                      </div>
-                      <div v-if="post.url !== ''" class="image">
-                        <img :src="post.url" alt="">
-                      </div>
-                  </div>
-              </footer>
-          </div>
+          <div class="posts-contents">
+            <div 
+                class="content"
+                v-for="post in postList"
+                :key="post.postId"
+            >
+                <div class="information">
+                    <h2 @click="enterPost(post.postId)">{{ post.title }}</h2>
+                    <p>{{ splitContents(post.userName + ": " + post.text) }}</p>
+                    <PostDetail :PostInfo="post"></PostDetail>
+                </div>
+                <div v-if="post.url !== ''" class="image">
+                    <img :src="post.url" alt="图片">
+                </div>
+            </div>
+            </div>
         </div>
       </div>
     </div>
 </template>
 <script setup lang="ts">
+import PostDetail from '../posts/post-information.vue'
 import {onMounted, ref, watch} from 'vue'
 import {
   getFollowedUserList,
@@ -309,6 +284,49 @@ const getUserId = () => {
                     label {
                         cursor: pointer;
                         user-select: none
+                    }
+                }
+            }
+        }
+
+        .posts-contents {
+            .content {
+                padding: 10px;
+                border-bottom: 1px solid #f0f0f0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .information {
+                    flex: 1;
+                    margin-right: 10px;
+
+                    h2 {
+                        font-size: 20px;
+                        margin: 0;
+                        padding: 0;
+                        cursor: pointer;
+                    }
+                    h2:hover {
+                        color: #1890ff;
+                    }
+
+                    p {
+                        color: #61666D;
+                        font-size: 15px;
+                    }
+                }
+
+
+                .image {
+                    width: 180px;
+                    height: 100px;
+                    
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 10px;
                     }
                 }
             }

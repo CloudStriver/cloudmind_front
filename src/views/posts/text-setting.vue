@@ -165,21 +165,23 @@
         </div>
     </div>
     <div class="sure-box" v-show="sureOption">
-        <div class="tags-box-header">
-          <div>该文章包含敏感词，是否继续发布</div>
-<!--          <div v-if="keywords && keywords.value.length >= 1" v-for="(keyword, index) in keywords.value[0].keywords.value">-->
-<!--            <div v-if="index !== 0">，</div>-->
-<!--            <div>{{keyword}}</div>-->
-<!--          </div>-->
-<!--          <div  v-if="keywords && keywords.value.length === 2" v-for="(keyword, index) in keywords.value[1].keywords.value">-->
-<!--            <div v-if="index !== 0">，</div>-->
-<!--            <div>{{keyword}}</div>-->
-<!--          </div>-->
+        <div class="sure-panel">      
+            <div class="tags-box-header">
+              <div>该文章包含敏感词，是否继续发布</div>
+    <!--          <div v-if="keywords && keywords.value.length >= 1" v-for="(keyword, index) in keywords.value[0].keywords.value">-->
+    <!--            <div v-if="index !== 0">，</div>-->
+    <!--            <div>{{keyword}}</div>-->
+    <!--          </div>-->
+    <!--          <div  v-if="keywords && keywords.value.length === 2" v-for="(keyword, index) in keywords.value[1].keywords.value">-->
+    <!--            <div v-if="index !== 0">，</div>-->
+    <!--            <div>{{keyword}}</div>-->
+    <!--          </div>-->
+            </div>
+            <div class="button">
+              <button @click="noSure()">取消</button>
+              <button @click="confirmSure()">确定</button>
+            </div>
         </div>
-        <div class="button">
-          <button @click="noSure()">取消</button>
-          <button @click="confirmSure()">确定</button>
-      </div>
     </div>
 </template>
 <script setup lang="ts">
@@ -321,29 +323,6 @@ const confirmSure = () => {
 
 </script>
 <style scoped lang="css">
-.sure-box {
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  display: flex;
-  .button {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-
-    button {
-      width: 60px;
-      margin-left: 10px;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 5px;
-    }
-    button:last-child {
-      background-color: #7ebcff;
-      color: #fff;
-    }
-  }
-}
 .setting-box {
     width: 100%;
     height: 100%;
@@ -669,6 +648,40 @@ const confirmSure = () => {
                 button:last-child:active {
                     background-color: #4d8af9;
                 }
+            }
+        }
+    }
+}
+.sure-box {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+
+    .sure-panel {
+        width: 400px;
+        background-color: #fff;
+        box-shadow: 0 0 10px 0 #00000078;
+        border-radius: 10px;
+        padding: 10px;
+        margin: auto;
+
+        .button {
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-end;
+    
+            button {
+            width: 60px;
+            margin-left: 10px;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            }
+            button:last-child {
+            background-color: #7ebcff;
+            color: #fff;
             }
         }
     }

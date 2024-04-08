@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "575136",
+      "name": "浏览量",
+      "font_class": "liulanliang",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
       "icon_id": "4182912",
       "name": "AK-MN_热门",
       "font_class": "mn_remen",
