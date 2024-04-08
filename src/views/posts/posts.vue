@@ -99,7 +99,8 @@
                 </div>
                 <div class="rank-create">
                     <div class="create-post">
-                        <button @click="router.push('/test/write')">创建帖子</button>
+                        <button @click="router.push('/write')">创建帖子</button>
+                        <button @click="router.push('/manage/post')">管理帖子</button>
                     </div>
                     <div class="post-rank">
                         <div class="post-rank-title">

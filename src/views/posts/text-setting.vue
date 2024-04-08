@@ -157,7 +157,7 @@
 import {onMounted, ref} from 'vue'
 import type {Tag, Zone} from "@/utils/type";
 import {createPost, getPostStatus, getTagList, getZoneList} from "@/utils/utils";
-import {enterPost} from "@/views/test-posts/utils";
+import {enterPost} from "@/views/posts/utils";
 
 const isShowSetting = ref(true)
 const sureOption = ref(false)

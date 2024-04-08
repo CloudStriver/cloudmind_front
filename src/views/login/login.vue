@@ -108,8 +108,8 @@ const isEmail = ref(false)
 const isCaptcha = ref(false)
 const isPassword = ref(false)
 const errorEmail = ref(false)
-const agreements = ref(false)
-const isAutoLogin = ref(false)
+const agreements = ref(true)
+const isAutoLogin = ref(true)
 const errorPassword = ref(false)
 
 onMounted(() => {

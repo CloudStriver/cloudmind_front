@@ -23,12 +23,12 @@
                 </li>
                 <li>
                     <input 
-                        type="radio"
+                        type="radio" 
                         name="select"
-                        id="tags"
-                        value="tags"
+                        id="files"
+                        value="files"
                     >
-                    <label for="tags">标签</label>
+                    <label for="files">文件</label>
                 </li>
                 <li>
                     <input 
@@ -113,6 +113,16 @@
 </template>
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
+import { onMounted } from 'vue';
+import { ref } from 'vue';
+const keyword = ref('')
+
+onMounted(() => {
+    keyword.value = location.href.split('/').pop() as string 
+    console.log(keyword.value)
+})
+
+
 </script>
 <style scoped lang="css">
 .search-box {
