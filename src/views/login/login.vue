@@ -91,7 +91,7 @@
 import Captcha from '@/components/captcha.vue'
 import Third from './third-login.vue'
 import router from '@/router'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { post, get } from '@/utils/request';
 import { useStore } from '@/store/index';
 import { errorMsg, successMsg } from '@/utils/message';
@@ -108,14 +108,25 @@ const isEmail = ref(false)
 const isCaptcha = ref(false)
 const isPassword = ref(false)
 const errorEmail = ref(false)
-const agreements = ref(false)
-const isAutoLogin = ref(false)
+const agreements = ref(true)
+const isAutoLogin = ref(true)
 const errorPassword = ref(false)
 
 onMounted(() => {
     thirdLogin()
+    document.addEventListener('keydown', handleEnterKey);
 })
 
+
+onUnmounted(() => {
+    document.removeEventListener('keydown', handleEnterKey);
+})
+
+const handleEnterKey = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+        login();
+    }
+};
 const thirdLogin = () => {
     const code = location.href.split('=')[1]
     if (code) {

@@ -3,12 +3,19 @@
         <input 
             type="text"
             placeholder="搜索"
+            v-model="keyword"
         >
-        <i class="iconfont icon-sistrix"></i>
+        <i @click="router.push(`/search/${keyword}`)" class="iconfont icon-sistrix"></i>
     </div>
 </template>
 
 <script setup lang="ts">
+import router from '@/router'
+import { onMounted, ref } from 'vue'
+const keyword = ref('')
+
+onMounted(() => {
+})
 </script>
 
 <style scoped lang="css">

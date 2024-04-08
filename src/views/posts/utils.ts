@@ -128,5 +128,5 @@ export const getFollowPostList = async (limit: number, offset: number) => {
 }
 
 export const enterPost = (id: string) => {
-    router.push('/test/post/' + id)
+    router.push('/post/' + id)
 }

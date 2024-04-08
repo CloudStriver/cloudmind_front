@@ -51,20 +51,20 @@
             >
                 <i class="iconfont icon-shopping-cart-solid"></i>
             </router-link> -->
-            <router-link
+            <!-- <router-link
                 to="/manage"
                 class="router-nav"
                 active-class="router-active"
             >
                 <i class="iconfont icon-guanlizhongxin-shezhi-01"></i>
-            </router-link>
-            <router-link
+            </router-link> -->
+            <!-- <router-link
                 to="/test"
                 class="router-nav"
                 active-class="router-active"
             >
                 测试
-            </router-link>
+            </router-link> -->
         </div>
     </div>
 </template>

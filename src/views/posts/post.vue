@@ -102,7 +102,7 @@ import CHeader from '@/components/header.vue'
 import {onMounted, ref} from "vue";
 import {getPostDetail, getPostRecommendByPostId, turnTime} from "@/utils/utils";
 import {useStore} from "@/store";
-import {enterPost} from "@/views/test-posts/utils";
+import {enterPost} from "@/views/posts/utils";
 import {CreateRelation} from "@/utils/api";
 import {RelationType, TargetType} from "@/utils/consts";
 

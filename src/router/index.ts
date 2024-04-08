@@ -48,23 +48,23 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/manage/post.vue'),
   },
   {
-    path: '/test',
-    component: () => import('../views/test-posts/posts.vue'),
+    path: '/posts',
+    component: () => import('../views/posts/posts.vue'),
+  }, 
+  {
+    path: '/editor',
+    component: () => import('../views/posts/text-editor.vue'),
   },
   {
-    path: '/test/editor',
-    component: () => import('../views/test-posts/text-editor.vue'),
+    path: '/write',
+    component: () => import('../views/posts/write.vue'),
   },
   {
-    path: '/test/write',
-    component: () => import('../views/test-posts/write.vue'),
+    path: '/post/:postId',
+    component: () => import('../views/posts/post.vue'),
   },
   {
-    path: '/test/post/:postId',
-    component: () => import('../views/test-posts/post.vue'),
-  },
-  {
-    path: '/search',
+    path: '/search/:keyword?',
     component: () => import('../views/search/search.vue'),
   }
 ]
