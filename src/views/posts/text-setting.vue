@@ -20,7 +20,15 @@
                             v-for="(zone, index) in firstZoneList"
                             :key="index"
                             @click="selectFirstZone(zone.zoneId)"
-                        >{{ zone.value }}</li>
+                        >
+                            <input 
+                                type="radio"
+                                name="zone1Select"
+                                :id="zone.zoneId"
+                                :value="zone.zoneId"
+                            >
+                            <label :for="zone.zoneId">{{ zone.value }}</label>
+                        </li>
                     </ul>
                 </div>
                 <div class="zone-2">
@@ -30,17 +38,38 @@
                             v-for="(zone, index) in secondZoneList"
                             :key="index"
                             @click="selectSecondZone(zone.zoneId)"
-                        >{{ zone.value }}</li>
+                        >
+                            <input 
+                                type="radio"
+                                name="zone2Select"
+                                :id="zone.zoneId"
+                                :value="zone.zoneId"
+                            >
+                            <label :for="zone.zoneId">{{ zone.value }}</label>
+                        </li>
                     </ul>
                 </div>
                 <div class="zone-3">
                     <p>添加标签</p>
-                    <div class="zone-3-button">
-                        <button
-                              v-for="(tag, index) in tagList"
-                              :key="index"
-                              @click="selectTag(tag)"
-                        >{{tag.value}}</button>
+                    <div class="zone-3-list">
+                        <ul>
+                            <li
+                                v-for="(tag, index) in tagList"
+                                :key="index"
+                            >
+                                <input 
+                                    type="checkbox"
+                                    :id="tag.tagId"
+                                    :value="tag.tagId"
+                                >
+                                <label 
+                                    :for="tag.tagId"
+                                    @click="selectTag(tag)"
+                                >
+                                    <span>{{ tag.value }}</span>
+                                </label>   
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -183,6 +212,7 @@ const props = defineProps<{
     title: string
   }
 }>()
+const emit = defineEmits(['sendSettingContents'])
 const keywords = ref()
 
 onMounted(async () => {
@@ -277,6 +307,7 @@ const CreatePost = async(url: string) => {
 
 const noPublishPost = () => {
   isShowSetting.value = false
+  emit('sendSettingContents', 'close')
 }
 
 const noSure = () => {
@@ -327,6 +358,7 @@ const confirmSure = () => {
         box-shadow: 0 0 10px 0 #00000078;
         left: 50%;
         transform: translate(-50%);
+        z-index: 100;
 
         .tags-box-header {
             margin-bottom: 20px;
@@ -376,6 +408,16 @@ const confirmSure = () => {
 
                     li {
                         height: 30px;
+                        font-size: 13px;
+                        cursor: pointer;
+                        user-select: none;
+
+                        input {
+                            display: none;
+                        }
+                        input:checked + label {
+                            color: #7ebcff;
+                        }
                     }
                 }
             }
@@ -385,19 +427,34 @@ const confirmSure = () => {
                 display: flex;
                 flex-direction: column;
 
-                .zone-3-button {
-                    display: flex;
-                    flex-wrap: wrap;
+                .zone-3-list {
+                    ul {
+                        list-style: none;
+                        margin: 0;
+                        padding: 0;
+                        display: flex;
+                        flex-wrap: wrap;
 
-                    button {
-                        width: auto;
-                        border: none;
-                        padding: 5px 10px;
-                        border-radius: 5px;
-                        background-color: #aec8e06f;
-                        color: #707f8e;
-                        margin: 5px;
-                        cursor: pointer;
+                        li {
+
+                            label {
+                                height: 30px;
+                                padding: 5px 10px;
+                                background-color: #aec8e06f;
+                                margin: 5px;
+                                font-size: 13px;
+                                border-radius: 5px;
+                                cursor: pointer;
+                                user-select: none;
+                            }
+
+                            input {
+                                display: none;
+                            }
+                            input:checked + label {
+                                background-color: #7ebcff71;
+                            }
+                        }
                     }
                 }
             }
@@ -441,6 +498,7 @@ const confirmSure = () => {
             width: 100%;
             margin-bottom: 20px;
             display: flex;
+            z-index: 1;
 
             .add-image-box {
                 width: 220px;
@@ -478,6 +536,7 @@ const confirmSure = () => {
                     object-fit: cover;
                     border-radius: 10px;
                     cursor: pointer;
+                    z-index: 1;
                 }
 
                 .change-image {
