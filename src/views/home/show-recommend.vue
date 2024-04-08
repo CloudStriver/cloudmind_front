@@ -27,10 +27,10 @@
                         <div class="post-content">{{ htmlToText(post.userName + ": " + post.text) }}</div>
                     </div>
                 </section>
-                <PostDetail 
-                    :information="post"
-                    class="footer"
-                ></PostDetail>
+<!--                <PostDetail -->
+<!--                    :information="post"-->
+<!--                    class="footer"-->
+<!--                ></PostDetail>-->
             </div>
         </div>
         <div class="user-box" v-show="props.classify === 'user'">
@@ -78,13 +78,11 @@
 
 
 <script setup lang="ts">
-import PostDetail from '../posts/post-information.vue'
 import {onMounted, ref, watch} from 'vue'
 import type {Post, User} from "@/utils/type";
 import {followUser, getPostRecommend, getUserRecommend, unFollowUser} from "@/utils/utils";
 import {TargetType} from "@/utils/consts";
 import {useStore} from "@/store";
-
 const store = useStore()
 const props = defineProps<{
     classify: string,

@@ -96,7 +96,7 @@ const sendEditorMsg = () => {
     const text = vditor.value.getValue()
     emit('sendEditorContents', {
         title: title.value,
-        text
+        text: text
     })
 }
 </script>
