@@ -273,6 +273,7 @@ const loadMorePosts = async () => {
     .section {
         width: 100%;
         flex: 1;
+        padding-top: 20px;
         overflow-y: auto;
 
         .contents-box {

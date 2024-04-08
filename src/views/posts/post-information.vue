@@ -24,7 +24,11 @@
                 <div>评论 {{ props.PostInfo.commentCount }}</div>
             </span>
             <span class="row">
-                <i class="iconfont icon-gengduo"></i>
+                <i class="iconfont icon-liulanliang"></i>
+                <div>浏览量 100</div>
+            </span>
+            <span class="row">
+                <i class="iconfont icon-fenxiang"></i>
             </span>
         </div>
         <div class="tag-box">

@@ -44,7 +44,7 @@
                             <span>{{ turnTime( postDetail?.createTime) }}</span>
                             <span>浏览量: 8k</span>
                         </div>
-                        <p>{{ postDetail?.text}}</p>
+                        <div class="vditor"></div>
                     </article>
                 </div>
                 <div class="right">
@@ -105,6 +105,7 @@ import {useStore} from "@/store";
 import {enterPost} from "@/views/posts/utils";
 import {CreateRelation} from "@/utils/api";
 import {RelationType, TargetType} from "@/utils/consts";
+import Vditor from "vditor";
 
 const postDetail = ref<PostDetail>()
 const postList = ref<Post[]>([])
@@ -112,11 +113,17 @@ const store = useStore()
 const postId = ref('')
 
 onMounted(async () => {
-  const urls = location.href.split("/")
-  postId.value = urls[urls.length - 1]
-  postDetail.value = await getPostDetail(postId.value)
-  postList.value = await getPostRecommendByPostId(postId.value)
+    const urls = location.href.split("/")
+    postId.value = urls[urls.length - 1]
+    postDetail.value = await getPostDetail(postId.value)
+    postList.value = await getPostRecommendByPostId(postId.value)
+    renderMarkdown('## Hello Vditor!')
 })
+
+const renderMarkdown = (md: any) => {
+    const vditor = document.createElement('vditor') as HTMLDivElement
+    Vditor.preview(vditor, md)
+}
 
 const changePost = async (nowPostId: string) => {
   postId.value = nowPostId
