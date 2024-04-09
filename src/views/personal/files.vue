@@ -89,23 +89,7 @@ const optionTop = ref<number>(0)
 const optionLeft = ref<number>(0)
 const fatherId = ref<string>("")
 const chooseFileList = ref<boolean[]>([])
-const fileDetails = ref<fileData[]>(
-    [{
-        fileId: "",
-        userId: "",
-        name: "",
-        type: "",
-        path: "",
-        fatherId: "",
-        spaceSize: "",
-        isDel: 0,
-        zone: "",
-        subZone: "",
-        description: "",
-        updateAt: "",
-        createAt: "",
-    }]
-)
+const fileDetails = ref<fileData[]>([])
 const ctxIndex = ref(-1)
 const mouseFileIndex = ref(-1)
 const isDragFile = ref(false)
@@ -193,6 +177,19 @@ watch(() => props.sendRequest, async() => {
           onlyFatherId: fatherId.value
         });
       break
+    case 'refreshFilesAndClearList':
+        nowFilesList.value = await getPrivateFilesList({
+            limit: 100,
+            offset: 0,
+            sortType: sortType.value,
+            backward: true,
+            onlyFatherId: fatherId.value
+        });
+        fileDetails.value = []
+        break
+    case 'clearList':
+        fileDetails.value = []
+        break
     case 'updateName':
         nowFilesList.value.files[ctxIndex.value].name = sliceFileName(props.sendRequest.message)
         break
@@ -200,7 +197,7 @@ watch(() => props.sendRequest, async() => {
         await classifyFile()
         break
     case  'allSelect':
-        if (props.sendRequest.message === true) {
+        if (props.sendRequest.message === "true") {
           chooseFileList.value = Array(nowFilesList.value.files.length).fill(true)
         } else {
           chooseFileList.value = Array(nowFilesList.value.files.length).fill(false)
@@ -218,11 +215,25 @@ watch(() => props.sendRequest, async() => {
           onlyFatherId: fatherId.value
         });
         break
+    case 'moveToRecycle':
+        getRecycleFileDetails()
+        emit('sendOptions', props.sendRequest.option)
+        emit('sendDetails', fileDetails.value)
+        break
     default:
         console.log('其他操作')
         break
   }
 })
+
+const getRecycleFileDetails = () => {
+    const len = chooseFileList.value.length
+    for (let i = 0; i < len; i ++) {
+        if (chooseFileList.value[i]) {
+            fileDetails.value[i] = nowFilesList.value.files[i]
+        }
+    }
+}
 
 const chooseFile = (index: number) => {
     chooseFileList.value[index] = true
@@ -379,6 +390,7 @@ const textLog = (index: number) => {
 }
 
 const getOptions = (file: fileData, event: any, index: number) => {
+    emit('sendOptions', 'cancelFilePopup')
     ctxIndex.value = index
     isShowOptions.value = true
     optionLeft.value = event.clientX
@@ -391,6 +403,12 @@ const getOptions = (file: fileData, event: any, index: number) => {
     }
     fileDetails.value[0] = file
     event.preventDefault()
+    document.addEventListener('click', (e) => {
+        const option = document.querySelector('.option') as HTMLElement
+        if (e.target !== option) {
+            isShowOptions.value = false
+        }
+    })
 }
 
 const toFile = (file: fileData) => {

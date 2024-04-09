@@ -4,6 +4,7 @@
             class="drawer" 
             @sendDrawerOptions="getDrawerOptionType"
             @sendDrawerSelectType="getDrawerSelectType"
+            :sendRequest="requestDrawerMessage"
         ></Drawer>
         <div class="contents-box">
             <div class="header">
@@ -11,10 +12,17 @@
                 <PathTitle 
                     v-if="isShowFiles && isLoading"
                     @sendPathMsg="getPathMsg"
+                    :sendRequest="requestPathMessage"
                 ></PathTitle>
                 <RecycleTitle v-if="isShowRecycle" @sendRecycleTitleOptions="getRecycleTitleOptions"></RecycleTitle>
             </div>
-            <div class="bottom">
+            <div class="bottom" @contextmenu.stop="showFileOperation">
+                <FileOption 
+                    v-show="isShowFilePopup" 
+                    class="file-options"
+                    :style="{left: filePopupLeft + 'px', top: filePopupTop + 'px'}"
+                    @sendFilePopupOptions = "getFilePopupOptionType"
+                ></FileOption>
                 <Files 
                     v-if="isShowFiles"
                     class="files" 
@@ -43,6 +51,7 @@ import PathTitle from './path.vue'
 import Recycle from './recycle.vue'
 import RecycleTitle from './recycle-title.vue'
 import CHeader from '@/components/header.vue'
+import FileOption from './fileOption.vue'
 import router from '@/router'
 import { ref } from 'vue'
 import {StoragePathId} from "@/utils/consts";
@@ -53,6 +62,9 @@ const RecycleMsg = ref({
 const requestMessage = ref({
     option: "",
     message: ""
+})
+const requestDrawerMessage = ref({
+    option: "", 
 })
 const fileContents = ref({
     option: "",
@@ -68,16 +80,77 @@ const fileContents = ref({
         updateAt: ""
     }]
 })
+
+const requestPathMessage = ref({
+    option: "",
+})
+const filePopupLeft = ref(0)
+const filePopupTop = ref(0)
 const isShowRecycle = ref(location.href.includes('recycle'))
 const isLoading = ref(false)
+const isShowFilePopup = ref(false)
 const isShowPopup = ref(false)
+const isClickFile = ref(false)
 const isShowFiles = ref(!location.href.includes('recycle'))
 let isFirst = false
+
 const getPathMsg = (sendPathMsg: any) => {
     requestMessage.value = {
         option: sendPathMsg.option,
         message: sendPathMsg.message
     }
+}
+
+const getFilePopupOptionType = (sendFilePopupOptions: string) => {
+    if (sendFilePopupOptions === 'allSelect') {
+        requestMessage.value = {
+            option: sendFilePopupOptions,
+            message: "true"
+        }
+        requestPathMessage.value = {
+            option: sendFilePopupOptions,
+        }
+    }
+    else if (sendFilePopupOptions === 'moveToRecycle') {
+        requestMessage.value = {
+            option: sendFilePopupOptions,
+            message: ""
+        }
+    }
+    else if (sendFilePopupOptions === 'createFolder') {
+        requestDrawerMessage.value = {
+            option: sendFilePopupOptions
+        }
+    }
+}
+
+const showFileOperation = (e: any) => {
+    if (isClickFile.value) {
+        isClickFile.value = false
+        return
+    }
+    if (isShowRecycle.value) {
+        return 
+    }
+    e.preventDefault()
+    filePopupLeft.value = e.clientX
+    filePopupTop.value = e.clientY
+    if (filePopupLeft.value + 160 > window.innerWidth) {
+        filePopupLeft.value = window.innerWidth - 160
+    }
+    if (filePopupTop.value + 450 > window.innerHeight) {
+        filePopupTop.value = window.innerHeight - 450
+    }
+    isShowFilePopup.value = true
+    const filePopup = document.querySelector('.file-popup') as HTMLElement
+    filePopup.style.left = e.clientX + 'px'
+    filePopup.style.top = e.clientY + 'px'
+    document.addEventListener('click', (e) => {
+        const filePopup = document.querySelector('.file-options') as HTMLElement
+        if (e.target !== filePopup) {
+            isShowFilePopup.value = false
+        }
+    })
 }
 
 const getRecycleTitleOptions = (sendRecycleTitleOptions: string) => {
@@ -117,6 +190,10 @@ const getLoading = (loading: boolean) => {
 }
 
 const getOptionType = (sendOptions: string) => {
+    if (sendOptions === 'cancelFilePopup') {
+        isClickFile.value = true
+        return
+    }
     fileContents.value.option = sendOptions
     isShowPopup.value = true
 }
@@ -139,6 +216,18 @@ const getPopupOperations = (sendOperations: any) => {
         requestMessage.value = {
             option: "updateName",
             message: sendOperations.name
+        }
+    }
+    if (sendOperations.option === 'clearList') {
+        requestMessage.value = {
+            option: "clearList",
+            message: ''
+        }
+    }
+    if (sendOperations.option === 'refreshFilesAndClearList') {
+        requestMessage.value = {
+            option: "refreshFilesAndClearList",
+            message: ''
         }
     }
 }
@@ -188,6 +277,10 @@ const getPopupOperations = (sendOperations: any) => {
 
             .files {
                 margin: 20px;
+            }
+
+            .file-options {
+                position: absolute;
             }
         }
     }

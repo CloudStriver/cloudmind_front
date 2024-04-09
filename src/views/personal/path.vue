@@ -117,6 +117,11 @@ import {StoragePathId, StoragePathName} from "@/utils/consts";
 
 const store = useStore()
 const emit = defineEmits(['sendPathMsg'])
+const props = defineProps<{
+    sendRequest: {
+        option: string,
+    }
+}>()
 const typeSort = ref("createTime")
 const sort = ref("asc")
 const allSelect = ref(false)
@@ -157,7 +162,7 @@ watch(() => store.pathChange, (newVal) => {
 watch(() => allSelect.value, (newVal) => {
     emit('sendPathMsg', {
         option: 'allSelect',
-        message: newVal
+        message: newVal.toString()
     })
 })
 
@@ -183,6 +188,9 @@ watch(() => typeSort.value, (newTypeSort) => {
   })
 })
 
+watch(() => props.sendRequest, () => {
+    allSelect.value = true
+})
 
 const cancelShowSort = (e: MouseEvent) => {
     //还需要再完善取消弹框的方法

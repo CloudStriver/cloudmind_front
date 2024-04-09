@@ -166,6 +166,11 @@ const isCreateFolderName = ref<boolean>(true)
 const isShowCreateFolder = ref<boolean>(false)
 const filesCount = ref<number>(0)
 const emit = defineEmits(['sendDrawerOptions', 'sendDrawerSelectType'])
+const props = defineProps<{
+    sendRequest: {
+        option: string
+    }
+}>()
 
 onMounted(() => {
     selectType.value = getSelectType()
@@ -193,6 +198,12 @@ watch(selectType, (newVal) => {
         router.push('/personal/' + pathList[pathList.length - 1])
         emit('sendDrawerOptions', 'showFiles')
         emit('sendDrawerSelectType', newVal)
+    }
+})
+
+watch(() => props.sendRequest, () => {
+    if (props.sendRequest.option === 'createFolder') {
+        isShowCreateFolder.value = true
     }
 })
 
