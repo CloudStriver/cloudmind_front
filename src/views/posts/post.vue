@@ -6,12 +6,9 @@
                 <div class="post">
                     <div class="information">
                         <ul>
-                            <li @click="CreateRelation({
-                                  toId: postId,
-                                  toType: TargetType.Post,
-                                  relationType: RelationType.Like,
-                                })">
-                                <i class="iconfont icon-a-dianzan2"></i>
+                            <li @click="likeOrCancel(postId, TargetType.Post, RelationType.Like)">
+                                <i class="iconfont icon-a-dianzan2" v-if="!postDetail?.liked"></i>
+                                <i class="iconfont icon-a-dianzan2 liked" v-else></i>
                                 <div >{{postDetail?.likeCount}}</div>
                             </li>
                             <li>
@@ -53,7 +50,11 @@
                             <div>
                                 <span>{{ postDetail?.author.name}}</span>
                                 <span>个性签名</span>
-                                <span>tag</span>
+                                <span class="user-tags">
+                                    <span>tags</span>
+                                    <span>tags</span>
+                                    <span>tags</span>
+                                </span>
                             </div>
                         </div>
                         <div class="user-infor">
@@ -118,6 +119,16 @@ onMounted(async () => {
     postList.value = await getPostRecommendByPostId(postId.value)
     renderMarkdown(postDetail?.value?.text)
 })
+
+const likeOrCancel = (toldId: string, toType: TargetType, relationType: RelationType) => {
+    if (postDetail?.value) {
+        CreateRelation({
+            toId: toldId,
+            toType: toType,
+            relationType: relationType,
+        })
+    }
+}
 
 const renderMarkdown = (md: string | undefined) => {
   if(md) {
@@ -205,6 +216,10 @@ const changePost = async (nowPostId: string) => {
                                 right: -15px;
                                 top: 0;
                             }
+
+                            .liked {
+                                color: #6d99ec;
+                            }
                         }
                     }
                 }
@@ -226,6 +241,10 @@ const changePost = async (nowPostId: string) => {
                             margin-right: 20px;
                         }
                     }
+
+                    .vditor {
+                        border: none;
+                    }
                 }
             }
 
@@ -246,8 +265,8 @@ const changePost = async (nowPostId: string) => {
                         align-items: center;
 
                         img {
-                            width: 50px;
-                            height: 50px;
+                            width: 70px;
+                            height: 70px;
                             border-radius: 50%;
                             margin-right: 15px;
                         }
@@ -266,10 +285,19 @@ const changePost = async (nowPostId: string) => {
                                 color: #666;
                                 margin-bottom: 5px;
                             }
-                            span:nth-child(3) {
-                                display: block;
+                            .user-tags {
                                 width: auto;
                                 padding: 0;
+
+                                span {
+                                    height: 20px;
+                                    padding: 0 10px;
+                                    margin-right: 5px;
+                                    font-size: 13px;
+                                    border-radius: 10px;
+                                    background-color: #b0d3f8;
+                                    color: #fff;
+                                }
                             }
                         }
                     }

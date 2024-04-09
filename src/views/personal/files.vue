@@ -28,7 +28,8 @@
                 class="files-contents"
                 v-for="(file, index) of nowFilesList.files"
                 :key="index"
-                @click="toFile(file)"
+                @dblclick="toFile(file)"
+                @click="chooseFileList[index] ? cancelChooseFile(index) : chooseFile(index)"
                 @contextmenu="getOptions(file, $event, index)"
                 @mouseenter="textLog(index)"
                 @mouseleave="textLog(-1)"
@@ -37,14 +38,12 @@
                     v-show="mouseFileIndex === index"
                     class="checkbox-choose"
                     style="opacity: calc(0.3);"
-                    @click="chooseFile(index)"
                 >
                     <i class="iconfont icon-0-58"></i>
                 </div>
                 <div 
                     v-show="chooseFileList[index] === true"
                     class="checkbox-choose"
-                    @click="cancelChooseFile(index)"
                 >
                     <i class="iconfont icon-0-58"></i>
                 </div>
