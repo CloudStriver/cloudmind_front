@@ -5,6 +5,8 @@
 
 * 帖子详细实现markdown渲染
 
+* 新增搜索样式
+* 
 ### 🐛 Bug Fixes | Bug 修复
 
 * 修复帖子详情布局的bug
