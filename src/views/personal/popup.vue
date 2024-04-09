@@ -266,7 +266,7 @@ const confirmMoveToRecycle = () => {
         cancelPopup()
         emit('sendOperations', 
         {
-            option: "refreshFiles",
+            option: "refreshFilesAndClearList",
             message: ""
         })
     })
@@ -358,6 +358,11 @@ const cancelPopup = () => {
         option: "cancelPopup",
         message: ""
     })
+    emit('sendOperations', {
+        option: "clearList",
+        message: ""
+    })
+
 }
 const showDetails = (name: string, event: any) => {
     details.value = name
