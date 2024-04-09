@@ -130,7 +130,7 @@
           </ul>
         </div>
 
-        <div v-if="props.SendContentMsg === 'post'">
+        <div v-if="props.SendContentMsg === 'post'" class="posts-box">
           <div class="posts-contents">
             <div 
                 class="content"
@@ -247,9 +247,10 @@ const getUserId = () => {
 .list-box {
     .contents {
         padding: 10px;
+        display: flex;
+        flex-direction: column;
 
         .detail {
-            border-bottom: 1px solid #f0f0f0;
             padding-bottom: 10px;
             margin-bottom: 10px;
             
@@ -341,48 +342,54 @@ const getUserId = () => {
             }
         }
 
-        .posts-contents {
-            .content {
-                padding: 10px;
-                border-bottom: 1px solid #f0f0f0;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-
-                .information {
-                    flex: 1;
-                    margin-right: 10px;
-
-                    h2 {
-                        font-size: 20px;
-                        margin: 0;
-                        padding: 0;
-                        cursor: pointer;
-                    }
-                    h2:hover {
-                        color: #1890ff;
-                    }
-
-                    p {
-                        color: #61666D;
-                        font-size: 15px;
-                    }
-                }
-
-
-                .image {
-                    width: 180px;
-                    height: 100px;
-                    
-                    img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        border-radius: 10px;
-                    }
-                }
-            }
+        .posts-box {
+          width: 100%;
+          .posts-contents {
+            width: 100%;
+              .content {
+                  width: 100%;
+                  padding: 10px;
+                  border-bottom: 1px solid #f0f0f0;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+  
+                  .information {
+                      flex: 1;
+                      margin-right: 10px;
+  
+                      h2 {
+                          font-size: 20px;
+                          margin: 0;
+                          padding: 0;
+                          cursor: pointer;
+                      }
+                      h2:hover {
+                          color: #1890ff;
+                      }
+  
+                      p {
+                          color: #61666D;
+                          font-size: 15px;
+                      }
+                  }
+  
+  
+                  .image {
+                      width: 180px;
+                      height: 100px;
+                      
+                      img {
+                          width: 100%;
+                          height: 100%;
+                          object-fit: cover;
+                          border-radius: 10px;
+                      }
+                  }
+              }
+          }
         }
+
 
         .file-contents {
             .content {
@@ -413,13 +420,6 @@ const getUserId = () => {
                 }
             }
         }
-            position: relative;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-
             .image {
                 width: 50px;
                 height: 50px;

@@ -5,6 +5,10 @@
 
 * 帖子详细实现markdown渲染
 
+### 🐛 Bug Fixes | Bug 修复
+
+* 修复帖子详情布局的bug
+
 ## 2024-04-08
 
 ### ✨ Features | 新功能
