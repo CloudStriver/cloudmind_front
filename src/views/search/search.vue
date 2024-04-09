@@ -100,7 +100,7 @@
                     </el-dropdown>
                 </div>
                 <div class="contents">
-                    <div class="content-box">
+                    <div class="content-file-box"> <!-- v-if="文件" -->
                         <h1 class="title">标题</h1>
                         <p class="content">内容</p>
                         <p>admin·2024-04-07·tags</p>
@@ -112,6 +112,39 @@
                             <div class="information">
                                 <i class="iconfont icon-a-xiaoxi1"></i>
                                 <span>1k</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-post-box"> <!-- v-if="帖子" -->
+                        <div 
+                            class="content"
+                        >
+                            <div class="information">
+                                <h2>标题</h2>
+                                <p>内容</p>
+                                <!-- <PostDetail :PostInfo="post"></PostDetail> -->
+                            </div>
+                            <!-- <div v-if="post.url !== ''" class="image">
+                                <img :src="post.url" alt="图片">
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="content-user-box"> <!-- v-if="用户" -->
+                        <div class="user-box">
+                            <div class="user-info">
+                                <div class="image">
+                                    <img src="" alt="">
+                                </div>
+                                <div class="infor">
+                                    <p class="name">用户名</p>
+                                    <p class="fans">粉丝量：100</p>
+                                    <div class="user-tag">
+                                        <span>标签</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="follow-button">
+                                <button>+ 关注</button>
                             </div>
                         </div>
                     </div>
@@ -248,7 +281,7 @@ onMounted(() => {
             }
 
             .contents {
-                .content-box {
+                .content-file-box {
                     padding-bottom: 10px;
                     margin-bottom: 10px;
                     border-bottom: 1px solid #f0f0f0;
@@ -304,6 +337,116 @@ onMounted(() => {
                             span {
                                 font-size: 14px;
                                 color: #999;
+                            }
+                        }
+                    }
+                }
+
+                .content-post-box {
+                    .content {
+                        padding: 10px;
+                        margin-bottom: 10px;
+                        border-bottom: 1px solid #f0f0f0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        .information {
+                            flex: 1;
+                            margin-right: 10px;
+
+                            h2 {
+                                font-size: 20px;
+                                margin: 0;
+                                padding: 0;
+                                cursor: pointer;
+                            }
+                            h2:hover {
+                                color: #1890ff;
+                            }
+
+                            p {
+                                color: #61666D;
+                                font-size: 15px;
+                            }
+                        }
+    
+    
+                        .image {
+                            width: 180px;
+                            height: 100px;
+                            
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                border-radius: 10px;
+                            }
+                        }
+                    }
+                }
+
+                .content-user-box {
+                    .user-box {
+                        margin-top: 10px;
+                        border-bottom: 1px solid #f0f0f0;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+
+                        .user-info {
+                            padding-bottom: 10px;
+                            margin-bottom: 10px;
+                            display: flex;
+                            .image {
+                                width: 60px;
+                                height: 60px;
+                                border-radius: 50%;
+                                margin-right: 20px;
+                                background-color: #625252;
+                            }
+    
+                            .infor {
+                                display: flex;
+                                flex-direction: column;
+    
+                                p {
+                                    margin: 0;
+                                    font-size: 16px;
+                                }
+                                .name {
+                                    font-weight: bold;
+                                }
+                                .fans {
+                                    font-size: 14px;
+                                    margin-bottom: 3px;
+                                    color: #999;
+                                }
+                                .user-tag {
+                                    display: flex;
+    
+                                    span {
+                                        padding: 0 10px;
+                                        font-size: 13px;
+                                        background-color: #b0d3f8;
+                                        color: #fff;
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                        border-radius: 5px;
+                                    }
+                                }
+                            }
+                        }
+    
+                        .follow-button {
+                            button {
+                                padding: 5px 10px;
+                                color: #1890ff;
+                                border: none;
+                                border-radius: 5px;
+                                cursor: pointer;
+                                background-color: #fff;
                             }
                         }
                     }
