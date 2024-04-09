@@ -100,6 +100,7 @@
                   id="publish"
                   value="publish"
                   v-model="select"
+                  @click="getPublish()"
                   checked
               >
               <label for="publish">发布</label>
@@ -111,6 +112,7 @@
                   id="like"
                   v-model="select"
                   value="like"
+                  @click="getLike()"
               >
               <label for="like">点赞</label>
             </li>
@@ -121,6 +123,7 @@
                   id="collect"
                   value="collect"
                   v-model="select"
+                  @click="getCollect()"
               >
               <label for="collect">收藏</label>
             </li>
@@ -167,13 +170,14 @@
 import PostDetail from '../posts/post-information.vue'
 import {onMounted, ref, watch} from 'vue'
 import {
+  getCollectPostList,
   getFollowedUserList,
-  getFollowUserList,
+  getFollowUserList, getLikePostList,
   getPostList
 } from "@/views/information/utils";
 import {useStore} from "@/store";
 import type {Post, User} from "@/utils/type";
-import {followUser, likePost, splitContents, unFollowUser, unLikePost} from "@/utils/utils";
+import {followUser, splitContents, unFollowUser} from "@/utils/utils";
 import {enterPost} from "@/views/posts/utils";
 
 const store = useStore()
@@ -200,6 +204,38 @@ watch(()=> props.SendContentMsg, async (newVal) => {
      break;
  }
 })
+
+const getPublish = async () => {
+  switch (props.SendContentMsg) {
+    case 'post':
+      postList.value = await getPostList(getUserId())
+      break;
+    case 'file':
+      break;
+  }
+}
+
+const getLike = async () => {
+  switch (props.SendContentMsg) {
+    case 'post':
+      console.log("获取点赞")
+      postList.value = await getLikePostList(getUserId())
+      break;
+    case 'file':
+      break;
+  }
+}
+
+const getCollect = async () => {
+  switch (props.SendContentMsg) {
+    case 'post':
+      postList.value = await getCollectPostList(getUserId())
+      break;
+    case 'file':
+      break;
+  }
+}
+
 
 const getUserId = () => {
   const urls = location.href.split("/")
@@ -420,6 +456,5 @@ const getUserId = () => {
                 }
             }
         }
-    }
 }
 </style>

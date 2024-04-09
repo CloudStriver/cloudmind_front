@@ -6,34 +6,33 @@
                 <div class="post">
                     <div class="information">
                         <ul>
-                            <li>
-                                <i class="iconfont icon-a-dianzan2"></i>
-                                <div @click="CreateRelation({
+                            <li @click="CreateRelation({
                                   toId: postId,
                                   toType: TargetType.Post,
                                   relationType: RelationType.Like,
-                                })">{{postDetail?.likeCount}}</div>
+                                })">
+                                <i class="iconfont icon-a-dianzan2"></i>
+                                <div >{{postDetail?.likeCount}}</div>
                             </li>
                             <li>
                                 <i class="iconfont icon-a-xiaoxi1"></i>
                                 <div>{{ postDetail?.commentCount }}</div>
                             </li>
-                            <li>
-                                <i class="iconfont icon-shoucang01"></i>
-                                <div @click="CreateRelation({
+                            <li @click="CreateRelation({
                                   toId: postId,
                                   toType: TargetType.Post,
                                   relationType: RelationType.Collect,
-                                })">{{ postDetail?.collectCount }}</div>
+                                })">
+                                <i class="iconfont icon-shoucang01"></i>
+                                <div>{{ postDetail?.collectCount }}</div>
                             </li>
-                            <li>
-                                <i class="iconfont icon-fenxiang"></i>
-                                <div @click="CreateRelation({
+                            <li @click="CreateRelation({
                                   toId: postId,
                                   toType: TargetType.Post,
                                   relationType: RelationType.Share,
-                                })"
-                                >{{ postDetail?.shareCount }}</div>
+                                })">
+                                <i class="iconfont icon-fenxiang"></i>
+                                <div>{{ postDetail?.shareCount }}</div>
                             </li>
                         </ul>
                     </div>
@@ -44,7 +43,7 @@
                             <span>{{ turnTime( postDetail?.createTime) }}</span>
                             <span>浏览量: 8k</span>
                         </div>
-                        <div class="vditor"></div>
+                        <div class="vditor" id="vditor"></div>
                     </article>
                 </div>
                 <div class="right">
@@ -106,7 +105,7 @@ import {enterPost} from "@/views/posts/utils";
 import {CreateRelation} from "@/utils/api";
 import {RelationType, TargetType} from "@/utils/consts";
 import Vditor from "vditor";
-
+import 'vditor/dist/index.css'
 const postDetail = ref<PostDetail>()
 const postList = ref<Post[]>([])
 const store = useStore()
@@ -117,12 +116,22 @@ onMounted(async () => {
     postId.value = urls[urls.length - 1]
     postDetail.value = await getPostDetail(postId.value)
     postList.value = await getPostRecommendByPostId(postId.value)
-    renderMarkdown('## Hello Vditor!')
+    renderMarkdown(postDetail?.value?.text)
 })
 
-const renderMarkdown = (md: any) => {
-    const vditor = document.createElement('vditor') as HTMLDivElement
-    Vditor.preview(vditor, md)
+const renderMarkdown = (md: string | undefined) => {
+  if(md) {
+    Vditor.preview(<HTMLDivElement>document.getElementById('vditor'), md, {
+      cdn: "https://cdn.jsdelivr.net/npm/vditor",
+      mode: "light",
+      theme: {
+        current: 'light'
+      },
+      hljs: {
+        style: 'github'
+      },
+    })
+  }
 }
 
 const changePost = async (nowPostId: string) => {
@@ -130,6 +139,7 @@ const changePost = async (nowPostId: string) => {
   enterPost(nowPostId)
   postDetail.value = await getPostDetail(nowPostId)
   postList.value = await getPostRecommendByPostId(nowPostId)
+  renderMarkdown(postDetail?.value?.text)
 }
 
 </script>

@@ -20,13 +20,8 @@
                             v-for="(zone, index) in firstZoneList"
                             :key="index"
                             @click="selectFirstZone(zone.zoneId)"
+                            :class="{ 'selected': selectFirstZoneId === zone.zoneId }"
                         >
-                            <input 
-                                type="radio"
-                                name="zone1Select"
-                                :id="zone.zoneId"
-                                :value="zone.zoneId"
-                            >
                             <label :for="zone.zoneId">{{ zone.value }}</label>
                         </li>
                     </ul>
@@ -38,13 +33,8 @@
                             v-for="(zone, index) in secondZoneList"
                             :key="index"
                             @click="selectSecondZone(zone.zoneId)"
+                            :class="{ 'selected': selectSecondZoneId === zone.zoneId }"
                         >
-                            <input 
-                                type="radio"
-                                name="zone2Select"
-                                :id="zone.zoneId"
-                                :value="zone.zoneId"
-                            >
                             <label :for="zone.zoneId">{{ zone.value }}</label>
                         </li>
                     </ul>
@@ -57,14 +47,11 @@
                                 v-for="(tag, index) in tagList"
                                 :key="index"
                             >
-                                <input 
-                                    type="checkbox"
-                                    :id="tag.tagId"
-                                    :value="tag.tagId"
-                                >
-                                <label 
+                                <label
                                     :for="tag.tagId"
                                     @click="selectTag(tag)"
+                                    :class="{ 'selected': isTagSelected(tag)}"
+
                                 >
                                     <span>{{ tag.value }}</span>
                                 </label>   
@@ -192,6 +179,8 @@ import {enterPost} from "@/views/posts/utils";
 import {cosUploadFile} from "@/utils/cos";
 import SparkMD5 from "spark-md5";
 import {cosUploadImage} from "@/utils/public-cos";
+import {errorMsg} from "@/utils/message";
+import Path from "@/views/personal/path.vue";
 
 const isShowSetting = ref(true)
 const sureOption = ref(false)
@@ -218,16 +207,20 @@ const emit = defineEmits(['sendSettingContents'])
 const keywords = ref()
 
 onMounted(async () => {
-
 })
 
 // 选择标签
 const selectTag = (tag: Tag) => {
-    if (selectTagList.value.includes(tag)) {
-        selectTagList.value = selectTagList.value.filter(item => item !== tag)
-    } else {
-        selectTagList.value.push(tag)
-    }
+  const tagIds = selectTagList.value.map(item => item.tagId); // 获取已选标签的 id 列表
+  const index = tagIds.indexOf(tag.tagId); // 检查当前标签的 id 是否存在于已选标签的 id 列表中
+
+  if (index !== -1) {
+    // 如果已经存在，则移除该标签
+    selectTagList.value.splice(index, 1);
+  } else {
+    // 否则，将标签添加到已选列表中
+    selectTagList.value.push(tag);
+  }
 }
 
 // 显示添加标签
@@ -236,6 +229,11 @@ const addTags = async () => {
   firstZoneList.value = await getZoneList("root", 99999, 0)
 }
 
+const isTagSelected = (tag:Tag ) => {
+  const tagIds = selectTagList.value.map(item => item.tagId); // 获取已选标签的 id 列表
+  const index = tagIds.indexOf(tag.tagId); // 检查当前标签的 id 是否存在于已选标签的 id 列表中
+  return index !== -1;
+}
 // 上传图片
 const uploadCoverImage = (event: Event) => {
     const target = event.target as HTMLInputElement
@@ -261,11 +259,20 @@ const selectSecondZone = async (zoneId: string ) => {
 }
 
 const selectFirstZone = async (zoneId: string) => {
+  tagList.value = []
   selectFirstZoneId.value = zoneId
   secondZoneList.value = await getZoneList(selectFirstZoneId.value, 99999, 0)
 }
 
 const publishPost = async () => {
+  if(selectTagList.value.length <= 0 ) {
+    errorMsg("至少选择一个标签")
+    return
+  }
+  if(selectTagList.value.length > 10) {
+    errorMsg("最多选择十个标签")
+    return
+  }
   const url = ref('')
   if(imageFile.value) {
     const fileReader = new FileReader();
@@ -391,13 +398,10 @@ const confirmSure = () => {
                         cursor: pointer;
                         user-select: none;
 
-                        input {
-                            display: none;
-                        }
-                        input:checked + label {
-                            color: #7ebcff;
-                        }
                     }
+                  .selected {
+                    color: #7ebcff;
+                  }
                 }
             }
 
@@ -426,12 +430,15 @@ const confirmSure = () => {
                                 cursor: pointer;
                                 user-select: none;
                             }
-
-                            input {
-                                display: none;
-                            }
-                            input:checked + label {
-                                background-color: #7ebcff71;
+                            .selected {
+                              height: 30px;
+                              padding: 5px 10px;
+                              margin: 5px;
+                              font-size: 13px;
+                              border-radius: 5px;
+                              cursor: pointer;
+                              user-select: none;
+                              background-color: #7ebcff71;
                             }
                         }
                     }

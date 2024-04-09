@@ -154,7 +154,7 @@ export const getCollectPostList = async (userId: string) => {
         relationType: RelationType.Collect,
     })
         .then((res:any)=>{
-            collectPostList.value = res.users.map((post: any) => ({
+            collectPostList.value = res.posts.map((post: any) => ({
                 postId: post.postId,
                 title: post.title,
                 text: post.text,
@@ -178,7 +178,7 @@ export const getLikePostList = async (userId: string) => {
         relationType: RelationType.Like,
     })
         .then((res:any)=>{
-            likePostList.value = res.users.map((post: any) => ({
+            likePostList.value = res.posts.map((post: any) => ({
                 postId: post.postId,
                 title: post.title,
                 text: post.text,

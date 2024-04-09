@@ -15,6 +15,7 @@
 import Vditor from 'vditor'
 import "vditor/dist/index.css"
 import { onMounted, ref } from 'vue';
+import {errorMsg} from "@/utils/message";
 
 const props = defineProps<{
     sendOperateType: string
@@ -94,6 +95,14 @@ onMounted(() => {
 
 const sendEditorMsg = () => {
     const text = vditor.value.getValue()
+    if(title.value === "") {
+      errorMsg("标题不能为空！")
+      return
+    }
+  if(text === '\n') {
+    errorMsg("内容不能为空")
+    return
+  }
     emit('sendEditorContents', {
         title: title.value,
         text: text
