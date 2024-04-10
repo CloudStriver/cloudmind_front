@@ -41,7 +41,7 @@
                         <div class="user">
                             <img :src="postDetail?.author.url" alt="" />
                             <div>
-                                <router-link :to="`/user/center/${postDetail?.author.userId}`">{{ postDetail?.author.name}}</router-link>
+                                <router-link :to="`/user/center/${postDetail?.author.userId}/dynamic/default`">{{ postDetail?.author.name}}</router-link>
                                 <span>{{postDetail?.author.description}}</span>
                                 <span class="user-tags" v-for="(label, index) in postDetail?.author.labels" :key="index">
                                     <span>{{label.value}}</span>

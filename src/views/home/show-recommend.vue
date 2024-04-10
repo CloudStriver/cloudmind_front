@@ -42,7 +42,7 @@
                 <img :src="user.url">
                 <div class="user-detail">
                   <router-link
-                      :to="`/user/center/${user.userId}`"
+                      :to="`/user/center/${user.userId}/dynamic/default`"
                   >{{ user.name }}</router-link>
                     <div>粉丝量：{{ user.followedCount }}</div>
                     <div 
