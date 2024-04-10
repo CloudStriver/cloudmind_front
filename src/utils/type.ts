@@ -101,3 +101,9 @@ export type PostInfo = {
     status: number,
     isSure: boolean
 }
+
+
+export type SearchOption = {
+    searchKeyword: string,
+    searchType: number
+}

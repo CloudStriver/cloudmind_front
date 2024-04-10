@@ -140,21 +140,24 @@ const selectInfo = ref({
   userId: ""
 })
 
+const loading = ref(true) // Step 1: Initialize loading state
+
 onMounted (async () => {
   const route = useRoute()
   const userId = route.params.userId as string
   classify.value = route.params.selectFirst as string
   const selectSecond = route.params.selectSecond as string
-  console.log(selectSecond)
   selectInfo.value = {
     selectFirst: classify.value,
     selectSecond: selectSecond,
     userId: userId,
   }
   user.value =  await getUserInfo(userId)
+  loading.value = false
 })
 
 watch(() => classify.value, async (newVal) => {
+  if (loading.value) return // Step 3: Check if still loading
   const newSecond = ref('')
   switch (newVal) {
     case 'dynamic':

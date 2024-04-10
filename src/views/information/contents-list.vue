@@ -182,7 +182,6 @@ import type {Post, User} from "@/utils/type";
 import {followUser, splitContents, unFollowUser} from "@/utils/utils";
 import {enterPost} from "@/views/posts/utils";
 import router from "@/router";
-import {useRoute} from "vue-router";
 
 const store = useStore()
 const followUserList = ref<User[]>([]) // 关注用户列表
@@ -199,27 +198,29 @@ const props = defineProps<{
 }>();
 
 onMounted(async () => {
-  const route = useRoute()
-  const userId = route.params.userId as string
-  const selectFirst = route.params.selectFirst as string
-  const selectSecond = route.params.selectSecond as string
+  console.log(props.SendContentMsg)
 
-  switch (selectFirst) {
-    case 'follow':
-      if (selectSecond == 'headerFollow')
-        followUserList.value = await getFollowUserList(userId)
-      else followUserList.value = await getFollowedUserList(userId)
-      break;
-    case 'post':
-      if (selectSecond == 'publish')
-        postList.value = await getPostList(userId)
-      else if(selectSecond == 'like')
-        postList.value = await getLikePostList(userId)
-      else postList.value = await getCollectPostList(userId)
-      break;
-    case 'file':
-      break;
-  }
+  // const route = useRoute()
+  // const userId = route.params.userId as string
+  // const selectFirst = route.params.selectFirst as string
+  // const selectSecond = route.params.selectSecond as string
+  //
+  // switch (selectFirst) {
+  //   case 'follow':
+  //     if (selectSecond == 'headerFollow')
+  //       followUserList.value = await getFollowUserList(userId)
+  //     else followUserList.value = await getFollowedUserList(userId)
+  //     break;
+  //   case 'post':
+  //     if (selectSecond == 'publish')
+  //       postList.value = await getPostList(userId)
+  //     else if(selectSecond == 'like')
+  //       postList.value = await getLikePostList(userId)
+  //     else postList.value = await getCollectPostList(userId)
+  //     break;
+  //   case 'file':
+  //     break;
+  // }
 })
 watch(()=> props.SendContentMsg, async (newVal) => {
   select.value = props.SendContentMsg.selectSecond

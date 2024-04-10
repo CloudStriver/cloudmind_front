@@ -5,13 +5,14 @@
             placeholder="搜索"
             v-model="keyword"
         >
-        <i @click="router.push(`/search/${keyword}`)" class="iconfont icon-sistrix"></i>
+        <i @click="router.push(`/search/${keyword}/post/${SearchSortType.Synthesis}/${SearchPeriodType.None}`)" class="iconfont icon-sistrix"></i>
     </div>
 </template>
 
 <script setup lang="ts">
 import router from '@/router'
 import { onMounted, ref } from 'vue'
+import {SearchPeriodType, SearchSortType} from "@/utils/consts";
 const keyword = ref('')
 
 onMounted(() => {

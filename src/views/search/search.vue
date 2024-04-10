@@ -21,6 +21,7 @@
                         id="post"
                         value="post"
                         v-model="selectContent"
+                        @click="changeContent('post')"
                     >
                     <label for="post">帖子</label>
                 </li>
@@ -31,6 +32,7 @@
                         id="files"
                         value="files"
                         v-model="selectContent"
+                        @click="changeContent('file')"
                     >
                     <label for="files">文件</label>
                 </li>
@@ -41,6 +43,7 @@
                         id="users"
                         value="users"
                         v-model="selectContent"
+                        @click="changeContent('user')"
                     >
                     <label for="users">用户</label>
                 </li>
@@ -55,9 +58,10 @@
                                 type="radio"
                                 name="selectSecond"
                                 id="synthesis_2"
-                                value="synthesis_2"
+                                :value="`${SearchSortType.Synthesis}`"
                                 v-model="selectSort"
-                                checked
+                                :class="{ 'checked': selectSort === 3}"
+                                @click="changeSort(SearchSortType.Synthesis)"
                             >
                             <label for="synthesis_2">综合排序</label>
                         </li>
@@ -66,8 +70,10 @@
                                 type="radio"
                                 name="selectSecond"
                                 id="new"
-                                value="new"
+                                :value="`${SearchSortType.CreateTime}`"
                                 v-model="selectSort"
+                                :class="{ 'checked': selectSort === 2}"
+                                @click="changeSort(SearchSortType.CreateTime)"
                             >
                             <label for="new">最新优先</label>
                         </li>
@@ -76,10 +82,12 @@
                                 type="radio"
                                 name="selectSecond"
                                 id="hot"
-                                value="hot"
+                                :value="`${SearchSortType.Score}`"
                                 v-model="selectSort"
+                                :class="{ 'checked': selectSort === 1}"
+                                @click="changeSort(SearchSortType.Score)"
                             >
-                            <label for="hot">热度优先</label>
+                            <label for="hot">相关性优先</label>
                         </li>
                     </ul>
                     <el-dropdown>
@@ -100,7 +108,7 @@
                     </el-dropdown>
                 </div>
                 <div class="contents">
-                    <div class="content-file-box"> <!-- v-if="文件" -->
+                    <div class="content-file-box" v-if="selectContent === 'file'">
                         <h1 class="title">标题</h1>
                         <p class="content">内容</p>
                         <p>admin·2024-04-07·tags</p>
@@ -115,21 +123,19 @@
                             </div>
                         </div>
                     </div>
-                    <div class="content-post-box"> <!-- v-if="帖子" -->
-                        <div 
-                            class="content"
-                        >
+                    <div class="content-post-box" v-if="selectContent === 'post'" v-for="(post, index) in postList"> <!-- v-if="帖子" -->
+                        <div class="content">
                             <div class="information">
-                                <h2>标题</h2>
-                                <p>内容</p>
-                                <!-- <PostDetail :PostInfo="post"></PostDetail> -->
+                                <h2 @click="enterPost(post.postId)">{{post.title}}</h2>
+                                <p>{{post.text}}</p>
+                                 <PostDetail :PostInfo="post"></PostDetail>
                             </div>
-                            <!-- <div v-if="post.url !== ''" class="image">
+                            <div v-if="post.url !== ''" class="image">
                                 <img :src="post.url" alt="图片">
-                            </div> -->
+                            </div>
                         </div>
                     </div>
-                    <div class="content-user-box"> <!-- v-if="用户" -->
+                    <div class="content-user-box" v-if="selectContent === 'users'"> <!-- v-if="用户" -->
                         <div class="user-box">
                             <div class="user-info">
                                 <div class="image">
@@ -155,16 +161,86 @@
 </template>
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
-import { onMounted } from 'vue';
-import { ref } from 'vue';
+import PostDetail from '@/views/posts/post-information.vue'
+import {onBeforeMount, onMounted, ref} from 'vue';
+import {useRoute} from "vue-router";
+import type {Post} from "@/utils/type";
+import {Search} from "@/utils/api";
+import {SearchSortType} from "@/utils/consts";
+import router from "@/router";
+import {enterPost} from "@/views/posts/utils";
+
 const keyword = ref('')
 const selectContent = ref('')
-const selectSort = ref('')
-
-onMounted(() => {
-    keyword.value = location.href.split('/').pop() as string
+const selectSort = ref(0)
+const selectPeriod = ref(0)
+const postList = ref<Post[]>([])
+const loading = ref(false)
+const route = useRoute()
+onMounted(async () => {
+  const route = useRoute()
+  keyword.value = route.params.keyword as string
+  selectContent.value = route.params.type as string
+  selectSort.value = parseInt(route.params.sort as string)
+  selectPeriod.value = parseInt(route.params.period as string)
+  await search()
+  loading.value = false
 })
 
+
+onBeforeMount(() => {
+  router.beforeEach(async (to, from, next) => {
+    keyword.value = to.params.keyword as string
+    selectContent.value = to.params.type as string
+    selectSort.value = parseInt(to.params.sort as string)
+    selectPeriod.value = parseInt(to.params.period as string)
+    if (loading.value) return
+    await search()
+    next();
+  });
+});
+
+
+const search = async () => {
+  switch (selectContent.value) {
+    case 'post':
+      postList.value = await searchPost(keyword.value, selectSort.value, selectPeriod.value)
+      break
+    case 'files':
+    case 'users':
+      // searchPost(keyword.value, selectContent.value, selectSort.value, selectPeriod.value)
+  }
+}
+
+const changeContent = (content: string) => {
+  router.push(`/search/${keyword.value}/${content}/${selectSort.value}/${selectPeriod.value}`)
+}
+
+const changeSort = (sort: SearchSortType) =>  {
+  router.push(`/search/${keyword.value}/${selectContent.value}/${sort}/${selectPeriod.value}`)
+}
+
+const searchPost = async (key: string, sort: number, period: number) => {
+  const postList = ref<Post[]>([])
+  await Search({
+    searchKeyword: key,
+    searchType: sort
+  }).then((res: any) => {
+    postList.value = res.posts.map((post: any) => ({
+      postId: post.postId,
+      title: post.title,
+      text: post.text,
+      url: post.url,
+      likeCount: post.likeCount,
+      Labels: post.labels,
+      commentCount: post.commentCount,
+      viewCount: post.viewCount,
+      liked: post.liked,
+      userName: post.userName
+    }))
+  })
+  return postList.value
+}
 
 </script>
 <style scoped lang="css">
@@ -268,7 +344,7 @@ onMounted(() => {
                             color: #333;
                             transition: all 0.3s;
 
-                            &:hover {
+                            .checkd {
                                 color: #1890ff;
                             }
                         }

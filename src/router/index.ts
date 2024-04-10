@@ -64,7 +64,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/posts/post.vue'),
   },
   {
-    path: '/search/:keyword?',
+    path: '/search/:keyword/:type/:sort/:period',
     component: () => import('../views/search/search.vue'),
   }
 ]

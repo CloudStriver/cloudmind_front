@@ -4,7 +4,7 @@ import {
     CreatePostUrl,
     GetLatestRecommendUrl,
     GetPopularRecommendUrl, GetPostUrl, GetRecommendByItemUrl,
-    GetRecommendByUserUrl, GetTagListUrl, GetZonesUrl, PostStatusType,
+    GetRecommendByUserUrl, GetTagListUrl, PostStatusType,
     RelationType,
     TargetType
 } from "@/utils/consts";

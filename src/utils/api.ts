@@ -1,7 +1,13 @@
 // 取消关注用户
-import type {Relation} from "@/utils/type";
+import type {Relation, SearchOption} from "@/utils/type";
 import {get, post} from "@/utils/request";
-import {CreateRelationUrl, DeleteRelationUrl, GetFromRelationsUrl, GetToRelationsUrl} from "@/utils/consts";
+import {
+    CreateRelationUrl,
+    DeleteRelationUrl,
+    GetFromRelationsUrl,
+    GetPostsUrl,
+    GetToRelationsUrl
+} from "@/utils/consts";
 
 export const DeleteRelation = (relation: Relation) =>  {
     return new Promise<void>((resolve, reject) => {
@@ -36,11 +42,15 @@ export const CreateRelation = async(relation: Relation)=>  {
 }
 
 export const GetFromRelation = async(relation: Relation): Promise<any> => {
-   return  await get(true, `${GetFromRelationsUrl}?fromId=${relation.fromId}&fromType=${relation.fromType}&toType=${relation.toType}&relationType=${relation.relationType}`)
+   return  await get(false, `${GetFromRelationsUrl}?fromId=${relation.fromId}&fromType=${relation.fromType}&toType=${relation.toType}&relationType=${relation.relationType}`)
 }
 
 export const GetToRelation = async(relation: Relation) :Promise<any> => {
-    return await get(true, `${GetToRelationsUrl}?toId=${relation.toId}&toType=${relation.toType}&fromType=${relation.fromType}&relationType=${relation.relationType}`)
+    return await get(false, `${GetToRelationsUrl}?toId=${relation.toId}&toType=${relation.toType}&fromType=${relation.fromType}&relationType=${relation.relationType}`)
 }
 
 
+
+export const Search = async(opt: SearchOption) :Promise<any> => {
+    return await get(false, `${GetPostsUrl}?searchKeyword=${opt.searchKeyword}&searchType=${opt.searchType}`)
+}

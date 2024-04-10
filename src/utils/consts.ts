@@ -51,6 +51,19 @@ export enum PostStatusType {
     Draft = 3
 }
 
+export enum SearchSortType {
+    Score = 1,
+    CreateTime = 2,
+    Synthesis = 3
+}
+
+export enum SearchPeriodType {
+    None = 1,
+    Day = 2,
+    Week = 3,
+    Month = 4,
+}
+
 
 // -----------------------------------------URL-------------------------------------------------------------------------
 
@@ -64,7 +77,6 @@ export const GetHotRanksUrl = "/rank/getHotRanks"
 
 export const GetUserUrl = "/content/getUser"
 export const GetPostUrl = "/content/getPost"
-export const GetZonesUrl = "/content/getZones"
 export const GetPostsUrl = "/content/getPosts"
 export const MoveFileUrl = "/content/moveFile"
 export const CreateFileUrl = "/content/createFile"
