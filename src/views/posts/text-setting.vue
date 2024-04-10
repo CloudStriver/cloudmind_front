@@ -154,6 +154,7 @@
         <div class="sure-panel">      
             <div class="tags-box-header">
               <div>该文章包含敏感词，是否继续发布</div>
+              <div v-for="(keyword) in keywords">{{ keyword }}</div>
     <!--          <div v-if="keywords && keywords.value.length >= 1" v-for="(keyword, index) in keywords.value[0].keywords.value">-->
     <!--            <div v-if="index !== 0">，</div>-->
     <!--            <div>{{keyword}}</div>-->
@@ -200,7 +201,7 @@ const props = defineProps<{
   }
 }>()
 const emit = defineEmits(['sendSettingContents'])
-const keywords = ref()
+const keywords = ref<string[]>([])
 
 onMounted(async () => {
 })
@@ -302,6 +303,7 @@ const CreatePost = async(url: string) => {
         if(res.keywords === null) {
           enterPost(res.postId)
         } else {
+          keywords.value = res.keywords
           sureOption.value = true
           isShowSetting.value = false
         }
@@ -315,6 +317,7 @@ const noPublishPost = () => {
 
 const noSure = () => {
   sureOption.value = false
+  emit('sendSettingContents', 'close')
 }
 
 const confirmSure = () => {
