@@ -40,17 +40,20 @@
                     <div class="user-box">
                         <div class="user">
                             <img :src="postDetail?.author.url" alt="" />
-                            <div>
-                                <router-link :to="`/user/center/${postDetail?.author.userId}/dynamic/default`">{{ postDetail?.author.name}}</router-link>
-                                <span>{{postDetail?.author.description}}</span>
-                                <span class="user-tags" v-for="(label, index) in postDetail?.author.labels" :key="index">
+                            <div class="user-info">
+                                <span class="pointer" @click="router.push(`/user/center/${postDetail?.author.userId}/dynamic/default`)">{{ postDetail?.author.name}}</span>
+                                <span class="user-description">{{postDetail?.author.description}}</span>
+                                <span 
+                                  class="user-tags" 
+                                  v-for="(label, index) in postDetail?.author.labels" :key="index"
+                                >
                                     <span>{{label.value}}</span>
                                 </span>
                             </div>
                         </div>
                         <div class="user-infor">
                             <div>
-                              <router-link :to="`/user/center/${postDetail?.author.userId}/post/publish`">{{postDetail?.author.postCount}}</router-link>
+                                <p @click="router.push(`/user/center/${postDetail?.author.userId}/post/publish`)" class="pointer">{{postDetail?.author.postCount}}</p>
                                 <p>文章</p>
                             </div>
                             <div>
@@ -58,7 +61,7 @@
                                 <p>总获赞</p>
                             </div>
                             <div>
-                                <router-link :to="`/user/center/${postDetail?.author.userId}/follow/fans`">{{postDetail?.author.followedCount}}</router-link>
+                                <p @click="router.push(`/user/center/${postDetail?.author.userId}/follow/fans`)" class="pointer">{{postDetail?.author.postCount}}</p>
                                 <p>粉丝</p>
                             </div>
                         </div>
@@ -97,6 +100,7 @@ import {useStore} from "@/store";
 import {enterPost} from "@/views/posts/utils";
 import {CreateRelation, DeleteRelation} from "@/utils/api";
 import {RelationType, TargetType} from "@/utils/consts";
+import router from "@/router";
 import Vditor from "vditor";
 import 'vditor/dist/index.css'
 
@@ -229,6 +233,10 @@ const changePost = async (nowPostId: string) => {
     background-color: rgba(240, 245, 255, 0.5);
     display: flex;
     flex-direction: column;
+    
+    .pointer {
+        cursor: pointer;
+    }
 
     .section {
         width: 100%;
@@ -325,12 +333,14 @@ const changePost = async (nowPostId: string) => {
                 flex-direction: column;
 
                 .user-box {
+                    width: 100%;
                     background-color: #fff;
                     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
                     padding: 20px;
                     margin-bottom: 10px;
 
                     .user {
+                        width: 100%;
                         margin-bottom: 20px;
                         display: flex;
                         align-items: center;
@@ -342,21 +352,19 @@ const changePost = async (nowPostId: string) => {
                             margin-right: 15px;
                         }
 
-                        div {
-
+                        .user-info {
+                            width: 100%;
                             display: flex;
                             flex-direction: column;
 
-                            span {
-                                font-size: 15px;
-                                color: #333;
-                                margin-bottom: 5px;
-                            }
-
-                            span:nth-child(2) {
-                                font-size: 13px;
+                            .user-description {
+                                width: 90%;
+                                font-size: 12px;
                                 color: #666;
                                 margin-bottom: 5px;
+                                overflow: hidden;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
                             }
 
                             .user-tags {

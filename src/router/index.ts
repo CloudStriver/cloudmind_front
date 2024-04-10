@@ -60,6 +60,10 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/posts/write.vue'),
   },
   {
+    path: '/edit',
+    component: () => import('../views/posts/write.vue'),
+  },
+  {
     path: '/post/:postId',
     component: () => import('../views/posts/post.vue'),
   },
