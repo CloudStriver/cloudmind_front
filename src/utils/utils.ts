@@ -8,7 +8,7 @@ import {
     RelationType,
     TargetType
 } from "@/utils/consts";
-import type {HotUser, Post, PostDetail, PostInfo, Tag, User, Zone} from "@/utils/type";
+import type {HotUser, Label, Post, PostDetail, PostInfo, User} from "@/utils/type";
 import {get, post} from "@/utils/request";
 import {ref} from "vue";
 
@@ -177,9 +177,15 @@ export const getPostDetail = async (postId: string) => {
                 author: {
                     userId: res.author.userId,
                     name: res.author.name,
-                    url: res.author.url
+                    url: res.author.url,
+                    labels: res.author.labels,
+                    followed: res.author.followed,
+                    followedCount: res.author.followedCount,
+                    description: res.author.description,
+                    likedCount: res.author.likedCount,
+                    postCount: res.author.postCount,
                 },
-                tags: res.tags,
+                labels: res.labels,
                 viewCount: res.viewCount,
                 likeCount: res.likeCount,
                 commentCount: res.commentCount,
@@ -214,45 +220,29 @@ export const getPostRecommendByPostId = async (postId: string) => {
 }
 
 
-// 获取分区列表
-export const getZoneList = async (fatherId: string, limit: number, offset: number)  => {
-    const zoneList = ref<Zone[]>([])
-    await get(false, `${GetZonesUrl}?fatherId=${fatherId}&limit=${limit}&offset${offset}`)
-        .then((res: any) => {
-            if (res.zones) {
-                zoneList.value = res.zones.map((zone: any) => ({
-                    zoneId: zone.id,
-                    value: zone.value,
-                }))
-            }
-        })
-    return zoneList.value
-}
 
-export const getTagList = async(key: string, zoneId: string, subZoneId: string) =>{
-    const tagsList = ref<Tag[]>([])
-    await get(false,  `${GetTagListUrl}?key=${key}&zone=${zoneId}&subZone=${subZoneId}`).then((res: any) => {
-        tagsList.value = res.labels.map((tag: any) => ({
-            tagId: tag.labelId,
-            zoneId: tag.zone,
-            subZoneId: tag.subZone,
-            value: tag.value,
+export const getLabelList = async(fatherId: string, key?: string) =>{
+    const labelList = ref<Label[]>([])
+    if(!key) key = ""
+    await get(false,  `${GetTagListUrl}?fatherId=${fatherId}&key=${key}`).then((res: any) => {
+        labelList.value = res.labels.map((label: any) => ({
+            id: label.id,
+            value: label.value
         }))
     })
-    return tagsList.value
+    return labelList.value
 }
 
 export const createPost = async (postInfo: PostInfo): Promise<any> => {
-    const tags = postInfo.tags.map((tag: Tag) => ({
-        tagId: tag.tagId,
-        zoneId: tag.subZoneId
-    }))
-    console.log(postInfo.tags, tags)
+    // const tags = postInfo.tags.map((tag: Tag) => ({
+    //     tagId: tag.tagId,
+    //     zoneId: tag.subZoneId
+    // }))
     return await post(true, CreatePostUrl, {
         title: postInfo.title,
         text: postInfo.text,
         url: postInfo.url,
-        tags: tags,
+        // tags: tags,
         status: postInfo.status,
         isSure: postInfo.isSure
     })

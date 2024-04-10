@@ -6,7 +6,7 @@
                 <div class="post">
                     <div class="information">
                         <ul>
-                            <li @click="likeOrCancel(postId, TargetType.Post, RelationType.Like)">
+                            <li @click="likeOrCancelPostDetail(postDetail);">
                                 <i class="iconfont icon-a-dianzan2" v-if="!postDetail?.liked"></i>
                                 <i class="iconfont icon-a-dianzan2 liked" v-else></i>
                                 <div >{{postDetail?.likeCount}}</div>
@@ -15,19 +15,12 @@
                                 <i class="iconfont icon-a-xiaoxi1"></i>
                                 <div>{{ postDetail?.commentCount }}</div>
                             </li>
-                            <li @click="CreateRelation({
-                                  toId: postId,
-                                  toType: TargetType.Post,
-                                  relationType: RelationType.Collect,
-                                })">
-                                <i class="iconfont icon-shoucang01"></i>
+                            <li @click="collectOrCancelPostDetail(postDetail)">
+                                <i class="iconfont icon-shoucang01" v-if="!postDetail?.collected"></i>
+                                <i class="iconfont icon-shoucang01 collected" v-else></i>
                                 <div>{{ postDetail?.collectCount }}</div>
                             </li>
-                            <li @click="CreateRelation({
-                                  toId: postId,
-                                  toType: TargetType.Post,
-                                  relationType: RelationType.Share,
-                                })">
+                            <li @click="sharePostDetail(postDetail)">
                                 <i class="iconfont icon-fenxiang"></i>
                                 <div>{{ postDetail?.shareCount }}</div>
                             </li>
@@ -38,7 +31,7 @@
                         <div class="post-detail">
                             <span>{{ postDetail?.author.name}}</span>
                             <span>{{ turnTime( postDetail?.createTime) }}</span>
-                            <span>浏览量: 8k</span>
+                            <span>浏览量: {{ postDetail?.viewCount}}</span>
                         </div>
                         <div class="vditor" id="vditor"></div>
                     </article>
@@ -48,31 +41,30 @@
                         <div class="user">
                             <img :src="postDetail?.author.url" alt="" />
                             <div>
-                                <span>{{ postDetail?.author.name}}</span>
-                                <span>个性签名</span>
-                                <span class="user-tags">
-                                    <span>tags</span>
-                                    <span>tags</span>
-                                    <span>tags</span>
+                                <router-link :to="`/user/center/${postDetail?.author.userId}`">{{ postDetail?.author.name}}</router-link>
+                                <span>{{postDetail?.author.description}}</span>
+                                <span class="user-tags" v-for="(label, index) in postDetail?.author.labels" :key="index">
+                                    <span>{{label.value}}</span>
                                 </span>
                             </div>
                         </div>
                         <div class="user-infor">
                             <div>
-                                <p>31</p>
+                              <router-link :to="`/user/center/${postDetail?.author.userId}/post/publish`">{{postDetail?.author.postCount}}</router-link>
                                 <p>文章</p>
                             </div>
                             <div>
-                                <p>1k</p>
-                                <p>阅读</p>
+                                <p>{{postDetail?.author.likedCount}}</p>
+                                <p>总获赞</p>
                             </div>
                             <div>
-                                <p>1k</p>
+                                <router-link :to="`/user/center/${postDetail?.author.userId}/follow/fans`">{{postDetail?.author.followedCount}}</router-link>
                                 <p>粉丝</p>
                             </div>
                         </div>
                         <div v-if="postDetail?.author.userId !== store.getUserId()">
-                          <button>关注</button>
+                          <button v-if="!postDetail?.author.followed" @click="followAuthor(postDetail?.author)">关注</button>
+                          <button v-else @click="unFollowAuthor(postDetail?.author)">已关注</button>
                         </div>
                     </div>
                     <div class="catalogue">
@@ -100,13 +92,14 @@
 import type {Post, PostDetail} from "@/utils/type";
 import CHeader from '@/components/header.vue'
 import {onMounted, ref} from "vue";
-import {getPostDetail, getPostRecommendByPostId, turnTime} from "@/utils/utils";
+import {getPostDetail, getPostRecommendByPostId, likePost, turnTime, unLikePost} from "@/utils/utils";
 import {useStore} from "@/store";
 import {enterPost} from "@/views/posts/utils";
-import {CreateRelation} from "@/utils/api";
+import {CreateRelation, DeleteRelation} from "@/utils/api";
 import {RelationType, TargetType} from "@/utils/consts";
 import Vditor from "vditor";
 import 'vditor/dist/index.css'
+
 const postDetail = ref<PostDetail>()
 const postList = ref<Post[]>([])
 const store = useStore()
@@ -120,15 +113,90 @@ onMounted(async () => {
     renderMarkdown(postDetail?.value?.text)
 })
 
-const likeOrCancel = (toldId: string, toType: TargetType, relationType: RelationType) => {
-    if (postDetail?.value) {
-        CreateRelation({
-            toId: toldId,
-            toType: toType,
-            relationType: relationType,
-        })
+
+
+const likeOrCancelPostDetail = (post: PostDetail | undefined) => {
+  if (post) {
+    if (post.liked) {
+      DeleteRelation({
+        toId: postId.value,
+        toType: TargetType.Post,
+        relationType: RelationType.Like,
+      }).then(() => {
+        post.liked = false
+        post.likeCount--
+      })
+    } else {
+      CreateRelation({
+        toId: postId.value,
+        toType: TargetType.Post,
+        relationType: RelationType.Like,
+      }).then(() => {
+        post.liked = true
+        post.likeCount++
+      })
+    }
+  }
+}
+
+const collectOrCancelPostDetail = (post: PostDetail | undefined) => {
+  if (post) {
+    if (post.collected) {
+      DeleteRelation({
+        toId: postId.value,
+        toType: TargetType.Post,
+        relationType: RelationType.Collect,
+      }).then(() => {
+        post.collected = false
+        post.collectCount--
+      })
+    } else {
+      CreateRelation({
+        toId: postId.value,
+        toType: TargetType.Post,
+        relationType: RelationType.Collect,
+      }).then(() => {
+        post.collected = true
+        post.collectCount++
+      })
+    }
+  }
+}
+
+const sharePostDetail = (post: PostDetail | undefined) => {
+  if (post) {
+      CreateRelation({
+        toId: postId.value,
+        toType: TargetType.Post,
+        relationType: RelationType.Share,
+      }).then(() => {
+        post.shareCount++
+      })
     }
 }
+
+const followAuthor = (author: any) => {
+  CreateRelation({
+    toId: author.userId,
+    toType: TargetType.User,
+    relationType: RelationType.Follow,
+  }).then(() => {
+    author.followed = true
+    author.followedCount++
+  })
+}
+
+const unFollowAuthor = (author: any) => {
+  DeleteRelation({
+    toId: author.userId,
+    toType: TargetType.User,
+    relationType: RelationType.Follow,
+  }).then(() => {
+    author.followed = false
+    author.followedCount--
+  })
+}
+
 
 const renderMarkdown = (md: string | undefined) => {
   if(md) {
@@ -220,6 +288,9 @@ const changePost = async (nowPostId: string) => {
                             .liked {
                                 color: #6d99ec;
                             }
+                            .collected {
+                              color: #6d99ec;
+                            }
                         }
                     }
                 }
@@ -272,6 +343,7 @@ const changePost = async (nowPostId: string) => {
                         }
 
                         div {
+
                             display: flex;
                             flex-direction: column;
 
@@ -280,11 +352,13 @@ const changePost = async (nowPostId: string) => {
                                 color: #333;
                                 margin-bottom: 5px;
                             }
+
                             span:nth-child(2) {
                                 font-size: 13px;
                                 color: #666;
                                 margin-bottom: 5px;
                             }
+
                             .user-tags {
                                 width: auto;
                                 padding: 0;
@@ -299,6 +373,7 @@ const changePost = async (nowPostId: string) => {
                                     color: #fff;
                                 }
                             }
+
                         }
                     }
 

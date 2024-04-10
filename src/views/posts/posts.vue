@@ -54,19 +54,19 @@
                     <div class="posts-select">
                         <div 
                             class="zone"
-                            v-for="(zone) in zoneList"
-                            :key="zone.zoneId"
+                            v-for="(label, index) in firstLabelList"
+                            :key="index"
                         >
                             <input 
                                 type="radio"
                                 name="zone"
-                                :id="zone.zoneId"
-                                :value="zone.zoneId"
-                                v-model="zoneFatherId"
+                                :id="label.id"
+                                :value="label.id"
+                                v-model="selectLabelId"
                             >
                             <label 
-                                :for="zone.zoneId" 
-                            >{{ zone.value }}</label>
+                                :for="label.id"
+                            >{{ label.value }}</label>
                         </div>
                         <div 
                             v-if="isShowZonePop"
@@ -183,13 +183,19 @@ import {
   getRecommendPostList,
   getUserRankList,
 } from "./utils"
-import type {HotPost, HotUser, Post, Zone} from "@/utils/type";
-import {followHotUser, getZoneList, splitContents, splitDescription, unFollowHotUser} from "@/utils/utils";
+import type {HotPost, HotUser, Label, Post} from "@/utils/type";
+import {
+  followHotUser,
+  getLabelList,
+  splitContents,
+  splitDescription,
+  unFollowHotUser
+} from "@/utils/utils";
 import {useStore} from "@/store";
 
 const store = useStore()
 const navSelect = ref('all') // 选项
-const zoneFatherId = ref('root') // 当前选择分区的父分区ID
+const selectLabelId = ref('root') // 当前选择分区的父分区ID
 const noMoreUsers = ref(false) // 没有更多作者了
 const noMorePosts = ref(false) // 没有更多文章了
 const isShowZonePop = ref(false) 
@@ -198,7 +204,7 @@ const postRankList = ref<HotPost[]>([]) // 文章排行榜
 const postList = ref<Post[]>([]) // 帖子列表
 const zonePopTop = ref(0)
 const zonePopLeft = ref(0)
-const zoneList = ref<Zone[]>([])
+const firstLabelList = ref<Label[]>([])
 const pageSize = 10; // 假设每页加载10项
 let userRankPage = 1; // 当前用户列表页码
 let postRankPage = 1; // 当前帖子列表页码
@@ -207,7 +213,7 @@ let postPage = 1;
 onMounted(async() => {
     userRankList.value = await getUserRankList(pageSize, 0)
     postRankList.value = await getPostRankList(pageSize, 0)
-    zoneList.value = await getZoneList(zoneFatherId.value, 99999, 0)
+    firstLabelList.value = await getLabelList(selectLabelId.value)
     postList.value = await getHotPostList()
 })
 

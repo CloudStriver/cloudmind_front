@@ -40,8 +40,8 @@
                     <div class="contents-classify">
                         <ul>
                             <li>
-                                <input 
-                                    type="radio" 
+                                <input
+                                    type="radio"
                                     name="classify"
                                     id="dynamic"
                                     value="dynamic"
@@ -51,8 +51,8 @@
                                 <label for="dynamic">动态</label>
                             </li>
                             <li>
-                                <input 
-                                    type="radio" 
+                                <input
+                                    type="radio"
                                     name="classify"
                                     id="file"
                                     value="file"
@@ -61,8 +61,8 @@
                                 <label for="file">文件</label>
                             </li>
                             <li>
-                                <input 
-                                    type="radio" 
+                                <input
+                                    type="radio"
                                     name="classify"
                                     id="post"
                                     value="post"
@@ -71,9 +71,9 @@
                                 <label for="post">帖子</label>
                             </li>
                             <li>
-                                <input 
+                                <input
                                     type="radio"
-                                    name="classify" 
+                                    name="classify"
                                     id="follow"
                                     value="follow"
                                     v-model="classify"
@@ -84,7 +84,7 @@
                         <div class="contents"></div>
                     </div>
                     <div class="show-contents">
-                        <List :SendContentMsg="classify"></List>
+                        <List :SendContentMsg="selectInfo"></List>
                     </div>
                 </div>
                 <div class="user-other-information">
@@ -115,9 +115,11 @@
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
 import List from './contents-list.vue'
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, watch} from 'vue'
 import { getUserInfo} from "@/views/information/utils";
 import {turnTime} from "@/utils/utils";
+import {useRoute} from "vue-router";
+import router from "@/router";
 
 const classify = ref('dynamic')
 const user = ref({
@@ -132,17 +134,52 @@ const user = ref({
   createTime: 0,
 })
 
-onMounted (async () => {
-  user.value = await getUser() as any
+const selectInfo = ref({
+  selectFirst : "",
+  selectSecond: "",
+  userId: ""
 })
 
+onMounted (async () => {
+  const route = useRoute()
+  const userId = route.params.userId as string
+  classify.value = route.params.selectFirst as string
+  const selectSecond = route.params.selectSecond as string
+  console.log(selectSecond)
+  selectInfo.value = {
+    selectFirst: classify.value,
+    selectSecond: selectSecond,
+    userId: userId,
+  }
+  user.value =  await getUserInfo(userId)
+})
 
-
-const getUser = async () => {
-  const urls = location.href.split("/")
-  const userId = urls[urls.length - 1]
-  return await getUserInfo(userId)
-}
+watch(() => classify.value, async (newVal) => {
+  const newSecond = ref('')
+  switch (newVal) {
+    case 'dynamic':
+      await router.push(`/user/center/${selectInfo.value.userId}/${newVal}/default`)
+      newSecond.value = 'default'
+          break
+    case 'file':
+      await router.push(`/user/center/${selectInfo.value.userId}/${newVal}/publish`)
+      newSecond.value = 'publish'
+      break
+    case 'post':
+      await router.push(`/user/center/${selectInfo.value.userId}/${newVal}/publish`)
+      newSecond.value = 'publish'
+      break
+    case 'follow':
+      await router.push(`/user/center/${selectInfo.value.userId}/${newVal}/headerFollow`)
+      newSecond.value = 'headerFollow'
+          break
+  }
+  selectInfo.value = {
+    selectFirst: newVal,
+    selectSecond: newSecond.value,
+    userId: selectInfo.value.userId,
+  }
+})
 
 </script>
 

@@ -1,6 +1,6 @@
 <template>
     <div class="list-box">
-      <div v-if="props.SendContentMsg === 'dynamic'" class="contents">
+      <div v-if="props.SendContentMsg.selectFirst === 'dynamic'" class="contents">
 <!--        <div class="detail">-->
 <!--          <h1>标题</h1>-->
 <!--          <p>内容</p>-->
@@ -42,7 +42,7 @@
 <!--          </footer>-->
 <!--        </div>-->
       </div>
-      <div v-else-if="SendContentMsg === 'follow'" class="contents">
+      <div v-else-if="SendContentMsg.selectFirst === 'follow'" class="contents">
         <div class="header">
           <ul>
             <li>
@@ -53,8 +53,9 @@
                   v-model="select"
                   value="headerFollow"
                   checked
+                  @click="getFollows(store.getUserId())"
               >
-              <label for="headerFollow" @click="getFollowUserList(store.getUserId())">关注</label>
+              <label for="headerFollow" >关注</label>
             </li>
             <li>
               <input
@@ -63,8 +64,9 @@
                   id="fans"
                   value="fans"
                   v-model="select"
+                  @click="getFans(store.getUserId())"
               >
-              <label for="fans" @click="getFollowedUserList(store.getUserId())">粉丝</label>
+              <label for="fans">粉丝</label>
             </li>
           </ul>
         </div>
@@ -130,7 +132,7 @@
           </ul>
         </div>
 
-        <div v-if="props.SendContentMsg === 'post'" class="posts-box">
+        <div v-if="props.SendContentMsg.selectFirst === 'post'" class="posts-box">
           <div class="posts-contents">
             <div 
                 class="content"
@@ -148,7 +150,7 @@
             </div>
             </div>
         </div>
-        <div v-if="props.SendContentMsg === 'file'">
+        <div v-if="props.SendContentMsg.selectFirst === 'file'">
           <div class="file-contents">
             <div 
                 class="content"
@@ -179,6 +181,8 @@ import {useStore} from "@/store";
 import type {Post, User} from "@/utils/type";
 import {followUser, splitContents, unFollowUser} from "@/utils/utils";
 import {enterPost} from "@/views/posts/utils";
+import router from "@/router";
+import {useRoute} from "vue-router";
 
 const store = useStore()
 const followUserList = ref<User[]>([]) // 关注用户列表
@@ -187,18 +191,50 @@ const fileList = ref<any[]>([])
 // const fileList = ref<File[]>([])
 const select = ref('headerFollow')
 const props = defineProps<{
-  SendContentMsg: string
+  SendContentMsg: {
+    selectFirst: string,
+    selectSecond: string,
+    userId: string,
+  }
 }>();
 
 onMounted(async () => {
+  const route = useRoute()
+  const userId = route.params.userId as string
+  const selectFirst = route.params.selectFirst as string
+  const selectSecond = route.params.selectSecond as string
+
+  switch (selectFirst) {
+    case 'follow':
+      if (selectSecond == 'headerFollow')
+        followUserList.value = await getFollowUserList(userId)
+      else followUserList.value = await getFollowedUserList(userId)
+      break;
+    case 'post':
+      if (selectSecond == 'publish')
+        postList.value = await getPostList(userId)
+      else if(selectSecond == 'like')
+        postList.value = await getLikePostList(userId)
+      else postList.value = await getCollectPostList(userId)
+      break;
+    case 'file':
+      break;
+  }
 })
 watch(()=> props.SendContentMsg, async (newVal) => {
- switch (newVal) {
+  select.value = props.SendContentMsg.selectSecond
+ switch (newVal.selectFirst) {
    case 'follow':
-     followUserList.value = await getFollowUserList(getUserId())
+     if (newVal.selectSecond == 'headerFollow')
+       followUserList.value = await getFollowUserList(props.SendContentMsg.userId)
+     else followUserList.value = await getFollowedUserList(props.SendContentMsg.userId)
      break;
    case 'post':
-     postList.value = await getPostList(getUserId())
+     if (newVal.selectSecond == 'publish')
+     postList.value = await getPostList(props.SendContentMsg.userId)
+     else if(newVal.selectSecond == 'like')
+     postList.value = await getLikePostList(props.SendContentMsg.userId)
+     else postList.value = await getCollectPostList(props.SendContentMsg.userId)
      break;
    case 'file':
      break;
@@ -206,9 +242,10 @@ watch(()=> props.SendContentMsg, async (newVal) => {
 })
 
 const getPublish = async () => {
-  switch (props.SendContentMsg) {
+  await router.push(`/user/center/${props.SendContentMsg.userId}/${props.SendContentMsg.selectFirst}/publish`)
+  switch (props.SendContentMsg.selectFirst) {
     case 'post':
-      postList.value = await getPostList(getUserId())
+      postList.value = await getPostList(props.SendContentMsg.userId)
       break;
     case 'file':
       break;
@@ -216,10 +253,11 @@ const getPublish = async () => {
 }
 
 const getLike = async () => {
-  switch (props.SendContentMsg) {
+  await router.push(`/user/center/${props.SendContentMsg.userId}/${props.SendContentMsg.selectFirst}/like`)
+  switch (props.SendContentMsg.selectFirst) {
     case 'post':
       console.log("获取点赞")
-      postList.value = await getLikePostList(getUserId())
+      postList.value = await getLikePostList(props.SendContentMsg.userId)
       break;
     case 'file':
       break;
@@ -227,21 +265,25 @@ const getLike = async () => {
 }
 
 const getCollect = async () => {
-  switch (props.SendContentMsg) {
+  await router.push(`/user/center/${props.SendContentMsg.userId}/${props.SendContentMsg.selectFirst}/collect`)
+  switch (props.SendContentMsg.selectFirst) {
     case 'post':
-      postList.value = await getCollectPostList(getUserId())
+      postList.value = await getCollectPostList(props.SendContentMsg.userId)
       break;
     case 'file':
       break;
   }
 }
 
-
-const getUserId = () => {
-  const urls = location.href.split("/")
-  return urls[urls.length - 1]
+const getFollows = async(userId: string) => {
+  await router.push(`/user/center/${props.SendContentMsg.userId}/${props.SendContentMsg.selectFirst}/headerFollow`)
+  followUserList.value = await getFollowUserList(userId)
 }
 
+const getFans = async(userId: string) => {
+  await router.push(`/user/center/${props.SendContentMsg.userId}/${props.SendContentMsg.selectFirst}/fans`)
+  followUserList.value = await getFollowedUserList(userId)
+}
 </script>
 <style scoped lang="css">
 .list-box {

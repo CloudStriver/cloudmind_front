@@ -17,12 +17,12 @@
                     <p>一级分区</p>
                     <ul>
                         <li
-                            v-for="(zone, index) in firstZoneList"
+                            v-for="(label, index) in firstLabelList"
                             :key="index"
-                            @click="selectFirstZone(zone.zoneId)"
-                            :class="{ 'selected': selectFirstZoneId === zone.zoneId }"
+                            @click="selectFirstLabel(label.id)"
+                            :class="{ 'selected': selectFirstLabelId === label.id }"
                         >
-                            <label :for="zone.zoneId">{{ zone.value }}</label>
+                            <label :for="label.id">{{ label.value }}</label>
                         </li>
                     </ul>
                 </div>
@@ -30,12 +30,12 @@
                     <p>二级分区</p>
                     <ul>
                         <li
-                            v-for="(zone, index) in secondZoneList"
+                            v-for="(label, index) in secondLabelList"
                             :key="index"
-                            @click="selectSecondZone(zone.zoneId)"
-                            :class="{ 'selected': selectSecondZoneId === zone.zoneId }"
+                            @click="selectSecondLabel(label.id)"
+                            :class="{ 'selected': selectSecondLabelId === label.id }"
                         >
-                            <label :for="zone.zoneId">{{ zone.value }}</label>
+                            <label :for="label.id">{{ label.value }}</label>
                         </li>
                     </ul>
                 </div>
@@ -44,16 +44,15 @@
                     <div class="zone-3-list">
                         <ul>
                             <li
-                                v-for="(tag, index) in tagList"
+                                v-for="(label, index) in labelList"
                                 :key="index"
                             >
                                 <label
-                                    :for="tag.tagId"
-                                    @click="selectTag(tag)"
-                                    :class="{ 'selected': isTagSelected(tag)}"
-
+                                    :for="label.id"
+                                    @click="selectLabel(label)"
+                                    :class="{ 'selected': isTagSelected(label)}"
                                 >
-                                    <span>{{ tag.value }}</span>
+                                    <span>{{ label.value }}</span>
                                 </label>   
                             </li>
                         </ul>
@@ -102,9 +101,9 @@
                 <span>设置帖子标签</span>
                 <span 
                     class="tags-list"
-                    v-for="(tag, index) in selectTagList"
+                    v-for="(tag, index) in selectLabelList"
                     :key="index"
-                    @click="selectTag(tag)"
+                    @click="selectLabel(tag)"
                 >
                     {{ tag.value }}
                     <i class="iconfont icon-cuowu1"></i>
@@ -173,15 +172,12 @@
 </template>
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
-import type {Tag, Zone} from "@/utils/type";
-import {createPost, getPostStatus, getTagList, getZoneList} from "@/utils/utils";
+import type {Label} from "@/utils/type";
+import {createPost, getLabelList, getPostStatus} from "@/utils/utils";
 import {enterPost} from "@/views/posts/utils";
-import {cosUploadFile} from "@/utils/cos";
 import SparkMD5 from "spark-md5";
 import {cosUploadImage} from "@/utils/public-cos";
 import {errorMsg} from "@/utils/message";
-import Path from "@/views/personal/path.vue";
-
 const isShowSetting = ref(true)
 const sureOption = ref(false)
 const isHasUploadImage = ref(false)
@@ -189,12 +185,12 @@ const ishowImageOperate = ref(false)
 const isShowAddTags = ref(false)
 const coverImageUrl = ref('')
 const imageFile = ref()
-const tagList = ref<Tag[]>([])
-const selectTagList = ref<Tag[]>([])
-const firstZoneList = ref<Zone[]>([])
-const secondZoneList = ref<Zone[]>([])
-const selectFirstZoneId = ref('')
-const selectSecondZoneId = ref('')
+const labelList = ref<Label[]>([])
+const selectLabelList = ref<Label[]>([])
+const firstLabelList = ref<Label[]>([])
+const secondLabelList = ref<Label[]>([])
+const selectFirstLabelId = ref('')
+const selectSecondLabelId = ref('')
 const postStatus = ref('public')
 const isSure = ref(false)
 const props = defineProps<{
@@ -210,28 +206,28 @@ onMounted(async () => {
 })
 
 // 选择标签
-const selectTag = (tag: Tag) => {
-  const tagIds = selectTagList.value.map(item => item.tagId); // 获取已选标签的 id 列表
-  const index = tagIds.indexOf(tag.tagId); // 检查当前标签的 id 是否存在于已选标签的 id 列表中
+const selectLabel = (label: Label) => {
+  const tagIds = selectLabelList.value.map(item => item.id); // 获取已选标签的 id 列表
+  const index = tagIds.indexOf(label.id); // 检查当前标签的 id 是否存在于已选标签的 id 列表中
 
   if (index !== -1) {
     // 如果已经存在，则移除该标签
-    selectTagList.value.splice(index, 1);
+    selectLabelList.value.splice(index, 1);
   } else {
     // 否则，将标签添加到已选列表中
-    selectTagList.value.push(tag);
+    selectLabelList.value.push(label);
   }
 }
 
 // 显示添加标签
 const addTags = async () => {
   isShowAddTags.value = true
-  firstZoneList.value = await getZoneList("root", 99999, 0)
+  firstLabelList.value = await getLabelList("root")
 }
 
-const isTagSelected = (tag:Tag ) => {
-  const tagIds = selectTagList.value.map(item => item.tagId); // 获取已选标签的 id 列表
-  const index = tagIds.indexOf(tag.tagId); // 检查当前标签的 id 是否存在于已选标签的 id 列表中
+const isTagSelected = (label:Label ) => {
+  const tagIds = selectLabelList.value.map(item => item.id); // 获取已选标签的 id 列表
+  const index = tagIds.indexOf(label.id); // 检查当前标签的 id 是否存在于已选标签的 id 列表中
   return index !== -1;
 }
 // 上传图片
@@ -246,30 +242,30 @@ const uploadCoverImage = (event: Event) => {
 
 const noShowSelectTag = () => {
   isShowAddTags.value = false
-  selectTagList.value = []
+  selectLabelList.value = []
 }
 
 const confirmSelectTag = () => {
   isShowAddTags.value = false
 }
 
-const selectSecondZone = async (zoneId: string ) => {
-  selectSecondZoneId.value = zoneId
-  tagList.value = await getTagList("", selectFirstZoneId.value, selectSecondZoneId.value)
+const selectSecondLabel = async (labelId: string ) => {
+  selectSecondLabelId.value = labelId
+  labelList.value = await getLabelList(selectSecondLabelId.value)
 }
 
-const selectFirstZone = async (zoneId: string) => {
-  tagList.value = []
-  selectFirstZoneId.value = zoneId
-  secondZoneList.value = await getZoneList(selectFirstZoneId.value, 99999, 0)
+const selectFirstLabel = async (labelId: string) => {
+  labelList.value = []
+  selectFirstLabelId.value = labelId
+  secondLabelList.value = await getLabelList(selectFirstLabelId.value)
 }
 
 const publishPost = async () => {
-  if(selectTagList.value.length <= 0 ) {
+  if(selectLabelList.value.length <= 0 ) {
     errorMsg("至少选择一个标签")
     return
   }
-  if(selectTagList.value.length > 10) {
+  if(selectLabelList.value.length > 10) {
     errorMsg("最多选择十个标签")
     return
   }
@@ -297,7 +293,7 @@ const CreatePost = async(url: string) => {
     title: props.sendPostData.title,
     text: props.sendPostData.text,
     url: url,
-    tags: selectTagList.value,
+    labels: selectLabelList.value,
     status: getPostStatus(postStatus.value),
     isSure: isSure.value,
   })
@@ -305,9 +301,6 @@ const CreatePost = async(url: string) => {
         if(res.keywords === null) {
           enterPost(res.postId)
         } else {
-          keywords.value = res.keywords
-          console.log(keywords.value[0].keywords)
-          console.log(keywords.value[1].keywords)
           sureOption.value = true
           isShowSetting.value = false
         }

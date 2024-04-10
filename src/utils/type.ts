@@ -34,10 +34,11 @@ export type Post = {
     title: string
     text: string
     url: string
-    tags: Tag[]
     likeCount: number
     commentCount: number
+    viewCount: number
     liked: boolean
+    labels: Label[]
     userName: string
 }
 
@@ -50,8 +51,14 @@ export type PostDetail = {
         userId: string,
         name: string,
         url: string
+        labels: Label[],
+        followed: boolean,
+        followedCount: number,
+        description: string,
+        likedCount: number,
+        postCount: number,
     },
-    tags: [],
+    labels: [],
     viewCount: number,
     likeCount: number,
     commentCount: number,
@@ -68,16 +75,10 @@ export type HotPost =  {
     title: string
 }
 
-export type Zone =  {
-    zoneId: string
-    value: string
-}
 
-
-export type Tag = {
-    tagId: string,
-    zoneId: string,
-    subZoneId: string,
+export type Label = {
+    id: string,
+    fatherId: string
     value: string,
 }
 
@@ -96,7 +97,7 @@ export type PostInfo = {
     title: string
     text: string
     url: string
-    tags: Tag[]
+    labels: Label[]
     status: number,
     isSure: boolean
 }

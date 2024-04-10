@@ -41,9 +41,10 @@ export const getNewPostList = async () => {
                 title: post.title,
                 text: post.text,
                 url: post.url,
-                tags: post.tags,
                 likeCount: post.likeCount,
+                Labels: post.labels,
                 commentCount: post.commentCount,
+                viewCount: post.viewCount,
                 liked: post.liked,
                 userName: post.userName
             })) 

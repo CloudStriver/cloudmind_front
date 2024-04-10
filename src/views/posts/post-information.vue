@@ -25,7 +25,7 @@
             </span>
             <span class="row">
                 <i class="iconfont icon-liulanliang"></i>
-                <div>浏览量 100</div>
+                <div>浏览量 {{ props.PostInfo.viewCount }}</div>
             </span>
             <span class="row">
                 <i class="iconfont icon-fenxiang"></i>
@@ -34,10 +34,10 @@
         <div class="tag-box">
             <div
                 class="tag"
-                v-for="(tag, index) in props.PostInfo.tags"
+                v-for="(label, index) in props.PostInfo.labels"
                 :key="index"
             >
-                <button>{{ tag.value }}</button>
+                <button>{{ label.value }}</button>
             </div>
         </div>
     </div>

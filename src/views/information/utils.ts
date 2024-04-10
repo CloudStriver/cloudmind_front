@@ -138,6 +138,7 @@ export const getPostList = async (userId: string) => {
                 tags: post.tags,
                 likeCount: post.likeCount,
                 commentCount: post.commentCount,
+                viewCount: post.viewCount,
                 liked: post.liked,
                 userName: post.userName
             }))

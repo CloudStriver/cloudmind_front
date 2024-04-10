@@ -32,7 +32,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/information/user.vue'),
   },
   {
-    path: '/user/center/:userId',
+    path: '/user/center/:userId/:selectFirst/:selectSecond',
     component: () => import('../views/information/center.vue'),
   },
   {
