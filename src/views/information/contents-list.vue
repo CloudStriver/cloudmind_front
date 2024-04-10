@@ -55,7 +55,7 @@
                   checked
                   @click="getFollows(store.getUserId())"
               >
-              <label for="headerFollow" >关注</label>
+              <label for="headerFollow">关注</label>
             </li>
             <li>
               <input
@@ -70,24 +70,26 @@
             </li>
           </ul>
         </div>
-        <div
-            v-for="(user, index) in followUserList"
-            class="detail-follow"
-            :key="index"
-        >
-          <div class="image">
-            <img :src="user.url" alt="">
-          </div>
-          <div class="user">
-            <p>{{ user.name }}</p>
-            <p>{{ user.description}}</p>
-          </div>
-          <div v-if="store.getUserLongToken()">
-            <div v-if="user.followed" class="button">
-              <button @click="unFollowUser(user)">已关注</button>
+        <div class="users-list">
+          <div
+              v-for="(user, index) in followUserList"
+              class="detail-follow"
+              :key="index"
+          >
+            <div class="image">
+              <img :src="user.url" alt="">
             </div>
-            <div v-else class="button">
-              <button @click="followUser(user)">关注</button>
+            <div class="user">
+              <p>{{ user.name }}</p>
+              <p>{{ user.description}}</p>
+            </div>
+            <div v-if="store.getUserLongToken()">
+              <div v-if="user.followed" class="button">
+                <button @click="unFollowUser(user)">已关注</button>
+              </div>
+              <div v-else class="button">
+                <button @click="followUser(user)">+ 关注</button>
+              </div>
             </div>
           </div>
         </div>
@@ -385,6 +387,50 @@ const getFans = async(userId: string) => {
             }
         }
 
+        .users-list {
+            .detail-follow {
+                padding: 10px;
+                border-bottom: 1px solid #f0f0f0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .image {
+                    width: 60px;
+                    height: 60px;
+                    margin-right: 10px;
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 50%;
+                    }
+                }
+
+                .user {
+                    flex: 1;
+                    margin-right: 10px;
+
+                    p {
+                        margin: 0;
+                        padding: 0;
+                    }
+                }
+
+                .button {
+                    button {
+                        padding: 5px 10px;
+                        border-radius: 5px;
+                        border: none;
+                        background-color: #fff;
+                        color: #6d99ec;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+
         .posts-box {
           width: 100%;
           .posts-contents {
@@ -463,41 +509,6 @@ const getFans = async(userId: string) => {
                 }
             }
         }
-            .image {
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                margin-right: 20px;
-
-                img {
-                    width: 50px;
-                    height: 50px;
-                    border-radius: 50%;
-                }
-            }
-
-            .user {
-                p {
-                    margin: 0;
-                }
-                p:last-child {
-                    color: rgb(99, 99, 99);
-                    font-size: 13px;
-                    margin-top: 5px;
-                }
-            }
-
-            .button {
-                position: absolute;
-                right: 0;
-
-                button {
-                    background-color: #fff;
-                    border: 1px solid #919191;
-                    padding: 2px 15px;
-                    border-radius: 10px;
-                }
-            }
-        }
+      }
 }
 </style>
