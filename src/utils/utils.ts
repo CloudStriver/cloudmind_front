@@ -242,7 +242,7 @@ export const createPost = async (postInfo: PostInfo): Promise<any> => {
         title: postInfo.title,
         text: postInfo.text,
         url: postInfo.url,
-        // tags: tags,
+        labelIds: postInfo.labelIds,
         status: postInfo.status,
         isSure: postInfo.isSure
     })

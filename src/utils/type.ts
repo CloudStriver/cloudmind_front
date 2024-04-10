@@ -97,7 +97,7 @@ export type PostInfo = {
     title: string
     text: string
     url: string
-    labels: Label[]
+    labelIds: string[]
     status: number,
     isSure: boolean
 }

@@ -289,11 +289,12 @@ const publishPost = async () => {
 }
 
 const CreatePost = async(url: string) => {
+  const labelIds = selectLabelList.value.map(item => item.id)
   await createPost({
     title: props.sendPostData.title,
     text: props.sendPostData.text,
     url: url,
-    labels: selectLabelList.value,
+    labelIds: labelIds,
     status: getPostStatus(postStatus.value),
     isSure: isSure.value,
   })
