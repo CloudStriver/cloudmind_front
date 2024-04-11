@@ -46,6 +46,7 @@ export enum NotificationType {
 }
 
 export enum PostStatusType {
+    None = 0,
     Public = 1,
     Private = 2,
     Draft = 3
@@ -78,6 +79,7 @@ export const GetHotRanksUrl = "/rank/getHotRanks"
 export const GetUserUrl = "/content/getUser"
 export const GetPostUrl = "/content/getPost"
 export const GetPostsUrl = "/content/getPosts"
+export const GetUsersUrl = "/content/searchUser"
 export const MoveFileUrl = "/content/moveFile"
 export const CreateFileUrl = "/content/createFile"
 export const DeleteFileUrl = "/content/deleteFile"
@@ -119,6 +121,7 @@ export const StorageDoGetUser = "DoGetUser" // 是否获取过用户信息
 export const StorageAvatarUrl= "AvatarUrl" // 头像URL
 export const StorageName= "Name" // 用户名
 export const StoragePostContent = "PostContent"
+export const StoragePostId = "PostId"
 export const StoragePostTitle = "PostTitle"
 export const StorageUserId = "UserId"
 export const StorageLongToken = "LongToken"

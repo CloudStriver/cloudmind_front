@@ -6,7 +6,7 @@ import {
     DeleteRelationUrl,
     GetFromRelationsUrl,
     GetPostsUrl,
-    GetToRelationsUrl
+    GetToRelationsUrl, GetUsersUrl
 } from "@/utils/consts";
 
 export const DeleteRelation = (relation: Relation) =>  {
@@ -51,6 +51,10 @@ export const GetToRelation = async(relation: Relation) :Promise<any> => {
 
 
 
-export const Search = async(opt: SearchOption) :Promise<any> => {
+export const SearchPost = async(opt: SearchOption) :Promise<any> => {
     return await get(false, `${GetPostsUrl}?searchKeyword=${opt.searchKeyword}&searchType=${opt.searchType}`)
+}
+
+export const SearchUser = async(opt: SearchOption) :Promise<any> => {
+    return await get(false, `${GetUsersUrl}?keyword=${opt.searchKeyword}&searchType=${opt.searchType}`)
 }

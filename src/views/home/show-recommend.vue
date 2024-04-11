@@ -8,7 +8,7 @@
                 </section>
             </div>
         </div>
-        <div class="posts-box" v-show="props.classify === 'posts'">
+        <div class="posts-box" v-show="props.classify === 'post'">
             <div 
                 class="posts" 
                 v-for="(post, index) in postList"
@@ -27,10 +27,10 @@
                         <div class="post-content">{{ htmlToText(post.userName + ": " + post.text) }}</div>
                     </div>
                 </section>
-<!--                <PostDetail -->
-<!--                    :information="post"-->
-<!--                    class="footer"-->
-<!--                ></PostDetail>-->
+                <PostDetail
+                    :PostInfo="post"
+                    class="footer"
+                ></PostDetail>
             </div>
         </div>
         <div class="user-box" v-show="props.classify === 'user'">
@@ -39,11 +39,9 @@
                 v-for="(user, index) in userList"
                 :key="index"
             >
-                <img :src="user.url">
+                <img :src="user.url" alt="">
                 <div class="user-detail">
-                  <router-link
-                      :to="`/user/center/${user.userId}/dynamic/default`"
-                  >{{ user.name }}</router-link>
+                  <div @click="enterUser(user.userId)">{{ user.name }}</div>
                     <div>粉丝量：{{ user.followedCount }}</div>
                     <div 
                         class="user-tag"
@@ -80,9 +78,11 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from 'vue'
 import type {Post, User} from "@/utils/type";
-import {followUser, getPostRecommend, getUserRecommend, unFollowUser} from "@/utils/utils";
+import {enterUser, followUser, getPostRecommend, getUserRecommend, unFollowUser} from "@/utils/utils";
 import {TargetType} from "@/utils/consts";
 import {useStore} from "@/store";
+import PostDetail from "@/views/posts/post-information.vue"
+import router from "@/router";
 const store = useStore()
 const props = defineProps<{
     classify: string,
@@ -91,6 +91,7 @@ const props = defineProps<{
 const userList = ref<User[]>([])
 const postList = ref<Post[]>([])
 onMounted(() => {
+  console.log(props.classify, props.mainClassify)
   getShow()
 })
 

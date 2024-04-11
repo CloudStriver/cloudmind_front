@@ -16,12 +16,13 @@ import Vditor from 'vditor'
 import "vditor/dist/index.css"
 import { onMounted, ref } from 'vue';
 import {errorMsg} from "@/utils/message";
+import {StoragePostContent, StoragePostId, StoragePostTitle} from "@/utils/consts";
 
 const props = defineProps<{
     sendOperateType: string
 }>()
 const vditor = ref()
-const title = ref<string>('')
+const title = ref<string>(sessionStorage.getItem(StoragePostTitle) as string)
 const operateType = ref<string>('')
 const emit = defineEmits(['sendEditorContents'])
 
@@ -33,6 +34,7 @@ onMounted(() => {
             enable: true,
             type: 'markdown'
         },
+        value: sessionStorage.getItem(StoragePostContent) as string,
         preview: {
         delay: 0,
         hljs: {
@@ -105,7 +107,7 @@ const sendEditorMsg = () => {
   }
     emit('sendEditorContents', {
         title: title.value,
-        text: text
+        text: text,
     })
 }
 </script>
