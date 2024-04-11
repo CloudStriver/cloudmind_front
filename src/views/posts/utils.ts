@@ -32,9 +32,11 @@ export const getUserRankList = async (limit: number, offset: number)  => {
 }
 
 // 获取最新的帖子列表
-export const getNewPostList = async () => {
+export const getNewPostList = async (onlyLabelId?: string) => {
     const postsList = ref<Post[]>([])
-    await get(false, GetPostsUrl)
+    const url = ref(GetPostsUrl)
+    if(onlyLabelId) url.value += `?onlyLabelId=${onlyLabelId}`
+    await get(false, url.value)
     .then((res: any) => {
         postsList.value =  res.posts.map((post: any) => ({
                 postId: post.postId,
@@ -42,7 +44,7 @@ export const getNewPostList = async () => {
                 text: post.text,
                 url: post.url,
                 likeCount: post.likeCount,
-                Labels: post.labels,
+                labels: post.labels,
                 commentCount: post.commentCount,
                 viewCount: post.viewCount,
                 liked: post.liked,
@@ -80,7 +82,7 @@ export const getHotPostList = async () => {
                 title: post.title,
                 text: post.text,
                 url: post.url,
-                tags: post.tags,
+                labels: post.labels,
                 likeCount: post.likeCount,
                 commentCount: post.commentCount,
                 liked: post.liked,
@@ -99,7 +101,7 @@ export const getRecommendPostList = async () => {
                 title: post.title,
                 text: post.text,
                 url: post.url,
-                tags: post.tags,
+                labels: post.labels,
                 likeCount: post.likeCount,
                 commentCount: post.commentCount,
                 liked: post.liked,
@@ -118,7 +120,7 @@ export const getFollowPostList = async (limit: number, offset: number) => {
                 title: post.title,
                 text: post.text,
                 url: post.url,
-                tags: post.tags,
+                labels: post.labels,
                 likeCount: post.likeCount,
                 commentCount: post.commentCount,
                 liked: post.liked,

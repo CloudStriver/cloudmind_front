@@ -174,7 +174,7 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
 import type {Label} from "@/utils/type";
-import {createPost, getLabelList, getPostStatus} from "@/utils/utils";
+import {createPost, getLabelList, getPostStatus, updatePost} from "@/utils/utils";
 import {enterPost} from "@/views/posts/utils";
 import SparkMD5 from "spark-md5";
 import {cosUploadImage} from "@/utils/public-cos";
@@ -197,7 +197,8 @@ const isSure = ref(false)
 const props = defineProps<{
   sendPostData: {
     text: string,
-    title: string
+    title: string,
+    postId: string,
   }
 }>()
 const emit = defineEmits(['sendSettingContents'])
@@ -262,7 +263,8 @@ const selectFirstLabel = async (labelId: string) => {
 }
 
 const publishPost = async () => {
-  if(selectLabelList.value.length <= 0 ) {
+  console.log(props.sendPostData)
+  if(selectLabelList.value.length <= 0  && !props.sendPostData.postId) {
     errorMsg("至少选择一个标签")
     return
   }
@@ -270,6 +272,12 @@ const publishPost = async () => {
     errorMsg("最多选择十个标签")
     return
   }
+
+  if(props.sendPostData.title.length > 20) {
+    errorMsg("标题长度不能超过20个字符")
+    return
+  }
+
   const url = ref('')
   if(imageFile.value) {
     const fileReader = new FileReader();
@@ -291,23 +299,45 @@ const publishPost = async () => {
 
 const CreatePost = async(url: string) => {
   const labelIds = selectLabelList.value.map(item => item.id)
-  await createPost({
-    title: props.sendPostData.title,
-    text: props.sendPostData.text,
-    url: url,
-    labelIds: labelIds,
-    status: getPostStatus(postStatus.value),
-    isSure: isSure.value,
-  })
-      .then((res:any)=> {
-        if(res.keywords === null) {
-          enterPost(res.postId)
-        } else {
-          keywords.value = res.keywords
-          sureOption.value = true
-          isShowSetting.value = false
-        }
-      })
+  if (labelIds.length <= 0) {
+    await updatePost({
+      title: props.sendPostData.title,
+      text: props.sendPostData.text,
+      url: url,
+      labelIds: labelIds,
+      status: getPostStatus(postStatus.value),
+      isSure: isSure.value,
+      postId: props.sendPostData.postId,
+    })
+        .then((res: any) => {
+          if (res.keywords === null) {
+            enterPost(props.sendPostData.postId)
+          } else {
+            keywords.value = res.keywords
+            sureOption.value = true
+            isShowSetting.value = false
+          }
+        })
+  } else {
+    await createPost({
+      title: props.sendPostData.title,
+      text: props.sendPostData.text,
+      url: url,
+      labelIds: labelIds,
+      status: getPostStatus(postStatus.value),
+      isSure: isSure.value,
+      postId: "",
+    })
+        .then((res: any) => {
+          if (res.keywords === null) {
+            enterPost(res.postId)
+          } else {
+            keywords.value = res.keywords
+            sureOption.value = true
+            isShowSetting.value = false
+          }
+        })
+  }
 }
 
 const noPublishPost = () => {

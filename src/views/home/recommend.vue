@@ -57,10 +57,10 @@
                             type="radio"
                             name="select-classify"
                             v-model="selectClassify"
-                            value="posts"
+                            value="post"
                             checked
                         >
-                        <label for="posts">帖子</label>
+                        <label for="post">帖子</label>
                     </div>
                     <div>
                         <input 
@@ -91,7 +91,7 @@ import ShowRecommend from './show-recommend.vue'
 
 const isShowClassify = ref(false)
 const selectMain = ref('hot')
-const selectClassify = ref('posts')
+const selectClassify = ref('post')
 
 const mouseleaveClassifyPop = () => {
     const popup = document.querySelector('.more-box') as Element

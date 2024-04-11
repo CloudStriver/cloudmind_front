@@ -7,51 +7,22 @@
                     <nav class="nav">
                         <ul>
                             <li>
-                                <input
-                                    type="radio"
-                                    name="nav"
-                                    id="hot"
-                                    value="hot"
-                                    v-model="navSelect"
-                                    checked
-                                >
-                                <label for="hot"><i class="iconfont icon-mn_remen"></i>热门</label>
+                                <label @click="router.push('/posts/hot')"><i class="iconfont icon-mn_remen"></i>热门</label>
                             </li>
                             <li>
-                                <input 
-                                    type="radio"
-                                    name="nav"
-                                    id="recommend"
-                                    value="recommend"
-                                    v-model="navSelect"
-                                >
-                                <label for="recommend"><i class="iconfont icon-tuijian"></i>推荐</label>
+                                <label @click="router.push('/posts/recommend')"><i class="iconfont icon-tuijian"></i>推荐</label>
                             </li>
                             <li>
-                                <input 
-                                    type="radio"
-                                    name="nav"
-                                    id="follow"
-                                    value="follow"
-                                    v-model="navSelect"
-                                >
-                                <label for="follow"><i class="iconfont icon-guanzhu"></i>关注</label>
+                                <label @click="router.push('/posts/follow')"><i class="iconfont icon-guanzhu"></i>关注</label>
                             </li>
                             <li>
-                                <input 
-                                    type="radio"
-                                    name="nav"
-                                    id="new"
-                                    value="new"
-                                    v-model="navSelect"
-                                >
-                                <label for="new"><i class="iconfont icon-zuixin"></i>最新</label>
+                                <label @click="router.push('/posts/new')"><i class="iconfont icon-zuixin"></i>最新</label>
                             </li>
                         </ul>
                     </nav>
                 </div>
                 <div class="posts">
-                    <div class="posts-select">
+                    <div class="posts-select" v-if="navSelect === 'new'">
                         <div 
                             class="zone"
                             v-for="(label, index) in firstLabelList"
@@ -62,8 +33,7 @@
                                 name="zone"
                                 :id="label.id"
                                 :value="label.id"
-                                v-model="selectLabelId"
-                                @click.stop="showZonePop($event)"
+                                @click.stop="showZonePop($event, label.id)"
                             >
                             <label 
                                 :for="label.id"
@@ -75,10 +45,7 @@
                             :style="{top: zonePopTop + 'px', left: zonePopLeft + 'px'}"
                         >
                             <ul>
-                                <li>二级分区1</li>
-                                <li>二级分区1</li>
-                                <li>二级分区1</li>
-                                <li>二级分区1</li>
+                                <li v-for="(label, index) in secondLabelList" @click="selectLabel(label.id)">{{ label.value }}</li>
                             </ul>
                         </div>
                     </div>
@@ -174,7 +141,7 @@
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
 import PostDetail from './post-information.vue'
-import {onMounted, ref, watch} from 'vue'
+import {onBeforeMount, onMounted, ref, watch} from 'vue'
 import router from '@/router'
 import {
   enterPost,
@@ -194,10 +161,12 @@ import {
   unFollowHotUser
 } from "@/utils/utils";
 import {useStore} from "@/store";
+import {useRoute} from "vue-router";
 
 const store = useStore()
 const navSelect = ref('all') // 选项
 const selectLabelId = ref('root') // 当前选择分区的父分区ID
+const NowLabelId = ref('')
 const noMoreUsers = ref(false) // 没有更多作者了
 const noMorePosts = ref(false) // 没有更多文章了
 const isShowZonePop = ref(false) 
@@ -207,20 +176,30 @@ const postList = ref<Post[]>([]) // 帖子列表
 const zonePopTop = ref(0)
 const zonePopLeft = ref(0)
 const firstLabelList = ref<Label[]>([])
+const secondLabelList = ref<Label[]>([])
 const pageSize = 10; // 假设每页加载10项
 let userRankPage = 1; // 当前用户列表页码
 let postRankPage = 1; // 当前帖子列表页码
 let postPage = 1;
-
+const route = useRoute()
 onMounted(async() => {
+    navSelect.value = route.params.select as string
     userRankList.value = await getUserRankList(pageSize, 0)
     postRankList.value = await getPostRankList(pageSize, 0)
     firstLabelList.value = await getLabelList(selectLabelId.value)
-    postList.value = await getHotPostList()
+    await getPosts()
 })
 
-watch(navSelect, async (newVal) => {
-  switch (newVal) {
+onBeforeMount(() => {
+  router.beforeEach(async (to, from, next) => {
+    navSelect.value = to.params.select as string
+    await getPosts()
+    next();
+  });
+});
+
+const getPosts = async () => {
+  switch (navSelect.value) {
     case 'hot':
       postList.value = await getHotPostList()
       break
@@ -231,26 +210,40 @@ watch(navSelect, async (newVal) => {
       postList.value = await getFollowPostList(pageSize, (postPage - 1) * pageSize)
       break
     case 'new':
-      postList.value = await getNewPostList()
+      postList.value = await getNewPostList(NowLabelId.value)
       break
   }
-})
-
+}
 // 取消显示二级分区
 const cancelShowZonePop = (e: MouseEvent) => {
     if (e.target instanceof HTMLElement) {
         if (e.target.className !== 'zone-pop') {
+            console.log("取消")
             isShowZonePop.value = false
+            secondLabelList.value = []
         }
     }
 }
 
+const selectLabel = async (labelId: string) => {
+  if (NowLabelId.value == labelId) {
+    NowLabelId.value = ''
+  } else {
+    NowLabelId.value = labelId
+  }
+  await getPosts()
+}
+
 // 显示二级分区
-const showZonePop = (e: MouseEvent) => {
-    isShowZonePop.value = false
-    zonePopLeft.value = e.clientX
-    zonePopTop.value = e.clientY - 90
-    isShowZonePop.value = true
+const showZonePop = async (e: MouseEvent, labelId: string) => {
+  selectLabelId.value = labelId
+  console.log(labelId)
+  isShowZonePop.value = false
+  zonePopLeft.value = e.clientX
+  zonePopTop.value = e.clientY - 90
+  isShowZonePop.value = true
+
+  secondLabelList.value = await getLabelList(selectLabelId.value)
 }
 
 // 加载下一页用户
@@ -333,7 +326,7 @@ const loadMorePosts = async () => {
                             font-size: 20px;
                             margin-right: 20px;
                         }
-    
+
                         input {
                             display: none;
                         }
