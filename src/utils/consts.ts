@@ -114,6 +114,7 @@ export const WechatIsLoginUrl = "/auth/weixinIsLogin"
 
 export const GetNotificationsUrl= "/system/getNotifications"
 export const GetNotificationCountUrl = "/system/getNotificationCount"
+export const GetSlidersUrl = "/system/getSliders"
 
 // ----------------------------------------Storage----------------------------------------------------------------------
 

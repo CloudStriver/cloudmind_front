@@ -5,7 +5,7 @@ import {
     CreateRelationUrl,
     DeleteRelationUrl,
     GetFromRelationsUrl,
-    GetPostsUrl,
+    GetPostsUrl, GetSlidersUrl,
     GetToRelationsUrl, GetUsersUrl
 } from "@/utils/consts";
 
@@ -57,4 +57,8 @@ export const SearchPost = async(opt: SearchOption) :Promise<any> => {
 
 export const SearchUser = async(opt: SearchOption) :Promise<any> => {
     return await get(false, `${GetUsersUrl}?keyword=${opt.searchKeyword}&searchType=${opt.searchType}`)
+}
+
+export const GetSliders = async():Promise<any> => {
+    return await get(false, `${GetSlidersUrl}`)
 }

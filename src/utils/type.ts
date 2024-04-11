@@ -107,3 +107,9 @@ export type SearchOption = {
     searchKeyword: string,
     searchType: number
 }
+
+export type Slider = {
+    sliderId: string,
+    imageUrl: string,
+    linkUrl: string
+}
