@@ -1,5 +1,5 @@
 <template>
-    <div class="main-box" @click="cancelDeletePost">
+    <div class="main-box">
         <div class="delete-post" v-if="isDeletePost">
             <div>执行此操作后，该文章将永久删除，是否继续？</div>
             <div class="delete-post-button">
@@ -33,75 +33,83 @@
                     <div>
                         <div class="section-header">
                             <div class="section-header-select">
-                                <div class="select-post-box" @click="selectStatus('')">
+                                <div class="select-post-box" @click="selectStatus(PostStatusType.None)">
                                     <input 
                                         type="radio"
                                         id="all"
                                         name="select-post"
+                                        v-model="onlyStatus"
+                                        :value="PostStatusType.None"
                                         checked
                                     >
-                                    <label for="all">全部 ({{ postsList.posts.length }})</label>
+                                    <label for="all">全部</label>
                                 </div>
-                                <div class="select-post-box" @click="selectStatus('&onlyStatus=1')">
+                                <div class="select-post-box" @click="selectStatus(PostStatusType.Public)">
                                     <input 
                                         type="radio"
                                         id="public"
                                         name="select-post"
+                                        v-model="onlyStatus"
+                                        :value="PostStatusType.Public"
                                     >
                                     <label for="public">全部可见</label>
                                 </div>
-                                <div class="select-post-box" @click="selectStatus('&onlyStatus=2')">
+                                <div class="select-post-box" @click="selectStatus(PostStatusType.Private)">
                                     <input 
                                         type="radio"
                                         id="onlyMe"
                                         name="select-post"
+                                        v-model="onlyStatus"
+                                        :value="PostStatusType.Private"
                                     >
                                     <label for="onlyMe">仅我可见</label>
                                 </div>
-                                <div class="select-post-box" @click="selectStatus('&onlyStatus=3')">
+                                <div class="select-post-box" @click="selectStatus(PostStatusType.Draft)">
                                     <input
                                         type="radio"
                                         id="draft"
                                         name="select-post"
+                                        v-model="onlyStatus"
+                                        :value="PostStatusType.Draft"
                                     >
                                     <label for="draft">草稿</label>
                                 </div>
                             </div>
                             <div class="section-header-classify">
-                                <div class="type-list">
-                                    <input 
-                                        type="text"
-                                        list="typeList"
-                                        placeholder="文章类型"
-                                    >
-                                    <datalist id="typeList">
-                                        <option value="前端"></option>
-                                        <option value="后端"></option>
-                                        <option value="数据库"></option>
-                                        <option value="运维"></option>
-                                        <option value="产品"></option>
-                                        <option value="设计"></option>
-                                        <option value="职场"></option>
-                                        <option value="其他"></option>
-                                    </datalist>
-                                </div>
-                                <div class="column-list"> 
-                                    <input 
-                                        type="text"
-                                        list="columnList"
-                                        placeholder="分类专栏"
-                                    >
-                                    <datalist id="columnList">
-                                        <option value="前端"></option>
-                                        <option value="后端"></option>
-                                        <option value="数据库"></option>
-                                        <option value="运维"></option>
-                                        <option value="产品"></option>
-                                        <option value="设计"></option>
-                                        <option value="职场"></option>
-                                        <option value="其他"></option>
-                                    </datalist>
-                                </div>
+<!--                                <div class="type-list">-->
+<!--                                    <input -->
+<!--                                        type="text"-->
+<!--                                        list="typeList"-->
+<!--                                        placeholder="文章类型"-->
+<!--                                    >-->
+<!--                                    <datalist id="typeList">-->
+<!--                                        <option value="前端"></option>-->
+<!--                                        <option value="后端"></option>-->
+<!--                                        <option value="数据库"></option>-->
+<!--                                        <option value="运维"></option>-->
+<!--                                        <option value="产品"></option>-->
+<!--                                        <option value="设计"></option>-->
+<!--                                        <option value="职场"></option>-->
+<!--                                        <option value="其他"></option>-->
+<!--                                    </datalist>-->
+<!--                                </div>-->
+<!--                                <div class="column-list"> -->
+<!--                                    <input -->
+<!--                                        type="text"-->
+<!--                                        list="columnList"-->
+<!--                                        placeholder="分类专栏"-->
+<!--                                    >-->
+<!--                                    <datalist id="columnList">-->
+<!--                                        <option value="前端"></option>-->
+<!--                                        <option value="后端"></option>-->
+<!--                                        <option value="数据库"></option>-->
+<!--                                        <option value="运维"></option>-->
+<!--                                        <option value="产品"></option>-->
+<!--                                        <option value="设计"></option>-->
+<!--                                        <option value="职场"></option>-->
+<!--                                        <option value="其他"></option>-->
+<!--                                    </datalist>-->
+<!--                                </div>-->
                                 <input 
                                     type="text"
                                     placeholder="请输入关键词"
@@ -114,16 +122,13 @@
                         <div class="section-section">
                             <div 
                                 class="detail"
-                                v-for="(post, index) in postsList.posts"
+                                v-for="(post, index) in postList"
                                 :key="index"
                             >
                                 <h3 
                                     @click="enterPost(post)"
                                     class="title"
                                 >{{ post.title }}</h3>
-                                <div>
-                                    <div class="type">原创</div>
-                                </div>
                                 <div class="detail-data">
                                     <div class="data">
                                         <span>点赞 {{ post.likeCount }}</span>
@@ -148,46 +153,49 @@
 import CHeader from '@/components/header.vue'
 import { onMounted, ref } from 'vue'
 import { getMyPostList } from './utils'
-import type { responseGetMyPostList } from './utils'
 import { successMsg } from '@/utils/message'
 import router from '@/router';
 import { post } from '@/utils/request'
-import {DeletePostUrl, StoragePostContent, StoragePostTitle} from "@/utils/consts";
+import {DeletePostUrl, PostStatusType, StoragePostContent, StoragePostId, StoragePostTitle} from "@/utils/consts";
+import type {Post} from "@/utils/type";
 
+const onlyStatus = ref(0)
 const keyContent = ref<string>('')
 const nowDeletePostId = ref('')
 const isDeletePost = ref(false)
-const postsList = ref<responseGetMyPostList>({
-    posts: []
-})
+const postList = ref<Post[]>([])
 
 onMounted(async() => {
-    postsList.value = await getMyPostList('')
+  postList.value = await getMyPostList()
 })
 
-const selectStatus = async (url: String) => {
-  postsList.value = await getMyPostList(url)
+const selectStatus = async (status: PostStatusType) => {
+  postList.value = await getMyPostList(status)
 }
+
+
 const continueDelete = () => {
     const postId = nowDeletePostId.value
-    
+    const postIds = ref<string[]>([])
+    postIds.value.push(postId)
     post(true, DeletePostUrl, {
-      // postIds: []String{postId}
+      postIds: postIds.value
     })
     .then(() => {
-        successMsg('删除成功' + postId)
-        // location.reload()
+        successMsg('删除成功')
+         postList.value = postList.value.filter(post => post.postId !== nowDeletePostId.value);
+        isDeletePost.value = false
     })
 }
 
-const cancelDeletePost = () => {
-    const deletePost = document.querySelector('.delete-post') as HTMLElement
-    document.addEventListener('click', (event) => {
-        if (event.target !== deletePost && !deletePost.contains(event.target as Node)) {
-            isDeletePost.value = false 
-        }
-    })
-}
+// const cancelDeletePost = () => {
+//     const deletePost = document.querySelector('.delete-post') as HTMLElement
+//     document.addEventListener('click', (event) => {
+//         if (event.target !== deletePost && !deletePost.contains(event.target as Node)) {
+//             isDeletePost.value = false
+//         }
+//     })
+// }
 
 const enterPost = (post: any) => {
     router.push('/post/' + post.postId)
@@ -198,15 +206,15 @@ const deletePost = (id: any) => {
     nowDeletePostId.value = id
 }
 
-const modifyPost = (post: any) => {
+const modifyPost = (post: Post) => {
     sessionStorage.setItem(StoragePostTitle, post.title)
     sessionStorage.setItem(StoragePostContent, post.text)
-    router.push('/write/modify/' + post.postId)
+    sessionStorage.setItem(StoragePostId, post.postId)
+    router.push(`/edit`)
 }
 
 const searchPostsList = async() => {
-    const key = '&allFieldsKey=' + keyContent.value
-    postsList.value = await getMyPostList(key)
+    postList.value = await getMyPostList(onlyStatus.value,keyContent.value)
 }
 </script>
 

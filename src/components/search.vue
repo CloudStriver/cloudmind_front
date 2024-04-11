@@ -5,18 +5,32 @@
             placeholder="搜索"
             v-model="keyword"
         >
-        <i @click="router.push(`/search/${keyword}/post/${SearchSortType.Synthesis}/${SearchPeriodType.None}`)" class="iconfont icon-sistrix"></i>
+        <i @click="search()" class="iconfont icon-sistrix"></i>
     </div>
 </template>
 
 <script setup lang="ts">
-import router from '@/router'
+// import router from '@/router'
 import { onMounted, ref } from 'vue'
+import {useRoute} from "vue-router";
+import router from "@/router";
 import {SearchPeriodType, SearchSortType} from "@/utils/consts";
 const keyword = ref('')
-
+const route = useRoute() // 如果你需要获取当前路由信息
 onMounted(() => {
+  keyword.value = route.params.keyword as string
 })
+
+const search = () => {
+  const selectContent = route.params.type as string
+  const selectSort = parseInt(route.params.sort as string)
+  const selectPeriod = parseInt(route.params.period as string)
+  if(!selectContent || !selectSort || !selectPeriod) {
+    router.push(`/search/${keyword.value}/post/${SearchSortType.Synthesis}/${SearchPeriodType.None}`)
+    return
+  }
+  router.push(`/search/${keyword.value}/${selectContent}/${selectSort}/${selectPeriod}`)
+}
 </script>
 
 <style scoped lang="css">

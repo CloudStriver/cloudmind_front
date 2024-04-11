@@ -21,6 +21,7 @@
                         id="post"
                         value="post"
                         v-model="selectContent"
+                        :class="{ 'checked': selectContent === 'post'}"
                         @click="changeContent('post')"
                     >
                     <label for="post">帖子</label>
@@ -30,8 +31,9 @@
                         type="radio" 
                         name="select"
                         id="files"
-                        value="files"
+                        value="file"
                         v-model="selectContent"
+                        :class="{ 'checked': selectContent === 'file'}"
                         @click="changeContent('file')"
                     >
                     <label for="files">文件</label>
@@ -41,8 +43,9 @@
                         type="radio"
                         name="select"
                         id="users"
-                        value="users"
+                        value="user"
                         v-model="selectContent"
+                        :class="{ 'checked': selectContent === 'user'}"
                         @click="changeContent('user')"
                     >
                     <label for="users">用户</label>
@@ -123,8 +126,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="content-post-box" v-if="selectContent === 'post'" v-for="(post, index) in postList"> <!-- v-if="帖子" -->
-                        <div class="content">
+                    <div class="content-post-box" v-if="selectContent === 'post'"> <!-- v-if="帖子" -->
+                        <div class="content" v-for="(post, index) in postList">
                             <div class="information">
                                 <h2 @click="enterPost(post.postId)">{{post.title}}</h2>
                                 <p>{{post.text}}</p>
@@ -135,22 +138,23 @@
                             </div>
                         </div>
                     </div>
-                    <div class="content-user-box" v-if="selectContent === 'users'"> <!-- v-if="用户" -->
-                        <div class="user-box">
+                    <div class="content-user-box" v-if="selectContent === 'user'"> <!-- v-if="用户" -->
+                        <div class="user-box" v-for="(user, index) in userList">
                             <div class="user-info">
                                 <div class="image">
-                                    <img src="" alt="">
+                                    <img :src="user.url" alt="">
                                 </div>
                                 <div class="infor">
-                                    <p class="name">用户名</p>
-                                    <p class="fans">粉丝量：100</p>
-                                    <div class="user-tag">
-                                        <span>标签</span>
+                                    <p class="name" @click="enterUser(user.userId)">{{user.name}}</p>
+                                    <p class="fans">粉丝量：{{user.followedCount}}</p>
+                                    <div class="user-tag" v-for="(label, index) in user.labels">
+                                        <span>{{label}}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="follow-button">
-                                <button>+ 关注</button>
+                            <div class="follow-button" v-if="user.userId !== store.getUserId()">
+                              <button v-if="!user.followed" @click="followUser(user)">+ 关注</button>
+                              <button v-else @click="unFollowUser(user)">已关注</button>
                             </div>
                         </div>
                     </div>
@@ -164,19 +168,21 @@ import CHeader from '@/components/header.vue'
 import PostDetail from '@/views/posts/post-information.vue'
 import {onBeforeMount, onMounted, ref} from 'vue';
 import {useRoute} from "vue-router";
-import type {Post} from "@/utils/type";
-import {Search} from "@/utils/api";
+import type {Post, User} from "@/utils/type";
+import { SearchPost, SearchUser} from "@/utils/api";
 import {SearchSortType} from "@/utils/consts";
 import router from "@/router";
 import {enterPost} from "@/views/posts/utils";
+import {useStore} from "@/store";
+import {enterUser, followUser, unFollowUser} from "@/utils/utils";
 
 const keyword = ref('')
 const selectContent = ref('')
 const selectSort = ref(0)
 const selectPeriod = ref(0)
 const postList = ref<Post[]>([])
-const loading = ref(false)
-const route = useRoute()
+const userList = ref<User[]>([])
+const store = useStore()
 onMounted(async () => {
   const route = useRoute()
   keyword.value = route.params.keyword as string
@@ -184,7 +190,6 @@ onMounted(async () => {
   selectSort.value = parseInt(route.params.sort as string)
   selectPeriod.value = parseInt(route.params.period as string)
   await search()
-  loading.value = false
 })
 
 
@@ -194,7 +199,6 @@ onBeforeMount(() => {
     selectContent.value = to.params.type as string
     selectSort.value = parseInt(to.params.sort as string)
     selectPeriod.value = parseInt(to.params.period as string)
-    if (loading.value) return
     await search()
     next();
   });
@@ -207,8 +211,8 @@ const search = async () => {
       postList.value = await searchPost(keyword.value, selectSort.value, selectPeriod.value)
       break
     case 'files':
-    case 'users':
-      // searchPost(keyword.value, selectContent.value, selectSort.value, selectPeriod.value)
+    case 'user':
+      userList.value = await searchUser(keyword.value, selectSort.value, selectPeriod.value)
   }
 }
 
@@ -222,7 +226,7 @@ const changeSort = (sort: SearchSortType) =>  {
 
 const searchPost = async (key: string, sort: number, period: number) => {
   const postList = ref<Post[]>([])
-  await Search({
+  await SearchPost({
     searchKeyword: key,
     searchType: sort
   }).then((res: any) => {
@@ -241,6 +245,28 @@ const searchPost = async (key: string, sort: number, period: number) => {
   })
   return postList.value
 }
+
+const searchUser = async (key: string, sort: number, period: number) => {
+  const userList = ref<User[]>([])
+  await SearchUser({
+    searchKeyword: key,
+    searchType: sort
+  }).then((res: any) => {
+    userList.value = res.users.map((user: any) => ({
+      userId: user.userId,
+      name: user.name,
+      url: user.url,
+      description: user.description,
+      followedCount: user.followedCount,
+      labels: user.tags,
+      followed: user.followed,
+    }))
+  })
+  return userList.value
+}
+
+
+
 
 </script>
 <style scoped lang="css">
@@ -284,6 +310,10 @@ const searchPost = async (key: string, sort: number, period: number) => {
                     transition: all 0.3s;
 
                     &:hover {
+                        color: #1890ff;
+                    }
+
+                    .checked {
                         color: #1890ff;
                     }
                 }
@@ -344,7 +374,7 @@ const searchPost = async (key: string, sort: number, period: number) => {
                             color: #333;
                             transition: all 0.3s;
 
-                            .checkd {
+                            .checked {
                                 color: #1890ff;
                             }
                         }

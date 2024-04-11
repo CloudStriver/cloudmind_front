@@ -78,7 +78,6 @@ export type HotPost =  {
 
 export type Label = {
     id: string,
-    fatherId: string
     value: string,
 }
 
@@ -100,6 +99,7 @@ export type PostInfo = {
     labelIds: string[]
     status: number,
     isSure: boolean
+    postId: string
 }
 
 

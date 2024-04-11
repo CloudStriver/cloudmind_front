@@ -6,11 +6,12 @@ import {
     GetPopularRecommendUrl, GetPostUrl, GetRecommendByItemUrl,
     GetRecommendByUserUrl, GetTagListUrl, PostStatusType,
     RelationType,
-    TargetType
+    TargetType, UpdatePostUrl
 } from "@/utils/consts";
 import type {HotUser, Label, Post, PostDetail, PostInfo, User} from "@/utils/type";
 import {get, post} from "@/utils/request";
 import {ref} from "vue";
+import router from "@/router";
 
 export const turnTime = (time: number | undefined) => {
     if (time) {
@@ -114,6 +115,8 @@ export const collectPost = (post: Post) => {
 }
 
 export const getPostRecommend = async (mainClassify: string, classifyNum: TargetType) => {
+    console.log("!!!")
+    console.log(mainClassify, classifyNum)
     const postList = ref<Post[]>([])
     await get(false, getRecommendUrl(mainClassify, classifyNum))
         .then((res: any) => {
@@ -132,6 +135,9 @@ export const getPostRecommend = async (mainClassify: string, classifyNum: Target
     return postList.value
 }
 
+export const enterUser = (userId: string) => {
+    router.push(`/user/center/${userId}/dynamic/default`)
+}
 
 export const getUserRecommend = async (mainClassify: string, classifyNum: number) => {
     const userList = ref<User[]>([])
@@ -230,14 +236,11 @@ export const getLabelList = async(fatherId: string, key?: string) =>{
             value: label.value
         }))
     })
+    console.log(labelList.value)
     return labelList.value
 }
 
 export const createPost = async (postInfo: PostInfo): Promise<any> => {
-    // const tags = postInfo.tags.map((tag: Tag) => ({
-    //     tagId: tag.tagId,
-    //     zoneId: tag.subZoneId
-    // }))
     return await post(true, CreatePostUrl, {
         title: postInfo.title,
         text: postInfo.text,
@@ -247,6 +250,19 @@ export const createPost = async (postInfo: PostInfo): Promise<any> => {
         isSure: postInfo.isSure
     })
 }
+
+export const updatePost = async (postInfo: PostInfo): Promise<any> => {
+    return await post(true, UpdatePostUrl, {
+        title: postInfo.title,
+        text: postInfo.text,
+        url: postInfo.url,
+        labelIds: postInfo.labelIds,
+        status: postInfo.status,
+        isSure: postInfo.isSure,
+        postId: postInfo.postId
+    })
+}
+
 
 export const getPostStatus = (status: string) => {
     console.log(status)

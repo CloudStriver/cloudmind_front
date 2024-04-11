@@ -18,16 +18,24 @@
 import Editor from './text-editor.vue'
 import ShowSetting from './text-setting.vue'
 import { ref, onBeforeMount } from 'vue'
+import {useRoute} from "vue-router";
+import {StoragePostContent, StoragePostId, StoragePostTitle} from "@/utils/consts";
 
 const createPostData = ref('')
 const isClickSettingButton = ref(false)
 const postData = ref({
     text: '',
     title: '',
+    postId: '',
 })
 onBeforeMount(() => {
     const option = location.href.split('/').pop()
     const type = option === 'write' ? '设置' : option === 'edit' ? '编辑' : ''
+    postData.value = {
+      text: sessionStorage.getItem(StoragePostContent) as string,
+      title:  sessionStorage.getItem(StoragePostTitle) as string,
+      postId: ""
+    }
     createPostData.value = type
 })
 
@@ -42,7 +50,8 @@ const getEditorText = (sendEditorContents: any) => {
     console.log(sendEditorContents)
     postData.value = {
         text: sendEditorContents.text,
-        title: sendEditorContents.title
+        title: sendEditorContents.title,
+        postId: sessionStorage.getItem(StoragePostId) as string,
     }
 }
 
