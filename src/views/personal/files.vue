@@ -165,6 +165,8 @@ onBeforeRouteUpdate(async(to) => {
 
 watch(() => store.tempFileData, (newVal) => {
     nowFilesList.value.files.unshift(newVal)
+    console.log(nowFilesList.value.files);
+    
 })
 watch(() => props.sendRequest, async() => {
   switch (props.sendRequest.option) {
@@ -414,6 +416,7 @@ const getOptions = (file: fileData, event: any, index: number) => {
 const toFile = (file: fileData) => {
     if (file.type === '文件夹') {
         fatherId.value = file.fileId
+        console.log(fatherId.value)
         router.push({name: 'personal', params: {fatherId: fatherId.value}})
     }
     else {

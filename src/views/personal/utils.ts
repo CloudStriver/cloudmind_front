@@ -207,14 +207,18 @@ export const postMoveFile = async(fileId: string, fatherId: string):Promise<void
 }
 
 //请求创建文件
-export const postCreateFile = async(data: requestCreateFile):Promise<string> => {
+export const postCreateFile = async(data: requestCreateFile):Promise<any> => {
     const fileId = ref<string>("")
     await post(true, CreateFileUrl, data)
     .then((res: any) => {
-        fileId.value = res.fileId
+        fileId.value = res.id
         data.name = res.name
     })
-    return fileId.value
+    return {
+        fileId: fileId.value,
+        name: data.name
+    
+    }
 }
 
 //请求搜索/查看用户文件列表
@@ -241,12 +245,12 @@ export const getPrivateFilesList = async(params: requestPrivateFilesList): Promi
         token: "",
         fatherIdPath: "",
         fatherNamePath: "",
-    })
+    })    
     await get( true,GetPrivateFilesUrl + generateGetRequestURL(params))
     .then ((res: any) => {
         filesList.value = {
             files: res.files.map((file: any) => ({
-                fileId: file.fileId,
+                fileId: file.id,
                 userId: file.userId,
                 name: file.name,
                 type: file.type,
