@@ -14,7 +14,7 @@
                     </div>
                 </section>
             </div>
-            </div>
+        </div>
     </div>
 </template>
 
@@ -63,19 +63,22 @@ const firstGetUserDetail = () => {
 <style scoped lang="css">
 .main-box {
     width: 100%;
+    height: 100%;
     background-color: rgba(240, 245, 255, 0.5);
+    display: flex;
+    flex-direction: column;
 
     .cheader{
-        width: 100%;
         height: 70px;
-        position: fixed;
-        z-index: 2;
+        z-index: 100;
     }
 
     .contents-box {
-        padding-top: 100px;
+        padding-top: 20px;
+        width: 100%;
+        flex: 1;
+        overflow-y: auto;
         display: flex;
-        flex-direction: column;
 
         .contents {
             margin: 0 auto;
@@ -84,9 +87,7 @@ const firstGetUserDetail = () => {
                 width: 100%;
 
                 .activity {
-                    height: 360px;
                     margin-bottom: 10px;
-                    background-color: #fff;
                 }
     
             }
