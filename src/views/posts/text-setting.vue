@@ -14,26 +14,13 @@
             </div>
             <div class="tags-select">
                 <div class="zone-1">
-                    <p>一级分区</p>
+                    <p>分区</p>
                     <ul>
                         <li
                             v-for="(label, index) in firstLabelList"
                             :key="index"
                             @click="selectFirstLabel(label.id)"
                             :class="{ 'selected': selectFirstLabelId === label.id }"
-                        >
-                            <label :for="label.id">{{ label.value }}</label>
-                        </li>
-                    </ul>
-                </div>
-                <div class="zone-2">
-                    <p>二级分区</p>
-                    <ul>
-                        <li
-                            v-for="(label, index) in secondLabelList"
-                            :key="index"
-                            @click="selectSecondLabel(label.id)"
-                            :class="{ 'selected': selectSecondLabelId === label.id }"
                         >
                             <label :for="label.id">{{ label.value }}</label>
                         </li>
@@ -189,9 +176,7 @@ const imageFile = ref()
 const labelList = ref<Label[]>([])
 const selectLabelList = ref<Label[]>([])
 const firstLabelList = ref<Label[]>([])
-const secondLabelList = ref<Label[]>([])
 const selectFirstLabelId = ref('')
-const selectSecondLabelId = ref('')
 const postStatus = ref('public')
 const isSure = ref(false)
 const props = defineProps<{
@@ -251,15 +236,11 @@ const confirmSelectTag = () => {
   isShowAddTags.value = false
 }
 
-const selectSecondLabel = async (labelId: string ) => {
-  selectSecondLabelId.value = labelId
-  labelList.value = await getLabelList(selectSecondLabelId.value)
-}
+
 
 const selectFirstLabel = async (labelId: string) => {
-  labelList.value = []
   selectFirstLabelId.value = labelId
-  secondLabelList.value = await getLabelList(selectFirstLabelId.value)
+  labelList.value = await getLabelList(selectFirstLabelId.value)
 }
 
 const publishPost = async () => {

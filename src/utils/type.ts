@@ -106,4 +106,44 @@ export type PostInfo = {
 export type SearchOption = {
     searchKeyword: string,
     searchType: number
+    searchTimerType: number
+}
+
+export type Slider = {
+    sliderId: string,
+    imageUrl: string,
+    linkUrl: string
+}
+
+export type Comment =  {
+    id: string,
+    subjectId: string,
+    rootId: string,
+    fatherId: string,
+    count: 0,
+    state: 0,
+    attrs: 0,
+    tags: string[],
+    userId: string,
+    atUserId: string,
+    content: string,
+    meta: string,
+    createTime: 0,
+    like: 0
+}
+
+// 文件信息
+export type File =  {
+    fileId: string;
+    userId: string;
+    name: string;
+    type: string;
+    path: string;
+    fatherId: string;
+    spaceSize: string;
+    isDel: number;
+    description: string;
+    updateAt: string;
+    createAt: string;
+    isChoose: boolean;
 }

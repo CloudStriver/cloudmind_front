@@ -36,7 +36,7 @@
                         <div class="vditor" id="vditor"></div>
                     </article>
                     <div class="comment">
-                      <Comment></Comment>
+                      <Comment :PostData="PostData"></Comment>
                     </div>
                 </div>
                 <div class="right">
@@ -107,17 +107,25 @@ import {RelationType, TargetType} from "@/utils/consts";
 import router from "@/router";
 import Vditor from "vditor";
 import 'vditor/dist/index.css'
+import {useRoute} from "vue-router";
 
 const postDetail = ref<PostDetail>()
 const postList = ref<Post[]>([])
 const store = useStore()
 const postId = ref('')
-
+const route = useRoute()
+const PostData = ref({
+  PostId: '',
+  UserId: '',
+  CommentCount: 0,
+})
 onMounted(async () => {
-    const urls = location.href.split("/")
-    postId.value = urls[urls.length - 1]
+    postId.value = route.params.postId as string
     postDetail.value = await getPostDetail(postId.value)
     postList.value = await getPostRecommendByPostId(postId.value)
+    PostData.value.PostId = postId.value
+    PostData.value.UserId = postDetail.value?.author.userId as string
+    PostData.value.CommentCount = postDetail.value?.commentCount as number
     renderMarkdown(postDetail?.value?.text)
 })
 

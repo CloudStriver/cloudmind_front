@@ -59,10 +59,11 @@ export enum SearchSortType {
 }
 
 export enum SearchPeriodType {
-    None = 1,
-    Day = 2,
-    Week = 3,
-    Month = 4,
+    None = 0,
+    Day = 1,
+    Week = 2,
+    Month = 3,
+    Year = 4,
 }
 
 
@@ -114,7 +115,11 @@ export const WechatIsLoginUrl = "/auth/weixinIsLogin"
 
 export const GetNotificationsUrl= "/system/getNotifications"
 export const GetNotificationCountUrl = "/system/getNotificationCount"
+export const GetSlidersUrl = "/system/getSliders"
 
+
+export const GetCommentsUrl = "/comment/getComments"
+export const CreateCommentUrl = "/comment/createComment"
 // ----------------------------------------Storage----------------------------------------------------------------------
 
 export const StorageDoGetUser = "DoGetUser" // 是否获取过用户信息

@@ -102,10 +102,11 @@
                         </span>
                         <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item>时间不限</el-dropdown-item>
-                            <el-dropdown-item>最近一天</el-dropdown-item>
-                            <el-dropdown-item>最近一周</el-dropdown-item>
-                            <el-dropdown-item>最近三月</el-dropdown-item>
+                            <el-dropdown-item @click="changeTimer(SearchPeriodType.None)">时间不限</el-dropdown-item>
+                            <el-dropdown-item @click="changeTimer(SearchPeriodType.Day)">最近一天</el-dropdown-item>
+                            <el-dropdown-item @click="changeTimer(SearchPeriodType.Week)">最近一周</el-dropdown-item>
+                            <el-dropdown-item @click="changeTimer(SearchPeriodType.Month)">最近一月</el-dropdown-item>
+                            <el-dropdown-item @click="changeTimer(SearchPeriodType.Year)">最近一年</el-dropdown-item>
                         </el-dropdown-menu>
                         </template>
                     </el-dropdown>
@@ -170,7 +171,7 @@ import {onBeforeMount, onMounted, ref} from 'vue';
 import {useRoute} from "vue-router";
 import type {Post, User} from "@/utils/type";
 import { SearchPost, SearchUser} from "@/utils/api";
-import {SearchSortType} from "@/utils/consts";
+import {SearchPeriodType, SearchSortType} from "@/utils/consts";
 import router from "@/router";
 import {enterPost} from "@/views/posts/utils";
 import {useStore} from "@/store";
@@ -224,11 +225,16 @@ const changeSort = (sort: SearchSortType) =>  {
   router.push(`/search/${keyword.value}/${selectContent.value}/${sort}/${selectPeriod.value}`)
 }
 
+const changeTimer = (timer: SearchPeriodType) => {
+  router.push(`/search/${keyword.value}/${selectContent.value}/${selectSort.value}/${timer}`)
+}
+
 const searchPost = async (key: string, sort: number, period: number) => {
   const postList = ref<Post[]>([])
   await SearchPost({
     searchKeyword: key,
-    searchType: sort
+    searchType: sort,
+    searchTimerType: period
   }).then((res: any) => {
     postList.value = res.posts.map((post: any) => ({
       postId: post.postId,
@@ -250,7 +256,8 @@ const searchUser = async (key: string, sort: number, period: number) => {
   const userList = ref<User[]>([])
   await SearchUser({
     searchKeyword: key,
-    searchType: sort
+    searchType: sort,
+    searchTimerType: period
   }).then((res: any) => {
     userList.value = res.users.map((user: any) => ({
       userId: user.userId,
