@@ -3,7 +3,7 @@ import type {Relation, SearchOption} from "@/utils/type";
 import {get, post} from "@/utils/request";
 import {
     CreateRelationUrl,
-    DeleteRelationUrl,
+    DeleteRelationUrl, GetCommentsUrl,
     GetFromRelationsUrl,
     GetPostsUrl, GetSlidersUrl,
     GetToRelationsUrl, GetUsersUrl
@@ -52,13 +52,14 @@ export const GetToRelation = async(relation: Relation) :Promise<any> => {
 
 
 export const SearchPost = async(opt: SearchOption) :Promise<any> => {
-    return await get(false, `${GetPostsUrl}?searchKeyword=${opt.searchKeyword}&searchType=${opt.searchType}`)
+    return await get(false, `${GetPostsUrl}?searchKeyword=${opt.searchKeyword}&searchType=${opt.searchType}&searchTimerType=${opt.searchTimerType}`)
 }
 
 export const SearchUser = async(opt: SearchOption) :Promise<any> => {
-    return await get(false, `${GetUsersUrl}?keyword=${opt.searchKeyword}&searchType=${opt.searchType}`)
+    return await get(false, `${GetUsersUrl}?keyword=${opt.searchKeyword}&searchType=${opt.searchType}&searchTimerType=${opt.searchTimerType}`)
 }
 
 export const GetSliders = async():Promise<any> => {
     return await get(false, `${GetSlidersUrl}`)
 }
+
