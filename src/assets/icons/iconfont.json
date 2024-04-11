@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1496054",
+      "name": "appreciate_light",
+      "font_class": "appreciate_light",
+      "unicode": "e7e1",
+      "unicode_decimal": 59361
+    },
+    {
+      "icon_id": "4124442",
+      "name": "oppose_light",
+      "font_class": "oppose_light",
+      "unicode": "e814",
+      "unicode_decimal": 59412
+    },
+    {
       "icon_id": "575136",
       "name": "浏览量",
       "font_class": "liulanliang",
