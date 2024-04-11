@@ -221,7 +221,10 @@ const searchPostsList = async() => {
 <style scoped lang="css">
 .main-box {
     width: 100%;
-    height: auto;
+    height: 100%;
+    background-color: rgba(240, 245, 255, 0.5);
+    display: flex;
+    flex-direction: column;
 
     .delete-post {
         position: absolute;
@@ -258,13 +261,13 @@ const searchPostsList = async() => {
     .cheader {
         width: 100%;
         height: 70px;
-        position: fixed;
+        z-index: 100;
     }
 
     .contents-box {
         width: 100%;
-        padding: 100px 20px; 
-        background-color: rgba(240, 245, 255, 1);
+        padding: 20px;
+        overflow: auto;
         display: flex;
         justify-content: center;
 

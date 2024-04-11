@@ -1,5 +1,5 @@
 <template>
-    <div class="posts-box">
+    <div class="posts-box" @click="cancelShowZonePop($event)">
         <CHeader class="cheader"></CHeader>
         <section class="section">
             <div class="contents-box">
@@ -63,6 +63,7 @@
                                 :id="label.id"
                                 :value="label.id"
                                 v-model="selectLabelId"
+                                @click.stop="showZonePop($event)"
                             >
                             <label 
                                 :for="label.id"
@@ -72,10 +73,11 @@
                             v-if="isShowZonePop"
                             class="zone-pop"
                             :style="{top: zonePopTop + 'px', left: zonePopLeft + 'px'}"
-                            @mouseover="isShowZonePop = true"
-                            @mouseout="isShowZonePop = false"
                         >
                             <ul>
+                                <li>二级分区1</li>
+                                <li>二级分区1</li>
+                                <li>二级分区1</li>
                                 <li>二级分区1</li>
                             </ul>
                         </div>
@@ -234,6 +236,23 @@ watch(navSelect, async (newVal) => {
   }
 })
 
+// 取消显示二级分区
+const cancelShowZonePop = (e: MouseEvent) => {
+    if (e.target instanceof HTMLElement) {
+        if (e.target.className !== 'zone-pop') {
+            isShowZonePop.value = false
+        }
+    }
+}
+
+// 显示二级分区
+const showZonePop = (e: MouseEvent) => {
+    isShowZonePop.value = false
+    zonePopLeft.value = e.clientX
+    zonePopTop.value = e.clientY - 90
+    isShowZonePop.value = true
+}
+
 // 加载下一页用户
 const loadMoreUsers = async () => {
     const nextUsers = await getUserRankList(pageSize, userRankPage * pageSize);
@@ -377,7 +396,8 @@ const loadMorePosts = async () => {
 
                     .zone-pop {
                         position: absolute;
-                        width: 100px;
+                        padding: 10px;
+                        border-radius: 10px;
                         background-color: #fff;
                         box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
 
@@ -387,16 +407,19 @@ const loadMorePosts = async () => {
                             margin: 0;
 
                             li {
-                                padding: 10px;
+                                padding: 10px 20px;
                                 cursor: pointer;
                                 font-size: 14px;
                             }
-                        
+                            li:hover {
+                                background-color: #f4f4f4;
+                            }
                         }
                     }
                 }
     
                 .posts-contents {
+                    border-top: 1px solid #f0f0f0;
                     .content {
                         padding: 10px;
                         border-bottom: 1px solid #f0f0f0;
