@@ -48,7 +48,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/manage/post.vue'),
   },
   {
-    path: '/posts',
+    path: '/posts/:select',
     component: () => import('../views/posts/posts.vue'),
   }, 
   {

@@ -31,7 +31,7 @@
                 <i class="iconfont icon-cube-solid"></i>
             </router-link>
             <router-link 
-                to="/posts" 
+                to="/posts/hot"
                 class="router-nav"
                 active-class="router-active"
             >

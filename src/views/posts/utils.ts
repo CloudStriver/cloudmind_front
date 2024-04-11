@@ -32,9 +32,11 @@ export const getUserRankList = async (limit: number, offset: number)  => {
 }
 
 // 获取最新的帖子列表
-export const getNewPostList = async () => {
+export const getNewPostList = async (onlyLabelId?: string) => {
     const postsList = ref<Post[]>([])
-    await get(false, GetPostsUrl)
+    const url = ref(GetPostsUrl)
+    if(onlyLabelId) url.value += `?onlyLabelId=${onlyLabelId}`
+    await get(false, url.value)
     .then((res: any) => {
         postsList.value =  res.posts.map((post: any) => ({
                 postId: post.postId,

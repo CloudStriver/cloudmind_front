@@ -236,6 +236,7 @@ export const getLabelList = async(fatherId: string, key?: string) =>{
             value: label.value
         }))
     })
+    console.log(labelList.value)
     return labelList.value
 }
 
