@@ -35,6 +35,9 @@
                         </div>
                         <div class="vditor" id="vditor"></div>
                     </article>
+                    <div class="comment">
+                      <Comment></Comment>
+                    </div>
                 </div>
                 <div class="right">
                     <div class="user-box">
@@ -92,8 +95,9 @@
     </div>
 </template>
 <script setup lang="ts">
-import type {Post, PostDetail} from "@/utils/type";
 import CHeader from '@/components/header.vue'
+import Comment from './comment.vue'
+import type {Post, PostDetail} from "@/utils/type";
 import {onMounted, ref} from "vue";
 import {getPostDetail, getPostRecommendByPostId, likePost, turnTime, unLikePost} from "@/utils/utils";
 import {useStore} from "@/store";
@@ -251,10 +255,7 @@ const changePost = async (nowPostId: string) => {
             
             .post {
                 width: 1000px;
-                background-color: #fff;
-                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
                 margin: 0 30px;
-                padding: 20px;
 
                 .information {
                     position: fixed;
@@ -304,6 +305,11 @@ const changePost = async (nowPostId: string) => {
                 }
 
                 .article {
+                    background-color: #fff;
+                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+                    padding: 20px;
+                    margin-bottom: 10px;
+
                     h1 {
                         margin: 0;
                         padding: 0;
@@ -324,6 +330,10 @@ const changePost = async (nowPostId: string) => {
                     .vditor {
                         border: none;
                     }
+                }
+
+                .comment {
+                    width: 100%;
                 }
             }
 
