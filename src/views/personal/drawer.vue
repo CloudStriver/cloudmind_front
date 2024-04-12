@@ -232,12 +232,12 @@ const createFolder = () => {
     }
 
     postCreateFile(data)
-    .then((res) => {        
+    .then((res: any) => {        
         const tempPath = sessionStorage.getItem(StoragePath) as string
         store.tempFileData = {
-            fileId: res,
+            fileId: res.fileId,
             userId: "",
-            name: data.name,
+            name: res.name,
             type: data.type,
             path: tempPath + '/' + data.name,
             fatherId: fatherId.value,
