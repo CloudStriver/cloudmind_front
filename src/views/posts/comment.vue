@@ -104,20 +104,18 @@ import {CreateCommentUrl, GetCommentsUrl} from "@/utils/consts";
 import {get, post} from "@/utils/request";
 import type {Comment} from "@/utils/type"
 import {enterUser, turnTime} from "@/utils/utils";
-import {useRoute} from "vue-router";
 import {errorMsg} from "@/utils/message";
 const store = useStore()
 const commentList = ref<Comment[]>([])
 const content = ref<string>('')
-const route = useRoute()
 const postId = ref<string>('')
 const userId = ref<string>('')
 const commentCount = ref<number>(0)
 const props = defineProps<{
   PostData: {
-    PostId: '',
-    UserId: '',
-    CommentCount: 0,
+    PostId: string,
+    UserId: string,
+    CommentCount: number,
   }
 }>()
 
