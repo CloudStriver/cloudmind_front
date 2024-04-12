@@ -115,16 +115,21 @@ export type Slider = {
     linkUrl: string
 }
 
+export type SimpleUser =  {
+    userId: string,
+    name: string,
+    url: string,
+}
 export type Comment =  {
     id: string,
     subjectId: string,
     rootId: string,
     fatherId: string,
-    count: 0,
-    state: 0,
-    attrs: 0,
+    count: number,
+    state: number,
+    attrs: number,
     tags: string[],
-    userId: string,
+    author: SimpleUser,
     atUserId: string,
     content: string,
     meta: string,

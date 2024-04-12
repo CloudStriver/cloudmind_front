@@ -24,17 +24,17 @@
                 :key="index"
             >
                 <div class="image">
-                    <img src="" alt="">
+                    <img :src="comment.author.url" alt="">
                 </div>
                 <div
                     class="comment-detail">
-                    <p class="name">{{comment.userId}}</p>
+                    <p class="name" @click="enterUser(comment.author.userId)">{{comment.author.name}}</p>
                     <p class="comment">{{comment.content}}</p>
                     <div class="footer">
                         <span class="time">{{turnTime(comment.createTime)}}</span>
                         <span class="agree">
                             <i class="iconfont icon-appreciate_light"></i>
-                            <span>888</span>
+                            <span>{{ comment.like }}</span>
                         </span>
                         <span class="disagree">
                             <i class="iconfont icon-oppose_light"></i>
@@ -103,21 +103,19 @@ import {useStore} from "@/store";
 import {CreateCommentUrl, GetCommentsUrl} from "@/utils/consts";
 import {get, post} from "@/utils/request";
 import type {Comment} from "@/utils/type"
-import {turnTime} from "@/utils/utils";
-import {useRoute} from "vue-router";
+import {enterUser, turnTime} from "@/utils/utils";
 import {errorMsg} from "@/utils/message";
 const store = useStore()
 const commentList = ref<Comment[]>([])
 const content = ref<string>('')
-const route = useRoute()
 const postId = ref<string>('')
 const userId = ref<string>('')
 const commentCount = ref<number>(0)
 const props = defineProps<{
   PostData: {
-    PostId: '',
-    UserId: '',
-    CommentCount: 0,
+    PostId: string,
+    UserId: string,
+    CommentCount: number,
   }
 }>()
 
@@ -144,7 +142,7 @@ const getComment = async (fatherId: string) => {
           state: comment.state,
           attrs: comment.attrs,
           tags: comment.tags,
-          userId: comment.userId,
+          author: comment.author,
           atUserId: comment.atUserId,
           content: comment.content,
           meta: comment.meta,
@@ -161,13 +159,11 @@ const submitComment = async () => {
     return
   }
   await post(true, `${CreateCommentUrl}`, {
-    comment: {
       subjectId: postId.value,
       rootId: postId.value,
       fatherId: postId.value,
       content: content.value,
       atUserId: userId.value,
-    }
   })
       .then(async () => {
         content.value = '';

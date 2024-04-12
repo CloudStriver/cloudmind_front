@@ -4,7 +4,7 @@
             <div class="slideshow">
                 <el-carousel height="320px">
                 <el-carousel-item v-for="(slider,index) in sliderList" :key="index">
-                    <img class="small justify-center" :src="slider.imageUrl"></img>
+                    <img class="small justify-center" :src="slider.imageUrl" alt="">
                 </el-carousel-item>
                 </el-carousel>
             </div>  
