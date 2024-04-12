@@ -7,16 +7,16 @@
                     <nav class="nav">
                         <ul>
                             <li>
-                                <label @click="router.push('/posts/hot')"><i class="iconfont icon-mn_remen"></i>热门</label>
+                                <label @click="router.push('/posts/hot')" :class="{checked: navSelect === 'hot'}"><i class="iconfont icon-mn_remen"></i>热门</label>
                             </li>
                             <li>
-                                <label @click="router.push('/posts/recommend')"><i class="iconfont icon-tuijian"></i>推荐</label>
+                                <label @click="router.push('/posts/recommend')" :class="{checked: navSelect === 'recommend'}"><i class="iconfont icon-tuijian"></i>推荐</label>
                             </li>
                             <li>
-                                <label @click="router.push('/posts/follow')"><i class="iconfont icon-guanzhu"></i>关注</label>
+                                <label @click="router.push('/posts/follow')" :class="{checked: navSelect === 'follow'}"><i class="iconfont icon-guanzhu"></i>关注</label>
                             </li>
                             <li>
-                                <label @click="router.push('/posts/new')"><i class="iconfont icon-zuixin"></i>最新</label>
+                                <label @click="router.push('/posts/new')" :class="{checked: navSelect === 'new'}"><i class="iconfont icon-zuixin"></i>最新</label>
                             </li>
                         </ul>
                     </nav>
@@ -660,4 +660,9 @@ const loadMorePosts = async () => {
         }
     }
 }
+
+.checked {
+  color: #1890ff; /* 蓝色 */
+}
+
 </style>
