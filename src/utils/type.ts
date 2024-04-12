@@ -130,6 +130,8 @@ export type Comment =  {
     attrs: number,
     tags: string[],
     author: SimpleUser,
+    tags: string[],
+    userId: string,
     atUserId: string,
     content: string,
     meta: string,

@@ -104,6 +104,7 @@ import {CreateCommentUrl, GetCommentsUrl} from "@/utils/consts";
 import {get, post} from "@/utils/request";
 import type {Comment} from "@/utils/type"
 import {enterUser, turnTime} from "@/utils/utils";
+import {turnTime} from "@/utils/utils";
 import {useRoute} from "vue-router";
 import {errorMsg} from "@/utils/message";
 const store = useStore()
@@ -145,6 +146,7 @@ const getComment = async (fatherId: string) => {
           attrs: comment.attrs,
           tags: comment.tags,
           author: comment.author,
+          userId: comment.userId,
           atUserId: comment.atUserId,
           content: comment.content,
           meta: comment.meta,

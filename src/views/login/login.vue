@@ -60,7 +60,7 @@
                             >
                             <label class="checkbox-lable" for="checkbox">自动登录</label>
                         </div>
-                        <div class="forget">忘记密码?</div>
+                        <div class="forget" @click="router.push('/forget')">忘记密码?</div>
                     </div>
                     <button class="login-button" @click="login">登 录</button>
                     <div class="agreements">
