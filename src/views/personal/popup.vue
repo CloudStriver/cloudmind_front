@@ -139,7 +139,7 @@ import {getPrivateFilesList, postCreateFile, postMoveFile, postDeleteFile, postC
 import type { responsePrivateFilesList, requestCreateFile } from './utils'
 import { errorMsg, successMsg } from '@/utils/message';
 import {StoragePathId, StoragePathName} from "@/utils/consts";
-
+import type {File} from "@/utils/type"
 const emit = defineEmits(['sendOperations', 'sendRenameMsg'])
 const renameMsg = ref({
     fileId: "",
@@ -148,17 +148,7 @@ const renameMsg = ref({
 const props = defineProps<{
     sendContents: {
         option: string,
-        contents: {
-            fileId: string,
-            userId: string,
-            name: string,
-            type: string,
-            path: string,
-            fatherId: string,
-            spaceSize: string,
-            createAt: string,
-            updateAt: string
-        }[]
+        contents: File[]
     }
 }>()
 const details = ref("")
@@ -168,23 +158,7 @@ const isMoveCreateFolder = ref(false)
 const detailsTop = ref(0)
 const detailsLeft = ref(0)
 const foldersList = ref<responsePrivateFilesList>({
-    files: [
-        {
-            fileId: '',
-            userId: '',
-            name: '',
-            type: '',
-            path: '',
-            fatherId: '',
-            spaceSize: '',
-            isDel: 0,
-            zone: '',
-            subZone: '',
-            description: '',
-            updateAt: '',
-            createAt: '',
-        }
-    ],
+    files: [],
     total: 0,
     token: '',
     fatherIdPath: '',

@@ -82,6 +82,7 @@ const props = defineProps(['link'])
 watch(() => props.link, (newVal) => {
     if (newVal) {
         fatherId.value = newVal
+        console.log("!!!")
         router.push('/personal/' + newVal)
     }
 })

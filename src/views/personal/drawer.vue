@@ -195,6 +195,8 @@ watch(selectType, (newVal) => {
     }
     else {
         const pathList = (sessionStorage.getItem(StoragePathId) as string).split("/")
+        console.log(sessionStorage.getItem(StoragePathId) as string)
+        console.log(pathList)
         router.push('/personal/' + pathList[pathList.length - 1])
         emit('sendDrawerOptions', 'showFiles')
         emit('sendDrawerSelectType', newVal)
@@ -204,6 +206,9 @@ watch(selectType, (newVal) => {
 watch(() => props.sendRequest, () => {
     if (props.sendRequest.option === 'createFolder') {
         isShowCreateFolder.value = true
+    }
+    else if(props.sendRequest.option === 'uploadFile') {
+      // uploadFiles($event)
     }
 })
 
@@ -244,11 +249,10 @@ const createFolder = () => {
             spaceSize: getFileSize(data.spaceSize),
             md5: data.md5,
             isDel: 0,
-            zone: "",
-            subZone: "",
             description: "",
             createAt: new Date().toLocaleString(),
             updateAt: new Date().toLocaleString(),
+            isChoose: false,
         }
         isShowCreateFolder.value = false
         // newFolderName.value = res.name
@@ -294,11 +298,10 @@ const uploadFiles = (event: any) => {
                         spaceSize: getFileSize(file.size),
                         md5,
                         isDel: 0,
-                        zone: "",
-                        subZone: "",
                         description: "",
                         createAt: new Date().toLocaleString(),
                         updateAt: new Date().toLocaleString(),
+                        isChoose: false,
                     }
                     filesCount.value--
                     if (filesCount.value === 0) {

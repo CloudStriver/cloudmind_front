@@ -104,23 +104,7 @@ const props = defineProps<{
 }>()
 //存储页面文件列表
 const nowFilesList = ref<responsePrivateFilesList>({
-    files: [
-        {
-            fileId: '',
-            userId: '',
-            name: '',
-            type: '',
-            path: '',
-            fatherId: '',
-            spaceSize: '',
-            isDel: 0,
-            zone: '',
-            subZone: '',
-            description: '',
-            updateAt: '',
-            createAt: '',
-        }
-    ],
+    files: [],
     total: 0,
     token: '',
     fatherIdPath: '',
@@ -130,6 +114,7 @@ const nowFilesList = ref<responsePrivateFilesList>({
 
 onMounted(async() => {
     fatherId.value = getPersonalFatherId()
+    console.log(fatherId.value)
     if (fatherId.value !== 'recycle') {
         nowFilesList.value = await getPrivateFilesList({
             limit: 100,
@@ -138,6 +123,7 @@ onMounted(async() => {
             backward: true,
             onlyFatherId: fatherId.value
         })
+        console.log(nowFilesList.value)
         sessionStorage.setItem(StoragePathId, nowFilesList.value.fatherIdPath)
         sessionStorage.setItem(StoragePathName, nowFilesList.value.fatherNamePath)
         emit('loading', true)
@@ -164,9 +150,12 @@ onBeforeRouteUpdate(async(to) => {
 })
 
 watch(() => store.tempFileData, (newVal) => {
+  console.log("change!!!")
+  console.log(nowFilesList.value.files);
+  console.log(newVal)
     nowFilesList.value.files.unshift(newVal)
-    console.log(nowFilesList.value.files);
-    
+  console.log(nowFilesList.value.files);
+
 })
 watch(() => props.sendRequest, async() => {
   switch (props.sendRequest.option) {
@@ -222,6 +211,24 @@ watch(() => props.sendRequest, async() => {
         emit('sendOptions', props.sendRequest.option)
         emit('sendDetails', fileDetails.value)
         break
+    case 'flashPage':
+      fatherId.value = getPersonalFatherId()
+        nowFilesList.value = await getPrivateFilesList({
+          limit: 100,
+          offset: 0,
+          sortType: sortType.value,
+          backward: true,
+          onlyFatherId: fatherId.value
+        })
+        sessionStorage.setItem(StoragePathId, nowFilesList.value.fatherIdPath)
+        sessionStorage.setItem(StoragePathName, nowFilesList.value.fatherNamePath)
+        emit('loading', true)
+        break
+    case 'cleanOutFile':
+      getRecycleFileDetails()
+      emit('sendOptions', props.sendRequest.option)
+      emit('sendDetails', fileDetails.value)
+      break
     default:
         console.log('其他操作')
         break
@@ -304,11 +311,10 @@ const dropUploadFile = (event: any) => {
                     spaceSize: getFileSize(file.size),
                     md5,
                     isDel: 0,
-                    zone: "",
-                    subZone: "",
                     description: "",
                     createAt: new Date().toLocaleString(),
                     updateAt: new Date().toLocaleString(),
+                    isChoose: false,
                 }
             })
         })

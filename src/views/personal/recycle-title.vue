@@ -13,6 +13,8 @@
                     <input 
                         type="checkbox"
                         id="recycleAllSelect"
+                        v-model="selectCheck"
+                        @click="AllSelect"
                     >全选
                 </label>
             </div>
@@ -31,13 +33,25 @@
 import {post} from "@/utils/request";
 import {successMsg} from "@/utils/message";
 import {EmptyRecycleBinUrl} from "@/utils/consts";
+import {ref} from "vue";
+const selectCheck = ref<Boolean>(false)
 const emit = defineEmits(['sendRecycleTitleOptions'])
 const cleanOutRecycle = () => {
   post(false, EmptyRecycleBinUrl)
       .then(() => {
         successMsg('成功清空回收站')
-        emit('sendRecycleTitleOptions', "cleanOutRecycle")
+        emit('sendRecycleTitleOptions', {
+          option: "cleanOutRecycle",
+          msg: "",
+        })
       })
+}
+
+const AllSelect = () => {
+  emit('sendRecycleTitleOptions', {
+    option: "AllSelect",
+    msg: selectCheck.value,
+  })
 }
 </script>
 

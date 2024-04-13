@@ -28,11 +28,10 @@ export const useStore = defineStore('user', {
                 spaceSize: "",
                 md5: "",
                 isDel: 0,
-                zone: "",
-                subZone: "",
                 description: "",
                 updateAt: "",
                 createAt: "",
+                isChoose: false,
             }
         }
     },

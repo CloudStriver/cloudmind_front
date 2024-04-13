@@ -81,8 +81,13 @@ const cancelShowPop = (e: MouseEvent) => {
 }
 
 watch(() => props.RecycleMsg, () => {
+  console.log(props.RecycleMsg.option)
   if(props.RecycleMsg.option == "cleanOutRecycle") {
     recycleFilesList.value.files = [];
+  } else if(props.RecycleMsg.option == "AllSelect") {
+    recycleFilesList.value.files.forEach(file => {
+      file.isChoose = props.RecycleMsg.message === "true";  // 将每个元素的 isChoose 属性设置为 true
+    });
   }
 })
 
