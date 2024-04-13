@@ -36,59 +36,65 @@
                             <i class="iconfont icon-appreciate_light"></i>
                             <span>{{ commentBlock.comment.like }}</span>
                         </span>
-                        <span @click="replyComment(
+                        <span 
+                            class="reply-btn"
+                            @click="replyComment(
                                     commentBlock.comment.commentId,
                                     commentBlock.comment.commentId,
                                     commentBlock.comment.author.userId,
                                     commentBlock.comment.author.name
                                   )">回复
                         </span>
-                        <span @click="deleteComment(commentBlock.comment.commentId)">删除</span>
+                        <span class="delete-reply-btn" @click="deleteComment(commentBlock.comment.commentId)">删除</span>
                     </div>
                     <div class="reply-item" v-for="(reply, index) in commentBlock.replyList.comments" :key="index">
-                      <div v-if="index < 3 || isExpanded">
-                        <div class="image">
-                            <img :src="reply.author.url" alt="">
-                        </div>
-                        <div class="reply-detail">
-                            <div class="reply">
-                                <span class="name">{{ reply.author.name }}</span>
-                                <span class="contents">{{reply.content}}</span>
+                        <div v-if="index < 3 || isExpanded" class="reply-limit">
+                            <div class="image">
+                                <img :src="reply.author.url" alt="">
                             </div>
-                            <div class="footer">
-                                <span class="time">{{turnTime(reply.createTime)}}</span>
-                                <span class="agree">
-                                    <i class="iconfont icon-appreciate_light"></i>
-                                    <span>{{ reply.like }}</span>
-                                </span>
-                                <span
-                                    @click="replyComment(
-                                            reply.commentId,
-                                            commentBlock.comment.commentId,
-                                            reply.author.userId,
-                                            reply.author.name
-                                        )">回复
-                                </span>
-                                <span @click="deleteComment(reply.commentId)">删除</span>
+                            <div class="reply-detail">
+                                <div class="reply">
+                                    <span class="name">{{ reply.author.name }}</span>
+                                    <span class="contents">{{reply.content}}</span>
+                                </div>
+                                <div class="footer">
+                                    <span class="time">{{turnTime(reply.createTime)}}</span>
+                                    <span class="agree">
+                                        <i class="iconfont icon-appreciate_light"></i>
+                                        <span>{{ reply.like }}</span>
+                                    </span>
+                                    <span
+                                        class="reply-btn"
+                                        @click="replyComment(
+                                                reply.commentId,
+                                                commentBlock.comment.commentId,
+                                                reply.author.userId,
+                                                reply.author.name
+                                            )">回复
+                                    </span>
+                                    <span class="delete-reply-btn" @click="deleteComment(reply.commentId)">删除</span>
+                                </div>
                             </div>
                         </div>
-                      </div>
                     </div>
                     <div class="more-comments">
-                        <span v-if="commentBlock.replyList.total > 10">共{{commentBlock.replyList.total / 10}} 页,</span>
+                        <span v-if="commentBlock.replyList.total > 10 && !isExpanded">共{{ getPages(commentBlock.replyList.total) }} 页,</span>
                         <span class="more" v-if="commentBlock.replyList.comments.length > 3 && !isExpanded" @click="isExpanded = true">查看更多</span>
+                        <span v-if="isExpanded">
+                            <el-pagination layout="prev, pager, next" :total="commentBlock.replyList.total" />
+                        </span>
                     </div>
-                  <div class="my-comment" v-if="commentBlock.comment.commentId === replyRootId">
-                    <div class="image">
-                      <img :src="store.getUserAvatar()" alt="">
+                    <div class="my-comment" v-if="commentBlock.comment.commentId === replyRootId">
+                        <div class="image">
+                        <img :src="store.getUserAvatar()" alt="">
+                        </div>
+                        <input
+                            type="text"
+                            :placeholder="`回复@${replyAtUserName}`"
+                            @keyup.enter="submitComment(postId,commentBlock.comment.commentId, replyCommentId, subContent, replyAtUserId)"
+                            v-model="subContent"
+                        >
                     </div>
-                    <input
-                        type="text"
-                        :placeholder="`回复@${replyAtUserName}`"
-                        @keyup.enter="submitComment(postId,commentBlock.comment.commentId, replyCommentId, subContent, replyAtUserId)"
-                        v-model="subContent"
-                    >
-                  </div>
                 </div>
             </div>
         </div>
@@ -132,6 +138,10 @@ watch(() => props.PostData.PostId, async () => {
   commentCount.value = props.PostData.CommentCount
   commentList.value = await getComments(postId.value)
 })
+
+const getPages = (total: number) => {
+  return Math.ceil(total / 10)
+}
 
 const deleteComment = async(commentId: string) => {
   await post(false, DeleteCommentUrl, {
@@ -279,6 +289,7 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
             margin-bottom: 20px;
             display: flex;
 
+
             .image {
                 width: 40px;
                 height: 40px;
@@ -317,8 +328,11 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
 
                     .time,
                     .agree,
-                    .disagree {
+                    .disagree,
+                    .reply-btn,
+                    .delete-reply-btn {
                         margin-right: 10px;
+                        cursor: pointer;
 
                         i {
                             margin-right: 3px;
@@ -328,42 +342,42 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
 
                 .reply-item {
                     width: 100%;
-                    margin-bottom: 10px;
-                    display: flex;
 
-                    .image {
-                        width: 35px;
-                        height: 35px;
-                        margin-right: 20px;
-
-                        img {
-                            width: 100%;
-                            height: 100%;
-                            border-radius: 50%;
-                        }
-                    }
-
-                    .reply-detail {
+                    .reply-limit {
                         display: flex;
-                        flex-direction: column;
-
-                        .reply {
-                            margin-bottom: 8px;
-
-                            .name {
-                                color: #5c5c5c;
-                                margin-right: 10px;
+                        .image {
+                            width: 35px;
+                            height: 35px;
+                            margin-right: 20px;
+    
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                border-radius: 50%;
                             }
-
-                            .contents {
-                                font-size: 15px;
+                        }
+    
+                        .reply-detail {
+                            display: flex;
+                            flex-direction: column;
+    
+                            .reply {
+                                margin-bottom: 8px;
+    
+                                .name {
+                                    color: #5c5c5c;
+                                    margin-right: 10px;
+                                }
+    
+                                .contents {
+                                    font-size: 15px;
+                                }
                             }
                         }
                     }
                 }
 
                 .more-comments {
-                    margin-top: -15px;
                     margin-bottom: 10px;
                     color: #a0a0a0;
                     font-size: 13px;
