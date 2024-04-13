@@ -36,13 +36,17 @@
                             <i class="iconfont icon-appreciate_light"></i>
                             <span>{{ commentBlock.comment.like }}</span>
                         </span>
-<!--                        <span class="disagree">-->
-<!--                            <i class="iconfont icon-oppose_light"></i>-->
-<!--                            <span>colabels</span>-->
-<!--                        </span>-->
-                        <span @click="replyComment(commentBlock.comment.commentId, commentBlock.comment.commentId, commentBlock.comment.author.userId)">回复</span>
+                        <span @click="replyComment(
+                                    commentBlock.comment.commentId,
+                                    commentBlock.comment.commentId,
+                                    commentBlock.comment.author.userId,
+                                    commentBlock.comment.author.name
+                                  )">回复
+                        </span>
+                        <span @click="deleteComment(commentBlock.comment.commentId)">删除</span>
                     </div>
-                    <div class="reply-item" v-for="(reply, index) in commentBlock.replyList.comments">
+                    <div class="reply-item" v-for="(reply, index) in commentBlock.replyList.comments" :key="index">
+                      <div v-if="index < 3 || isExpanded">
                         <div class="image">
                             <img :src="reply.author.url" alt="">
                         </div>
@@ -57,17 +61,22 @@
                                     <i class="iconfont icon-appreciate_light"></i>
                                     <span>{{ reply.like }}</span>
                                 </span>
-                                <span class="disagree">
-                                    <i class="iconfont icon-oppose_light"></i>
-                                    <span>888</span>
+                                <span
+                                    @click="replyComment(
+                                            reply.commentId,
+                                            commentBlock.comment.commentId,
+                                            reply.author.userId,
+                                            reply.author.name
+                                        )">回复
                                 </span>
-                                <span @click="replyComment(reply.commentId, commentBlock.comment.commentId, reply.author.userId)">回复</span>
+                                <span @click="deleteComment(reply.commentId)">删除</span>
                             </div>
                         </div>
+                      </div>
                     </div>
                     <div class="more-comments">
-                        <span>共{{commentBlock.replyList.total}}条回复,</span>
-                        <span class="more">查看更多</span>
+                        <span v-if="commentBlock.replyList.total > 10">共{{commentBlock.replyList.total / 10}} 页,</span>
+                        <span class="more" v-if="commentBlock.replyList.comments.length > 3 && !isExpanded" @click="isExpanded = true">查看更多</span>
                     </div>
                   <div class="my-comment" v-if="commentBlock.comment.commentId === replyRootId">
                     <div class="image">
@@ -75,7 +84,7 @@
                     </div>
                     <input
                         type="text"
-                        placeholder="写下你的评论吧~"
+                        :placeholder="`回复@${replyAtUserName}`"
                         @keyup.enter="submitComment(postId,commentBlock.comment.commentId, replyCommentId, subContent, replyAtUserId)"
                         v-model="subContent"
                     >
@@ -88,7 +97,7 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from 'vue'
 import {useStore} from "@/store";
-import {CreateCommentUrl, GetCommentBlocksUrl, GetCommentsUrl} from "@/utils/consts";
+import {CreateCommentUrl, DeleteCommentUrl, GetCommentBlocksUrl, GetCommentsUrl} from "@/utils/consts";
 import {get, post} from "@/utils/request";
 import type {CommentBlock} from "@/utils/type"
 import {enterUser, turnTime} from "@/utils/utils";
@@ -104,6 +113,8 @@ const replyCommentId = ref<string>("")
 const replyRootId = ref<string>("")
 const subContent = ref<string>("")
 const replyAtUserId = ref<string>("")
+const replyAtUserName = ref<string>("")
+const isExpanded = ref<boolean>(false)
 const props = defineProps<{
   PostData: {
     PostId: string,
@@ -122,19 +133,27 @@ watch(() => props.PostData.PostId, async () => {
   commentList.value = await getComments(postId.value)
 })
 
-const replyComment = (replyId: string, rootId: string, atUserId: string) => {
-  console.log(replyCommentId.value, replyRootId.value)
-  if(replyCommentId.value === "") {
+const deleteComment = async(commentId: string) => {
+  await post(false, DeleteCommentUrl, {
+        commentId: commentId
+  })
+      .then(async() => {
+        commentCount.value = props.PostData.CommentCount
+        commentList.value =  await getComments(postId.value)
+      })
+}
+const replyComment = (replyId: string, rootId: string, atUserId: string, AtUserName: string) => {
+  if(replyCommentId.value !== replyId) {
     replyCommentId.value = replyId
     replyRootId.value = rootId
     replyAtUserId.value = atUserId
+    replyAtUserName.value = AtUserName
   } else {
     replyCommentId.value = ''
     replyRootId.value = ''
     replyAtUserId.value = ''
+    replyAtUserName.value = ''
   }
-  console.log(replyCommentId.value, replyRootId.value)
-
 }
 
 const getComments = async(fatherId: string) => {

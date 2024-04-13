@@ -1,5 +1,12 @@
 import { defineStore } from 'pinia'
-import {StorageAutoLogin, StorageDoGetUser, StorageLongToken, StorageShortToken, StorageUserId} from "@/utils/consts";
+import {
+    StorageAutoLogin,
+    StorageAvatarUrl,
+    StorageDoGetUser,
+    StorageLongToken,
+    StorageShortToken,
+    StorageUserId
+} from "@/utils/consts";
 
 export const useStore = defineStore('user', {
     state: () =>{
@@ -47,6 +54,12 @@ export const useStore = defineStore('user', {
             this.fatherId = fatherId
         },
         getUserAvatar() {
+            if (sessionStorage.getItem(StorageAvatarUrl) !== null) {
+                this.userAvatar = sessionStorage.getItem(StorageAvatarUrl) as string
+            }
+            else if (localStorage.getItem(StorageAvatarUrl) !== null) {
+                this.userAvatar = localStorage.getItem(StorageAvatarUrl) as string
+            }
             return this.userAvatar
         },
         getUserId () {

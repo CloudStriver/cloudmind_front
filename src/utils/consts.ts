@@ -121,6 +121,7 @@ export const GetSlidersUrl = "/system/getSliders"
 export const GetCommentsUrl = "/comment/getComments"
 export const CreateCommentUrl = "/comment/createComment"
 export const GetCommentBlocksUrl = "/comment/getCommentBlocks"
+export const DeleteCommentUrl = "/comment/deleteComment"
 // ----------------------------------------Storage----------------------------------------------------------------------
 
 export const StorageDoGetUser = "DoGetUser" // 是否获取过用户信息
