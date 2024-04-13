@@ -22,6 +22,7 @@
                     class="file-options"
                     :style="{left: filePopupLeft + 'px', top: filePopupTop + 'px'}"
                     @sendFilePopupOptions = "getFilePopupOptionType"
+                    :AllSelect="AllSelect"
                 ></FileOption>
                 <Files 
                     v-if="isShowFiles"
@@ -55,6 +56,7 @@ import FileOption from './fileOption.vue'
 import router from '@/router'
 import { ref } from 'vue'
 import {StoragePathId} from "@/utils/consts";
+import {send} from "vite";
 const RecycleMsg = ref({
     option: "",
     message: "",
@@ -68,17 +70,7 @@ const requestDrawerMessage = ref({
 })
 const fileContents = ref({
     option: "",
-    contents: [{
-        fileId: "",
-        userId: "",
-        name: "",
-        type: "",
-        path: "",
-        fatherId: "",
-        spaceSize: "",
-        createAt: "",
-        updateAt: ""
-    }]
+    contents: [],
 })
 
 const requestPathMessage = ref({
@@ -93,12 +85,13 @@ const isShowPopup = ref(false)
 const isClickFile = ref(false)
 const isShowFiles = ref(!location.href.includes('recycle'))
 let isFirst = false
-
+const AllSelect = ref<boolean>(false)
 const getPathMsg = (sendPathMsg: any) => {
     requestMessage.value = {
         option: sendPathMsg.option,
         message: sendPathMsg.message
     }
+    AllSelect.value = !AllSelect.value
 }
 
 const getFilePopupOptionType = (sendFilePopupOptions: string) => {
@@ -121,6 +114,23 @@ const getFilePopupOptionType = (sendFilePopupOptions: string) => {
         requestDrawerMessage.value = {
             option: sendFilePopupOptions
         }
+    }
+    else if(sendFilePopupOptions === 'flashPage') {
+      requestMessage.value = {
+        option: sendFilePopupOptions,
+        message: ""
+      }
+    }
+    else if(sendFilePopupOptions === 'uploadFile') {
+      requestDrawerMessage.value = {
+        option: sendFilePopupOptions
+      }
+    }
+    else if(sendFilePopupOptions === 'cleanOutFile') {
+      requestMessage.value = {
+        option: sendFilePopupOptions,
+        message: ""
+      }
     }
 }
 
@@ -153,11 +163,16 @@ const showFileOperation = (e: any) => {
     })
 }
 
-const getRecycleTitleOptions = (sendRecycleTitleOptions: string) => {
-    if(sendRecycleTitleOptions === 'cleanOutRecycle') {
+const getRecycleTitleOptions = (sendRecycleTitleOptions: any) => {
+    if(sendRecycleTitleOptions.option === 'cleanOutRecycle') {
       RecycleMsg.value = {
-        option: sendRecycleTitleOptions,
+        option: sendRecycleTitleOptions.option,
         message: "",
+      }
+    } else if(sendRecycleTitleOptions.option === 'AllSelect') {
+      RecycleMsg.value = {
+        option: sendRecycleTitleOptions.option,
+        message: (sendRecycleTitleOptions.msg !== true) ? "true": "false",
       }
     }
 }

@@ -121,20 +121,33 @@ export type SimpleUser =  {
     url: string,
 }
 export type Comment =  {
-    id: string,
+    commentId: string,
     subjectId: string,
     rootId: string,
     fatherId: string,
     count: number,
     state: number,
     attrs: number,
-    tags: string[],
+    labels: string[],
     author: SimpleUser,
     atUserId: string,
     content: string,
     meta: string,
     createTime: 0,
-    like: 0
+    like: 0,
+    commentRelation: {
+        liked: boolean,
+        hated: boolean
+    }
+}
+
+export type CommentBlock = {
+    comment: Comment,
+    replyList: {
+        comments: Comment[],
+        total: number
+        token: string
+    }
 }
 
 // 文件信息
@@ -152,3 +165,4 @@ export type File =  {
     createAt: string;
     isChoose: boolean;
 }
+

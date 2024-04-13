@@ -9,28 +9,11 @@ import {
     DeleteFileUrl,
     GetPrivateFilesUrl,
     GetRecycleBinFilesUrl,
-    MoveFileUrl
+    MoveFileUrl, StoragePath
 } from "@/utils/consts";
-
+import type {File} from "@/utils/type"
 //------------------------------------------------------------interface
 
-// 文件信息
-interface File {
-    fileId: string;
-    userId: string;
-    name: string;
-    type: string;
-    path: string;
-    fatherId: string;
-    spaceSize: string;
-    isDel: number;
-    zone: string;
-    subZone: string;
-    description: string;
-    updateAt: string;
-    createAt: string;
-    isChoose: boolean;
-}
 
 //搜索/查看用户文件列表的参数
 export interface requestPrivateFilesList {
@@ -48,25 +31,10 @@ export interface requestPrivateFilesList {
     onlyFatherId?: string;
 }
 
+
 //搜索/查看用户文件列表的返回
 export interface responsePrivateFilesList {
-    files: [
-        {
-            fileId: string,
-            userId: string,
-            name: string,
-            type: string,
-            path: string
-            fatherId: string,
-            spaceSize: string,
-            isDel: number,
-            zone: string,
-            subZone: string,
-            description: string,
-            updateAt: string,
-            createAt: string,
-        }
-    ],
+    files: File[],
     total: number,
     token: string,
     fatherIdPath: string,
@@ -91,8 +59,6 @@ export interface fileData {
     fatherId: string,
     spaceSize: string,
     isDel: number,
-    zone: string,
-    subZone: string,
     description: string,
     updateAt: string,
     createAt: string,
@@ -158,24 +124,7 @@ export const postDeleteFile = async(fileIds: string[]):Promise<void> => {
 //查看回收站文件列表的请求URL
 export const getRecycleFilesList = async(params: requestPrivateFilesList): Promise<responseRecycleFilesList> => {
     const filesList = ref<responseRecycleFilesList>({
-        files: [
-            {
-                fileId: "",
-                userId: "",
-                name: "",
-                type: "",
-                path: "",
-                fatherId: "",
-                spaceSize: "",
-                isDel: 0,
-                zone: "",
-                subZone: "",
-                description: "",
-                updateAt: "",
-                createAt: "",
-                isChoose: false 
-            }
-        ],
+        files: [],
         total: 0,
         token: "",
     })
@@ -211,36 +160,19 @@ export const postCreateFile = async(data: requestCreateFile):Promise<any> => {
     const fileId = ref<string>("")
     await post(true, CreateFileUrl, data)
     .then((res: any) => {
-        fileId.value = res.id
+        fileId.value = res.fileId
         data.name = res.name
     })
     return {
         fileId: fileId.value,
         name: data.name
-    
     }
 }
 
 //请求搜索/查看用户文件列表
 export const getPrivateFilesList = async(params: requestPrivateFilesList): Promise<responsePrivateFilesList> => {
     const filesList = ref<responsePrivateFilesList>({
-        files: [
-            {
-                fileId: "",
-                userId: "",
-                name: "",
-                type: "",
-                path: "",
-                fatherId: "",
-                spaceSize: "",
-                isDel: 0,
-                zone: "",
-                subZone: "",
-                description: "",
-                updateAt: "",
-                createAt: "",
-            }
-        ],
+        files: [],
         total: 0,
         token: "",
         fatherIdPath: "",
@@ -250,13 +182,12 @@ export const getPrivateFilesList = async(params: requestPrivateFilesList): Promi
     .then ((res: any) => {
         filesList.value = {
             files: res.files.map((file: any) => ({
-                fileId: file.id,
+                fileId: file.fileId,
                 userId: file.userId,
                 name: file.name,
                 type: file.type,
                 path: `${res.fatherNamePath}/${file.name}`,
                 fatherId: file.fatherId,
-                md5: file.md5,
                 updateAt: turnTime(file.updateAt),
                 createAt: turnTime(file.createAt),
                 spaceSize: getFileSize(file.spaceSize),
@@ -266,6 +197,7 @@ export const getPrivateFilesList = async(params: requestPrivateFilesList): Promi
             fatherIdPath: res.fatherIdPath,
             fatherNamePath: res.fatherNamePath
         }
+        sessionStorage.setItem(StoragePath, res.fatherNamePath)
     })
     return filesList.value
 }

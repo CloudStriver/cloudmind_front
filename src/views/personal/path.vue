@@ -205,6 +205,7 @@ const clickSort = () => {
     isShowSort.value = !isShowSort.value
 }
 const toPath = (index: number) => {
+    console.log("!!!")
     router.push({name: 'personal', params: {fatherId: pathData.value.pathId[index]}})
 }
 
