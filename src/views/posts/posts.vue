@@ -45,7 +45,11 @@
                             :style="{top: zonePopTop + 'px', left: zonePopLeft + 'px'}"
                         >
                             <ul>
-                                <li v-for="(label, index) in secondLabelList" @click="selectLabel(label.id)">{{ label.value }}</li>
+                                <li 
+                                    v-for="(label, index) in secondLabelList" 
+                                    @click="selectLabel(label.id)"
+                                    :key="index"
+                                >{{ label.value }}</li>
                             </ul>
                         </div>
                     </div>

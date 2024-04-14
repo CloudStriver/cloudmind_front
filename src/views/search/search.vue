@@ -128,7 +128,11 @@
                         </div>
                     </div>
                     <div class="content-post-box" v-if="selectContent === 'post'"> <!-- v-if="帖子" -->
-                        <div class="content" v-for="(post, index) in postList">
+                        <div 
+                            class="content" 
+                            v-for="(post, index) in postList"
+                            :key="index"
+                        >
                             <div class="information">
                                 <h2 @click="enterPost(post.postId)">{{post.title}}</h2>
                                 <p>{{post.text}}</p>
@@ -140,7 +144,11 @@
                         </div>
                     </div>
                     <div class="content-user-box" v-if="selectContent === 'user'"> <!-- v-if="用户" -->
-                        <div class="user-box" v-for="(user, index) in userList">
+                        <div 
+                            class="user-box" 
+                            v-for="(user, index) in userList"
+                            :key="index"
+                        >
                             <div class="user-info">
                                 <div class="image">
                                     <img :src="user.url" alt="">
@@ -148,7 +156,11 @@
                                 <div class="infor">
                                     <p class="name" @click="enterUser(user.userId)">{{user.name}}</p>
                                     <p class="fans">粉丝量：{{user.followedCount}}</p>
-                                    <div class="user-tag" v-for="(label, index) in user.labels">
+                                    <div 
+                                        class="user-tag" 
+                                        v-for="(label, index) in user.labels"
+                                        :key="index"
+                                    >
                                         <span>{{label}}</span>
                                     </div>
                                 </div>

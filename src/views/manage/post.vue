@@ -16,7 +16,8 @@
                             type="radio" 
                             id="post" 
                             name="select-type"
-                            checked
+                            v-model="selectType"
+                            value="post"
                         >
                         <label for="post">帖子</label>
                     </div>
@@ -25,6 +26,9 @@
                             type="radio" 
                             id="comment"
                             name="select-type"
+                            v-model="selectType"
+                            value="comment"
+                            checked
                         >
                         <label for="comment">评论</label>
                     </div>
@@ -32,7 +36,7 @@
                 <section class="section">
                     <div>
                         <div class="section-header">
-                            <div class="section-header-select">
+                            <div class="section-header-select" v-show="selectType === 'post'">
                                 <div class="select-post-box" @click="selectStatus(PostStatusType.None)">
                                     <input 
                                         type="radio"
@@ -73,6 +77,29 @@
                                         :value="PostStatusType.Draft"
                                     >
                                     <label for="draft">草稿</label>
+                                </div>
+                            </div>
+                            <div class="section-header-select" v-show="selectType === 'comment'">
+                                <div class="select-post-box">
+                                    <input 
+                                        type="radio"
+                                        id="create"
+                                        name="select-comment"
+                                        v-model="commentStatus"
+                                        :value="CommentStatusType.Create"
+                                        checked
+                                    >
+                                    <label for="create">我发表的</label>
+                                </div>
+                                <div class="select-post-box">
+                                    <input 
+                                        type="radio"
+                                        id="replied"
+                                        name="select-comment"
+                                        v-model="commentStatus"
+                                        :value="CommentStatusType.Replied"
+                                    >
+                                    <label for="replied">回复我的</label>
                                 </div>
                             </div>
                             <div class="section-header-classify">
@@ -119,7 +146,7 @@
                                 <button class="filter" @click="searchPostsList">搜索</button>
                             </div>
                         </div>
-                        <div class="section-section">
+                        <div class="section-section" v-show="selectType === 'post'">
                             <div 
                                 class="detail"
                                 v-for="(post, index) in postList"
@@ -142,6 +169,37 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="section-section-comment" v-show="selectType === 'comment'">
+                            <div class="comment-create-list">
+                                <div class="comment-item"  v-if="commentStatus === 0">
+                                    <div class="infor">
+                                        <div class="image">
+                                            <img src="" alt="">
+                                        </div>
+                                        <div class="name">用户名</div>
+                                        <div class="time">2021-08-08 12:00</div>
+                                        <div class="other">回复了你的文章</div>
+                                        <div class="title">文章标题</div>
+                                    </div>
+                                    <div class="contents">
+                                        <span>评论内容</span>
+                                    </div>
+                                </div>
+                                <div v-else class="comment-item">
+                                    <div class="infor">
+                                        <span class="me">我</span>
+                                        <span class="time">2023-08-11</span>
+                                        <span class="other">评论了</span>
+                                        <span class="he">name</span>
+                                        <span class="other">的文章</span>
+                                        <span class="title">文章标题</span>
+                                    </div>
+                                    <div class="contents-">
+                                        <span>评论内容</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </div>
@@ -151,22 +209,31 @@
 
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { getMyPostList } from './utils'
 import { successMsg } from '@/utils/message'
 import router from '@/router';
 import { post } from '@/utils/request'
-import {DeletePostUrl, PostStatusType, StoragePostContent, StoragePostId, StoragePostTitle} from "@/utils/consts";
+import { DeletePostUrl, PostStatusType, StoragePostContent, StoragePostId, StoragePostTitle, CommentStatusType } from "@/utils/consts";
 import type {Post} from "@/utils/type";
 
 const onlyStatus = ref(0)
 const keyContent = ref<string>('')
+const commentStatus = ref(0)
+const selectType = ref('comment')
 const nowDeletePostId = ref('')
 const isDeletePost = ref(false)
 const postList = ref<Post[]>([])
 
 onMounted(async() => {
   postList.value = await getMyPostList()
+})
+
+watch(() => selectType.value, async (type) => {
+  selectType.value = type
+})
+watch(() => commentStatus.value, (type) => {
+    commentStatus.value = type
 })
 
 const selectStatus = async (status: PostStatusType) => {
@@ -428,6 +495,71 @@ const searchPostsList = async() => {
                                     margin-right: 20px;
                                     cursor: pointer;
                                 }
+                            }
+                        }
+                    }
+                }
+
+                .section-section-comment {
+                    padding: 20px;
+                    background-color: #fff;
+                    display: block;
+
+                    .comment-create-list {
+                        display: flex;
+                        flex-direction: column;
+
+                        .comment-item {
+                            padding-bottom: 10px;
+                            margin-bottom: 10px;
+                            border-bottom: 1px solid #f1f1f1;
+                            display: flex;
+                            flex-direction: column;
+                            
+                            .infor {
+                                display: flex;
+                                align-items: center;
+                                
+                                .image {
+                                    width: 40px;
+                                    height: 40px;
+                                    border-radius: 50%;
+                                    margin-right: 15px;
+    
+                                    img {
+                                        width: 40px;
+                                        height: 40px;
+                                        border-radius: 50%;
+                                    }
+                                }
+
+                                .name {
+                                    font-size: 16px;
+                                    margin-right: 8px;
+                                    cursor: pointer;
+                                }
+
+                                .me, 
+                                .he {
+                                    margin-right: 8px;
+                                }
+                                
+                                .time,
+                                .other {
+                                    color: #a4a4a4;
+                                    margin-right: 8px;
+                                }
+                                .title {
+                                    color: #4da1e6;
+                                    cursor: pointer;
+                                }
+                            }
+
+                            .contents {
+                                padding-left: 70px;
+                            }
+                            .contents- {
+                                padding-left: 25px;
                             }
                         }
                     }

@@ -53,6 +53,11 @@ export enum PostStatusType {
     Draft = 3
 }
 
+export enum CommentStatusType {
+    Create = 0,
+    Replied = 1
+}
+
 export enum SearchSortType {
     Score = 1,
     CreateTime = 2,

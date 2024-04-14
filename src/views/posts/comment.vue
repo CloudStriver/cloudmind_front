@@ -113,12 +113,11 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from 'vue'
 import {useStore} from "@/store";
-import {CreateCommentUrl, DeleteCommentUrl, GetCommentBlocksUrl, GetCommentsUrl} from "@/utils/consts";
+import {CreateCommentUrl, DeleteCommentUrl, GetCommentBlocksUrl } from "@/utils/consts";
 import {get, post} from "@/utils/request";
 import type {CommentBlock} from "@/utils/type"
 import {enterUser, likeComment, turnTime, unLikeComment} from "@/utils/utils";
 import {errorMsg} from "@/utils/message";
-import {root} from "postcss";
 const store = useStore()
 const commentList = ref<CommentBlock[]>([])
 const content = ref<string>('')

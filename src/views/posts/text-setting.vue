@@ -141,7 +141,10 @@
         <div class="sure-panel">      
             <div class="tags-box-header">
               <div>该文章包含敏感词，是否继续发布</div>
-              <div v-for="(keyword) in keywords">{{ keyword }}</div>
+              <div 
+                v-for="(keyword, index) in keywords"
+                :key="index"
+              >{{ keyword }}</div>
     <!--          <div v-if="keywords && keywords.value.length >= 1" v-for="(keyword, index) in keywords.value[0].keywords.value">-->
     <!--            <div v-if="index !== 0">，</div>-->
     <!--            <div>{{keyword}}</div>-->
