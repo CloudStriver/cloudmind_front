@@ -32,11 +32,19 @@
                     <p class="comment">{{commentBlock.comment.content}}</p>
                     <div class="footer">
                         <span class="time">{{turnTime(commentBlock.comment.createTime)}}</span>
-                        <span class="agree" v-if="!commentBlock.comment.commentRelation.liked" @click="likeComment(commentBlock.comment)">
+                        <span
+                            class="agree"
+                            v-if="!commentBlock.comment.commentRelation.liked"
+                            @click="likeComment(commentBlock.comment)"
+                        >
                             <i class="iconfont icon-appreciate_light"></i>
                             <span>{{ commentBlock.comment.like }}</span>
                         </span>
-                        <span class="agree" v-if="commentBlock.comment.commentRelation.liked" @click="unLikeComment(commentBlock.comment)">
+                        <span
+                            class="agree-like"
+                            v-if="commentBlock.comment.commentRelation.liked"
+                            @click="unLikeComment(commentBlock.comment)"
+                        >
                             <i class="iconfont icon-appreciate_light"></i>
                             <span>{{ commentBlock.comment.like }}</span>
                         </span>
@@ -63,7 +71,19 @@
                                 </div>
                                 <div class="footer">
                                     <span class="time">{{turnTime(reply.createTime)}}</span>
-                                    <span class="agree">
+                                    <span
+                                        class="agree"
+                                        v-if="!reply.commentRelation.liked"
+                                        @click="likeComment(reply)"
+                                    >
+                                        <i class="iconfont icon-appreciate_light"></i>
+                                        <span>{{ reply.like }}</span>
+                                    </span>
+                                  <span
+                                      class="agree-like"
+                                      v-else
+                                      @click="unLikeComment(reply)"
+                                  >
                                         <i class="iconfont icon-appreciate_light"></i>
                                         <span>{{ reply.like }}</span>
                                     </span>
@@ -405,6 +425,15 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
                         i {
                             margin-right: 3px;
                         }
+                    }
+                    .agree-like {
+                      margin-right: 10px;
+                      cursor: pointer;
+
+                      i {
+                        color: #7baaef;
+                        margin-right: 3px;
+                      }
                     }
                 }
 
