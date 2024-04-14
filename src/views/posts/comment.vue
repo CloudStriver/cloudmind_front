@@ -32,7 +32,11 @@
                     <p class="comment">{{commentBlock.comment.content}}</p>
                     <div class="footer">
                         <span class="time">{{turnTime(commentBlock.comment.createTime)}}</span>
-                        <span class="agree">
+                        <span class="agree" v-if="!commentBlock.comment.commentRelation.liked" @click="likeComment(commentBlock.comment)">
+                            <i class="iconfont icon-appreciate_light"></i>
+                            <span>{{ commentBlock.comment.like }}</span>
+                        </span>
+                        <span class="agree" v-if="commentBlock.comment.commentRelation.liked" @click="unLikeComment(commentBlock.comment)">
                             <i class="iconfont icon-appreciate_light"></i>
                             <span>{{ commentBlock.comment.like }}</span>
                         </span>
@@ -48,7 +52,7 @@
                         <span class="delete-reply-btn" @click="deleteComment(commentBlock.comment.commentId)">删除</span>
                     </div>
                     <div class="reply-item" v-for="(reply, index) in commentBlock.replyList.comments" :key="index">
-                        <div v-if="index < 3 || isExpanded" class="reply-limit">
+                        <div v-if="index < 3 || commentBlock.isExpand" class="reply-limit">
                             <div class="image">
                                 <img :src="reply.author.url" alt="">
                             </div>
@@ -78,11 +82,17 @@
                         </div>
                     </div>
                     <div class="more-comments">
-                        <span v-if="commentBlock.replyList.total > 10 && !isExpanded">共{{ getPages(commentBlock.replyList.total) }} 页,</span>
-                        <span class="more" v-if="commentBlock.replyList.comments.length > 3 && !isExpanded" @click="isExpanded = true">查看更多</span>
-                        <span v-if="isExpanded">
-                            <el-pagination layout="prev, pager, next" :total="commentBlock.replyList.total" />
-                        </span>
+                        <div class="pagination-container" v-if="commentBlock.isExpand">
+                          <span v-if="commentBlock.replyList.total > 10">共 {{ getPages(commentBlock.replyList.total) }} 页</span>
+                          <el-pagination
+                              layout="prev, pager, next"
+                              :total="commentBlock.replyList.total"
+                              :hide-on-single-page="true"
+                              @update:current-page="handlePageChange($event, commentBlock, index)"
+                          />
+                        </div>
+                        <span v-else>共{{commentBlock.replyList.total}}条回复</span>
+                        <span class="more" v-if="commentBlock.replyList.comments.length > 3 && !commentBlock.isExpand" @click="commentBlock.isExpand = true">查看更多</span>
                     </div>
                     <div class="my-comment" v-if="commentBlock.comment.commentId === replyRootId">
                         <div class="image">
@@ -106,7 +116,7 @@ import {useStore} from "@/store";
 import {CreateCommentUrl, DeleteCommentUrl, GetCommentBlocksUrl, GetCommentsUrl} from "@/utils/consts";
 import {get, post} from "@/utils/request";
 import type {CommentBlock} from "@/utils/type"
-import {enterUser, turnTime} from "@/utils/utils";
+import {enterUser, likeComment, turnTime, unLikeComment} from "@/utils/utils";
 import {errorMsg} from "@/utils/message";
 import {root} from "postcss";
 const store = useStore()
@@ -120,7 +130,7 @@ const replyRootId = ref<string>("")
 const subContent = ref<string>("")
 const replyAtUserId = ref<string>("")
 const replyAtUserName = ref<string>("")
-const isExpanded = ref<boolean>(false)
+const replyPage = ref<number>(1)
 const props = defineProps<{
   PostData: {
     PostId: string,
@@ -136,8 +146,16 @@ watch(() => props.PostData.PostId, async () => {
   postId.value = props.PostData.PostId
   userId.value = props.PostData.UserId
   commentCount.value = props.PostData.CommentCount
-  commentList.value = await getComments(postId.value)
+  commentList.value = await getComments(postId.value, postId.value)
 })
+
+const handlePageChange = async (number: any, commentBlock: CommentBlock, index: number) => {
+  replyPage.value = number
+  await getComments(commentBlock.comment.commentId, postId.value)
+      .then((res:any) => {
+        commentList.value[index] = res[0]
+      })
+};
 
 const getPages = (total: number) => {
   return Math.ceil(total / 10)
@@ -149,7 +167,7 @@ const deleteComment = async(commentId: string) => {
   })
       .then(async() => {
         commentCount.value = props.PostData.CommentCount
-        commentList.value =  await getComments(postId.value)
+        commentList.value =  await getComments(postId.value, postId.value)
       })
 }
 const replyComment = (replyId: string, rootId: string, atUserId: string, AtUserName: string) => {
@@ -166,13 +184,14 @@ const replyComment = (replyId: string, rootId: string, atUserId: string, AtUserN
   }
 }
 
-const getComments = async(fatherId: string) => {
+const getComments = async(fatherId: string, subjectId: string) => {
   const comments = ref<CommentBlock[]>([])
-  await get(false, `${GetCommentBlocksUrl}?fatherId=${fatherId}&subjectId=${fatherId}`)
+  await get(false, `${GetCommentBlocksUrl}?rootId=${fatherId}&subjectId=${subjectId}&limit=10&offset=${10 * (replyPage.value - 1)}`)
       .then((res: any) => {
         comments.value =  res.commentBlocks.map((commentBlock:any) => ({
           comment: commentBlock.rootComment,
           replyList: commentBlock.replyList,
+          isExpand: false,
         }))
       })
   return comments.value
@@ -194,7 +213,6 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
       .then(async () => {
         content.value = '';
         commentCount.value ++;
-        commentList.value = await getComments(postId.value)
       })
 }
 </script>
@@ -390,5 +408,16 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
             }
         }
     }
+}
+
+.pagination-container {
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: space-between; /* 元素之间的空间平均分配 */
+  width: 100%; /* 或根据实际需要调整宽度 */
+}
+
+.pagination-container span {
+  margin-right: 20px; /* 为页数信息添加一些右边距 */
 }
 </style>

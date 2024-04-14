@@ -148,6 +148,7 @@ export type CommentBlock = {
         total: number
         token: string
     }
+    isExpand: boolean
 }
 
 // 文件信息

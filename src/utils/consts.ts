@@ -4,7 +4,8 @@
 export enum TargetType {
     User = 1,
     File = 2,
-    Post = 3
+    Post = 3,
+    Comment = 4,
 }
 
 export enum RelationType {

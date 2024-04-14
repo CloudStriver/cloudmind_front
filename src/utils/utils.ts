@@ -8,7 +8,7 @@ import {
     RelationType,
     TargetType, UpdatePostUrl
 } from "@/utils/consts";
-import type {HotUser, Label, Post, PostDetail, PostInfo, User} from "@/utils/type";
+import type {HotUser, Label, Post, PostDetail, PostInfo, User, Comment} from "@/utils/type";
 import {get, post} from "@/utils/request";
 import {ref} from "vue";
 import router from "@/router";
@@ -287,4 +287,27 @@ export const splitDescription = (text: string) => {
 export const splitContents = (content: string) => {
     if (content.length > 80) return content.slice(0, 80) + '...'
     return content
+}
+
+
+export const likeComment = async (comment: Comment) => {
+    await CreateRelation({
+        toId: comment.commentId,
+        toType: TargetType.Comment,
+        relationType: RelationType.Like,
+    }).then(() => {
+        comment.commentRelation.liked = true
+        comment.like++
+    })
+}
+
+export const unLikeComment = async (comment: Comment) => {
+    await DeleteRelation({
+        toId: comment.commentId,
+        toType: TargetType.Comment,
+        relationType: RelationType.Like,
+    }).then(() => {
+        comment.commentRelation.liked = false
+        comment.like--
+    })
 }

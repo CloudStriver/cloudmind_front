@@ -225,6 +225,9 @@ const renderMarkdown = (md: string | undefined) => {
       hljs: {
         style: 'github'
       },
+      outline: {
+        enable: true
+      }
     })
   }
 }
