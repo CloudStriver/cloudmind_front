@@ -83,13 +83,15 @@
                     </div>
                     <div class="more-comments">
                         <div class="pagination-container" v-if="commentBlock.isExpand">
-                          <span v-if="commentBlock.replyList.total > 10">共 {{ getPages(commentBlock.replyList.total) }} 页</span>
-                          <el-pagination
-                              layout="prev, pager, next"
-                              :total="commentBlock.replyList.total"
-                              :hide-on-single-page="true"
-                              @update:current-page="handlePageChange($event, commentBlock, index)"
-                          />
+                            <span 
+                                v-if="commentBlock.replyList.total > 10"
+                            >共 {{ getPages(commentBlock.replyList.total) }} 页</span>
+                            <el-pagination
+                                layout="prev, pager, next"
+                                :total="commentBlock.replyList.total"
+                                :hide-on-single-page="true"
+                                @update:current-page="handlePageChange($event, commentBlock, index)"
+                            />
                         </div>
                         <span v-else>共{{commentBlock.replyList.total}}条回复</span>
                         <span class="more" v-if="commentBlock.replyList.comments.length > 3 && !commentBlock.isExpand" @click="commentBlock.isExpand = true">查看更多</span>
@@ -107,6 +109,13 @@
                     </div>
                 </div>
             </div>
+            <el-pagination
+                class="el-pagination"
+                layout="prev, pager, next"
+                :total="commentCount"
+                :hide-on-single-page="true"
+                @update:current-page="handlePageChange($event, commentList[0], 0)"
+            />
         </div>
     </div>
 </template>
@@ -316,7 +325,6 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
             margin-bottom: 20px;
             display: flex;
 
-
             .image {
                 width: 40px;
                 height: 40px;
@@ -415,6 +423,16 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
                     }
                 }
             }
+
+            .more-comment {
+                height: 100px;
+            }
+        }
+
+        .el-pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
         }
     }
 }
@@ -422,7 +440,6 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
 .pagination-container {
   display: flex;
   align-items: center; /* 垂直居中 */
-  justify-content: space-between; /* 元素之间的空间平均分配 */
   width: 100%; /* 或根据实际需要调整宽度 */
 }
 

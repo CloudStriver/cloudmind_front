@@ -267,6 +267,8 @@ const changePost = async (nowPostId: string) => {
             .post {
                 width: 1000px;
                 margin: 0 30px;
+                margin-bottom: 10px;
+
 
                 .information {
                     position: fixed;
