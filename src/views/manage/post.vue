@@ -170,6 +170,12 @@
                                 </div>
                             </div>
                         </div>
+                        <el-pagination
+                            class="el-pagination"
+                            layout="prev, pager, next"
+                            :total="100"
+                            :hide-on-single-page="true"
+                        />
                     </div>
                 </section>
             </div>
@@ -557,6 +563,14 @@ const searchPostsList = async() => {
                             }
                         }
                     }
+                }
+
+                .el-pagination {
+                    height: 50px;
+                    margin-top: -25px;
+                    background-color: #fff;
+                    display: flex;
+                    justify-content: center;
                 }
             }
         }
