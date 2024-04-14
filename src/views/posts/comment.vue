@@ -13,7 +13,7 @@
             <input
                 type="text"
                 placeholder="写下你的评论吧~"
-                @keyup.enter="submitComment(postId,postId,postId, content, userId)"
+                @keyup.enter="submitComment(postId,postId,postId, content, userId, 0)"
                 v-model="content"
             >
         </div>
@@ -101,7 +101,7 @@
                         <input
                             type="text"
                             :placeholder="`回复@${replyAtUserName}`"
-                            @keyup.enter="submitComment(postId,commentBlock.comment.commentId, replyCommentId, subContent, replyAtUserId)"
+                            @keyup.enter="submitComment(postId,commentBlock.comment.commentId, replyCommentId, subContent, replyAtUserId, index)"
                             v-model="subContent"
                         >
                     </div>
@@ -152,7 +152,7 @@ const handlePageChange = async (number: any, commentBlock: CommentBlock, index: 
   replyPage.value = number
   await getComments(commentBlock.comment.commentId, postId.value)
       .then((res:any) => {
-        commentList.value[index] = res[0]
+        commentList.value[index].replyList = res[0].replyList
       })
 };
 
@@ -183,9 +183,9 @@ const replyComment = (replyId: string, rootId: string, atUserId: string, AtUserN
   }
 }
 
-const getComments = async(fatherId: string, subjectId: string) => {
+const getComments = async(rootId: string, subjectId: string) => {
   const comments = ref<CommentBlock[]>([])
-  await get(false, `${GetCommentBlocksUrl}?rootId=${fatherId}&subjectId=${subjectId}&limit=10&offset=${10 * (replyPage.value - 1)}`)
+  await get(false, `${GetCommentBlocksUrl}?rootId=${rootId}&subjectId=${subjectId}&limit=10&offset=${10 * (replyPage.value - 1)}`)
       .then((res: any) => {
         comments.value =  res.commentBlocks.map((commentBlock:any) => ({
           comment: commentBlock.rootComment,
@@ -197,7 +197,7 @@ const getComments = async(fatherId: string, subjectId: string) => {
 }
 
 
-const submitComment = async (subjectId: string,rootId: string, fatherId: string, cnt: string, atUserId: string) => {
+const submitComment = async (subjectId: string,rootId: string, fatherId: string, cnt: string, atUserId: string, index: number) => {
   if(cnt === '') {
     errorMsg('评论内容不能为空')
     return
@@ -212,6 +212,16 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
       .then(async () => {
         content.value = '';
         commentCount.value ++;
+        if(subjectId === rootId && rootId === fatherId) {
+          commentList.value = await getComments(subjectId, subjectId)
+        } else {
+          await getComments(rootId, subjectId)
+              .then((res:any) => {
+                commentList.value[index].replyList = res[0].replyList
+                content.value = ""
+                subContent.value = ""
+              })
+        }
       })
 }
 </script>

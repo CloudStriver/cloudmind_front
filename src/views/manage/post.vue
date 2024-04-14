@@ -18,6 +18,7 @@
                             name="select-type"
                             v-model="selectType"
                             value="post"
+                            checked
                         >
                         <label for="post">帖子</label>
                     </div>
@@ -28,7 +29,6 @@
                             name="select-type"
                             v-model="selectType"
                             value="comment"
-                            checked
                         >
                         <label for="comment">评论</label>
                     </div>
@@ -81,7 +81,7 @@
                             </div>
                             <div class="section-header-select" v-show="selectType === 'comment'">
                                 <div class="select-post-box">
-                                    <input 
+                                    <input
                                         type="radio"
                                         id="create"
                                         name="select-comment"
@@ -89,55 +89,21 @@
                                         :value="CommentStatusType.Create"
                                         checked
                                     >
-                                    <label for="create">我发表的</label>
+                                    <label for="create" @click="getMyComments">我发表的</label>
                                 </div>
                                 <div class="select-post-box">
-                                    <input 
+                                    <input
                                         type="radio"
                                         id="replied"
                                         name="select-comment"
                                         v-model="commentStatus"
                                         :value="CommentStatusType.Replied"
                                     >
-                                    <label for="replied">回复我的</label>
+                                    <label for="replied" @click="getReplyMeComments">回复我的</label>
                                 </div>
                             </div>
-                            <div class="section-header-classify">
-<!--                                <div class="type-list">-->
-<!--                                    <input -->
-<!--                                        type="text"-->
-<!--                                        list="typeList"-->
-<!--                                        placeholder="文章类型"-->
-<!--                                    >-->
-<!--                                    <datalist id="typeList">-->
-<!--                                        <option value="前端"></option>-->
-<!--                                        <option value="后端"></option>-->
-<!--                                        <option value="数据库"></option>-->
-<!--                                        <option value="运维"></option>-->
-<!--                                        <option value="产品"></option>-->
-<!--                                        <option value="设计"></option>-->
-<!--                                        <option value="职场"></option>-->
-<!--                                        <option value="其他"></option>-->
-<!--                                    </datalist>-->
-<!--                                </div>-->
-<!--                                <div class="column-list"> -->
-<!--                                    <input -->
-<!--                                        type="text"-->
-<!--                                        list="columnList"-->
-<!--                                        placeholder="分类专栏"-->
-<!--                                    >-->
-<!--                                    <datalist id="columnList">-->
-<!--                                        <option value="前端"></option>-->
-<!--                                        <option value="后端"></option>-->
-<!--                                        <option value="数据库"></option>-->
-<!--                                        <option value="运维"></option>-->
-<!--                                        <option value="产品"></option>-->
-<!--                                        <option value="设计"></option>-->
-<!--                                        <option value="职场"></option>-->
-<!--                                        <option value="其他"></option>-->
-<!--                                    </datalist>-->
-<!--                                </div>-->
-                                <input 
+                            <div class="section-header-classify" v-if="selectType === 'post'">
+                                <input
                                     type="text"
                                     placeholder="请输入关键词"
                                     class="search"
@@ -170,32 +136,36 @@
                             </div>
                         </div>
                         <div class="section-section-comment" v-show="selectType === 'comment'">
-                            <div class="comment-create-list">
-                                <div class="comment-item"  v-if="commentStatus === 0">
+                            <div
+                                class="comment-create-list"
+                                v-for="(comment, index) in commentList"
+                                :key="index"
+                            >
+                                <div class="comment-item"  v-if="commentStatus === CommentStatusType.Replied">
                                     <div class="infor">
                                         <div class="image">
-                                            <img src="" alt="">
+                                            <img :src="comment.author.url" alt="">
                                         </div>
-                                        <div class="name">用户名</div>
-                                        <div class="time">2021-08-08 12:00</div>
+                                        <div class="name">{{ comment.author.name }}</div>
+                                        <div class="time">{{ turnTime(comment.createTime) }}</div>
                                         <div class="other">回复了你的文章</div>
                                         <div class="title">文章标题</div>
                                     </div>
                                     <div class="contents">
-                                        <span>评论内容</span>
+                                        <span>{{ comment.content }}</span>
                                     </div>
                                 </div>
                                 <div v-else class="comment-item">
                                     <div class="infor">
                                         <span class="me">我</span>
-                                        <span class="time">2023-08-11</span>
+                                        <span class="time">{{ turnTime(comment.createTime) }}</span>
                                         <span class="other">评论了</span>
                                         <span class="he">name</span>
                                         <span class="other">的文章</span>
                                         <span class="title">文章标题</span>
                                     </div>
                                     <div class="contents-">
-                                        <span>评论内容</span>
+                                        <span>{{ comment.content }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -209,37 +179,42 @@
 
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
-import { onMounted, ref, watch } from 'vue'
-import { getMyPostList } from './utils'
-import { successMsg } from '@/utils/message'
+import {onMounted, ref} from 'vue'
+import {getMyPostList} from './utils'
+import {successMsg} from '@/utils/message'
 import router from '@/router';
-import { post } from '@/utils/request'
-import { DeletePostUrl, PostStatusType, StoragePostContent, StoragePostId, StoragePostTitle, CommentStatusType } from "@/utils/consts";
-import type {Post} from "@/utils/type";
+import {get, post} from '@/utils/request'
+import {
+  CommentStatusType,
+  DeletePostUrl,
+  GetCommentsUrl,
+  PostStatusType,
+  StoragePostContent,
+  StoragePostId,
+  StoragePostTitle
+} from "@/utils/consts";
+import type {Post, Comment} from "@/utils/type";
+import {useStore} from "@/store";
+import {turnTime} from "../../utils/utils";
 
 const onlyStatus = ref(0)
 const keyContent = ref<string>('')
-const commentStatus = ref(0)
-const selectType = ref('comment')
+const commentStatus = ref(CommentStatusType.Create)
+const selectType = ref('post')
 const nowDeletePostId = ref('')
 const isDeletePost = ref(false)
 const postList = ref<Post[]>([])
-
+const commentList = ref<Comment[]>([])
+const store = useStore()
 onMounted(async() => {
   postList.value = await getMyPostList()
+  await getMyComments()
 })
 
-watch(() => selectType.value, async (type) => {
-  selectType.value = type
-})
-watch(() => commentStatus.value, (type) => {
-    commentStatus.value = type
-})
 
 const selectStatus = async (status: PostStatusType) => {
   postList.value = await getMyPostList(status)
 }
-
 
 const continueDelete = () => {
     const postId = nowDeletePostId.value
@@ -254,6 +229,25 @@ const continueDelete = () => {
         isDeletePost.value = false
     })
 }
+
+const getMyComments = async () => {
+  commentStatus.value = CommentStatusType.Create
+  const userId = store.getUserId()
+  await get(true, `${GetCommentsUrl}?onlyUserId=${userId}`)
+      .then((res:any) => {
+          commentList.value = res.comments
+      })
+}
+
+const getReplyMeComments = async () => {
+  commentStatus.value = CommentStatusType.Create
+  const userId = store.getUserId()
+  await get(true, `${GetCommentsUrl}?onlyAtUserId=${userId}`)
+      .then((res:any) => {
+        commentList.value = res.comments
+      })
+}
+
 
 // const cancelDeletePost = () => {
 //     const deletePost = document.querySelector('.delete-post') as HTMLElement
