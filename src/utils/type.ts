@@ -148,6 +148,7 @@ export type CommentBlock = {
         total: number
         token: string
     }
+    replyPage: number
     isExpand: boolean
 }
 

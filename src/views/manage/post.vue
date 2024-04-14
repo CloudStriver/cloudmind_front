@@ -11,7 +11,7 @@
         <div class="contents-box">
             <div class="contents">
                 <header class="header">
-                    <div class="select-box">
+                    <div class="select-box" @click="getMyPostList()">
                         <input 
                             type="radio" 
                             id="post" 
@@ -22,7 +22,7 @@
                         >
                         <label for="post">帖子</label>
                     </div>
-                    <div class="select-box"> 
+                    <div class="select-box" @click="getMyComments">
                         <input 
                             type="radio" 
                             id="comment"
@@ -89,7 +89,7 @@
                                         :value="CommentStatusType.Create"
                                         checked
                                     >
-                                    <label for="create" @click="getMyComments">我发表的</label>
+                                    <label for="create" @click="updateCommentStatus(CommentStatusType.Create)">我发表的</label>
                                 </div>
                                 <div class="select-post-box">
                                     <input
@@ -99,7 +99,7 @@
                                         v-model="commentStatus"
                                         :value="CommentStatusType.Replied"
                                     >
-                                    <label for="replied" @click="getReplyMeComments">回复我的</label>
+                                    <label for="replied" @click="updateCommentStatus(CommentStatusType.Replied)">回复我的</label>
                                 </div>
                             </div>
                             <div class="section-header-classify" v-if="selectType === 'post'">
@@ -173,8 +173,10 @@
                         <el-pagination
                             class="el-pagination"
                             layout="prev, pager, next"
-                            :total="100"
+                            :total="nowTotal"
                             :hide-on-single-page="true"
+                            :current-page="nowPage"
+                            @update:current-page="handPageChange($event)"
                         />
                     </div>
                 </section>
@@ -186,22 +188,21 @@
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
 import {onMounted, ref} from 'vue'
-import {getMyPostList} from './utils'
 import {successMsg} from '@/utils/message'
 import router from '@/router';
 import {get, post} from '@/utils/request'
 import {
   CommentStatusType,
   DeletePostUrl,
-  GetCommentsUrl,
-  PostStatusType,
+  GetCommentsUrl, GetPostsUrl,
+  PostStatusType, SearchSortType,
   StoragePostContent,
   StoragePostId,
   StoragePostTitle
 } from "@/utils/consts";
 import type {Post, Comment} from "@/utils/type";
 import {useStore} from "@/store";
-import {turnTime} from "../../utils/utils";
+import {turnTime} from "@/utils/utils";
 
 const onlyStatus = ref(0)
 const keyContent = ref<string>('')
@@ -210,16 +211,38 @@ const selectType = ref('post')
 const nowDeletePostId = ref('')
 const isDeletePost = ref(false)
 const postList = ref<Post[]>([])
+const nowPage = ref<number>(1)
+const nowTotal = ref<number>(0)
 const commentList = ref<Comment[]>([])
 const store = useStore()
 onMounted(async() => {
-  postList.value = await getMyPostList()
-  await getMyComments()
+  await getMyPostList()
 })
 
+const updateCommentStatus = async(nowStatus: CommentStatusType) => {
+  nowPage.value = 1
+  console.log("change")
+  if(nowStatus === CommentStatusType.Create) {
+    await getMyComments()
+  } else {
+    await getReplyMeComments()
+  }
+}
+const handPageChange = async(num: number) => {
+  nowPage.value = num
+  if(selectType.value === 'post') {
+     await getMyPostList(onlyStatus.value, keyContent.value)
+  } else {
+    if(commentStatus.value === CommentStatusType.Create) {
+      await getMyComments()
+    } else {
+      await getReplyMeComments()
+    }
+  }
+}
 
 const selectStatus = async (status: PostStatusType) => {
-  postList.value = await getMyPostList(status)
+    await getMyPostList(status)
 }
 
 const continueDelete = () => {
@@ -236,21 +259,50 @@ const continueDelete = () => {
     })
 }
 
+const getMyPostList = async(status?: PostStatusType, keyword?: string) => {
+  const userId = store.getUserId()
+  const url = ref(`${GetPostsUrl}?onlyUserId=' + ${userId}`)
+  url.value = `${GetPostsUrl}?onlyUserId=${userId}`
+  if(status) url.value += `&onlyStatus=${status}`
+  if(keyword) url.value += `&searchKeyword=${keyword}&searchType=${SearchSortType.Score}`
+  url.value += `&limit=10&offset=${(nowPage.value - 1) * 10}`
+  await get(true, url.value)
+      .then((res: any) => {
+        postList.value = res.posts.map((post: any) => ({
+          postId: post.postId,
+          title: post.title,
+          text: post.text,
+          url: post.url,
+          tags: post.tags,
+          likeCount: post.likeCount,
+          commentCount: post.commentCount,
+          liked: post.liked,
+          userName: post.userName,
+        }))
+        nowTotal.value = res.total
+        commentList.value = []
+      })
+}
+
 const getMyComments = async () => {
   commentStatus.value = CommentStatusType.Create
   const userId = store.getUserId()
-  await get(true, `${GetCommentsUrl}?onlyUserId=${userId}`)
+  await get(true, `${GetCommentsUrl}?onlyUserId=${userId}&limit=10&offset=${(nowPage.value - 1) * 10}`)
       .then((res:any) => {
           commentList.value = res.comments
+          nowTotal.value = res.total
+          postList.value = []
       })
 }
 
 const getReplyMeComments = async () => {
-  commentStatus.value = CommentStatusType.Create
+  commentStatus.value = CommentStatusType.Replied
   const userId = store.getUserId()
-  await get(true, `${GetCommentsUrl}?onlyAtUserId=${userId}`)
+  await get(true, `${GetCommentsUrl}?onlyAtUserId=${userId}&limit=10&offset=${(nowPage.value - 1) * 10}`)
       .then((res:any) => {
         commentList.value = res.comments
+        nowTotal.value = res.total
+        postList.value = []
       })
 }
 
@@ -281,7 +333,7 @@ const modifyPost = (post: Post) => {
 }
 
 const searchPostsList = async() => {
-    postList.value = await getMyPostList(onlyStatus.value,keyContent.value)
+    await getMyPostList(onlyStatus.value,keyContent.value)
 }
 </script>
 

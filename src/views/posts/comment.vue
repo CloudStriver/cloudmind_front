@@ -49,7 +49,7 @@
                                     commentBlock.comment.author.name
                                   )">回复
                         </span>
-                        <span class="delete-reply-btn" @click="deleteComment(commentBlock.comment.commentId)">删除</span>
+                        <span class="delete-reply-btn" @click="deleteComment(commentBlock.comment.commentId, commentBlock.replyList.total)">删除</span>
                     </div>
                     <div class="reply-item" v-for="(reply, index) in commentBlock.replyList.comments" :key="index">
                         <div v-if="index < 3 || commentBlock.isExpand" class="reply-limit">
@@ -76,7 +76,7 @@
                                                 reply.author.name
                                             )">回复
                                     </span>
-                                    <span class="delete-reply-btn" @click="deleteComment(reply.commentId)">删除</span>
+                                    <span class="delete-reply-btn" @click="deleteComment(reply.commentId, 0)">删除</span>
                                 </div>
                             </div>
                         </div>
@@ -90,6 +90,7 @@
                                 layout="prev, pager, next"
                                 :total="commentBlock.replyList.total"
                                 :hide-on-single-page="true"
+                                :current-page="commentBlock.replyPage"
                                 @update:current-page="handlePageChange($event, commentBlock, index)"
                             />
                         </div>
@@ -112,9 +113,10 @@
             <el-pagination
                 class="el-pagination"
                 layout="prev, pager, next"
-                :total="commentCount"
+                :total="commentTotal"
                 :hide-on-single-page="true"
-                @update:current-page="handlePageChange($event, commentList[0], 0)"
+                :current-page="allPage"
+                @update:current-page="handleAllPageChange($event)"
             />
         </div>
     </div>
@@ -138,7 +140,9 @@ const replyRootId = ref<string>("")
 const subContent = ref<string>("")
 const replyAtUserId = ref<string>("")
 const replyAtUserName = ref<string>("")
-const replyPage = ref<number>(1)
+const allPage = ref<number>(1)
+const commentTotal = ref<number>(-1)
+const emit = defineEmits(['sendCommentOptions'])
 const props = defineProps<{
   PostData: {
     PostId: string,
@@ -157,9 +161,18 @@ watch(() => props.PostData.PostId, async () => {
   commentList.value = await getComments(postId.value, postId.value)
 })
 
+const handleAllPageChange = async (number: any) => {
+  allPage.value = number
+  await getComments(postId.value, postId.value)
+      .then((res:any) => {
+        commentList.value = res
+      })
+};
+
+
 const handlePageChange = async (number: any, commentBlock: CommentBlock, index: number) => {
-  replyPage.value = number
-  await getComments(commentBlock.comment.commentId, postId.value)
+  commentBlock.replyPage = number
+  await getComments(commentBlock.comment.commentId, postId.value, number)
       .then((res:any) => {
         commentList.value[index].replyList = res[0].replyList
       })
@@ -169,15 +182,20 @@ const getPages = (total: number) => {
   return Math.ceil(total / 10)
 }
 
-const deleteComment = async(commentId: string) => {
+const deleteComment = async(commentId: string, subCount: number) => {
   await post(false, DeleteCommentUrl, {
         commentId: commentId
   })
       .then(async() => {
-        commentCount.value = props.PostData.CommentCount
         commentList.value =  await getComments(postId.value, postId.value)
+        commentCount.value -= 1 + subCount
+        emit('sendCommentOptions', {
+          option: "updateCommentCount",
+          CommentCount: commentCount.value
+        })
       })
 }
+
 const replyComment = (replyId: string, rootId: string, atUserId: string, AtUserName: string) => {
   if(replyCommentId.value !== replyId) {
     replyCommentId.value = replyId
@@ -192,15 +210,25 @@ const replyComment = (replyId: string, rootId: string, atUserId: string, AtUserN
   }
 }
 
-const getComments = async(rootId: string, subjectId: string) => {
+const getComments = async(rootId: string, subjectId: string, replyPage?: number) => {
   const comments = ref<CommentBlock[]>([])
-  await get(false, `${GetCommentBlocksUrl}?rootId=${rootId}&subjectId=${subjectId}&limit=10&offset=${10 * (replyPage.value - 1)}`)
+  const url = ref<string>("")
+  if(rootId === subjectId) {
+    url.value = `${GetCommentBlocksUrl}?rootId=${rootId}&subjectId=${subjectId}&limit=10&offset=${10 * (allPage.value - 1)}`
+  } else {
+    if(replyPage)
+    url.value = `${GetCommentBlocksUrl}?rootId=${rootId}&subjectId=${subjectId}&limit=10&offset=${10 * (replyPage - 1)}`
+  }
+  await get(false, url.value)
       .then((res: any) => {
         comments.value =  res.commentBlocks.map((commentBlock:any) => ({
           comment: commentBlock.rootComment,
           replyList: commentBlock.replyList,
           isExpand: false,
+          replayPage: 1,
         }))
+        if(commentTotal.value === -1)
+        commentTotal.value = res.total
       })
   return comments.value
 }
@@ -224,13 +252,18 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
         if(subjectId === rootId && rootId === fatherId) {
           commentList.value = await getComments(subjectId, subjectId)
         } else {
-          await getComments(rootId, subjectId)
+          await getComments(rootId, subjectId, 1)
               .then((res:any) => {
                 commentList.value[index].replyList = res[0].replyList
+                commentList.value[index].replyPage = 1
                 content.value = ""
                 subContent.value = ""
               })
         }
+        emit('sendCommentOptions', {
+          option: "updateCommentCount",
+          CommentCount: commentCount.value
+        })
       })
 }
 </script>

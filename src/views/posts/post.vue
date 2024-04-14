@@ -36,7 +36,7 @@
                         <div class="vditor" id="vditor"></div>
                     </article>
                     <div class="comment">
-                      <Comment :PostData="PostData"></Comment>
+                      <Comment :PostData="PostData" @sendCommentOptions="getCommentOptions"></Comment>
                     </div>
                 </div>
                 <div class="right">
@@ -129,6 +129,14 @@ onMounted(async () => {
     renderMarkdown(postDetail?.value?.text)
 })
 
+const getCommentOptions = (sendCommentOptions: any) => {
+  if(sendCommentOptions.option === 'updateCommentCount') {
+    console.log("update to" + sendCommentOptions.CommentCount)
+    if(postDetail.value) {
+      postDetail.value.commentCount = sendCommentOptions.CommentCount
+    }
+  }
+}
 
 
 const likeOrCancelPostDetail = (post: PostDetail | undefined) => {
@@ -225,9 +233,6 @@ const renderMarkdown = (md: string | undefined) => {
       hljs: {
         style: 'github'
       },
-      outline: {
-        enable: true
-      }
     })
   }
 }
