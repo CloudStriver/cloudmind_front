@@ -25,7 +25,7 @@ import recommend from '@/views/home/recommend.vue'
 import rank from '@/views/home/rank.vue'
 import announced from '@/views/home/announced.vue'
 import { onMounted } from 'vue'
-import { useStore } from '@/store/index'
+import { useStore } from '@/store'
 import { getUserDetail } from '../information/utils'
 import {StorageAvatarUrl, StorageDoGetUser, StorageName} from "@/utils/consts";
 
@@ -89,7 +89,7 @@ const firstGetUserDetail = () => {
                 .activity {
                     margin-bottom: 10px;
                 }
-    
+
             }
             .section-bottom {
                 width: 100%;

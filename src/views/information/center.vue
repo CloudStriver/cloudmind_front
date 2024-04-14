@@ -39,27 +39,27 @@
                 <div class="contents-box">
                     <div class="contents-classify">
                         <ul>
-                            <li>
-                                <input
-                                    type="radio"
-                                    name="classify"
-                                    id="dynamic"
-                                    value="dynamic"
-                                    v-model="classify"
-                                    checked
-                                >
-                                <label for="dynamic">动态</label>
-                            </li>
-                            <li>
-                                <input
-                                    type="radio"
-                                    name="classify"
-                                    id="file"
-                                    value="file"
-                                    v-model="classify"
-                                >
-                                <label for="file">文件</label>
-                            </li>
+<!--                            <li>-->
+<!--                                <input-->
+<!--                                    type="radio"-->
+<!--                                    name="classify"-->
+<!--                                    id="dynamic"-->
+<!--                                    value="dynamic"-->
+<!--                                    v-model="classify"-->
+<!--                                    checked-->
+<!--                                >-->
+<!--                                <label for="dynamic">动态</label>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <input-->
+<!--                                    type="radio"-->
+<!--                                    name="classify"-->
+<!--                                    id="file"-->
+<!--                                    value="file"-->
+<!--                                    v-model="classify"-->
+<!--                                >-->
+<!--                                <label for="file">文件</label>-->
+<!--                            </li>-->
                             <li>
                                 <input
                                     type="radio"
@@ -67,6 +67,7 @@
                                     id="post"
                                     value="post"
                                     v-model="classify"
+                                    checked
                                 >
                                 <label for="post">帖子</label>
                             </li>
@@ -121,7 +122,7 @@ import {turnTime} from "@/utils/utils";
 import {useRoute} from "vue-router";
 import router from "@/router";
 
-const classify = ref('dynamic')
+const classify = ref('post')
 const user = ref({
   name: '',
   sex: '',

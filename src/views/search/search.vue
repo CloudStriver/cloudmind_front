@@ -26,18 +26,18 @@
                     >
                     <label for="post">帖子</label>
                 </li>
-                <li>
-                    <input 
-                        type="radio" 
-                        name="select"
-                        id="files"
-                        value="file"
-                        v-model="selectContent"
-                        :class="{ 'checked': selectContent === 'file'}"
-                        @click="changeContent('file')"
-                    >
-                    <label for="files">文件</label>
-                </li>
+<!--                <li>-->
+<!--                    <input -->
+<!--                        type="radio" -->
+<!--                        name="select"-->
+<!--                        id="files"-->
+<!--                        value="file"-->
+<!--                        v-model="selectContent"-->
+<!--                        :class="{ 'checked': selectContent === 'file'}"-->
+<!--                        @click="changeContent('file')"-->
+<!--                    >-->
+<!--                    <label for="files">文件</label>-->
+<!--                </li>-->
                 <li>
                     <input 
                         type="radio"

@@ -284,7 +284,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
                 margin-bottom: 0;
             }
         }
-
     }
 }
 </style>

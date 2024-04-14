@@ -136,7 +136,7 @@ export const getPostRecommend = async (mainClassify: string, classifyNum: Target
 }
 
 export const enterUser = (userId: string) => {
-    router.push(`/user/center/${userId}/dynamic/default`)
+    router.push(`/user/center/${userId}/post/publish`)
 }
 
 export const getUserRecommend = async (mainClassify: string, classifyNum: number) => {

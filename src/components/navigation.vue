@@ -23,13 +23,13 @@
             >
                 <i class="iconfont icon-sidenav-doc" style="font-size: 18px;"></i>
             </router-link>
-            <router-link 
-                to="/space" 
-                class="router-nav"
-                active-class="router-active"
-            >
-                <i class="iconfont icon-cube-solid"></i>
-            </router-link>
+<!--            <router-link -->
+<!--                to="/space" -->
+<!--                class="router-nav"-->
+<!--                active-class="router-active"-->
+<!--            >-->
+<!--                <i class="iconfont icon-cube-solid"></i>-->
+<!--            </router-link>-->
             <router-link 
                 to="/posts/hot"
                 class="router-nav"

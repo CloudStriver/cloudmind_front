@@ -85,7 +85,7 @@
                                 <div class="content">
                                     <div class="content-top">
                                         <router-link
-                                            :to="`/user/center/${notification.fromId}/dynamic/default`"
+                                            :to="`/user/center/${notification.fromId}/post/publish`"
                                             class="user-section"
                                         >{{ notification.fromName }}</router-link>
                                         <div>赞了</div>
@@ -106,7 +106,7 @@
                                 <div class="content">
                                     <div class="content-top">
                                         <router-link
-                                            :to="`/user/center/${notification.fromId}/dynamic/default`"
+                                            :to="`/user/center/${notification.fromId}/post/publish`"
                                             class="user-section"
                                         >{{ notification.fromName }}</router-link>
                                         <div>评论了</div>
@@ -127,7 +127,7 @@
                                 <div class="content">
                                     <div class="content-top">
                                         <router-link
-                                            :to="`/user/center/${notification.fromId}/dynamic/default`"
+                                            :to="`/user/center/${notification.fromId}/post/publish`"
                                             class="user-section"
                                         >{{ notification.fromName }}</router-link>
                                         <div>收藏了</div>
@@ -148,7 +148,7 @@
                                 <div class="content">
                                     <div class="content-top">
                                         <router-link
-                                            :to="`/user/center/${notification.fromId}/dynamic/default`"
+                                            :to="`/user/center/${notification.fromId}/post/publish`"
                                             class="user-section"
                                         >{{ notification.fromName }}</router-link>
                                         <div>分享了</div>
@@ -169,7 +169,7 @@
                                 <div class="content">
                                     <div class="content-top">
                                         <router-link
-                                            :to="`/user/center/${notification.fromId}/dynamic/default`"
+                                            :to="`/user/center/${notification.fromId}/post/publish`"
                                             class="user-section"
                                         >{{ notification.fromName }}</router-link>
                                         <div>关注了</div>

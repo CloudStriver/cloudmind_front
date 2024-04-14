@@ -114,6 +114,8 @@ const showPostImage = (url: string) => {
 }
 
 const getShow = async () => {
+  userList.value = []
+  postList.value = []
   switch (props.classify) {
     case "user":
       userList.value = await getUserRecommend(props.mainClassify, TargetType.User)

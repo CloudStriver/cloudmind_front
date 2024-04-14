@@ -44,7 +44,7 @@
                         <div class="user">
                             <img :src="postDetail?.author.url" alt="" />
                             <div class="user-info">
-                                <span class="pointer" @click="router.push(`/user/center/${postDetail?.author.userId}/dynamic/default`)">{{ postDetail?.author.name}}</span>
+                                <span class="pointer" @click="router.push(`/user/center/${postDetail?.author.userId}/post/publish`)">{{ postDetail?.author.name}}</span>
                                 <span class="user-description">{{postDetail?.author.description}}</span>
                                 <span 
                                   class="user-tags" 

@@ -200,8 +200,6 @@ const props = defineProps<{
 }>();
 
 onMounted(async () => {
-  console.log(props.SendContentMsg)
-
   // const route = useRoute()
   // const userId = route.params.userId as string
   // const selectFirst = route.params.selectFirst as string

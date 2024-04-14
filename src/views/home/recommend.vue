@@ -41,19 +41,19 @@
                     @mouseleave="mouseleaveClassifyPop"
                 ></i>
                 <div class="more-box" v-show="isShowClassify">
+<!--                    <div>-->
+<!--                        <input -->
+<!--                            id="file"-->
+<!--                            type="radio" -->
+<!--                            name="select-classify"-->
+<!--                            v-model="selectClassify"-->
+<!--                            value="file"-->
+<!--                        >-->
+<!--                        <label for="file">文件</label>-->
+<!--                    </div>-->
                     <div>
                         <input 
-                            id="file"
-                            type="radio" 
-                            name="select-classify"
-                            v-model="selectClassify"
-                            value="file"
-                        >
-                        <label for="file">文件</label>
-                    </div>
-                    <div>
-                        <input 
-                            id="posts"
+                            id="post"
                             type="radio"
                             name="select-classify"
                             v-model="selectClassify"

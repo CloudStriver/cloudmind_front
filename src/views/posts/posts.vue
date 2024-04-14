@@ -114,7 +114,7 @@
                                         <div class="author-information">
                                             <img :src="user.url" alt="头像">
                                             <div class="information">
-                                                <router-link :to="`/user/center/${user.userId}/dynamic/default`" class="router-link">
+                                                <router-link :to="`/user/center/${user.userId}/post/publish`" class="router-link">
                                                     <p>{{ user.name }}</p>
                                                 </router-link>
                                                     <p>{{ splitDescription(user.description) }}</p>
