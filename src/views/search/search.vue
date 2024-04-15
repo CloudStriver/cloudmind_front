@@ -1,6 +1,6 @@
 <template>
     <div class="search-box">
-        <CHeader></CHeader>
+        <CHeader class="header"></CHeader>
         <nav class="nav">
             <ul>
 <!--                <li>-->
@@ -54,64 +54,64 @@
         </nav>
         <section class="section">
             <div class="contents-box">
-                <div class="header">
-                    <ul>
-                        <li>
-                            <input 
-                                type="radio"
-                                name="selectSecond"
-                                id="synthesis_2"
-                                :value="`${SearchSortType.Synthesis}`"
-                                v-model="selectSort"
-                                :class="{ 'checked': selectSort === 3}"
-                                @click="changeSort(SearchSortType.Synthesis)"
-                            >
-                            <label for="synthesis_2">综合排序</label>
-                        </li>
-                        <li>
-                            <input 
-                                type="radio"
-                                name="selectSecond"
-                                id="new"
-                                :value="`${SearchSortType.CreateTime}`"
-                                v-model="selectSort"
-                                :class="{ 'checked': selectSort === 2}"
-                                @click="changeSort(SearchSortType.CreateTime)"
-                            >
-                            <label for="new">最新优先</label>
-                        </li>
-                        <li>
-                            <input 
-                                type="radio"
-                                name="selectSecond"
-                                id="hot"
-                                :value="`${SearchSortType.Score}`"
-                                v-model="selectSort"
-                                :class="{ 'checked': selectSort === 1}"
-                                @click="changeSort(SearchSortType.Score)"
-                            >
-                            <label for="hot">相关性优先</label>
-                        </li>
-                    </ul>
-                    <el-dropdown>
-                        <span class="el-dropdown-link">
-                        时间不限
-                        <el-icon class="el-icon--right">
-                            <arrow-down />
-                        </el-icon>
-                        </span>
-                        <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item @click="changeTimer(SearchPeriodType.None)">时间不限</el-dropdown-item>
-                            <el-dropdown-item @click="changeTimer(SearchPeriodType.Day)">最近一天</el-dropdown-item>
-                            <el-dropdown-item @click="changeTimer(SearchPeriodType.Week)">最近一周</el-dropdown-item>
-                            <el-dropdown-item @click="changeTimer(SearchPeriodType.Month)">最近一月</el-dropdown-item>
-                            <el-dropdown-item @click="changeTimer(SearchPeriodType.Year)">最近一年</el-dropdown-item>
-                        </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
-                </div>
                 <div class="contents">
+                    <div class="header">
+                        <ul>
+                            <li>
+                                <input 
+                                    type="radio"
+                                    name="selectSecond"
+                                    id="synthesis_2"
+                                    :value="`${SearchSortType.Synthesis}`"
+                                    v-model="selectSort"
+                                    :class="{ 'checked': selectSort === 3}"
+                                    @click="changeSort(SearchSortType.Synthesis)"
+                                >
+                                <label for="synthesis_2">综合排序</label>
+                            </li>
+                            <li>
+                                <input 
+                                    type="radio"
+                                    name="selectSecond"
+                                    id="new"
+                                    :value="`${SearchSortType.CreateTime}`"
+                                    v-model="selectSort"
+                                    :class="{ 'checked': selectSort === 2}"
+                                    @click="changeSort(SearchSortType.CreateTime)"
+                                >
+                                <label for="new">最新优先</label>
+                            </li>
+                            <li>
+                                <input 
+                                    type="radio"
+                                    name="selectSecond"
+                                    id="hot"
+                                    :value="`${SearchSortType.Score}`"
+                                    v-model="selectSort"
+                                    :class="{ 'checked': selectSort === 1}"
+                                    @click="changeSort(SearchSortType.Score)"
+                                >
+                                <label for="hot">相关性优先</label>
+                            </li>
+                        </ul>
+                        <el-dropdown>
+                            <span class="el-dropdown-link">
+                            时间不限
+                            <el-icon class="el-icon--right">
+                                <arrow-down />
+                            </el-icon>
+                            </span>
+                            <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item @click="changeTimer(SearchPeriodType.None)">时间不限</el-dropdown-item>
+                                <el-dropdown-item @click="changeTimer(SearchPeriodType.Day)">最近一天</el-dropdown-item>
+                                <el-dropdown-item @click="changeTimer(SearchPeriodType.Week)">最近一周</el-dropdown-item>
+                                <el-dropdown-item @click="changeTimer(SearchPeriodType.Month)">最近一月</el-dropdown-item>
+                                <el-dropdown-item @click="changeTimer(SearchPeriodType.Year)">最近一年</el-dropdown-item>
+                            </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                    </div>
                     <div class="content-file-box" v-if="selectContent === 'file'">
                         <h1 class="title">标题</h1>
                         <p class="content">内容</p>
@@ -172,6 +172,52 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="hot-search">
+                <span class="title">热门搜索</span>
+                <ul>
+                    <li>
+                        <span class="n1">1</span>
+                        <span>三年前掉河里的20g金戒指捞上来</span>
+                    </li>
+                    <li>
+                        <span class="n2">2</span>
+                        <span>阿姨吐槽年轻人卧铺挂帘子不让坐</span>
+                    </li>
+                    <li>
+                        <span class="n3">3</span>
+                        <span>六年级男孩百米跑出12秒27</span>
+                    </li>
+                    <li>
+                        <span>4</span>
+                        <span>86岁老人隆重仪式迎娶初恋女友</span>
+                    </li>
+                    <li>
+                        <span>5</span>
+                        <span>三星堆挖出“飞碟”青铜器系谣言</span>
+                    </li>
+                    <li>
+                        <span>6</span>
+                        <span>副县长妻子为出轨对象做间谍17年</span>
+                    </li>
+                    <li>
+                        <span>7</span>
+                        <span>30余万现金被烧银行救回24万</span>
+                    </li>
+                    <li>
+                        <span>8</span>
+                        <span>端午节放3天不调休</span>
+                    </li>
+                    <li>
+                        <span>9</span>
+                        <span>胖东来回应爆改长沙步步高超市</span>
+                    </li>
+                    <li>
+                        <span>10</span>
+                        <span>顾客正泡温泉发现自己入镜直播间</span>
+                    </li>
+                    
+                </ul>
             </div>
         </section>
     </div>
@@ -346,22 +392,21 @@ const searchUser = async (key: string, sort: number, period: number) => {
 
     .section {
         width: 100%;
-        height: 100%;
+        flex: 1;
         overflow-y: auto;
         padding-top: 20px;
         padding-bottom: 20px;
+        display: flex;
+        justify-content: center;
 
         .contents-box {
             width: 1000px;
-            min-height: 800px;
-            background-color: #fff;
-            margin: auto;
-            box-shadow: 0 0 10px rgba(26, 26, 26, 0.1);
-            padding: 20px;
+            margin-right: 30px;
 
             .header {
                 width: 100%;
                 padding-bottom: 10px;
+                background-color: #fff;
                 border-bottom: 1px solid #f0f0f0;
                 display: flex;
                 justify-content: space-between;
@@ -406,6 +451,12 @@ const searchUser = async (key: string, sort: number, period: number) => {
             }
 
             .contents {
+                flex: 1;
+                background-color: #fff;
+                box-shadow: 0 0 10px rgba(26, 26, 26, 0.1);
+                padding: 20px;
+
+
                 .content-file-box {
                     padding-bottom: 10px;
                     margin-bottom: 10px;
@@ -523,12 +574,19 @@ const searchUser = async (key: string, sort: number, period: number) => {
                             padding-bottom: 10px;
                             margin-bottom: 10px;
                             display: flex;
+
                             .image {
                                 width: 60px;
                                 height: 60px;
                                 border-radius: 50%;
                                 margin-right: 20px;
                                 background-color: #625252;
+
+                                img {
+                                    width: 60px;
+                                    height: 60px;
+                                    border-radius: 50%;
+                                }
                             }
     
                             .infor {
@@ -574,6 +632,51 @@ const searchUser = async (key: string, sort: number, period: number) => {
                                 background-color: #fff;
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        .hot-search {
+            height: 470px;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+
+            .title {
+                font-size: 15px;
+                font-weight: 600;
+            }
+
+            ul {
+                list-style: none;
+                margin: 0;
+                padding: 10px;
+
+                li {
+                    border-bottom: 1px solid #f0f0f0;
+                    padding-bottom: 10px;
+                    font-size: 15px;
+                    color: #666;
+                    margin-bottom: 10px;
+
+                    span {
+                        margin-right: 20px;
+                        cursor: pointer;
+                    }
+
+                    .n1 {
+                        color: #f00;
+                        font-weight: 600;
+                    }
+                    .n2 {
+                        color: #f60;
+                        font-weight: 600;
+                    }
+                    .n3 {
+                        color: #f90;
+                        font-weight: 600;
                     }
                 }
             }

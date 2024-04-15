@@ -134,7 +134,7 @@ const thirdLogin = () => {
         .then ((res: any) => {
             store.setUserLocal (res.shortToken, res.longToken, res.userId)
             successMsg('登录成功')
-            router.push('/')
+            router.push('/posts/hot')
         })
         .catch((err:any) => {
             console.log(err);
@@ -217,7 +217,7 @@ const login = () => {
                 store.setUserLocal (res.shortToken, res.longToken, res.userId)
             }
             successMsg('登录成功')
-            router.push('/')
+            router.push('/posts/hot')
         })
         .catch((err:any) => {
             console.log(err);

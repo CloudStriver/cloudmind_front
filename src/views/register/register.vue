@@ -307,7 +307,7 @@ const register = () => {
                 store.setUserSession(res.shortToken, res.longToken, res.userId)
 
                 successMsg('注册成功')
-                router.push('/')
+                router.push('/posts/hot')
             })
         }
         else {

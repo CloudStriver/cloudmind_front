@@ -7,14 +7,14 @@
         >
         <i class="iconfont icon-gengduo-2 more"></i>
         <div class="nav-box">
-            <router-link 
+            <!-- <router-link 
                 to="/" 
                 class="router-nav"
                 active-class="router-active"
             >
                 <i class="iconfont icon-home-solid"></i>
-            </router-link>
-            <router-link
+            </router-link> -->
+            <!-- <router-link
                 v-if="store.getUserLongToken() !== ''"
                 :to="{name: 'personal', params: {fatherId: fatherId}}"
                 class="router-nav"
@@ -22,7 +22,7 @@
                 exact-active-class="router-active"
             >
                 <i class="iconfont icon-sidenav-doc" style="font-size: 18px;"></i>
-            </router-link>
+            </router-link> -->
 <!--            <router-link -->
 <!--                to="/space" -->
 <!--                class="router-nav"-->

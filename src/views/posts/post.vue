@@ -73,21 +73,31 @@
                           <button v-else @click="unFollowAuthor(postDetail?.author)">已关注</button>
                         </div>
                     </div>
-                    <div class="catalogue">
+                    <!-- <div class="catalogue">
                         <span>目录</span>
                         <ul>
                             <li>目录1</li>
                             <li>目录2</li>
                             <li>目录3</li>
                         </ul>
-                    </div>
+                    </div> -->
                     <div class="recommend">
                         <span>推荐</span>
-                        <ul v-for="(post,index) in postList" :key="index">
+                        <ul v-for="(post,index) in postList.slice(0, 10)" :key="index">
                             <li>
                               <div class="post-title" @click="changePost(post.postId)">{{post.title}}</div>
                             </li>
                         </ul>
+                    </div>
+                    <div class="slideshow">
+                      <el-carousel indicator-position="outside" class="el-carousel">
+                        <el-carousel-item 
+                          v-for="(item, index) in imageList" 
+                          :key="index"
+                        >
+                          <img :src="item" alt="">
+                        </el-carousel-item>
+                      </el-carousel>
                     </div>
                 </div>
             </div>
@@ -109,6 +119,11 @@ import Vditor from "vditor";
 import 'vditor/dist/index.css'
 import {useRoute} from "vue-router";
 
+const imageList = [
+  'https://images.pexels.com/photos/3538558/pexels-photo-3538558.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/20991840/pexels-photo-20991840.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/18903447/pexels-photo-18903447.jpeg?auto=compress&cs=tinysrgb&w=600',
+]
 const postDetail = ref<PostDetail>()
 const postList = ref<Post[]>([])
 const store = useStore()
@@ -365,7 +380,7 @@ const changePost = async (nowPostId: string) => {
                     background-color: #fff;
                     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
                     padding: 20px;
-                    margin-bottom: 10px;
+                    margin-bottom: 30px;
 
                     .user {
                         width: 100%;
@@ -468,6 +483,7 @@ const changePost = async (nowPostId: string) => {
                     background-color: #fff;
                     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
                     padding: 20px;
+                    margin-bottom: 30px;
 
                     span {
                         font-size: 15px;
@@ -480,14 +496,31 @@ const changePost = async (nowPostId: string) => {
                         padding: 10px;
 
                         li {
+                            border-bottom: 1px solid #f0f0f0;
+                            padding-bottom: 10px;
                             font-size: 15px;
                             color: #666;
-                            margin: 10px;
 
                             div:hover {
                               color: #1890ff;
                             }
                         }
+                    }
+                }
+
+                .slideshow {
+                    height: 500px;
+                    background-color: #fff;
+                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+
+                    .el-carousel:deep(.el-carousel__container) {
+                        height: 500px;
+                    }
+                    
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
                     }
                 }
             }

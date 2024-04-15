@@ -40,7 +40,7 @@
                         > 
                         <label for="个人资料">个人资料</label>
                     </div>
-                    <div>
+                    <!-- <div>
                         <input 
                             type="radio" 
                             name="select" 
@@ -61,13 +61,16 @@
                             style="display: none;"
                         > 
                         <label for="浏览历史">浏览历史</label>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="show-contents" v-show="select === '个人资料'">
-                <header class="show-contents-header">个人资料
-                  <button @click="toggleEdit" class="edit-button">{{ isEditing ? '取消' : '编辑' }}</button>
-                  <button v-if="isEditing" @click="saveChanges" class="edit-button">保存</button>
+                <header class="show-contents-header">
+                    <span>个人资料</span>
+                    <div>
+                        <button @click="toggleEdit" class="edit-button">{{ isEditing ? '取消' : '编辑' }}</button>
+                        <button v-if="isEditing" @click="saveChanges" class="edit-button">保存</button>
+                    </div>
                 </header>
                 <footer class="show-contents-footer">
                     <div class="info">
@@ -105,7 +108,7 @@
                           </div>
                         </div>
                     </div>
-                    <div class="info">
+                    <!-- <div class="info">
                         <div class="first">
                             <div>真</div>
                             <div>实</div>
@@ -128,7 +131,7 @@
                           <div v-if="!isEditing" class="second">{{ detail.idCard }}</div>
                           <input v-else class="second" v-model="editableDetail.idCard">
                         </div>
-                    </div>
+                    </div> -->
                     <div class="info">
                         <div class="first">
                             <div>个</div>
@@ -244,7 +247,7 @@ const changeAvatar = async(event: any) => {
 
         .operate-box {
             width: 300px;
-            height: 330px;
+            height: 240px;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px 1px #e1e1e1;
@@ -315,7 +318,7 @@ const changeAvatar = async(event: any) => {
 
         .show-contents {
             width: 800px;
-            height: 400px;
+            height: 280px;
             background-color: #fff;
             margin-left: 20px;
             box-shadow: 0 0 10px 1px #e1e1e1;
@@ -328,16 +331,23 @@ const changeAvatar = async(event: any) => {
                 font-weight: 600;
                 padding: 10px;
                 border-bottom: 2px solid rgba(240, 245, 255, 1);
+                display: flex;
+                justify-content: space-between;
+
                 .edit-button {
-                  margin-left: 642px;
-                  font-size: 20px;
-                  font-weight: 600;
-                  border-bottom: 2px solid rgba(240, 245, 255, 1);
+                    width: 60px;
+                    height: 30px;
+                    background-color: #409eff;
+                    color: #fff;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    margin-left: 10px;
                 }
             }
 
             .show-contents-footer {
-                height: 350px;
+                height: 200px;
                 padding-left: 20px;
                 color: #4c4b4b;
                 display: flex;
