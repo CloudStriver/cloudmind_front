@@ -4,7 +4,7 @@
             <Nav class="nav"></Nav>
             <search class="search"></search>
             <div class="header-right">
-                <i class="iconfont icon-calendar-check-solid"></i>
+                <!-- <i class="iconfont icon-calendar-check-solid"></i> -->
                 <router-link 
                     class="router"
                     v-if="isLogin"

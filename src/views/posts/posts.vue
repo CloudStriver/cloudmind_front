@@ -20,6 +20,17 @@
                             </li>
                         </ul>
                     </nav>
+                    <div class="link-box">
+                        <p>友情链接</p>
+                        <ul>
+                            <li>视觉中国</li>
+                            <li>看准网</li>
+                            <li>优设网</li>
+                            <li>CSDN文库</li>
+                            <li>哔哩哔哩</li>
+                            <li>人民日报</li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="posts">
                     <div class="posts-select" v-if="navSelect === 'new'">
@@ -69,6 +80,13 @@
                             </div>
                         </div>
                     </div>
+                    <el-pagination
+                        class="el-pagination"
+                        layout="prev, pager, next"
+                        :total="1000"
+                        :hide-on-single-page="true"
+                        current-page="1"
+                    />
                 </div>
                 <div class="rank-create">
                     <div class="create-post" v-if="store.getUserLongToken() !== ''">
@@ -348,9 +366,43 @@ const loadMorePosts = async () => {
                     }
                 }
             }
+
+            .link-box {
+                width: 200px;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
+                margin-right: 30px;
+                margin-top: 30px;
+                
+                p {
+                    padding: 10px;
+                    font-size: 16px;
+                    border-bottom: 1px solid #f0f0f0;
+                    font-weight: 600;
+                }
+
+                ul {
+                    list-style: none;
+                    padding: 10px;
+                    margin: 0;
+                    display: flex;
+                    flex-wrap: wrap;
+    
+                    li {
+                        padding: 3px 10px;
+                        border: 1px solid #d7d7d7;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin: 5px;
+                        font-size: 14px;
+                    }
+                }
+            }
     
             .posts {
                 width: 1000px;
+                height: 100%;
                 margin-right: 30px;
                 padding: 10px;
                 margin-top: 10px;
@@ -457,6 +509,12 @@ const loadMorePosts = async () => {
                             }
                         }
                     }
+                }
+
+                .el-pagination {
+                    margin-top: 10px;
+                    display: flex;
+                    justify-content: center;
                 }
             }
     

@@ -126,6 +126,8 @@
                                     <div class="data">
                                         <span>点赞 {{ post.likeCount }}</span>
                                         <span>评论 {{ post.commentCount }}</span>
+                                        <span>收藏 1</span>
+                                        <span>浏览量 {{ post.viewCount }}</span>
                                     </div>
                                     <div class="operate">
                                         <span @click="modifyPost(post)">编辑</span>

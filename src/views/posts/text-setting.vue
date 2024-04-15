@@ -436,7 +436,7 @@ const confirmSure = () => {
                         flex-wrap: wrap;
 
                         li {
-
+                            margin: 5px;
                             label {
                                 height: 30px;
                                 padding: 5px 10px;
