@@ -169,6 +169,7 @@ import {enterPost} from "@/views/posts/utils";
 import SparkMD5 from "spark-md5";
 import {cosUploadImage} from "@/utils/public-cos";
 import {errorMsg} from "@/utils/message";
+import {StoragePostContent, StoragePostTitle} from "@/utils/consts";
 const isShowSetting = ref(true)
 const sureOption = ref(false)
 const isHasUploadImage = ref(false)
@@ -247,7 +248,6 @@ const selectFirstLabel = async (labelId: string) => {
 }
 
 const publishPost = async () => {
-  console.log(props.sendPostData)
   if(selectLabelList.value.length <= 0  && !props.sendPostData.postId) {
     errorMsg("至少选择一个标签")
     return
@@ -283,7 +283,7 @@ const publishPost = async () => {
 
 const CreatePost = async(url: string) => {
   const labelIds = selectLabelList.value.map(item => item.id)
-  if (labelIds.length <= 0) {
+  if (props.sendPostData.postId && props.sendPostData.postId !== '') {
     await updatePost({
       title: props.sendPostData.title,
       text: props.sendPostData.text,
@@ -294,7 +294,10 @@ const CreatePost = async(url: string) => {
       postId: props.sendPostData.postId,
     })
         .then((res: any) => {
+          sessionStorage.removeItem(StoragePostTitle)
+          sessionStorage.removeItem(StoragePostContent)
           if (res.keywords === null) {
+            console.log(props.sendPostData.postId)
             enterPost(props.sendPostData.postId)
           } else {
             keywords.value = res.keywords
@@ -313,6 +316,8 @@ const CreatePost = async(url: string) => {
       postId: "",
     })
         .then((res: any) => {
+          sessionStorage.removeItem(StoragePostTitle)
+          sessionStorage.removeItem(StoragePostContent)
           if (res.keywords === null) {
             enterPost(res.postId)
           } else {
@@ -322,6 +327,7 @@ const CreatePost = async(url: string) => {
           }
         })
   }
+
 }
 
 const noPublishPost = () => {

@@ -20,10 +20,10 @@
                                 <i class="iconfont icon-shoucang01 collected" v-else></i>
                                 <div>{{ postDetail?.collectCount }}</div>
                             </li>
-                            <li @click="sharePostDetail(postDetail)">
-                                <i class="iconfont icon-fenxiang"></i>
-                                <div>{{ postDetail?.shareCount }}</div>
-                            </li>
+<!--                            <li @click="sharePostDetail(postDetail)">-->
+<!--                                <i class="iconfont icon-fenxiang"></i>-->
+<!--                                <div>{{ postDetail?.shareCount }}</div>-->
+<!--                            </li>-->
                         </ul>
                     </div>
                     <article class="article">
@@ -64,7 +64,7 @@
                                 <p>总获赞</p>
                             </div>
                             <div>
-                                <p @click="router.push(`/user/center/${postDetail?.author.userId}/follow/fans`)" class="pointer">{{postDetail?.author.postCount}}</p>
+                                <p @click="router.push(`/user/center/${postDetail?.author.userId}/follow/fans`)" class="pointer">{{postDetail?.author.followedCount}}</p>
                                 <p>粉丝</p>
                             </div>
                         </div>

@@ -86,7 +86,8 @@ export const getHotPostList = async () => {
                 likeCount: post.likeCount,
                 commentCount: post.commentCount,
                 liked: post.liked,
-                userName: post.userName 
+                viewCount: post.viewCount,
+                userName: post.userName
         }))
     })
     return postList.value
@@ -104,6 +105,7 @@ export const getRecommendPostList = async () => {
                 labels: post.labels,
                 likeCount: post.likeCount,
                 commentCount: post.commentCount,
+                viewCount: post.viewCount,
                 liked: post.liked,
                 userName: post.userName
             }))
@@ -123,6 +125,7 @@ export const getFollowPostList = async (limit: number, offset: number) => {
                 labels: post.labels,
                 likeCount: post.likeCount,
                 commentCount: post.commentCount,
+                viewCount: post.viewCount,
                 liked: post.liked,
                 userName: post.userName
             }))

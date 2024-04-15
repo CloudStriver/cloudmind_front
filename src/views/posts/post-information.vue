@@ -27,9 +27,9 @@
                 <i class="iconfont icon-liulanliang"></i>
                 <div>浏览量 {{ props.PostInfo.viewCount }}</div>
             </span>
-            <span class="row">
-                <i class="iconfont icon-fenxiang"></i>
-            </span>
+<!--            <span class="row">-->
+<!--                <i class="iconfont icon-fenxiang"></i>-->
+<!--            </span>-->
         </div>
         <div class="tag-box">
             <div

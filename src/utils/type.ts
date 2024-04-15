@@ -139,6 +139,8 @@ export type Comment =  {
         liked: boolean,
         hated: boolean
     }
+    itemTitle: string,
+    itemId: string,
 }
 
 export type CommentBlock = {

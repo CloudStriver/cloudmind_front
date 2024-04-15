@@ -164,7 +164,8 @@ export const getCollectPostList = async (userId: string) => {
                 likeCount: post.likeCount,
                 commentCount: post.commentCount,
                 liked: post.liked,
-                userName: post.userName
+                userName: post.userName,
+                viewCount: post.viewCount,
             }))
         })
     return collectPostList.value
@@ -188,7 +189,8 @@ export const getLikePostList = async (userId: string) => {
                 likeCount: post.likeCount,
                 commentCount: post.commentCount,
                 liked: post.liked,
-                userName: post.userName
+                userName: post.userName,
+                viewCount: post.viewCount,
             }))
         })
     return likePostList.value

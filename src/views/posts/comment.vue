@@ -66,7 +66,8 @@
                             </div>
                             <div class="reply-detail">
                                 <div class="reply">
-                                    <span class="name">{{ reply.author.name }}</span>
+                                    <span class="name" v-if="reply.rootId === reply.fatherId">{{ reply.author.name }}</span>
+                                    <span class="name" v-else>{{reply.author.name}} @ {{reply.atUserId}}</span>
                                     <span class="contents">{{reply.content}}</span>
                                 </div>
                                 <div class="footer">

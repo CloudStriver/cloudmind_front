@@ -71,7 +71,7 @@
                     </div>
                 </div>
                 <div class="rank-create">
-                    <div class="create-post" v-if="store.getUserLongToken()">
+                    <div class="create-post" v-if="store.getUserLongToken() !== ''">
                         <button @click="router.push('/write')">创建帖子</button>
                         <button @click="router.push('/manage/post')">管理帖子</button>
                     </div>

@@ -149,7 +149,7 @@
                                         <div class="name">{{ comment.author.name }}</div>
                                         <div class="time">{{ turnTime(comment.createTime) }}</div>
                                         <div class="other">回复了你的文章</div>
-                                        <div class="title">文章标题</div>
+                                        <div class="title">{{ comment.itemTitle }}</div>
                                     </div>
                                     <div class="contents">
                                         <span>{{ comment.content }}</span>
