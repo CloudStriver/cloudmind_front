@@ -128,7 +128,7 @@
                                         <span>评论 {{ post.commentCount }}</span>
                                     </div>
                                     <div class="operate">
-                                        <span @click="modifyPost(post)">编辑</span>
+                                        <span @click="modifyPost(post.postId)">编辑</span>
                                         <span @click.stop="deletePost(post.postId)">删除</span>
                                         <span><i class="iconfont icon-gengduo"></i></span>
                                     </div>
@@ -195,14 +195,14 @@ import {
   CommentStatusType,
   DeletePostUrl,
   GetCommentsUrl, GetPostsUrl,
-  PostStatusType, SearchSortType,
+  PostStatusType, SearchPeriodType, SearchSortType,
   StoragePostContent,
   StoragePostId,
   StoragePostTitle
 } from "@/utils/consts";
-import type {Post, Comment} from "@/utils/type";
+import type {Post, Comment, PostDetail} from "@/utils/type";
 import {useStore} from "@/store";
-import {turnTime} from "@/utils/utils";
+import {getPostDetail, turnTime} from "@/utils/utils";
 
 const onlyStatus = ref(0)
 const keyContent = ref<string>('')
@@ -264,7 +264,7 @@ const getMyPostList = async(status?: PostStatusType, keyword?: string) => {
   const url = ref(`${GetPostsUrl}?onlyUserId=' + ${userId}`)
   url.value = `${GetPostsUrl}?onlyUserId=${userId}`
   if(status) url.value += `&onlyStatus=${status}`
-  if(keyword) url.value += `&searchKeyword=${keyword}&searchType=${SearchSortType.Score}`
+  if(keyword) url.value += `&searchKeyword=${keyword}&searchType=${SearchSortType.Score}&searchTimerType=${SearchPeriodType.None}`
   url.value += `&limit=10&offset=${(nowPage.value - 1) * 10}`
   await get(true, url.value)
       .then((res: any) => {
@@ -325,11 +325,14 @@ const deletePost = (id: any) => {
     nowDeletePostId.value = id
 }
 
-const modifyPost = (post: Post) => {
+const modifyPost = async (postId: string) => {
+  const post = await getPostDetail(postId)
+  if(post) {
     sessionStorage.setItem(StoragePostTitle, post.title)
     sessionStorage.setItem(StoragePostContent, post.text)
-    sessionStorage.setItem(StoragePostId, post.postId)
-    router.push(`/edit`)
+    sessionStorage.setItem(StoragePostId, postId)
+    await router.push(`/edit`)
+  }
 }
 
 const searchPostsList = async() => {

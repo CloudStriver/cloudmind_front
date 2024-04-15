@@ -169,7 +169,8 @@ import {enterPost} from "@/views/posts/utils";
 import SparkMD5 from "spark-md5";
 import {cosUploadImage} from "@/utils/public-cos";
 import {errorMsg} from "@/utils/message";
-import {StoragePostContent, StoragePostTitle} from "@/utils/consts";
+import {StoragePostContent, StoragePostId, StoragePostTitle} from "@/utils/consts";
+import {onBeforeRouteUpdate} from "vue-router";
 const isShowSetting = ref(true)
 const sureOption = ref(false)
 const isHasUploadImage = ref(false)
@@ -190,6 +191,11 @@ const props = defineProps<{
     postId: string,
   }
 }>()
+
+onBeforeRouteUpdate((to) => {
+})
+
+
 const emit = defineEmits(['sendSettingContents'])
 const keywords = ref<string[]>([])
 
@@ -293,12 +299,12 @@ const CreatePost = async(url: string) => {
       isSure: isSure.value,
       postId: props.sendPostData.postId,
     })
-        .then((res: any) => {
+        .then(async (res: any) => {
           sessionStorage.removeItem(StoragePostTitle)
           sessionStorage.removeItem(StoragePostContent)
+          sessionStorage.removeItem(StoragePostId)
           if (res.keywords === null) {
-            console.log(props.sendPostData.postId)
-            enterPost(props.sendPostData.postId)
+            await enterPost(props.sendPostData.postId)
           } else {
             keywords.value = res.keywords
             sureOption.value = true
@@ -315,11 +321,11 @@ const CreatePost = async(url: string) => {
       isSure: isSure.value,
       postId: "",
     })
-        .then((res: any) => {
+        .then(async (res: any) => {
           sessionStorage.removeItem(StoragePostTitle)
           sessionStorage.removeItem(StoragePostContent)
           if (res.keywords === null) {
-            enterPost(res.postId)
+            await enterPost(res.postId)
           } else {
             keywords.value = res.keywords
             sureOption.value = true
@@ -327,7 +333,6 @@ const CreatePost = async(url: string) => {
           }
         })
   }
-
 }
 
 const noPublishPost = () => {
