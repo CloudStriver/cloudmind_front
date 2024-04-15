@@ -48,6 +48,7 @@
                     id="uploadFolder"
                     style="display: none;"
                     webkitdirectory
+                    @change="uploadFolders($event)"
                 >
             </label>
             <div class="create" @click="isShowCreateFolder = true">
@@ -195,8 +196,6 @@ watch(selectType, (newVal) => {
     }
     else {
         const pathList = (sessionStorage.getItem(StoragePathId) as string).split("/")
-        console.log(sessionStorage.getItem(StoragePathId) as string)
-        console.log(pathList)
         router.push('/personal/' + pathList[pathList.length - 1])
         emit('sendDrawerOptions', 'showFiles')
         emit('sendDrawerSelectType', newVal)
@@ -259,6 +258,97 @@ const createFolder = () => {
     })
 }
 
+// 上传文件夹
+const uploadFolders = async (event: any) => {
+  filesCount.value = event.target.files.length
+  if (event.target.files.length > 0) {
+    isShowFilesCount.value = true
+  }
+  const st = new Map()
+  const paths = (sessionStorage.getItem(StoragePath) as string).split("/")
+  const fatherPath = paths.pop()
+  st.set(fatherPath, getPersonalFatherId())
+  let flag = false
+  for (let i = 0; i < event.target.files.length; i++) {
+    const path = event.target.files[i].webkitRelativePath
+    const pathList = path.split('/')
+    let nowPath = fatherPath
+    for (let j = 0; j < pathList.length - 1; j++) {
+      if (!st.has(nowPath + "/" + pathList[j])) {
+        console.log(nowPath,st.get(nowPath), pathList[j])
+        await postCreateFile({
+          name: pathList[j],
+          type: '文件夹',
+          spaceSize: -1,
+          md5: "",
+          fatherId: st.get(nowPath),
+          category: 1,
+        })
+            .then((res: any) => {
+              if(!flag) {
+                const tempPath = sessionStorage.getItem(StoragePath) as string
+                store.tempFileData = {
+                  fileId: res.fileId,
+                  userId: "",
+                  name: res.name,
+                  type: "文件夹",
+                  path: tempPath + '/' + pathList[j],
+                  fatherId: getPersonalFatherId(),
+                  spaceSize: getFileSize(-1),
+                  md5: "",
+                  isDel: 0,
+                  description: "",
+                  createAt: new Date().toLocaleString(),
+                  updateAt: new Date().toLocaleString(),
+                  isChoose: false,
+                }
+                flag = true
+              }
+              nowPath = nowPath + '/' + pathList[j]
+              st.set(nowPath, res.fileId)
+            })
+      } else {
+        nowPath = nowPath + '/' + pathList[j]
+      }
+    }
+  }
+
+  for(let i = 0; i < event.target.files.length; i ++ ) {
+    const path = event.target.files[i].webkitRelativePath
+    const pathList = path.split('/')
+    pathList.pop()
+    const fatherPath = "CloudMind/" + pathList.join('/')
+    console.log(fatherPath, st.get(fatherPath))
+    const file = event.target.files[i]
+    const fileReader = new FileReader()
+    const spark = new SparkMD5.ArrayBuffer()
+    fileReader.readAsArrayBuffer(file)
+    fileReader.onload = (e: any) => {
+      spark.append(e.target.result)
+      const md5 = spark.end()
+      const suffix = '.' + file.name.split('.').pop()
+      const type = file.type
+      const data: requestCreateFile = {
+        name: file.name,
+        type,
+        spaceSize: file.size,
+        md5: md5,
+        fatherId: st.get(fatherPath),
+        category: getCategory(file.type),
+      }
+      cosUploadFile(file, md5, suffix, () => {
+        postCreateFile(data)
+            .then(()=> {
+              filesCount.value--
+              if (filesCount.value === 0) {
+                isShowFilesCount.value = false
+              }
+            })
+      })
+    }
+  }
+}
+
 //上传文件
 const uploadFiles = (event: any) => {
     filesCount.value = event.target.files.length
@@ -274,7 +364,6 @@ const uploadFiles = (event: any) => {
             spark.append(e.target.result)
             const md5 = spark.end()
             const suffix = '.' + file.name.split('.').pop()
-          // const type = mime.getExtension(file.type) as string
           const type = file.type
             const data: requestCreateFile = {
                 name: file.name,

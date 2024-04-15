@@ -71,14 +71,13 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { useStore } from '@/store/index';
+import { useStore } from '@/store';
 import router from '@/router';
 
 const store = useStore();
 const userId = store.getUserId()
 const fatherId = ref<string>(userId);
 const props = defineProps(['link'])
-
 watch(() => props.link, (newVal) => {
     if (newVal) {
         fatherId.value = newVal
@@ -86,6 +85,7 @@ watch(() => props.link, (newVal) => {
         router.push('/personal/' + newVal)
     }
 })
+
 
 </script>
 

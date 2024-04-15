@@ -1,6 +1,6 @@
 <template>
     <div class="main-box">
-        <CHeader class="cheader"></CHeader>
+        <CHeader class="cheader" :avatar="detail.avatar"></CHeader>
         <div class="contents">
             <div class="operate-box">
                 <div class="avatar-name">
@@ -19,10 +19,11 @@
                                 style="display: none;" 
                                 id="changeAvatar"
                                 @change="changeAvatar($event)"
+                                accept="image/*"
                             >
                             <i class="iconfont icon-xiangji"></i>
                         </label>
-                        <avatar></avatar>
+                        <avatar :avatar="detail.avatar"></avatar>
                     </div>
                     <div>{{ splitName(detail.name) }}</div>
                 </div>
@@ -202,6 +203,10 @@ const noPlanAvatar = () => {
 }
 const changeAvatar = async(event: any) => {
     const file = event.target.files![0]
+  if(file.type.indexOf('image') === -1) {
+    alert('请上传图片')
+    return
+  }
     const fileReader = new FileReader();
     const spark = new SparkMD5.ArrayBuffer();
     fileReader.readAsArrayBuffer(file);
@@ -211,9 +216,8 @@ const changeAvatar = async(event: any) => {
         const suffix = '.' + file.name.split('.').pop();
         cosUploadImage(file, md5, suffix, async () => {
             await updateUser("","", UserAvatarUrl + md5 + suffix, 0,"","")
-            location.reload()
+            detail.value.avatar = UserAvatarUrl + md5 + suffix
         })
-
     }
 }
 </script>

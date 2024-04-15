@@ -1,6 +1,6 @@
 <template>
     <div class="center-box">
-        <CHeader class="cheader"></CHeader>
+        <CHeader class="cheader" :avatar="user.avatar"></CHeader>
         <section class="section">
             <div class="user-information-box">
                 <div class="user-background">
@@ -17,6 +17,8 @@
                                 type="file" 
                                 style="display: none;" 
                                 id="changeAvatar"
+                                accept="image/*"
+                                @change="changeAvatar($event)"
                             >
                             <i class="iconfont icon-xiangji"></i>
                         </label>
@@ -117,11 +119,16 @@
 import CHeader from '@/components/header.vue'
 import List from './contents-list.vue'
 import {ref, onMounted, watch} from 'vue'
-import { getUserInfo} from "@/views/information/utils";
+import {getUserInfo, updateUser} from "@/views/information/utils";
 import {turnTime} from "@/utils/utils";
 import {useRoute} from "vue-router";
 import router from "@/router";
+import SparkMD5 from "spark-md5";
+import {cosUploadImage} from "@/utils/public-cos";
+import {StorageAvatarUrl, UserAvatarUrl} from "@/utils/consts";
+import {useStore} from "@/store";
 
+const store = useStore()
 const classify = ref('post')
 const user = ref({
   name: '',
@@ -140,6 +147,27 @@ const selectInfo = ref({
   selectSecond: "",
   userId: ""
 })
+
+const changeAvatar = async(event: any) => {
+  const file = event.target.files![0]
+  if(file.type.indexOf('image') === -1) {
+    alert('请上传图片')
+    return
+  }
+  const fileReader = new FileReader();
+  const spark = new SparkMD5.ArrayBuffer();
+  fileReader.readAsArrayBuffer(file);
+  fileReader.onload = (e: any) => {
+    spark.append(e.target.result);
+    const md5 = spark.end();
+    const suffix = '.' + file.name.split('.').pop();
+    cosUploadImage(file, md5, suffix, async () => {
+      await updateUser("","", UserAvatarUrl + md5 + suffix, 0,"","")
+      store.setAvatar(UserAvatarUrl + md5 + suffix)
+      user.value.avatar = UserAvatarUrl + md5 + suffix
+    })
+  }
+}
 
 const loading = ref(true) // Step 1: Initialize loading state
 

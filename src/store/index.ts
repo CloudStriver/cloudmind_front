@@ -53,6 +53,14 @@ export const useStore = defineStore('user', {
         setFatherId (fatherId: string) {
             this.fatherId = fatherId
         },
+        setAvatar(avatar: string) {
+            if (sessionStorage.getItem(StorageAutoLogin) !== null) {
+                sessionStorage.setItem(StorageAvatarUrl, avatar)
+            }
+            else {
+                localStorage.setItem(StorageAvatarUrl, avatar)
+            }
+        },
         getUserAvatar() {
             if (sessionStorage.getItem(StorageAvatarUrl) !== null) {
                 this.userAvatar = sessionStorage.getItem(StorageAvatarUrl) as string

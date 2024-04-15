@@ -19,6 +19,7 @@
                     class="avatar" 
                     @mouseover="mouseoverPopup"
                     @mouseleave="mouseleavePopup"
+                    :avatar="props.avatar"
                 ></avatar>
                 <popup 
                     class="popup"
@@ -40,6 +41,9 @@ import Avatar from '@/components/avatar.vue'
 import Nav from '@/components/navigation.vue'
 import popup from './popup.vue'
 
+const props = defineProps<{
+  avatar: string
+}>()
 const isLogin = ref(false)
 const isPopup = ref(false)
 const notificationCount = ref(0)
