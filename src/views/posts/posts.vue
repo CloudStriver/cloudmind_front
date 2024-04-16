@@ -20,28 +20,26 @@
                             </li>
                         </ul>
                     </nav>
-                  <div class="comment-rank">
-                    <div class="comment-rank-title">
-                            <span>
-                                <span class="comment-rank-span">热门评论</span>
-                            </span>
+                    <div class="comment-rank">
+                        <div class="comment-rank-title">
+                            <span class="comment-rank-span">热门评论</span>
+                        </div>
+                        <div class="comment-rank-contents">
+                            <ul>
+                                <li
+                                    v-for="(comment,index) in commentRankList"
+                                    :key="index"
+                                >
+                                <span>{{index + 1 + ((commentRankPage - 1) * pageSize)}}</span>
+                                <router-link :to="`/post/${comment.itemId}`" class="router-link">
+                                    <span>{{comment.userName}}: {{comment.content}}</span>
+                                </router-link>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="comment-rank-more" @click="loadMoreComments" v-if="!noMoreComments">查看更多</div>
+                        <div v-else  class="comment-rank-more">没有更多评论了</div>
                     </div>
-                    <div class="comment-rank-contents">
-                      <ul>
-                        <li
-                            v-for="(comment,index) in commentRankList"
-                            :key="index"
-                        >
-                          <span>{{index + 1 + ((commentRankPage - 1) * pageSize)}}</span>
-                          <router-link :to="`/post/${comment.itemId}`" class="router-link">
-                            <span>{{comment.userName}}: {{comment.content}}</span>
-                          </router-link>
-                        </li>
-                      </ul>
-                    </div>
-                    <div class="comment-rank-more" @click="loadMoreComments" v-if="!noMoreComments">查看更多</div>
-                    <div v-else  class="comment-rank-more">没有更多文章了</div>
-                  </div>
                   <div class="link-box">
                     <p>友情链接</p>
                     <ul>
@@ -112,8 +110,8 @@
                 </div>
                 <div class="rank-create">
                     <div class="create-post" v-if="store.getUserLongToken() !== ''">
-                        <button @click="router.push('/write')">创建帖子</button>
-                        <button @click="router.push('/manage/post')">管理帖子</button>
+                        <button @click="turnPage('/write')">创建帖子</button>
+                        <button @click="turnPage('/manage/post')">管理帖子</button>
                     </div>
                     <div class="post-rank">
                         <div class="post-rank-title">
@@ -140,7 +138,7 @@
                     <div class="author-rank">
                         <div class="author-rank-title">
                             <span>
-                                <span class="author-rank-span">作者排行榜</span>
+                                <span class="author-rank-span">可能认识的人</span>
                             </span>
                         </div>
                         <div 
@@ -245,6 +243,10 @@ onBeforeMount(() => {
     next();
   });
 });
+
+const turnPage = (path: string) => {
+    router.push(path)
+}
 
 const getPosts = async () => {
   switch (navSelect.value) {
@@ -369,6 +371,7 @@ const loadMoreComments = async () => {
                 border-radius: 5px;
                 box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
                 margin-right: 30px;
+                margin-bottom: 30px;
                 margin-top: 10px;
     
     
@@ -407,12 +410,14 @@ const loadMoreComments = async () => {
             }
 
             .comment-rank {
-              width: 50%;
-              background-color: #fff;
-              border-radius: 5px;
-              box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
-              padding: 15px;
-              margin-bottom: 30px;
+                width: 200px;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
+                padding: 15px;
+                margin-bottom: 30px;
+                display: flex;
+                flex-direction: column;
 
               .comment-rank-title {
                 padding-bottom: 10px;

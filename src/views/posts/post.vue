@@ -20,10 +20,19 @@
                                 <i class="iconfont icon-shoucang01 collected" v-else></i>
                                 <div>{{ postDetail?.collectCount }}</div>
                             </li>
-<!--                            <li @click="sharePostDetail(postDetail)">-->
-<!--                                <i class="iconfont icon-fenxiang"></i>-->
-<!--                                <div>{{ postDetail?.shareCount }}</div>-->
-<!--                            </li>-->
+                            <li v-click-outside="onClickOutside" ref="buttonRef">
+                               <i class="iconfont icon-fenxiang"></i>
+                               <div>{{ postDetail?.shareCount }}</div>
+                            </li>
+                            <el-popover
+                              ref="popoverRef"
+                              :virtual-ref="buttonRef"
+                              trigger="click"
+                              title="标题"
+                              virtual-triggering
+                            >
+                              <span>链接</span>
+                            </el-popover>
                         </ul>
                     </div>
                     <article class="article">
@@ -225,6 +234,12 @@ const followAuthor = (author: any) => {
   })
 }
 
+const buttonRef = ref()
+const popoverRef = ref()
+const onClickOutside = () => {
+  unref(popoverRef).popperRef?.delayHide?.()
+}
+
 const unFollowAuthor = (author: any) => {
   DeleteRelation({
     toId: author.userId,
@@ -293,7 +308,7 @@ const changePost = async (nowPostId: string) => {
                 .information {
                     position: fixed;
                     margin-top: 50px;
-                    left: 50%;
+                    left: 48%;
                     transform: translate(-780px);
 
                     ul {

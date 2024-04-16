@@ -90,24 +90,65 @@
                         <List :SendContentMsg="selectInfo"></List>
                     </div>
                 </div>
-                <div class="user-other-information">
-                    <div class="follow-star">
-                        <div class="follow">
-                            <p>关注了</p>
-                            <p>{{user.followCount}}</p>
+                <div>
+                    <div class="user-other-information">
+                        <div class="follow-star">
+                            <div class="follow">
+                                <p>关注了</p>
+                                <p>{{user.followCount}}</p>
+                            </div>
+                            <div class="star">
+                                <p>关注者</p>
+                                <p>{{user.followedCount}}</p>
+                            </div>
                         </div>
-                        <div class="star">
-                            <p>关注者</p>
-                            <p>{{user.followedCount}}</p>
+                        <div class="other">
+                            <ul>
+                                <li>
+                                    <span>加入于</span>
+                                    <span>{{turnTime(user.createTime)}}</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="other">
-                        <ul>
-                            <li>
-                                <span>加入于</span>
-                                <span>{{turnTime(user.createTime)}}</span>
-                            </li>
-                        </ul>
+                    <div class="author-rank">
+                        <div class="author-rank-title">
+                            <span>
+                                <span class="author-rank-span">可能认识的人</span>
+                            </span>
+                        </div>
+                        <div 
+                            class="author-rank-contents" 
+                            v-for="user in userRankList"
+                            :key="user.userId"
+                        >
+                            <ul>
+                                <li>
+                                    <div class="author">
+                                        <div class="author-information">
+                                            <img :src="user.url" alt="头像">
+                                            <div class="information">
+                                                <router-link :to="`/user/center/${user.userId}/post/publish`" class="router-link">
+                                                    <p>{{ user.name }}</p>
+                                                </router-link>
+                                                    <p>{{ splitDescription(user.description) }}</p>
+                                            </div>
+                                        </div>
+                                        <div v-if="user.userId !== store.getUserId()">
+                                            <button
+                                                v-if="!user.followed"
+                                                @click="followHotUser(user)"
+                                            >关注</button>
+                                            <button v-else
+                                                    @click="unFollowHotUser(user)"
+                                            >已关注</button>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="author-rank-more" @click="loadMoreUsers" v-if="!noMoreUsers">查看更多</div>
+                        <div v-else  class="author-rank-more">没有更多作者了</div>
                     </div>
                 </div>
             </div>
@@ -380,6 +421,7 @@ watch(() => classify.value, async (newVal) => {
 
             .user-other-information {
                 width: 280px;
+                margin-bottom: 30px;
                 display: flex;
                 flex-direction: column;
 
@@ -431,6 +473,100 @@ watch(() => classify.value, async (newVal) => {
                             border-bottom: 1px solid #e0e0e0;
                         }
                     }
+                }
+            }
+
+            .author-rank {
+                width: 100%;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
+                padding: 15px;
+
+                .author-rank-title {
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid #f0f0f0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .author-rank-span {
+                        font-size: 16px;
+                        font-weight: 600;
+                    }
+                }
+
+                .author-rank-contents {
+                    ul {
+                        list-style: none;
+                        padding: 0;
+                        margin: 0;
+
+                        li {
+                            padding: 15px 0;
+                            border-bottom: 1px solid #f0f0f0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+
+                            .author {
+                                width: 100%;
+                                margin-right: 10px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+
+                                .author-information {
+                                    flex: 1;
+                                    display: flex;
+
+                                    img {
+                                        width: 40px;
+                                        height: 40px;
+                                        border-radius: 50%;
+                                        margin-right: 10px;
+                                    }
+        
+                                    .information {
+                                        p {
+                                            margin: 0;
+                                        }
+                                        p:first-child {
+                                            font-size: 15px;
+                                            color: black
+                                        }
+                                        p:nth-child(2) {
+                                            font-size: 12px;
+                                            color: rgb(132, 132, 132);
+                                        }
+
+                                        .router-link {
+                                            text-decoration: none;
+                                        }
+                                    }
+                                }
+
+                                button {
+                                    width: 60px;
+                                    height: 30px;
+                                    border: none;
+                                    border-radius: 5px;
+                                    cursor: pointer;
+                                    background-color: #ffede0;
+                                    color: #a37658;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .author-rank-more {
+                    padding: 10px 0 0 0;
+                    text-align: center;
+                    cursor: pointer;
+                    font-size: 13px;
+                    color: rgb(132, 132, 132);
+                    border-top: 1px solid #f0f0f0;
                 }
             }
         }
