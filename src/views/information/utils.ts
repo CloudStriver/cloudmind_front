@@ -50,6 +50,7 @@ export const getUserInfo = async (userId: string) => {
         followedCount: 0,
         followCount: 0,
         createTime: 0,
+        background: '',
     })
     await get(false, `${GetUserUrl}?userId=${userId}`)
         .then((res: any) => {
@@ -62,17 +63,19 @@ export const getUserInfo = async (userId: string) => {
             detail.value.followedCount = res.followedCount
             detail.value.followed = res.followed
             detail.value.createTime = res.createTime
+            detail.value.background = res.backgroundUrl
         })
     return detail.value
 }
-export const updateUser = async (name?: String, fullName?:String, url?:String, sex?:number, idCard?:String,description?:String) => {
+export const updateUser = async (name?: String, fullName?:String, url?:String, sex?:number, idCard?:String,description?:String, background?:string) => {
     await post(true, UpdateUserUrl, {
         name: name,
         fullName: fullName,
         url: url,
         sex: sex,
         idCard: idCard,
-        description: description
+        description: description,
+        backgroundUrl: background,
     });
 }
 

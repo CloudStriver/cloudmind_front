@@ -20,10 +20,19 @@
                                 <i class="iconfont icon-shoucang01 collected" v-else></i>
                                 <div>{{ postDetail?.collectCount }}</div>
                             </li>
-<!--                            <li @click="sharePostDetail(postDetail)">-->
-<!--                                <i class="iconfont icon-fenxiang"></i>-->
-<!--                                <div>{{ postDetail?.shareCount }}</div>-->
-<!--                            </li>-->
+                            <li v-click-outside="onClickOutside" ref="buttonRef" @click="sharePostDetail(postDetail)">
+                               <i class="iconfont icon-fenxiang"></i>
+                               <div>{{ postDetail?.shareCount }}</div>
+                            </li>
+                            <el-popover
+                              ref="popoverRef"
+                              :virtual-ref="buttonRef"
+                              trigger="click"
+                              :title="postDetail?.title"
+                              virtual-triggering
+                            >
+                              <span>{{ url }}</span>
+                            </el-popover>
                         </ul>
                     </div>
                     <article class="article">
@@ -108,7 +117,7 @@
 import CHeader from '@/components/header.vue'
 import Comment from './comment.vue'
 import type {Post, PostDetail} from "@/utils/type";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, unref} from "vue";
 import {getPostDetail, getPostRecommendByPostId, likePost, turnTime, unLikePost} from "@/utils/utils";
 import {useStore} from "@/store";
 import {enterPost} from "@/views/posts/utils";
@@ -134,6 +143,7 @@ const PostData = ref({
   UserId: '',
   CommentCount: 0,
 })
+const url = ref(location.href)
 onMounted(async () => {
     postId.value = route.params.postId as string
     postDetail.value = await getPostDetail(postId.value)
@@ -202,16 +212,20 @@ const collectOrCancelPostDetail = (post: PostDetail | undefined) => {
   }
 }
 
-const sharePostDetail = (post: PostDetail | undefined) => {
+const sharePostDetail = async (post: PostDetail | undefined) => {
   if (post) {
-      CreateRelation({
-        toId: postId.value,
-        toType: TargetType.Post,
-        relationType: RelationType.Share,
-      }).then(() => {
+    await CreateRelation({
+      toId: postId.value,
+      toType: TargetType.Post,
+      relationType: RelationType.Share,
+    }).then(() => {
+      if(localStorage.getItem("share") !== 'true') {
+        localStorage.setItem("share", "true")
         post.shareCount++
-      })
-    }
+      }
+    })
+  } else {
+  }
 }
 
 const followAuthor = (author: any) => {
@@ -223,6 +237,12 @@ const followAuthor = (author: any) => {
     author.followed = true
     author.followedCount++
   })
+}
+
+const buttonRef = ref()
+const popoverRef = ref()
+const onClickOutside = async() => {
+  unref(popoverRef).popperRef?.delayHide?.()
 }
 
 const unFollowAuthor = (author: any) => {
@@ -293,7 +313,7 @@ const changePost = async (nowPostId: string) => {
                 .information {
                     position: fixed;
                     margin-top: 50px;
-                    left: 50%;
+                    left: 48%;
                     transform: translate(-780px);
 
                     ul {

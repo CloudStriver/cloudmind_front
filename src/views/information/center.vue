@@ -3,8 +3,16 @@
         <CHeader class="cheader" :avatar="avatar"></CHeader>
         <section class="section">
             <div class="user-information-box">
-                <div class="user-background">
-                    <button>点击上传背景图片</button>
+                <div class="user-background" >
+                    <img :src="user.background">
+                    <input
+                        type="file"
+                        style="display: none;"
+                        id="fileInput"
+                        accept="image/*"
+                        @change="uploadBackgroudImage($event)"
+                    >
+                    <button onclick="document.getElementById('fileInput').click()">点击上传背景图片</button>
                 </div>
                 <div class="user-information">
                     <div class="avatar">
@@ -90,24 +98,63 @@
                         <List :SendContentMsg="selectInfo"></List>
                     </div>
                 </div>
-                <div class="user-other-information">
-                    <div class="follow-star">
-                        <div class="follow">
-                            <p>关注了</p>
-                            <p>{{user.followCount}}</p>
+                <div>
+                    <div class="user-other-information">
+                        <div class="follow-star">
+                            <div class="follow">
+                                <p>关注了</p>
+                                <p>{{user.followCount}}</p>
+                            </div>
+                            <div class="star">
+                                <p>关注者</p>
+                                <p>{{user.followedCount}}</p>
+                            </div>
                         </div>
-                        <div class="star">
-                            <p>关注者</p>
-                            <p>{{user.followedCount}}</p>
+                        <div class="other">
+                            <ul>
+                                <li>
+                                    <span>加入于</span>
+                                    <span>{{turnTime(user.createTime)}}</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="other">
-                        <ul>
-                            <li>
-                                <span>加入于</span>
-                                <span>{{turnTime(user.createTime)}}</span>
-                            </li>
-                        </ul>
+                    <div class="author-rank">
+                        <div class="author-rank-title">
+                            <span>
+                                <span class="author-rank-span">可能认识的人</span>
+                            </span>
+                        </div>
+                        <div 
+                            class="author-rank-contents" 
+                            v-for="(recommendUser,index) in recommendUserList"
+                            :key="index"
+                        >
+                            <ul>
+                                <li>
+                                    <div class="author">
+                                        <div class="author-information">
+                                            <img :src="recommendUser.url" alt="头像">
+                                            <div class="information">
+                                                <router-link :to="`/user/center/${recommendUser.userId}/post/publish`" class="router-link">
+                                                    <p>{{ recommendUser.name }}</p>
+                                                </router-link>
+                                                    <p>{{ splitDescription(recommendUser.description) }}</p>
+                                            </div>
+                                        </div>
+                                        <div v-if="recommendUser.userId !== store.getUserId()">
+                                            <button
+                                                v-if="!recommendUser.followed"
+                                                @click="followHotUser(recommendUser)"
+                                            >关注</button>
+                                            <button v-else
+                                                    @click="unFollowHotUser(recommendUser)"
+                                            >已关注</button>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -120,14 +167,36 @@ import CHeader from '@/components/header.vue'
 import List from './contents-list.vue'
 import {ref, onMounted, watch} from 'vue'
 import {getUserInfo, updateUser} from "@/views/information/utils";
-import {turnTime} from "@/utils/utils";
+import {followHotUser, getUserRecommend, splitDescription, turnTime, unFollowHotUser} from "@/utils/utils";
 import {useRoute} from "vue-router";
 import router from "@/router";
 import SparkMD5 from "spark-md5";
 import {cosUploadImage} from "@/utils/public-cos";
-import { UserAvatarUrl} from "@/utils/consts";
+import {CategoryType, UserAvatarUrl} from "@/utils/consts";
 import {useStore} from "@/store";
+import type {HotUser} from "@/utils/type";
 
+const recommendUserList = ref<HotUser[]>([])
+
+const uploadBackgroudImage = (event: any) => {
+  const file = event.target.files![0]
+  if(file.type.indexOf('image') === -1) {
+    alert('请上传图片')
+    return
+  }
+  const fileReader = new FileReader();
+  const spark = new SparkMD5.ArrayBuffer();
+  fileReader.readAsArrayBuffer(file);
+  fileReader.onload = (e: any) => {
+    spark.append(e.target.result);
+    const md5 = spark.end();
+    const suffix = '.' + file.name.split('.').pop();
+    cosUploadImage(file, md5, suffix, async () => {
+      await updateUser("", "", "", 0,"","", UserAvatarUrl + md5 + suffix)
+      user.value.backgroud = UserAvatarUrl + md5 + suffix
+    })
+  }
+}
 const store = useStore()
 const classify = ref('post')
 const user = ref({
@@ -140,6 +209,7 @@ const user = ref({
   followedCount: 0,
   followCount: 0,
   createTime: 0,
+  background: ''
 })
 
 const selectInfo = ref({
@@ -183,7 +253,9 @@ onMounted (async () => {
     userId: userId,
   }
   user.value =  await getUserInfo(userId)
+  console.log(user.value.background)
   loading.value = false
+  recommendUserList.value = await getUserRecommend("recommend", CategoryType.UserCategory)
 })
 
 watch(() => classify.value, async (newVal) => {
@@ -247,6 +319,13 @@ watch(() => classify.value, async (newVal) => {
                 position: relative;
                 height: 245.28px;
                 background: linear-gradient(90deg, rgba(180, 203, 224, 1) 12.5%, rgba(198, 223, 247, 0) 100%);
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+
+                }
 
                 button {
                     position: absolute;
@@ -380,6 +459,7 @@ watch(() => classify.value, async (newVal) => {
 
             .user-other-information {
                 width: 280px;
+                margin-bottom: 30px;
                 display: flex;
                 flex-direction: column;
 
@@ -431,6 +511,100 @@ watch(() => classify.value, async (newVal) => {
                             border-bottom: 1px solid #e0e0e0;
                         }
                     }
+                }
+            }
+
+            .author-rank {
+                width: 100%;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
+                padding: 15px;
+
+                .author-rank-title {
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid #f0f0f0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .author-rank-span {
+                        font-size: 16px;
+                        font-weight: 600;
+                    }
+                }
+
+                .author-rank-contents {
+                    ul {
+                        list-style: none;
+                        padding: 0;
+                        margin: 0;
+
+                        li {
+                            padding: 15px 0;
+                            border-bottom: 1px solid #f0f0f0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+
+                            .author {
+                                width: 100%;
+                                margin-right: 10px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+
+                                .author-information {
+                                    flex: 1;
+                                    display: flex;
+
+                                    img {
+                                        width: 40px;
+                                        height: 40px;
+                                        border-radius: 50%;
+                                        margin-right: 10px;
+                                    }
+        
+                                    .information {
+                                        p {
+                                            margin: 0;
+                                        }
+                                        p:first-child {
+                                            font-size: 15px;
+                                            color: black
+                                        }
+                                        p:nth-child(2) {
+                                            font-size: 12px;
+                                            color: rgb(132, 132, 132);
+                                        }
+
+                                        .router-link {
+                                            text-decoration: none;
+                                        }
+                                    }
+                                }
+
+                                button {
+                                    width: 60px;
+                                    height: 30px;
+                                    border: none;
+                                    border-radius: 5px;
+                                    cursor: pointer;
+                                    background-color: #ffede0;
+                                    color: #a37658;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .author-rank-more {
+                    padding: 10px 0 0 0;
+                    text-align: center;
+                    cursor: pointer;
+                    font-size: 13px;
+                    color: rgb(132, 132, 132);
+                    border-top: 1px solid #f0f0f0;
                 }
             }
         }

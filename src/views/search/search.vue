@@ -173,17 +173,29 @@
                     </div>
                 </div>
             </div>
-            <div class="hot-search">
-                <span class="title">热门搜索</span>
-                <ul>
-                    <li v-for="(search, index) in hotSearchList" :key="index">
-                        <span class="n1" v-if="index === 0">1</span>
-                        <span class="n2" v-else-if="index === 1">2</span>
-                        <span class="n3" v-else-if="index === 2">3</span>
-                        <span class="n" v-else>{{index + 1}}</span>
-                        <span @click="router.push(`/search/${search}/post/${SearchSortType.Synthesis}/${SearchPeriodType.None}`)">{{search}}</span>
-                    </li>
-                </ul>
+            <div>
+                <div class="hot-search">
+                    <span class="title">热门搜索</span>
+                    <ul>
+                        <li v-for="(search, index) in hotSearchList" :key="index">
+                            <span class="n1" v-if="index === 0">1</span>
+                            <span class="n2" v-else-if="index === 1">2</span>
+                            <span class="n3" v-else-if="index === 2">3</span>
+                            <span class="n" v-else>{{index + 1}}</span>
+                            <span @click="router.push(`/search/${search}/post/${SearchSortType.Synthesis}/${SearchPeriodType.None}`)">{{search}}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="slideshow">
+                    <el-carousel indicator-position="outside" class="el-carousel">
+                    <el-carousel-item 
+                        v-for="(item, index) in imageList" 
+                        :key="index"
+                    >
+                        <img :src="item" alt="">
+                    </el-carousel-item>
+                    </el-carousel>
+                </div>
             </div>
         </section>
     </div>
@@ -208,6 +220,11 @@ const selectPeriod = ref(0)
 const postList = ref<Post[]>([])
 const userList = ref<User[]>([])
 const store = useStore()
+const imageList = [
+    'https://img-operation.csdnimg.cn/csdn/silkroad/img/1702263558311.gif',
+    'https://img-operation.csdnimg.cn/csdn/silkroad/img/1712817929834.png',
+    'https://img-operation.csdnimg.cn/csdn/silkroad/img/1712731722868.png',
+]
 const hotSearchList = ref<string[]>([])
 onMounted(async () => {
   const route = useRoute()
@@ -229,8 +246,6 @@ onMounted(async () => {
   ]
   await search()
 })
-
-
 
 onBeforeMount(() => {
   router.beforeEach(async (to, from, next) => {
@@ -656,6 +671,22 @@ const searchUser = async (key: string, sort: number, period: number) => {
                         font-weight: 600;
                     }
                 }
+            }
+        }
+
+        .slideshow {
+            height: 500px;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+
+            .el-carousel:deep(.el-carousel__container) {
+                height: 500px;
+            }
+            
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
         }
     }
