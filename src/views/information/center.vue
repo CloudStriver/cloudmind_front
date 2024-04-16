@@ -12,12 +12,13 @@
                         accept="image/*"
                         @change="uploadBackgroudImage($event)"
                     >
-                    <button onclick="document.getElementById('fileInput').click()">点击上传背景图片</button>
+                    <button v-if="nowUserId === store.getUserId()" onclick="document.getElementById('fileInput').click()">点击上传背景图片</button>
                 </div>
                 <div class="user-information">
                     <div class="avatar">
                         <img :src="user.avatar" alt="头像">
                         <label
+                            v-if="nowUserId === store.getUserId()"
                             for="changeAvatar"
                             class="change-avatar" 
                         >
@@ -193,7 +194,7 @@ const uploadBackgroudImage = (event: any) => {
     const suffix = '.' + file.name.split('.').pop();
     cosUploadImage(file, md5, suffix, async () => {
       await updateUser("", "", "", 0,"","", UserAvatarUrl + md5 + suffix)
-      user.value.backgroud = UserAvatarUrl + md5 + suffix
+      user.value.background = UserAvatarUrl + md5 + suffix
     })
   }
 }
@@ -217,7 +218,7 @@ const selectInfo = ref({
   selectSecond: "",
   userId: ""
 })
-
+const nowUserId = ref<string>('')
 const avatar = ref(store.getUserAvatar())
 const changeAvatar = async(event: any) => {
   const file = event.target.files![0]
@@ -244,16 +245,15 @@ const loading = ref(true) // Step 1: Initialize loading state
 
 onMounted (async () => {
   const route = useRoute()
-  const userId = route.params.userId as string
+  nowUserId.value = route.params.userId as string
   classify.value = route.params.selectFirst as string
   const selectSecond = route.params.selectSecond as string
   selectInfo.value = {
     selectFirst: classify.value,
     selectSecond: selectSecond,
-    userId: userId,
+    userId: nowUserId.value,
   }
-  user.value =  await getUserInfo(userId)
-  console.log(user.value.background)
+  user.value =  await getUserInfo(nowUserId.value)
   loading.value = false
   recommendUserList.value = await getUserRecommend("recommend", CategoryType.UserCategory)
 })

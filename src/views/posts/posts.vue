@@ -207,8 +207,9 @@ import {
   GetPopularRecommendUrl, GetPostsUrl,
   GetRecommendByUserUrl,
   GetRelationPathsUrl,
-  RelationType
+  RelationType, StorageAvatarUrl, StorageDoGetUser, StorageName
 } from "@/utils/consts";
+import {getUserDetail} from "@/views/information/utils";
 
 const store = useStore()
 const navSelect = ref('all') // 选项
@@ -233,7 +234,34 @@ let userRankPage = 1; // 当前用户列表页码
 let postRankPage = 1; // 当前帖子列表页码
 let commentRankPage = 1;
 const route = useRoute()
+
+const firstGetUserDetail = () => {
+  const longToken = store.getUserLongToken()
+  const loginType = store.getLoginType()
+
+  if (longToken) {
+    if (loginType === 1 && sessionStorage.getItem(StorageDoGetUser) === 'false') {
+      getUserDetail().then(res => {
+        sessionStorage.setItem(StorageDoGetUser, 'true')
+        sessionStorage.setItem(StorageAvatarUrl, res.avatar)
+        sessionStorage.setItem(StorageName, res.name)
+        location.reload()
+      });
+    }
+    else if (loginType === 2 && localStorage.getItem(StorageDoGetUser) === 'false') {
+      getUserDetail().then(res => {
+        localStorage.setItem(StorageDoGetUser, 'true')
+        localStorage.setItem(StorageAvatarUrl, res.avatar)
+        localStorage.setItem(StorageName, res.name)
+        location.reload()
+      });
+    }
+  }
+}
+
+
 onMounted(async() => {
+    firstGetUserDetail()
     navSelect.value = route.params.select as string
     userRankList.value = await getUserRankList(pageSize, 0)
     postRankList.value = await getPostRankList(pageSize, 0)
