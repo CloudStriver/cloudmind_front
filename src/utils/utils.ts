@@ -142,7 +142,7 @@ export const enterUser = async (userId: string) => {
 
 export const getUserRecommend = async (mainClassify: string, classifyNum: number) => {
     const userList = ref<User[]>([])
-    await get(false, getRecommendUrl(mainClassify, classifyNum))
+    await get(false, getRecommendUrl(mainClassify, classifyNum) + `&limit=10`)
         .then((res: any) => {
             userList.value = res.recommends.users.map((user: any) => ({
                 userId: user.userId,
@@ -226,18 +226,15 @@ export const getPostRecommendByPostId = async (postId: string) => {
     return postList.value
 }
 
-
-
 export const getLabelList = async(fatherId: string, key?: string) =>{
     const labelList = ref<Label[]>([])
     if(!key) key = ""
-    await get(false,  `${GetTagListUrl}?fatherId=${fatherId}&key=${key}`).then((res: any) => {
+    await get(false,  `${GetTagListUrl}?fatherId=${fatherId}&key=${key}&limit=20`).then((res: any) => {
         labelList.value = res.labels.map((label: any) => ({
             id: label.id,
             value: label.value
         }))
     })
-    console.log(labelList.value)
     return labelList.value
 }
 

@@ -106,6 +106,20 @@
                                         <span>{{ reply.like }}</span>
                                     </span>
                                     <span
+                                      class="disagree"
+                                      v-if="!commentBlock.comment.commentRelation.hated"
+                                      @click="hateComment(commentBlock.comment)"
+                                    >
+                                    <i class="iconfont icon-oppose_light"></i>
+                                    </span>
+                                            <span
+                                                class="disagree-like"
+                                                v-if="commentBlock.comment.commentRelation.hated"
+                                                @click="unHateComment(commentBlock.comment)"
+                                            >
+                                        <i class="iconfont icon-oppose_light"></i>
+                                    </span>
+                                    <span
                                         class="reply-btn"
                                         @click="replyComment(
                                                 reply.commentId,
@@ -456,7 +470,6 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
                         margin-right: 3px;
                       }
                     }
-
                 }
 
                 .reply-item {
