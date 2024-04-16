@@ -56,7 +56,6 @@ import FileOption from './fileOption.vue'
 import router from '@/router'
 import { ref } from 'vue'
 import {StoragePathId} from "@/utils/consts";
-import {send} from "vite";
 const RecycleMsg = ref({
     option: "",
     message: "",

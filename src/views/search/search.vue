@@ -1,6 +1,6 @@
 <template>
     <div class="search-box">
-        <CHeader class="header"></CHeader>
+        <CHeader class="header" :keyword="keyword"></CHeader>
         <nav class="nav">
             <ul>
 <!--                <li>-->
@@ -176,47 +176,13 @@
             <div class="hot-search">
                 <span class="title">热门搜索</span>
                 <ul>
-                    <li>
-                        <span class="n1">1</span>
-                        <span>三年前掉河里的20g金戒指捞上来</span>
+                    <li v-for="(search, index) in hotSearchList" :key="index">
+                        <span class="n1" v-if="index === 0">1</span>
+                        <span class="n2" v-else-if="index === 1">2</span>
+                        <span class="n3" v-else-if="index === 2">3</span>
+                        <span class="n" v-else>{{index + 1}}</span>
+                        <span @click="router.push(`/search/${search}/post/${SearchSortType.Synthesis}/${SearchPeriodType.None}`)">{{search}}</span>
                     </li>
-                    <li>
-                        <span class="n2">2</span>
-                        <span>阿姨吐槽年轻人卧铺挂帘子不让坐</span>
-                    </li>
-                    <li>
-                        <span class="n3">3</span>
-                        <span>六年级男孩百米跑出12秒27</span>
-                    </li>
-                    <li>
-                        <span>4</span>
-                        <span>86岁老人隆重仪式迎娶初恋女友</span>
-                    </li>
-                    <li>
-                        <span>5</span>
-                        <span>三星堆挖出“飞碟”青铜器系谣言</span>
-                    </li>
-                    <li>
-                        <span>6</span>
-                        <span>副县长妻子为出轨对象做间谍17年</span>
-                    </li>
-                    <li>
-                        <span>7</span>
-                        <span>30余万现金被烧银行救回24万</span>
-                    </li>
-                    <li>
-                        <span>8</span>
-                        <span>端午节放3天不调休</span>
-                    </li>
-                    <li>
-                        <span>9</span>
-                        <span>胖东来回应爆改长沙步步高超市</span>
-                    </li>
-                    <li>
-                        <span>10</span>
-                        <span>顾客正泡温泉发现自己入镜直播间</span>
-                    </li>
-                    
                 </ul>
             </div>
         </section>
@@ -242,14 +208,28 @@ const selectPeriod = ref(0)
 const postList = ref<Post[]>([])
 const userList = ref<User[]>([])
 const store = useStore()
+const hotSearchList = ref<string[]>([])
 onMounted(async () => {
   const route = useRoute()
   keyword.value = route.params.keyword as string
   selectContent.value = route.params.type as string
   selectSort.value = parseInt(route.params.sort as string)
   selectPeriod.value = parseInt(route.params.period as string)
+  hotSearchList.value = [
+      "三年前掉河里的20g金戒指捞上来",
+      "阿姨吐槽年轻人卧铺挂帘子不让坐",
+      "六年级男孩百米跑出12秒27",
+      "86岁老人隆重仪式迎娶初恋女友",
+      "三星堆挖出“飞碟”青铜器系谣言",
+      "副县长妻子为出轨对象做间谍17年",
+      "30余万现金被烧银行救回24万",
+      "端午节放3天不调休",
+      "胖东来回应爆改长沙步步高超市",
+      "顾客正泡温泉发现自己入镜直播间"
+  ]
   await search()
 })
+
 
 
 onBeforeMount(() => {
@@ -329,9 +309,6 @@ const searchUser = async (key: string, sort: number, period: number) => {
   })
   return userList.value
 }
-
-
-
 
 </script>
 <style scoped lang="css">

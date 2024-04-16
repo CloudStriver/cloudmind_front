@@ -120,9 +120,9 @@ import 'vditor/dist/index.css'
 import {useRoute} from "vue-router";
 
 const imageList = [
-  'https://images.pexels.com/photos/3538558/pexels-photo-3538558.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'https://images.pexels.com/photos/20991840/pexels-photo-20991840.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'https://images.pexels.com/photos/18903447/pexels-photo-18903447.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://img-operation.csdnimg.cn/csdn/silkroad/img/1702263558311.gif',
+  'https://img-operation.csdnimg.cn/csdn/silkroad/img/1712817929834.png',
+  'https://img-operation.csdnimg.cn/csdn/silkroad/img/1712731722868.png',
 ]
 const postDetail = ref<PostDetail>()
 const postList = ref<Post[]>([])
@@ -371,7 +371,7 @@ const changePost = async (nowPostId: string) => {
             }
 
             .right {
-                width: 300px;
+                width: 330px;
                 display: flex;
                 flex-direction: column;
 

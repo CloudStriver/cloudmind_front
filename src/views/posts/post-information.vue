@@ -37,7 +37,7 @@
                 v-for="(label, index) in props.PostInfo.labels"
                 :key="index"
             >
-                <button>{{ label.value }}</button>
+                <button @click="router.push(`/search/${label.value}/post/${SearchSortType.Synthesis}/${SearchPeriodType.None}`)">{{ label.value }}</button>
             </div>
         </div>
     </div>
@@ -46,6 +46,8 @@
 <script setup lang="ts">
 import type {Post} from "@/utils/type";
 import {likePost, unLikePost} from "@/utils/utils";
+import router from "@/router";
+import {SearchPeriodType, SearchSortType} from "@/utils/consts";
 
 const props = defineProps<{
   PostInfo: Post

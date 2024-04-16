@@ -7,7 +7,7 @@
                 <button @click="continueDelete">继续</button>
             </div>
         </div>
-        <CHeader class="cheader"></CHeader>
+        <CHeader class="cheader" avatar=""></CHeader>
         <div class="contents-box">
             <div class="contents">
                 <header class="header">
@@ -126,7 +126,7 @@
                                     <div class="data">
                                         <span>点赞 {{ post.likeCount }}</span>
                                         <span>评论 {{ post.commentCount }}</span>
-                                        <span>收藏 1</span>
+<!--                                        <span>收藏 1</span>-->
                                         <span>浏览量 {{ post.viewCount }}</span>
                                     </div>
                                     <div class="operate">
@@ -148,10 +148,10 @@
                                         <div class="image">
                                             <img :src="comment.author.url" alt="">
                                         </div>
-                                        <div class="name">{{ comment.author.name }}</div>
+                                        <div class="name" @click="enterUser(comment.atUser.userId)">{{ comment.author.name }}</div>
                                         <div class="time">{{ turnTime(comment.createTime) }}</div>
                                         <div class="other">回复了你的文章</div>
-                                        <div class="title">{{ comment.itemTitle }}</div>
+                                        <div class="title" @click="enterPostId(comment.subjectId)">{{ comment.itemTitle }}</div>
                                     </div>
                                     <div class="contents">
                                         <span>{{ comment.content }}</span>
@@ -162,9 +162,9 @@
                                         <span class="me">我</span>
                                         <span class="time">{{ turnTime(comment.createTime) }}</span>
                                         <span class="other">评论了</span>
-                                        <span class="he">name</span>
+                                        <span class="title" @click="enterUser(comment.atUser.userId)">{{ comment.atUser.name }}</span>
                                         <span class="other">的文章</span>
-                                        <span class="title">文章标题</span>
+                                        <span class="title" @click="enterPostId(comment.subjectId)">{{ comment.itemTitle }}</span>
                                     </div>
                                     <div class="contents-">
                                         <span>{{ comment.content }}</span>
@@ -202,9 +202,9 @@ import {
   StoragePostId,
   StoragePostTitle
 } from "@/utils/consts";
-import type {Post, Comment, PostDetail} from "@/utils/type";
+import type {Post, Comment} from "@/utils/type";
 import {useStore} from "@/store";
-import {getPostDetail, turnTime} from "@/utils/utils";
+import {enterUser, getPostDetail, turnTime} from "@/utils/utils";
 
 const onlyStatus = ref(0)
 const keyContent = ref<string>('')
@@ -318,6 +318,9 @@ const getReplyMeComments = async () => {
 //     })
 // }
 
+const enterPostId = (postId: any) => {
+  router.push('/post/' + postId)
+}
 const enterPost = (post: any) => {
     router.push('/post/' + post.postId)
 }

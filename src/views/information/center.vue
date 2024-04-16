@@ -1,6 +1,6 @@
 <template>
     <div class="center-box">
-        <CHeader class="cheader" :avatar="user.avatar"></CHeader>
+        <CHeader class="cheader" :avatar="avatar"></CHeader>
         <section class="section">
             <div class="user-information-box">
                 <div class="user-background">
@@ -125,7 +125,7 @@ import {useRoute} from "vue-router";
 import router from "@/router";
 import SparkMD5 from "spark-md5";
 import {cosUploadImage} from "@/utils/public-cos";
-import {StorageAvatarUrl, UserAvatarUrl} from "@/utils/consts";
+import { UserAvatarUrl} from "@/utils/consts";
 import {useStore} from "@/store";
 
 const store = useStore()
@@ -148,6 +148,7 @@ const selectInfo = ref({
   userId: ""
 })
 
+const avatar = ref(store.getUserAvatar())
 const changeAvatar = async(event: any) => {
   const file = event.target.files![0]
   if(file.type.indexOf('image') === -1) {

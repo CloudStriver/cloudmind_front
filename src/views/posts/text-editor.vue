@@ -16,7 +16,7 @@ import Vditor from 'vditor'
 import "vditor/dist/index.css"
 import { onMounted, ref } from 'vue';
 import {errorMsg} from "@/utils/message";
-import {StoragePostContent, StoragePostId, StoragePostTitle} from "@/utils/consts";
+import {StoragePostContent, StoragePostTitle} from "@/utils/consts";
 
 const props = defineProps<{
     sendOperateType: string

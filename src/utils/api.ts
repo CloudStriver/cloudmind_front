@@ -3,7 +3,7 @@ import type {Relation, SearchOption} from "@/utils/type";
 import {get, post} from "@/utils/request";
 import {
     CreateRelationUrl,
-    DeleteRelationUrl, GetCommentsUrl,
+    DeleteRelationUrl,
     GetFromRelationsUrl,
     GetPostsUrl, GetSlidersUrl,
     GetToRelationsUrl, GetUsersUrl

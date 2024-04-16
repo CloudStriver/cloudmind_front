@@ -11,10 +11,11 @@
 
 <script setup lang="ts">
 // import router from '@/router'
-import { onMounted, ref } from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import {useRoute} from "vue-router";
 import router from "@/router";
 import {SearchPeriodType, SearchSortType} from "@/utils/consts";
+import {errorMsg} from "@/utils/message";
 const keyword = ref('')
 const route = useRoute() // 如果你需要获取当前路由信息
 onMounted(() => {
@@ -22,6 +23,10 @@ onMounted(() => {
 })
 
 const search = () => {
+  if(!keyword.value) {
+    errorMsg('请输入搜索内容')
+    return
+  }
   const selectContent = route.params.type as string
   const selectSort = parseInt(route.params.sort as string)
   const selectPeriod = parseInt(route.params.period as string)
@@ -31,6 +36,13 @@ const search = () => {
   }
   router.push(`/search/${keyword.value}/${selectContent}/${selectSort}/${selectPeriod}`)
 }
+
+watch(() => route.params.keyword, (value) => {
+  if(value) {
+    keyword.value = value as string
+  }
+  console.log("!!!")
+})
 </script>
 
 <style scoped lang="css">

@@ -177,11 +177,19 @@ const select = ref('个人资料')
 
 onMounted(async() => {
     detail.value = await getUserDetail() as any
-    editableDetail.value = detail.value
+    editableDetail.value = {
+      name: detail.value.name,
+      sex: detail.value.sex,//1男 2女
+      idCard: detail.value.idCard,
+      fullName: detail.value.fullName,
+      description: detail.value.description,
+      avatar: detail.value.avatar
+    }
 })
 
 const toggleEdit = () => {
   if (isEditing.value) {
+    console.log(detail.value)
     isEditing.value = false
     editableDetail.value = { ...detail.value } // 取消时重置更改
   } else {

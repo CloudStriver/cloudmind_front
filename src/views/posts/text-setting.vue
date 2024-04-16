@@ -170,7 +170,6 @@ import SparkMD5 from "spark-md5";
 import {cosUploadImage} from "@/utils/public-cos";
 import {errorMsg} from "@/utils/message";
 import {StoragePostContent, StoragePostId, StoragePostTitle} from "@/utils/consts";
-import {onBeforeRouteUpdate} from "vue-router";
 const isShowSetting = ref(true)
 const sureOption = ref(false)
 const isHasUploadImage = ref(false)
@@ -191,9 +190,6 @@ const props = defineProps<{
     postId: string,
   }
 }>()
-
-onBeforeRouteUpdate((to) => {
-})
 
 
 const emit = defineEmits(['sendSettingContents'])

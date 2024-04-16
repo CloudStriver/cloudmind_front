@@ -2,7 +2,7 @@
     <div class="main-box">
         <div class="header-box">
             <Nav class="nav"></Nav>
-            <search class="search"></search>
+            <search class="search" :keyword="props.keyword"></search>
             <div class="header-right">
                 <!-- <i class="iconfont icon-calendar-check-solid"></i> -->
                 <router-link 
@@ -43,7 +43,8 @@ import popup from './popup.vue'
 
 const props = defineProps<{
   avatar: string
-}>()
+  keyword: string
+}>();
 const isLogin = ref(false)
 const isPopup = ref(false)
 const notificationCount = ref(0)

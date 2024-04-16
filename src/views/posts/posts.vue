@@ -20,17 +20,39 @@
                             </li>
                         </ul>
                     </nav>
-                    <div class="link-box">
-                        <p>友情链接</p>
-                        <ul>
-                            <li>视觉中国</li>
-                            <li>看准网</li>
-                            <li>优设网</li>
-                            <li>CSDN文库</li>
-                            <li>哔哩哔哩</li>
-                            <li>人民日报</li>
-                        </ul>
+                  <div class="comment-rank">
+                    <div class="comment-rank-title">
+                            <span>
+                                <span class="comment-rank-span">热门评论</span>
+                            </span>
                     </div>
+                    <div class="comment-rank-contents">
+                      <ul>
+                        <li
+                            v-for="(comment,index) in commentRankList"
+                            :key="index"
+                        >
+                          <span>{{index + 1 + ((commentRankPage - 1) * pageSize)}}</span>
+                          <router-link :to="`/post/${comment.itemId}`" class="router-link">
+                            <span>{{comment.userName}}: {{comment.content}}</span>
+                          </router-link>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="comment-rank-more" @click="loadMoreComments" v-if="!noMoreComments">查看更多</div>
+                    <div v-else  class="comment-rank-more">没有更多文章了</div>
+                  </div>
+                  <div class="link-box">
+                    <p>友情链接</p>
+                    <ul>
+                      <li><a href="https://cloud.tencent.com/" style="text-decoration: none;">腾讯云</a></li>
+                      <li><a href="https://kafka.apache.org/" style="text-decoration: none;">Kafka</a></li>
+                      <li><a href="https://www.elastic.co/cn/elasticsearch" style="text-decoration: none;">Elasticsearch</a></li>
+                      <li><a href="https://kubernetes.io/zh/" style="text-decoration: none;">K8s</a></li>
+                      <li><a href="https://gorse.io/" style="text-decoration: none;">Gorse</a></li>
+                      <li><a href="https://www.rancher.cn/quick-start/" style="text-decoration: none;">Rancher</a></li>
+                    </ul>
+                  </div>
                 </div>
                 <div class="posts">
                     <div class="posts-select" v-if="navSelect === 'new'">
@@ -105,7 +127,7 @@
                                     v-for="(post,index) in postRankList"
                                     :key="post.postId"
                                 >
-                                    <span>{{index + 1}}</span>
+                                    <span>{{index + 1 + ((postRankPage - 1) * pageSize)}}</span>
                                     <router-link :to="`/post/${post.postId}`" class="router-link">
                                       <span>{{post.title}}</span>
                                     </router-link>
@@ -163,10 +185,10 @@
 <script setup lang="ts">
 import CHeader from '@/components/header.vue'
 import PostDetail from './post-information.vue'
-import {onBeforeMount, onMounted, ref, watch} from 'vue'
+import {onBeforeMount, onMounted, ref} from 'vue'
 import router from '@/router'
 import {
-  enterPost,
+  enterPost, getCommentRankList,
   getFollowPostList,
   getHotPostList,
   getNewPostList,
@@ -174,7 +196,7 @@ import {
   getRecommendPostList,
   getUserRankList,
 } from "./utils"
-import type {HotPost, HotUser, Label, Post} from "@/utils/type";
+import type {HotComment, HotPost, HotUser, Label, Post} from "@/utils/type";
 import {
   followHotUser,
   getLabelList,
@@ -191,6 +213,7 @@ const selectLabelId = ref('root') // 当前选择分区的父分区ID
 const NowLabelId = ref('')
 const noMoreUsers = ref(false) // 没有更多作者了
 const noMorePosts = ref(false) // 没有更多文章了
+const noMoreComments = ref(false)
 const isShowZonePop = ref(false) 
 const userRankList = ref<HotUser[]>([]) // 作者排行榜
 const postRankList = ref<HotPost[]>([]) // 文章排行榜
@@ -199,15 +222,18 @@ const zonePopTop = ref(0)
 const zonePopLeft = ref(0)
 const firstLabelList = ref<Label[]>([])
 const secondLabelList = ref<Label[]>([])
+const commentRankList = ref<HotComment[]>([])
 const pageSize = 10; // 假设每页加载10项
 let userRankPage = 1; // 当前用户列表页码
 let postRankPage = 1; // 当前帖子列表页码
+let commentRankPage = 1;
 let postPage = 1;
 const route = useRoute()
 onMounted(async() => {
     navSelect.value = route.params.select as string
     userRankList.value = await getUserRankList(pageSize, 0)
     postRankList.value = await getPostRankList(pageSize, 0)
+    commentRankList.value = await getCommentRankList(pageSize, 0)
     firstLabelList.value = await getLabelList(selectLabelId.value)
     await getPosts()
 })
@@ -274,7 +300,7 @@ const loadMoreUsers = async () => {
     if (nextUsers.length === 0) {
         noMoreUsers.value = true;
     } else {
-        userRankList.value = [...userRankList.value, ...nextUsers];
+        userRankList.value = nextUsers;
         userRankPage++;
         noMoreUsers.value = false;
     }
@@ -286,9 +312,21 @@ const loadMorePosts = async () => {
   if (nextPosts.length === 0) {
     noMorePosts.value = true;
   } else {
-    postRankList.value = [...postRankList.value, ...nextPosts];
+    postRankList.value = nextPosts;
     postRankPage++;
     noMorePosts.value = false;
+  }
+};
+
+// 加载下一页的帖子
+const loadMoreComments = async () => {
+  const nextComments = await getCommentRankList(pageSize, commentRankPage * pageSize);
+  if (nextComments.length === 0) {
+    noMoreComments.value = true;
+  } else {
+    commentRankList.value = nextComments;
+    commentRankPage++;
+    noMoreComments.value = false;
   }
 };
 
@@ -366,6 +404,88 @@ const loadMorePosts = async () => {
                     }
                 }
             }
+
+            .comment-rank {
+              width: 50%;
+              background-color: #fff;
+              border-radius: 5px;
+              box-shadow: 0 0 10px 1px rgba(136, 136, 136, 0.1);
+              padding: 15px;
+              margin-bottom: 30px;
+
+              .comment-rank-title {
+                padding-bottom: 10px;
+                border-bottom: 1px solid #f0f0f0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                .comment-rank-span {
+                  font-size: 16px;
+                  font-weight: 600;
+                }
+
+                .refresh-post-rank {
+                  color: rgb(132, 132, 132);
+                  font-size: 12px;
+                  cursor: pointer;
+
+
+                  i {
+                    font-size: 12px;
+                    margin-right: 5px;
+                  }
+                }
+              }
+
+              .comment-rank-contents {
+                ul {
+                  list-style: none;
+                  padding: 0;
+                  margin: 0;
+
+                  li {
+                    display: flex;
+                    align-items: center;
+                    padding: 10px 0;
+                    color: #61666D;
+
+                    span {
+                      width: 30px;
+                      font-size: 16px;
+                    }
+
+                    .router-link {
+                      text-decoration: none;
+                      color: rgb(63, 63, 63);
+                      font-size: 13px;
+                    }
+                  }
+                  li:nth-child(1) {
+                    color: #ff4d4f;
+                    font-weight: 600;
+                  }
+                  li:nth-child(2) {
+                    color: #fa8c16;
+                    font-weight: 600;
+                  }
+                  li:nth-child(3) {
+                    color: #e7c943;
+                    font-weight: 600;
+                  }
+                }
+              }
+
+              .comment-rank-more {
+                padding: 10px 0 0 0;
+                text-align: center;
+                cursor: pointer;
+                font-size: 13px;
+                color: rgb(132, 132, 132);
+                border-top: 1px solid #f0f0f0;
+              }
+            }
+
 
             .link-box {
                 width: 200px;

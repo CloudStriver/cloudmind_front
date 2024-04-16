@@ -18,7 +18,6 @@
 import Editor from './text-editor.vue'
 import ShowSetting from './text-setting.vue'
 import { ref, onBeforeMount } from 'vue'
-import {useRoute} from "vue-router";
 import {StoragePostContent, StoragePostId, StoragePostTitle} from "@/utils/consts";
 
 const createPostData = ref('')

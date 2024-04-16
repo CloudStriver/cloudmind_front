@@ -8,7 +8,7 @@ import {
      RelationType,
     TargetType
 } from '@/utils/consts'
-import type {HotPost, HotUser, Post} from "@/utils/type";
+import type {HotComment, HotPost, HotUser, Post} from "@/utils/type";
 import router from "@/router";
 
 
@@ -64,6 +64,17 @@ export const getPostRankList = async (limit: number, offset: number)  => {
                             postId: post.postId,
                             title: post.title,
                 }))
+            }
+        })
+    return rankList.value
+}
+
+export const getCommentRankList = async(limit: number, offset: number) => {
+    const rankList = ref<HotComment[]>([])
+    await get(false, `${GetHotRanksUrl}?targetType=${TargetType.Comment}&limit=${limit}&offset=${offset}`)
+        .then((res: any) => {
+            if (res.comments) {
+                rankList.value = res.comments
             }
         })
     return rankList.value

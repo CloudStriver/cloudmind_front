@@ -76,6 +76,15 @@ export type HotPost =  {
 }
 
 
+export type HotComment = {
+    commentId: string
+    content: string
+    userId: string
+    itemId: string
+    createTime: number
+        userName: string,
+}
+
 export type Label = {
     id: string,
     value: string,
@@ -141,6 +150,11 @@ export type Comment =  {
     }
     itemTitle: string,
     itemId: string,
+    atUser: {
+        userId: string,
+        name: string,
+        url: string,
+    }
 }
 
 export type CommentBlock = {

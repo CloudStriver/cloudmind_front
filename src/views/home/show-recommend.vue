@@ -82,7 +82,6 @@ import {enterUser, followUser, getPostRecommend, getUserRecommend, unFollowUser}
 import {TargetType} from "@/utils/consts";
 import {useStore} from "@/store";
 import PostDetail from "@/views/posts/post-information.vue"
-import router from "@/router";
 const store = useStore()
 const props = defineProps<{
     classify: string,

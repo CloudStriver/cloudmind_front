@@ -13,7 +13,6 @@
     </div>
 </template>
 <script setup lang="ts">
-import {ref, watch} from 'vue'
 
 const emit = defineEmits(['sendFilePopupOptions'])
 const props = defineProps<{
