@@ -1,14 +1,10 @@
 import { ref } from 'vue'
 import { get } from '@/utils/request'
 import {
-    CategoryType,
     GetHotRanksUrl,
-    GetPopularRecommendUrl, GetPostsUrl,
-    GetRecommendByUserUrl, GetRelationPathsUrl,
-     RelationType,
     TargetType
 } from '@/utils/consts'
-import type {HotComment, HotPost, HotUser, Post} from "@/utils/type";
+import type {HotComment, HotPost, HotUser} from "@/utils/type";
 import router from "@/router";
 
 
@@ -31,28 +27,6 @@ export const getUserRankList = async (limit: number, offset: number)  => {
     return rankList.value
 }
 
-// 获取最新的帖子列表
-export const getNewPostList = async (onlyLabelId?: string) => {
-    const postsList = ref<Post[]>([])
-    const url = ref(GetPostsUrl)
-    if(onlyLabelId) url.value += `?onlyLabelId=${onlyLabelId}`
-    await get(false, url.value)
-    .then((res: any) => {
-        postsList.value =  res.posts.map((post: any) => ({
-                postId: post.postId,
-                title: post.title,
-                text: post.text,
-                url: post.url,
-                likeCount: post.likeCount,
-                labels: post.labels,
-                commentCount: post.commentCount,
-                viewCount: post.viewCount,
-                liked: post.liked,
-                userName: post.userName
-            })) 
-    })
-    return postsList.value
-}
 
 // 获取文章排行榜
 export const getPostRankList = async (limit: number, offset: number)  => {
@@ -78,70 +52,6 @@ export const getCommentRankList = async(limit: number, offset: number) => {
             }
         })
     return rankList.value
-}
-
-
-
-
-
-export const getHotPostList = async () => {
-    const postList = ref<Post[]>([]) // 帖子列表
-    await get(false, `${GetPopularRecommendUrl}?category=${CategoryType.PostCategory}`)
-    .then((res: any) => {
-        postList.value = res.recommends.posts.map((post: any) => ({
-                postId: post.postId,
-                title: post.title,
-                text: post.text,
-                url: post.url,
-                labels: post.labels,
-                likeCount: post.likeCount,
-                commentCount: post.commentCount,
-                liked: post.liked,
-                viewCount: post.viewCount,
-                userName: post.userName
-        }))
-    })
-    return postList.value
-}
-
-export const getRecommendPostList = async () => {
-    const postList = ref<Post[]>([])
-    await get(false, `${GetRecommendByUserUrl}?category=${CategoryType.PostCategory}`)
-        .then((res: any) => {
-            postList.value = res.recommends.posts.map((post: any) => ({
-                postId: post.postId,
-                title: post.title,
-                text: post.text,
-                url: post.url,
-                labels: post.labels,
-                likeCount: post.likeCount,
-                commentCount: post.commentCount,
-                viewCount: post.viewCount,
-                liked: post.liked,
-                userName: post.userName
-            }))
-        })
-    return postList.value
-}
-
-export const getFollowPostList = async (limit: number, offset: number) => {
-    const postList = ref<Post[]>([])
-    await get(true, `${GetRelationPathsUrl}?relationType=${RelationType.Publish}&limit=${limit}&offset=${offset}`)
-        .then((res: any) => {
-            postList.value = res.posts.map((post: any) => ({
-                postId: post.postId,
-                title: post.title,
-                text: post.text,
-                url: post.url,
-                labels: post.labels,
-                likeCount: post.likeCount,
-                commentCount: post.commentCount,
-                viewCount: post.viewCount,
-                liked: post.liked,
-                userName: post.userName
-            }))
-        })
-    return postList.value
 }
 
 export const enterPost = async (id: string) => {

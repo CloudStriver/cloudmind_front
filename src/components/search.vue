@@ -4,13 +4,13 @@
             type="text"
             placeholder="搜索"
             v-model="keyword"
+            @keydown.enter="search"
         >
         <i @click="search()" class="iconfont icon-sistrix"></i>
     </div>
 </template>
 
 <script setup lang="ts">
-// import router from '@/router'
 import {onMounted, ref, watch} from 'vue'
 import {useRoute} from "vue-router";
 import router from "@/router";
@@ -30,7 +30,8 @@ const search = () => {
   const selectContent = route.params.type as string
   const selectSort = parseInt(route.params.sort as string)
   const selectPeriod = parseInt(route.params.period as string)
-  if(!selectContent || !selectSort || !selectPeriod) {
+  console.log(selectContent, selectSort, selectPeriod)
+  if(!selectContent || !selectSort || selectPeriod == null) {
     router.push(`/search/${keyword.value}/post/${SearchSortType.Synthesis}/${SearchPeriodType.None}`)
     return
   }
@@ -41,7 +42,6 @@ watch(() => route.params.keyword, (value) => {
   if(value) {
     keyword.value = value as string
   }
-  console.log("!!!")
 })
 </script>
 

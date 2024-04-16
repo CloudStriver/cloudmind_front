@@ -105,9 +105,10 @@
                     <el-pagination
                         class="el-pagination"
                         layout="prev, pager, next"
-                        :total="1000"
+                        :total="totalPost"
                         :hide-on-single-page="true"
-                        current-page="1"
+                        :current-page="nowPage"
+                        @update:currentPage="changePage($event)"
                     />
                 </div>
                 <div class="rank-create">
@@ -189,11 +190,7 @@ import {onBeforeMount, onMounted, ref} from 'vue'
 import router from '@/router'
 import {
   enterPost, getCommentRankList,
-  getFollowPostList,
-  getHotPostList,
-  getNewPostList,
   getPostRankList,
-  getRecommendPostList,
   getUserRankList,
 } from "./utils"
 import type {HotComment, HotPost, HotUser, Label, Post} from "@/utils/type";
@@ -206,6 +203,15 @@ import {
 } from "@/utils/utils";
 import {useStore} from "@/store";
 import {useRoute} from "vue-router";
+import {
+  CategoryType,
+  GetPopularRecommendUrl,
+  GetPostsUrl,
+  GetRecommendByUserUrl,
+  GetRelationPathsUrl,
+  RelationType
+} from "@/utils/consts";
+import {get} from "@/utils/request";
 
 const store = useStore()
 const navSelect = ref('all') // 选项
@@ -223,11 +229,12 @@ const zonePopLeft = ref(0)
 const firstLabelList = ref<Label[]>([])
 const secondLabelList = ref<Label[]>([])
 const commentRankList = ref<HotComment[]>([])
+const totalPost = ref(0)
 const pageSize = 10; // 假设每页加载10项
+const nowPage = ref(1)
 let userRankPage = 1; // 当前用户列表页码
 let postRankPage = 1; // 当前帖子列表页码
 let commentRankPage = 1;
-let postPage = 1;
 const route = useRoute()
 onMounted(async() => {
     navSelect.value = route.params.select as string
@@ -246,6 +253,10 @@ onBeforeMount(() => {
   });
 });
 
+const changePage = async(page: number) => {
+  nowPage.value = page
+  await getPosts()
+}
 const getPosts = async () => {
   switch (navSelect.value) {
     case 'hot':
@@ -255,7 +266,7 @@ const getPosts = async () => {
       postList.value = await getRecommendPostList()
       break
     case 'follow':
-      postList.value = await getFollowPostList(pageSize, (postPage - 1) * pageSize)
+      postList.value = await getFollowPostList()
       break
     case 'new':
       postList.value = await getNewPostList(NowLabelId.value)
@@ -330,6 +341,95 @@ const loadMoreComments = async () => {
   }
 };
 
+// 获取最新的帖子列表
+const getNewPostList = async (onlyLabelId?: string) => {
+  const postsList = ref<Post[]>([])
+  const url = ref(GetPostsUrl)
+  if(onlyLabelId) url.value += `?onlyLabelId=${onlyLabelId}&limit=${pageSize}&offset=${(nowPage.value - 1) * pageSize}`
+  else url.value += `?limit=${pageSize}&offset=${(nowPage.value - 1) * pageSize}`
+  await get(false, url.value)
+      .then((res: any) => {
+        postsList.value =  res.posts.map((post: any) => ({
+          postId: post.postId,
+          title: post.title,
+          text: post.text,
+          url: post.url,
+          likeCount: post.likeCount,
+          labels: post.labels,
+          commentCount: post.commentCount,
+          viewCount: post.viewCount,
+          liked: post.liked,
+          userName: post.userName
+        }))
+        totalPost.value = res.total
+      })
+  return postsList.value
+}
+
+
+const getFollowPostList = async () => {
+  const postList = ref<Post[]>([])
+  await get(true, `${GetRelationPathsUrl}?relationType=${RelationType.Publish}&limit=${pageSize}&offset=${(nowPage.value - 1) * pageSize}`)
+      .then((res: any) => {
+        postList.value = res.posts.map((post: any) => ({
+          postId: post.postId,
+          title: post.title,
+          text: post.text,
+          url: post.url,
+          labels: post.labels,
+          likeCount: post.likeCount,
+          commentCount: post.commentCount,
+          viewCount: post.viewCount,
+          liked: post.liked,
+          userName: post.userName
+        }))
+        totalPost.value = res.total
+      })
+  return postList.value
+}
+
+
+const getHotPostList = async () => {
+  const postList = ref<Post[]>([]) // 帖子列表
+  await get(false, `${GetPopularRecommendUrl}?category=${CategoryType.PostCategory}&limit=${pageSize}&offset=${(nowPage.value - 1) * pageSize}`)
+      .then((res: any) => {
+        postList.value = res.recommends.posts.map((post: any) => ({
+          postId: post.postId,
+          title: post.title,
+          text: post.text,
+          url: post.url,
+          labels: post.labels,
+          likeCount: post.likeCount,
+          commentCount: post.commentCount,
+          liked: post.liked,
+          viewCount: post.viewCount,
+          userName: post.userName
+        }))
+        totalPost.value = 100
+      })
+  return postList.value
+}
+
+const getRecommendPostList = async () => {
+  const postList = ref<Post[]>([])
+  await get(false, `${GetRecommendByUserUrl}?category=${CategoryType.PostCategory}&limit=${pageSize}&offset=${(nowPage.value - 1) * pageSize}`)
+      .then((res: any) => {
+        postList.value = res.recommends.posts.map((post: any) => ({
+          postId: post.postId,
+          title: post.title,
+          text: post.text,
+          url: post.url,
+          labels: post.labels,
+          likeCount: post.likeCount,
+          commentCount: post.commentCount,
+          viewCount: post.viewCount,
+          liked: post.liked,
+          userName: post.userName
+        }))
+        totalPost.value = 100
+      })
+  return postList.value
+}
 
 
 </script>

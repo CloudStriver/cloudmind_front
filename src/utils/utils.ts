@@ -297,7 +297,10 @@ export const likeComment = async (comment: Comment) => {
         relationType: RelationType.Like,
     }).then(() => {
         comment.commentRelation.liked = true
-        comment.commentRelation.hated = false
+        if(comment.commentRelation.hated) {
+            unHateComment(comment)
+            comment.commentRelation.hated = false
+        }
         comment.like++
     })
 }
@@ -318,10 +321,12 @@ export const hateComment = async(comment: Comment) => {
         toId: comment.commentId,
         toType: TargetType.Comment,
         relationType: RelationType.Hate,
-    }).then(() => {
+    }).then(async () => {
         comment.commentRelation.hated = true
-        if(comment.commentRelation.liked) comment.like --
-        comment.commentRelation.liked = false
+        if (comment.commentRelation.liked) {
+            await unLikeComment(comment)
+            comment.commentRelation.liked = false
+        }
     })
 }
 
