@@ -48,7 +48,21 @@
                             <i class="iconfont icon-appreciate_light"></i>
                             <span>{{ commentBlock.comment.like }}</span>
                         </span>
-                        <span 
+                        <span
+                            class="disagree"
+                            v-if="!commentBlock.comment.commentRelation.hated"
+                            @click="hateComment(commentBlock.comment)"
+                        >
+                                <i class="iconfont icon-oppose_light"></i>
+                        </span>
+                        <span
+                            class="disagree-like"
+                            v-if="commentBlock.comment.commentRelation.hated"
+                            @click="unHateComment(commentBlock.comment)"
+                        >
+                              <i class="iconfont icon-oppose_light"></i>
+                          </span>
+                        <span
                             class="reply-btn"
                             @click="replyComment(
                                     commentBlock.comment.commentId,
@@ -57,7 +71,7 @@
                                     commentBlock.comment.author.name
                                   )">回复
                         </span>
-                        <span class="delete-reply-btn" @click="deleteComment(commentBlock.comment.commentId, commentBlock.replyList.total)">删除</span>
+                        <span class="delete-reply-btn" v-if="commentBlock.comment.author.userId === store.getUserId() || props.PostData.UserId === store.getUserId()" @click="deleteComment(commentBlock.comment.commentId, commentBlock.replyList.total)">删除</span>
                     </div>
                     <div class="reply-item" v-for="(reply, index) in commentBlock.replyList.comments" :key="index">
                         <div v-if="index < 3 || commentBlock.isExpand" class="reply-limit">
@@ -67,7 +81,10 @@
                             <div class="reply-detail">
                                 <div class="reply">
                                     <span class="name" v-if="reply.rootId === reply.fatherId">{{ reply.author.name }}</span>
-                                    <span class="name" v-else>{{reply.author.name}} @ {{reply.atUserId}}</span>
+                                    <span class="name" v-else>
+                                      <span @click="enterUser(reply.author.userId)">{{reply.author.name}}</span>
+                                      <span class="highlight" @click="enterUser(reply.atUser.userId)">  @{{reply.atUser.name}} :</span>
+                                    </span>
                                     <span class="contents">{{reply.content}}</span>
                                 </div>
                                 <div class="footer">
@@ -97,7 +114,7 @@
                                                 reply.author.name
                                             )">回复
                                     </span>
-                                    <span class="delete-reply-btn" @click="deleteComment(reply.commentId, 0)">删除</span>
+                                    <span class="delete-reply-btn" v-if="reply.author.userId === store.getUserId() || props.PostData.UserId === store.getUserId()" @click="deleteComment(reply.commentId, 0)">删除</span>
                                 </div>
                             </div>
                         </div>
@@ -148,7 +165,7 @@ import {useStore} from "@/store";
 import {CreateCommentUrl, DeleteCommentUrl, GetCommentBlocksUrl } from "@/utils/consts";
 import {get, post} from "@/utils/request";
 import type {CommentBlock} from "@/utils/type"
-import {enterUser, likeComment, turnTime, unLikeComment} from "@/utils/utils";
+import {enterUser, hateComment, likeComment, turnTime, unHateComment, unLikeComment} from "@/utils/utils";
 import {errorMsg} from "@/utils/message";
 const store = useStore()
 const commentList = ref<CommentBlock[]>([])
@@ -396,6 +413,7 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
                 flex-direction: column;
 
                 .name {
+                    cursor: pointer;
                     font-size: 18px;
                     padding: 0;
                     margin-top: 10px;
@@ -427,15 +445,18 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
                             margin-right: 3px;
                         }
                     }
+
+                    .disagree-like,
                     .agree-like {
                       margin-right: 10px;
                       cursor: pointer;
 
                       i {
-                        color: #7baaef;
+                        color: #0000ff;
                         margin-right: 3px;
                       }
                     }
+
                 }
 
                 .reply-item {
@@ -509,4 +530,9 @@ const submitComment = async (subjectId: string,rootId: string, fatherId: string,
 .pagination-container span {
   margin-right: 20px; /* 为页数信息添加一些右边距 */
 }
+
+.highlight {
+  color: #008ac5; /* 蓝色 */
+}
+
 </style>

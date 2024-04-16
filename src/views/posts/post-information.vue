@@ -86,6 +86,7 @@ const props = defineProps<{
             display: flex;
 
             button {
+                cursor: pointer;
                 background-color: #b0d3f8;
                 color: #fff;
                 border: none;

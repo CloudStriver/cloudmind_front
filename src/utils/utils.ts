@@ -297,6 +297,7 @@ export const likeComment = async (comment: Comment) => {
         relationType: RelationType.Like,
     }).then(() => {
         comment.commentRelation.liked = true
+        comment.commentRelation.hated = false
         comment.like++
     })
 }
@@ -309,5 +310,28 @@ export const unLikeComment = async (comment: Comment) => {
     }).then(() => {
         comment.commentRelation.liked = false
         comment.like--
+    })
+}
+
+export const hateComment = async(comment: Comment) => {
+    await CreateRelation({
+        toId: comment.commentId,
+        toType: TargetType.Comment,
+        relationType: RelationType.Hate,
+    }).then(() => {
+        comment.commentRelation.hated = true
+        if(comment.commentRelation.liked) comment.like --
+        comment.commentRelation.liked = false
+    })
+}
+
+
+export const unHateComment = async(comment: Comment) => {
+    await DeleteRelation({
+        toId: comment.commentId,
+        toType: TargetType.Comment,
+        relationType: RelationType.Hate,
+    }).then(() => {
+        comment.commentRelation.hated = false
     })
 }

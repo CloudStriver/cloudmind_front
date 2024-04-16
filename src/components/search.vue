@@ -67,6 +67,7 @@ watch(() => route.params.keyword, (value) => {
     }
 
     i {
+        cursor: pointer;
         font-size: 20px;
         color: rgb(107, 167, 232);
     }

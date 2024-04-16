@@ -392,6 +392,7 @@ const loadMoreComments = async () => {
                         }
     
                         label {
+                          cursor: pointer;
                             width: 100%;
                             padding: 10px;
                             font-size: 16px;
@@ -844,6 +845,7 @@ const loadMoreComments = async () => {
 }
 
 .checked {
+  cursor: pointer;
   color: #1890ff; /* 蓝色 */
 }
 

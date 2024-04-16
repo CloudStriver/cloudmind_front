@@ -496,6 +496,7 @@ const changePost = async (nowPostId: string) => {
                         padding: 10px;
 
                         li {
+                            cursor: pointer;
                             border-bottom: 1px solid #f0f0f0;
                             padding-bottom: 10px;
                             font-size: 15px;
