@@ -274,9 +274,12 @@ const renderMarkdown = (md: string | undefined) => {
 
 const changePost = async (nowPostId: string) => {
   postId.value = nowPostId
-  enterPost(nowPostId)
+  await enterPost(nowPostId)
   postDetail.value = await getPostDetail(nowPostId)
   postList.value = await getPostRecommendByPostId(nowPostId)
+  PostData.value.PostId = postId.value
+  PostData.value.UserId = postDetail.value?.author.userId as string
+  PostData.value.CommentCount = postDetail.value?.commentCount as number
   renderMarkdown(postDetail?.value?.text)
 }
 

@@ -53,7 +53,7 @@
                   v-model="select"
                   value="headerFollow"
                   checked
-                  @click="getFollows(store.getUserId())"
+                  @click="getFollows(props.SendContentMsg.userId)"
               >
               <label for="headerFollow">关注</label>
             </li>
@@ -64,7 +64,7 @@
                   id="fans"
                   value="fans"
                   v-model="select"
-                  @click="getFans(store.getUserId())"
+                  @click="getFans(props.SendContentMsg.userId)"
               >
               <label for="fans">粉丝</label>
             </li>
@@ -80,7 +80,7 @@
               <img :src="user.url" alt="">
             </div>
             <div class="user">
-              <p>{{ user.name }}</p>
+              <p @click="enterUser(user.userId)">{{ user.name }}</p>
               <p>{{ user.description}}</p>
             </div>
             <div v-if="store.getUserLongToken()">
@@ -181,7 +181,7 @@ import {
 } from "@/views/information/utils";
 import {useStore} from "@/store";
 import type {Post, User} from "@/utils/type";
-import {followUser, splitContents, unFollowUser} from "@/utils/utils";
+import {enterUser, followUser, splitContents, unFollowUser} from "@/utils/utils";
 import {enterPost} from "@/views/posts/utils";
 import router from "@/router";
 
@@ -411,6 +411,7 @@ const getFans = async(userId: string) => {
                     margin-right: 10px;
 
                     p {
+                        cursor: pointer;
                         margin: 0;
                         padding: 0;
                     }

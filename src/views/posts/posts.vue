@@ -434,7 +434,7 @@ const getHotPostList = async () => {
           viewCount: post.viewCount,
           userName: post.userName
         }))
-        totalPost.value = 100
+        totalPost.value = 10
       })
   return postList.value
 }
@@ -455,7 +455,7 @@ const getRecommendPostList = async () => {
           liked: post.liked,
           userName: post.userName
         }))
-        totalPost.value = 100
+        totalPost.value = 10
       })
   return postList.value
 }
