@@ -137,9 +137,9 @@
                                         <div class="author-information">
                                             <img :src="recommendUser.url" alt="头像">
                                             <div class="information">
-                                                <router-link :to="`/user/center/${recommendUser.userId}/post/publish`" class="router-link">
-                                                    <p>{{ recommendUser.name }}</p>
-                                                </router-link>
+                                                <div class="router-link">
+                                                    <p @click="enterUser(recommendUser.userId)">{{ recommendUser.name }}</p>
+                                                </div>
                                                     <p>{{ splitDescription(recommendUser.description) }}</p>
                                             </div>
                                         </div>
@@ -168,7 +168,7 @@ import CHeader from '@/components/header.vue'
 import List from './contents-list.vue'
 import {ref, onMounted, watch} from 'vue'
 import {getUserInfo, updateUser} from "@/views/information/utils";
-import {followHotUser, getUserRecommend, splitDescription, turnTime, unFollowHotUser} from "@/utils/utils";
+import {enterUser, followHotUser, getUserRecommend, splitDescription, turnTime, unFollowHotUser} from "@/utils/utils";
 import {useRoute} from "vue-router";
 import router from "@/router";
 import SparkMD5 from "spark-md5";
@@ -579,6 +579,7 @@ watch(() => classify.value, async (newVal) => {
                                         }
 
                                         .router-link {
+                                            cursor: pointer;
                                             text-decoration: none;
                                         }
                                     }

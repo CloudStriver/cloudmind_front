@@ -135,8 +135,9 @@ export const getPostRecommend = async (mainClassify: string, classifyNum: Target
     return postList.value
 }
 
-export const enterUser = (userId: string) => {
-    router.push(`/user/center/${userId}/post/publish`)
+export const enterUser = async (userId: string) => {
+    await router.push(`/user/center/${userId}/post/publish`)
+    location.reload()
 }
 
 export const getUserRecommend = async (mainClassify: string, classifyNum: number) => {
